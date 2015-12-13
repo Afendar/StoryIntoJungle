@@ -17,9 +17,10 @@ public class EndScene extends Scene {
     public Font font, fontS;
     public String text1, text2, text3, text4, btnBack;
     public BufferedImage spritesheetGui, bgBtn, foreground, background;
-    public Color beige, darkGreen;
+    public Color darkGreen;
     public int[][] btnCoords;
     public int selectedItem;
+    public int alpha;
     
     public EndScene(int w, int h, Game game){
         super(w, h, game);
@@ -35,7 +36,6 @@ public class EndScene extends Scene {
             e.printStackTrace();
         }
         
-        this.beige = new Color(239, 228, 176);
         this.darkGreen = new Color(128, 0, 19);
         
         //new game
@@ -52,6 +52,8 @@ public class EndScene extends Scene {
         this.text3 = "Now it is he who will watch over his mother.";
         this.text4 = "Thanks a lot having played my game";
         this.btnBack = "Back to main";
+        
+        this.alpha = 255;
     }
     
     @Override
@@ -79,17 +81,22 @@ public class EndScene extends Scene {
         int text3Width = metrics.stringWidth(this.text3);
         g.drawString(this.text3, this.w/2 - text3Width/2, 360);
         
-        int backWidth = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
-        if(this.selectedItem == 1){
-            g2d.rotate(-0.1, (3*this.w/4)+25, 475);
-            g.setColor(this.darkGreen);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
-            g2d.rotate(0.1, (3*this.w/4)+25, 475);
-        }
-        else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+        if(this.alpha > 0){
+            this.alpha--;
+        }else
+        {
+            int backWidth = metrics.stringWidth(this.btnBack);
+            g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+            if(this.selectedItem == 1){
+                g2d.rotate(-0.1, (3*this.w/4)+25, 475);
+                g.setColor(this.darkGreen);
+                g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+                g2d.rotate(0.1, (3*this.w/4)+25, 475);
+            }
+            else{
+                g.setColor(Color.BLACK);
+                g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+            }
         }
         
         g.setFont(this.fontS);
@@ -99,6 +106,9 @@ public class EndScene extends Scene {
         g.drawString(this.text4, this.w/3 - text4Width/2 + 40, 490);
         
         g.drawImage(this.foreground, 0, 0, null);
+        
+        g.setColor(new Color(0, 0, 0, this.alpha));
+        g.fillRect(0, 0, this.w, this.h);
     }
     
     public void processHover(){

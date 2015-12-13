@@ -19,7 +19,7 @@ public class OptionsScene extends Scene {
     
     public Font font, fontL, fontU;
     public String title, btnBack, difficulty, easy, medium, hard;
-    public Color beige, darkGreen;
+    public Color darkGreen;
     public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, forground;
     public int[][] btnCoords;
     public int selectedItem;
@@ -42,7 +42,6 @@ public class OptionsScene extends Scene {
             e.printStackTrace();
         }
         
-        this.beige = new Color(239, 228, 176);
         this.darkGreen = new Color(128, 0, 19);
         
         int [][]coords = {

@@ -1,8 +1,6 @@
 package ld34.scene;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
-import javax.swing.JComponent;
 import ld34.Game;
 
 public abstract class Scene{

@@ -21,10 +21,11 @@ public class GameScene extends Scene {
     public Player player;
     public Level level;
     public Camera cam;
-    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, ctrl1, ctrl2;
-    public BufferedImage background, foreground, background2, bgGui, gui;
+    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn;
+    public BufferedImage background, foreground, background2, bgGui, gui, bgGui2;
     public int nbLevel;
     public boolean displayEnd, displayStart;
+    public int alpha, alphaMax;
     
     public GameScene(int w, int h, Game game){
         super(w, h, game);
@@ -52,18 +53,21 @@ public class GameScene extends Scene {
         }
         
         this.bgGui = this.gui.getSubimage(0, 20, 214, 50);
+        this.bgGui2 = this.gui.getSubimage(0, 0, 214, 50);
         
         this.deathMsg = "You are dead";
         this.startTxt1 = "The little panda has lost his mom";
         this.startTxt2 = "You must help him find her";
         this.startTxt3 = "But warning to traps";
         this.startTxt4 = "Press enter to continue";
-        this.respawn = "Press enter to respawn";
-        this.ctrl1 = "Space : JUMP";
-        this.ctrl2 = "Ctrl : WALK SLOWLY";
+        this.respawn = "Press enter to play again";
+        
+        this.alpha = 255;
+        this.alphaMax = 128;
     }
 
     public void reinit(int lvl){
+        this.alpha = 0;
         if(this.nbLevel < 3){
             this.nbLevel+= lvl;
             this.level = new Level(this.nbLevel);
@@ -97,6 +101,7 @@ public class GameScene extends Scene {
             else if(this.displayStart){
                 if(this.game.listener.next.enabled){
                     this.displayStart = false;
+                    this.alpha = 0;
                 }
                 return this;
             }
@@ -126,6 +131,8 @@ public class GameScene extends Scene {
         //RENDERING
         ///////////////////////////////////////////
         if(this.displayStart){
+            if(this.alpha > 0)
+                this.alpha--;
             
             g.drawImage(this.background2, 0, -10, null);
             g.setColor(Color.BLACK);
@@ -142,6 +149,9 @@ public class GameScene extends Scene {
             metrics = g.getFontMetrics(this.fontS);
             int txt4W = metrics.stringWidth(this.startTxt4);
             g.drawString(this.startTxt4, this.w/2-txt4W/2, 520);
+            
+            g.setColor(new Color(0, 0, 0, this.alpha));
+            g.fillRect(0, 0, this.w, this.h);
         }
         else
         {
@@ -170,18 +180,26 @@ public class GameScene extends Scene {
             g.drawString("Level : " + this.nbLevel, this.w/2 + 90, 26);
             
             if(this.player.isDead){
+                if(this.alpha < this.alphaMax){
+                    this.alpha += 1;
+                }
+                
+                g.setColor(new Color(206, 0, 31, this.alpha));
+                g.fillRect(0, 0, this.w, this.h);
+                
                 FontMetrics metrics = g.getFontMetrics(this.font);
                 int deathMsgWidth = metrics.stringWidth(this.deathMsg);
                 g.setFont(this.font);
                 g.setColor(Color.BLACK);
-                g.drawString(this.deathMsg, this.w/2 - deathMsgWidth/2, this.h/2);
+                g.drawString(this.deathMsg, this.w/2 - deathMsgWidth/2, this.h/2 - 60);
                 
                 metrics = g.getFontMetrics(this.fontM);
                 int respawnW = metrics.stringWidth(this.respawn);
                 g.setFont(this.fontM);
-                g.drawString(this.respawn, this.w/2-respawnW/2, 370);
+                g.drawString(this.respawn, this.w/2-respawnW/2, this.h/2);
+                
+                this.player.render(g);
             }
-
             //END REDNERING
             ///////////////////////////////////////////
             g.drawImage(this.foreground, 0, 0, null);

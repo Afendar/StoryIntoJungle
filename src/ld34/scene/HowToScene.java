@@ -16,7 +16,7 @@ public class HowToScene extends Scene {
     
     public Font font, fontL;
     public String title, btnBack, txt1, txt2, txt3, txt4, txt5;
-    public Color beige, darkGreen;
+    public Color darkGreen;
     public BufferedImage spritesheetGui, bgBtn, background, forground, tileset, pious, bridge, leaves, apple;
     public int[][] btnCoords;
     public int selectedItem;
@@ -36,7 +36,6 @@ public class HowToScene extends Scene {
             e.printStackTrace();
         }
         
-        this.beige = new Color(239, 228, 176);
         this.darkGreen = new Color(128, 0, 19);
         
         int [][]coords = {

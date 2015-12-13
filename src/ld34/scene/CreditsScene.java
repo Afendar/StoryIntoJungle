@@ -16,7 +16,7 @@ public class CreditsScene extends Scene {
     
     public Font font, fontL;
     public String title, btnBack, text1, text2, text3;
-    public Color beige, darkGreen;
+    public Color darkGreen;
     public BufferedImage spritesheetGui, bgBtn, background, forground;
     public int[][] btnCoords;
     public int selectedItem;
@@ -35,7 +35,6 @@ public class CreditsScene extends Scene {
             e.printStackTrace();
         }
         
-        this.beige = new Color(239, 228, 176);
         this.darkGreen = new Color(128, 0, 19);
         
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);

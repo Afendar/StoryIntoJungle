@@ -17,7 +17,7 @@ public class MenuScene extends Scene {
     public Font font, fontL, fontS;
     public String title, btnNewGame, btnOptions, btnCredits, btnQuit, btnHowTo;
     public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, foreground, background;
-    public Color beige, darkGreen;
+    public Color darkGreen;
     public int[][] btnCoords;
     public int selectedItem;
     
@@ -36,7 +36,6 @@ public class MenuScene extends Scene {
             e.printStackTrace();
         }
         
-        this.beige = new Color(239, 228, 176);
         this.darkGreen = new Color(128, 0, 19);
         
         //new game
