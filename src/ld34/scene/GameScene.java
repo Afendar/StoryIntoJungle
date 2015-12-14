@@ -68,7 +68,7 @@ public class GameScene extends Scene {
 
     public void reinit(int lvl){
         this.alpha = 0;
-        if(this.nbLevel < 3){
+        if(this.nbLevel < 3 || this.player.isDead){
             this.nbLevel+= lvl;
             this.level = new Level(this.nbLevel);
             this.player.level = this.level;
@@ -107,9 +107,9 @@ public class GameScene extends Scene {
             }
             else if(this.player.isDead){
                 if(this.game.listener.next.enabled){
+                    reinit(0);
                     this.player.isDead = false;
                     this.player.score = 0;
-                    reinit(0);
                 }
                 this.player.update();
             }
