@@ -6,9 +6,11 @@ import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Game;
 
@@ -17,7 +19,6 @@ public class EndScene extends Scene {
     public Font font, fontS;
     public String text1, text2, text3, text4, btnBack;
     public BufferedImage spritesheetGui, bgBtn, foreground, background;
-    public Color darkGreen;
     public int[][] btnCoords;
     public int selectedItem;
     public int alpha;
@@ -26,7 +27,7 @@ public class EndScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
             this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
@@ -35,9 +36,7 @@ public class EndScene extends Scene {
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
-        
-        this.darkGreen = new Color(128, 0, 19);
-        
+
         //new game
         int [][]coords = {
             {(3*this.w/4) - 80, 455}
@@ -47,11 +46,13 @@ public class EndScene extends Scene {
 
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
         
-        this.text1 = "The little panda has recover his mom,";
-        this.text2 = "but he is no longer a child...";
-        this.text3 = "Now it is he who will watch over his mother.";
-        this.text4 = "Thanks a lot having played my game";
-        this.btnBack = "Back to main";
+        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[this.game.lang]);
+        
+        this.text1 = this.bundle.getString("text1");
+        this.text2 = this.bundle.getString("text2");
+        this.text3 = this.bundle.getString("text3");
+        this.text4 = this.bundle.getString("text4");
+        this.btnBack = this.bundle.getString("backToMain");
         
         this.alpha = 255;
     }
@@ -67,6 +68,7 @@ public class EndScene extends Scene {
     public void render(Graphics g) {
         
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(this.background, 0, 0, null);
         

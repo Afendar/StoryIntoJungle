@@ -6,9 +6,11 @@ import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Game;
 
@@ -16,7 +18,6 @@ public class CreditsScene extends Scene {
     
     public Font font, fontL;
     public String title, btnBack, text1, text2, text3;
-    public Color darkGreen;
     public BufferedImage spritesheetGui, bgBtn, background, forground;
     public int[][] btnCoords;
     public int selectedItem;
@@ -25,7 +26,7 @@ public class CreditsScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
             this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
@@ -35,8 +36,6 @@ public class CreditsScene extends Scene {
             e.printStackTrace();
         }
         
-        this.darkGreen = new Color(128, 0, 19);
-        
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
         
         int [][]coords = {
@@ -45,11 +44,13 @@ public class CreditsScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        this.title = "About Story Into Jungle";
-        this.btnBack = "Back to main";
-        this.text1 = "This game was made in 48 hours by COMESSE Mickael";
-        this.text2 = "for the LudumDare 34 competition.";
-        this.text3 = "Edited in 12-13 december 2015.";
+        this.bundle = ResourceBundle.getBundle("lang.credits", this.game.langs[this.game.lang]);
+        
+        this.title = this.bundle.getString("title");
+        this.btnBack = this.bundle.getString("backToMain");
+        this.text1 = this.bundle.getString("text1");
+        this.text2 = this.bundle.getString("text2");
+        this.text3 = this.bundle.getString("text3");
     }
 
     @Override
@@ -64,6 +65,7 @@ public class CreditsScene extends Scene {
     public void render(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(this.background, 0, 0, null);
         

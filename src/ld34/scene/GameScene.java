@@ -7,9 +7,11 @@ import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
 import ld34.Game;
@@ -55,12 +57,14 @@ public class GameScene extends Scene {
         this.bgGui = this.gui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.gui.getSubimage(0, 0, 214, 50);
         
-        this.deathMsg = "You are dead";
-        this.startTxt1 = "The little panda has lost his mom";
-        this.startTxt2 = "You must help him find her";
-        this.startTxt3 = "But warning to traps";
-        this.startTxt4 = "Press enter to continue";
-        this.respawn = "Press enter to play again";
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[this.game.lang]);
+        
+        this.deathMsg = this.bundle.getString("deathMsg");
+        this.startTxt1 = this.bundle.getString("startTxt1");
+        this.startTxt2 = this.bundle.getString("startTxt2");
+        this.startTxt3 = this.bundle.getString("startTxt3");
+        this.startTxt4 = this.bundle.getString("startTxt4");
+        this.respawn = this.bundle.getString("respawn");
         
         this.alpha = 255;
         this.alphaMax = 128;
@@ -127,6 +131,7 @@ public class GameScene extends Scene {
     @Override
     public void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         //RENDERING
         ///////////////////////////////////////////

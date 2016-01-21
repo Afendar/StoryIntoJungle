@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.util.Locale;
 import ld34.scene.MenuScene;
 import ld34.scene.Scene;
 
@@ -13,7 +14,8 @@ public class Game extends Canvas implements Runnable {
     public Thread tgame;
     public Scene gs;
     public InputsListeners listener;
-    public int difficulty;
+    public int difficulty, lang;
+    public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
     
     public Game(int w, int h){
         
@@ -22,8 +24,8 @@ public class Game extends Canvas implements Runnable {
         this.setMinimumSize(new Dimension(w, h));
         this.setMaximumSize(new Dimension(w, h));
         this.setSize(new Dimension(w, h));
-        
         this.difficulty = 0;
+        this.lang = 1;
         
         this.listener = new InputsListeners(this);
         
