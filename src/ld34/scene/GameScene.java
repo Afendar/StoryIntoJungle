@@ -41,7 +41,7 @@ public class GameScene extends Scene {
         this.player = new Player(32, 460, this.level, this.game.listener, this.cam, this.game.difficulty);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
             this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
             this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
@@ -182,7 +182,7 @@ public class GameScene extends Scene {
             g.drawString("Score : " + this.player.score, this.w/2 - 190  , 23);
             
             g.drawImage(this.bgGui, this.w/2 + 20, 0, null);
-            g.drawString("Level : " + this.nbLevel, this.w/2 + 90, 26);
+            g.drawString(this.bundle.getString("levelTxt") + this.nbLevel, this.w/2 + 90, 26);
             
             if(this.player.isDead){
                 if(this.alpha < this.alphaMax){
