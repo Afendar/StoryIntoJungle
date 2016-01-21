@@ -25,7 +25,7 @@ public class Game extends Canvas implements Runnable {
         this.setMaximumSize(new Dimension(w, h));
         this.setSize(new Dimension(w, h));
         this.difficulty = 0;
-        this.lang = 1;
+        this.lang = 0;
         
         this.listener = new InputsListeners(this);
         
