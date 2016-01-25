@@ -46,7 +46,7 @@ public class EndScene extends Scene {
 
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
         
-        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[this.game.lang]);
+        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[this.game.configs[0]]);
         
         this.text1 = this.bundle.getString("text1");
         this.text2 = this.bundle.getString("text2");

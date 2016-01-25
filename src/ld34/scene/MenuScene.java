@@ -38,7 +38,7 @@ public class MenuScene extends Scene {
             e.printStackTrace();
         }
         
-        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[this.game.lang]);
+        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[this.game.configs[0]]);
         
         //new game
         int [][]coords = {

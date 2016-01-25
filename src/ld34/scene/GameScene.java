@@ -57,7 +57,7 @@ public class GameScene extends Scene {
         this.bgGui = this.gui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.gui.getSubimage(0, 0, 214, 50);
         
-        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[this.game.lang]);
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[this.game.configs[0]]);
         
         this.deathMsg = this.bundle.getString("deathMsg");
         this.startTxt1 = this.bundle.getString("startTxt1");

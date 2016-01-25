@@ -44,7 +44,7 @@ public class CreditsScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        this.bundle = ResourceBundle.getBundle("lang.credits", this.game.langs[this.game.lang]);
+        this.bundle = ResourceBundle.getBundle("lang.credits", this.game.langs[this.game.configs[0]]);
         
         this.title = this.bundle.getString("title");
         this.btnBack = this.bundle.getString("backToMain");

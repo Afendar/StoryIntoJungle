@@ -52,7 +52,7 @@ public class OptionsScene extends Scene {
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
         this.bgBtnSmall = this.spritesheetGui.getSubimage(0, 71, 107, 40);
         
-        this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[this.game.lang]);
+        this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[this.game.configs[0]]);
         
         this.title = this.bundle.getString("title");
         this.btnBack = this.bundle.getString("backToMain");
@@ -87,12 +87,14 @@ public class OptionsScene extends Scene {
             }
             else if(mouseX > 3*this.w/4 - 51 && mouseX < (3*this.w/4 - 51) + 107 &&
                     mouseY > 210 && mouseY < 210 + 40){
-                this.game.lang = 0;
+                this.game.configs[0] = 0;
+                this.game.configs[0] = 0;
                 this.reloadLangs();
             }
             else if(mouseX > 3*this.w/4 - 51 && mouseX < (3*this.w/4 - 51) + 107 &&
                     mouseY > 270 && mouseY < 270 + 40){
-                this.game.lang = 1;
+                this.game.configs[0] = 1;
+                this.game.configs[0] = 1;
                 this.reloadLangs();
             }
         }
@@ -101,7 +103,7 @@ public class OptionsScene extends Scene {
     }
 
     public void reloadLangs(){
-        this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[this.game.lang]);
+        this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[this.game.configs[0]]);
         
         this.title = this.bundle.getString("title");
         this.btnBack = this.bundle.getString("backToMain");
@@ -175,7 +177,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.language, 3*this.w/4 - difficultyWidth/2, 180);
         
         int englishW = metrics.stringWidth(this.english);
-        if(this.game.lang == 0){
+        if(this.game.configs[0] == 0){
             g.setFont(this.fontU);
         }else{
             g.setFont(this.font);
@@ -184,7 +186,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.english, 3*this.w/4 - englishW/2, 235);
         
         int frenchW = metrics.stringWidth(this.french);
-        if(this.game.lang == 1){
+        if(this.game.configs[0] == 1){
             g.setFont(this.fontU);
         }else{
             g.setFont(this.font);
@@ -230,6 +232,7 @@ public class OptionsScene extends Scene {
         if(this.game.listener.mousePressed){
             switch(this.selectedItem){
                 case 1:
+                    this.game.saveConfigs();
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;
                 default:
