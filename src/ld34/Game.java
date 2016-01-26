@@ -21,11 +21,10 @@ public class Game extends Canvas implements Runnable {
     public Thread tgame;
     public Scene gs;
     public InputsListeners listener;
-    public int difficulty;
     public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
     public String fileOptions = "settings.dat";
-    public String[] configsLabel = {"Lang"};
-    public int[] defaultConfigs = {0};
+    public String[] configsLabel = {"Lang", "Difficulty"};
+    public int[] defaultConfigs = {0, 0};
     public int[] configs;
     
     public Game(int w, int h){
@@ -35,7 +34,6 @@ public class Game extends Canvas implements Runnable {
         this.setMinimumSize(new Dimension(w, h));
         this.setMaximumSize(new Dimension(w, h));
         this.setSize(new Dimension(w, h));
-        this.difficulty = 0;
         
         this.loadConfigs();
         

@@ -75,15 +75,15 @@ public class OptionsScene extends Scene {
             
             if(mouseX > this.w/4 - 54 && mouseX < (this.w/4 - 54) + 107 &&
                     mouseY > 210 && mouseY < 210 + 40){
-                this.game.difficulty = 0;
+                this.game.configs[1] = 0;
             }
             else if(mouseX > this.w/4 - 54 && mouseX < (this.w/4 - 54) + 107 &&
                     mouseY > 270 && mouseY < 270 + 40){
-                this.game.difficulty = 2;
+                this.game.configs[1] = 2;
             }
             else if(mouseX > this.w/4 - 54 && mouseX < (this.w/4 - 54) + 107 &&
                     mouseY > 330 && mouseY < 330 + 40){
-                this.game.difficulty = 4;
+                this.game.configs[1] = 4;
             }
             else if(mouseX > 3*this.w/4 - 51 && mouseX < (3*this.w/4 - 51) + 107 &&
                     mouseY > 210 && mouseY < 210 + 40){
@@ -137,7 +137,7 @@ public class OptionsScene extends Scene {
         int difficultyWidth = metrics.stringWidth(this.difficulty);
         g.drawString(this.difficulty, this.w/4 - difficultyWidth/2, 180);
         
-        if(this.game.difficulty == 0){
+        if(this.game.configs[1] == 0){
             g.setFont(this.fontU);
         }else{
             g.setFont(this.font);
@@ -148,7 +148,7 @@ public class OptionsScene extends Scene {
         g.setColor(new Color(0, 64, 0));
         g.drawString(this.easy, this.w/4 - easyWidth/2, 235);
         
-        if(this.game.difficulty == 2){
+        if(this.game.configs[1] == 2){
             g.setFont(this.fontU);
         }else{
             g.setFont(this.font);
@@ -159,7 +159,7 @@ public class OptionsScene extends Scene {
         g.setColor(new Color(0, 0, 128));
         g.drawString(this.medium, this.w/4 - mediumWidth/2, 295);
         
-        if(this.game.difficulty == 4){
+        if(this.game.configs[1] == 4){
             g.setFont(this.fontU);
         }else{
             g.setFont(this.font);

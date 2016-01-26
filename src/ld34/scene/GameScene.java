@@ -38,7 +38,7 @@ public class GameScene extends Scene {
         
         this.level = new Level(this.nbLevel);
         this.cam = new Camera(0, 0, w, h, this.level);
-        this.player = new Player(32, 460, this.level, this.game.listener, this.cam, this.game.difficulty);
+        this.player = new Player(32, 460, this.level, this.game.listener, this.cam, this.game.configs[1]);
         
         try{
             this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
