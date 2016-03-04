@@ -9,8 +9,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
@@ -24,7 +24,7 @@ public class GameScene extends Scene {
     public Level level;
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn;
-    public BufferedImage background, foreground, background2, bgGui, gui, bgGui2;
+    public BufferedImage background2, bgGui, gui, bgGui2;
     public int nbLevel;
     public boolean displayEnd, displayStart;
     public int alpha, alphaMax;
@@ -41,21 +41,22 @@ public class GameScene extends Scene {
         this.player = new Player(32, 460, this.level, this.game.listener, this.cam, this.game.configs[1]);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
             this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
             this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
-            this.background = ImageIO.read(new File("gfx/background.png"));
-            this.background2 = ImageIO.read(new File("gfx/background2.png"));
-            this.foreground = ImageIO.read(new File("gfx/foreground2.png"));
-            this.gui = ImageIO.read(new File("gfx/gui.png"));
+            
+            url = this.getClass().getResource("/background2.png");
+            this.background2 = ImageIO.read(url);
+            
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
         
-        this.bgGui = this.gui.getSubimage(0, 20, 214, 50);
-        this.bgGui2 = this.gui.getSubimage(0, 0, 214, 50);
+        this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
+        this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
         
         this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[this.game.configs[0]]);
         

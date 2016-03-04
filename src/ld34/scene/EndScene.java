@@ -7,9 +7,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Game;
@@ -18,7 +17,6 @@ public class EndScene extends Scene {
 
     public Font font, fontS;
     public String text1, text2, text3, text4, btnBack;
-    public BufferedImage spritesheetGui, bgBtn, foreground, background;
     public int[][] btnCoords;
     public int selectedItem;
     public int alpha;
@@ -27,12 +25,11 @@ public class EndScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
-            this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
-            this.foreground = ImageIO.read(new File("gfx/foreground3.png"));
-            this.background = ImageIO.read(new File("gfx/background.png"));
+
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
@@ -43,8 +40,6 @@ public class EndScene extends Scene {
         };
         this.btnCoords = coords;
         this.selectedItem = 0;
-
-        this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
         
         this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[this.game.configs[0]]);
         

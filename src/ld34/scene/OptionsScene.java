@@ -8,37 +8,34 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.TextAttribute;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.imageio.ImageIO;
 import ld34.Game;
 
 public class OptionsScene extends Scene {
     
     public Font font, fontL, fontU;
     public String title, btnBack, difficulty, easy, medium, hard, language, french, english;
-    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, forground;
     public int[][] btnCoords;
     public int selectedItem;
     
     public OptionsScene(int w, int h, Game game){
+        
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
             Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
             fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
             this.fontU = this.font;
             this.fontU = this.fontU.deriveFont(fontAttributes);
-            this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
-            this.background = ImageIO.read(new File("gfx/background.png"));
-            this.forground = ImageIO.read(new File("gfx/foreground2.png"));
+            
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
@@ -48,9 +45,6 @@ public class OptionsScene extends Scene {
         };
         this.btnCoords = coords;
         this.selectedItem = 0;
-        
-        this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
-        this.bgBtnSmall = this.spritesheetGui.getSubimage(0, 71, 107, 40);
         
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[this.game.configs[0]]);
         
@@ -208,7 +202,7 @@ public class OptionsScene extends Scene {
             g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
         }
         
-        g.drawImage(this.forground, 0, 0, null);
+        g.drawImage(this.foreground, 0, 0, null);
     }
     
     public void processHover(){

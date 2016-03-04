@@ -7,18 +7,15 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ResourceBundle;
-import javax.imageio.ImageIO;
 import ld34.Game;
 
 public class MenuScene extends Scene {
     
     public Font font, fontL, fontS;
     public String title, btnNewGame, btnOptions, btnCredits, btnQuit;
-    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, foreground, background;
     public int[][] btnCoords;
     public int selectedItem;
     
@@ -27,13 +24,13 @@ public class MenuScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/kaushanscriptregular.ttf"));
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.fontS = this.font.deriveFont(18.0f);
             this.font = this.font.deriveFont(22.0f);
             this.fontL = this.font.deriveFont(52.0f);
-            this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
-            this.foreground = ImageIO.read(new File("gfx/foreground1.png"));
-            this.background = ImageIO.read(new File("gfx/background.png"));
+
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
@@ -49,9 +46,6 @@ public class MenuScene extends Scene {
         };
         this.btnCoords = coords;
         this.selectedItem = 0;
-
-        this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
-        this.bgBtnSmall = this.spritesheetGui.getSubimage(0, 71, 107, 40);
         
         this.title = "Story Into Jungle";
         this.btnNewGame = bundle.getString("newGame");
