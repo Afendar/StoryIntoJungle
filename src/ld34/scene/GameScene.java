@@ -208,7 +208,7 @@ public class GameScene extends Scene {
             }
             //END REDNERING
             ///////////////////////////////////////////
-            g.drawImage(this.foreground, 0, 0, null);
+            g.drawImage(this.foreground2, 0, 0, null);
         }
     }
     

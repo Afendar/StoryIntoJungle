@@ -2,8 +2,8 @@ package level.tiles;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Defines;
 
@@ -20,7 +20,8 @@ public abstract class Tile {
         this.ID = ID;
         
         try{
-            this.tileset = ImageIO.read(new File("gfx/tileset.png"));
+            URL url = this.getClass().getResource("/tileset.png");
+            this.tileset = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();
         }

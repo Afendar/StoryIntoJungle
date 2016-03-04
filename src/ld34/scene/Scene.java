@@ -12,7 +12,7 @@ import ld34.Game;
 
 public abstract class Scene{
     
-    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, foreground;
+    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3;
     
     public int w, h;
     public Game game;
@@ -33,8 +33,12 @@ public abstract class Scene{
             this.spritesheetGui = ImageIO.read(url);
             url = runtimeClass.getResource("/background.png");
             this.background = ImageIO.read(url);
-            url = runtimeClass.getResource("/foreground2.png");
+            url = runtimeClass.getResource("/foreground1.png");
             this.foreground = ImageIO.read(url);
+            url = runtimeClass.getResource("/foreground2.png");
+            this.foreground2 = ImageIO.read(url);
+            url = runtimeClass.getResource("/foreground3.png");
+            this.foreground3 = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();
         }

@@ -10,7 +10,6 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javax.imageio.ImageIO;
 import ld34.Game;
 
 public class EndScene extends Scene {
@@ -102,7 +101,7 @@ public class EndScene extends Scene {
         int text4Width = metrics.stringWidth(this.text4);
         g.drawString(this.text4, this.w/3 - text4Width/2 + 40, 490);
         
-        g.drawImage(this.foreground, 0, 0, null);
+        g.drawImage(this.foreground3, 0, 0, null);
         
         g.setColor(new Color(0, 0, 0, this.alpha));
         g.fillRect(0, 0, this.w, this.h);

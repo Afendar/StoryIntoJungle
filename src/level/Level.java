@@ -3,8 +3,8 @@ package level;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Defines;
 import level.tiles.TileAtlas;
@@ -75,7 +75,8 @@ public class Level {
     
     public void loadLevel(int nbLevel){
         try{
-            BufferedImage lvlImg = ImageIO.read(new File("levels/lvl"+nbLevel+".png"));
+            URL url = this.getClass().getResource("/lvl"+nbLevel+".png");
+            BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
             int width = lvlImg.getWidth();

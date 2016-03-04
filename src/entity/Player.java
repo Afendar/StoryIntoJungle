@@ -3,8 +3,8 @@ package entity;
 import audio.Sound;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Camera;
 import ld34.Defines;
@@ -47,7 +47,8 @@ public class Player extends Entity {
         this.PLAYER_SIZE = 32;
         
         try{
-            this.spritesheet = ImageIO.read(new File("gfx/spritesheet.png"));
+            URL url = this.getClass().getResource("/spritesheet.png");
+            this.spritesheet = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -269,7 +270,8 @@ public class Player extends Entity {
     
     public void reloadSpritesheet(int lvl){
         try{
-            this.spritesheet = ImageIO.read(new File("gfx/spritesheet"+lvl+".png"));
+            URL url = this.getClass().getResource("/spritesheet"+lvl+".png");
+            this.spritesheet = ImageIO.read(url);
         }catch(IOException e){e.printStackTrace();}
     }
 }

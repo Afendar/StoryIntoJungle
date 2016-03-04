@@ -97,7 +97,7 @@ public class CreditsScene extends Scene {
             g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
         }
         
-        g.drawImage(this.foreground, 0, 0, null);
+        g.drawImage(this.foreground2, 0, 0, null);
     }
     
     public void processHover(){
