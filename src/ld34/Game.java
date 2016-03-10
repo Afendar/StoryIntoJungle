@@ -1,17 +1,17 @@
 package ld34;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Locale;
+import ld34.scene.GameScene;
 import ld34.scene.MenuScene;
 import ld34.scene.Scene;
 
@@ -22,24 +22,32 @@ public class Game extends Canvas implements Runnable {
     public Scene gs;
     public InputsListeners listener;
     public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
-    public String fileOptions = "settings.dat";
-    public String[] configsLabel = {"Lang", "Difficulty"};
-    public int[] defaultConfigs = {0, 0};
-    public int[] configs;
+    public Font font;
+    public int w;
+    public int h;
     
     public Game(int w, int h){
         
         this.running = false;
         
+        this.w = w;
+        this.h = h;
         this.setMinimumSize(new Dimension(w, h));
         this.setMaximumSize(new Dimension(w, h));
         this.setSize(new Dimension(w, h));
         
-        this.loadConfigs();
-        
         this.listener = new InputsListeners(this);
         
         this.gs = new MenuScene(w, h, this);
+        
+        try{
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
+            this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
+        }
+        catch(FontFormatException|IOException e){
+            e.printStackTrace();
+        }
     }
     
     public void start(){
@@ -104,7 +112,10 @@ public class Game extends Canvas implements Runnable {
     public void update(){
         this.requestFocus();
         
-        this.gs = this.gs.update();
+        if(this.hasFocus()){
+            this.gs = this.gs.update();
+        }
+        this.listener.update();
     }
     
     public void render(){
@@ -119,52 +130,25 @@ public class Game extends Canvas implements Runnable {
         Graphics g = bs.getDrawGraphics();
         
         this.gs.render(g);
+        
+        if((!this.hasFocus() && this.gs instanceof GameScene) || (this.listener.mouseExited && this.gs instanceof GameScene)){
+            this.renderNeedFocus(g);
+        }
 
         g.dispose();
         bs.show();
     }
     
-    
-    public void loadConfigs(){
+    public void renderNeedFocus(Graphics g){
+        String msg = "Game in Pause";
         
-        File f = new File(this.fileOptions);
-        this.configs = this.defaultConfigs;
+        g.setColor(new Color(127, 127, 127, 210));
+        g.fillRect(0, 0, w, h);
         
-        if(f.exists() && !f.isDirectory()){
-            //read configurations
-            try{
-                BufferedReader br = new BufferedReader(new FileReader(this.fileOptions));
-                String line = null;
-                int i = 0;
-                while((line = br.readLine()) != null){
-                    String[] strSplited = line.split(":");
-                    this.configs[i] = Integer.parseInt(strSplited[1]);
-                    i++;
-                }
-                br.close();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-        else{
-            //file not exist add default configuration file
-            this.saveConfigs();
-        }
-    }
-    
-    public void saveConfigs(){
-        try{
-            PrintWriter pw = new PrintWriter(
-                                new BufferedWriter(
-                                    new FileWriter(this.fileOptions)));
-            for(int i=0;i<this.configs.length;i++){
-                pw.println(this.configsLabel[i] + ":" + this.configs[i]);
-            }
-            pw.close();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
+        g.setFont(this.font);
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        int msgWidth = metrics.stringWidth(msg);
+        g.setColor(Color.BLACK);
+        g.drawString(msg, this.w/2 - msgWidth/2, this.h/2 - 25);
     }
 }

@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import ld34.Configs;
 import ld34.Game;
 
 public class MenuScene extends Scene {
@@ -35,7 +36,7 @@ public class MenuScene extends Scene {
             e.printStackTrace();
         }
         
-        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[this.game.configs[0]]);
+        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
         
         //new game
         int [][]coords = {
@@ -171,7 +172,7 @@ public class MenuScene extends Scene {
         
         Scene currentScene = this;
         
-        if(this.game.listener.mousePressed){
+        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItem){
                 case 1:
                     currentScene =new GameScene(this.w, this.h, this.game);

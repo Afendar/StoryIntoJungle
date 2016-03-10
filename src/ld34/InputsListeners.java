@@ -29,8 +29,9 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     public Action jump = new Action();
     public Action slow = new Action();
     public Action next = new Action();
-    public int mouseX, mouseY;
+    public int mouseX, mouseY, mouseClickCount;
     public boolean mouseExited, mousePressed;
+    public KeyEvent e = null;
     
     public InputsListeners(Game game){
         
@@ -40,14 +41,19 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
         
         this.mouseX = 0;
         this.mouseY = 0;
+        this.mouseClickCount = 0;
         this.mouseExited = true;
         this.mousePressed = false;
         this.keys = new boolean[KeyEvent.KEY_LAST];
     }
     
+    public void update(){
+        this.mouseClickCount = 0;
+    }
+    
     public void processKey(KeyEvent e, boolean enabled){
-        if(e.getKeyCode() == KeyEvent.VK_SPACE) jump.switched(enabled);
-        if(e.getKeyCode() == KeyEvent.VK_CONTROL) slow.switched(enabled);
+        if(e.getKeyCode() == (int)Configs.getInstance().getConfigValue("Jump")) jump.switched(enabled);
+        if(e.getKeyCode() == (int)Configs.getInstance().getConfigValue("Walk")) slow.switched(enabled);
         if(e.getKeyCode() == KeyEvent.VK_ENTER) next.switched(enabled);
     }
     
@@ -59,11 +65,13 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     @Override
     public void keyPressed(KeyEvent e) {
         processKey(e, true);
+        this.e = e;
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         processKey(e, false);
+        this.e = null;
     }
     
     @Override
@@ -79,12 +87,12 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         this.mousePressed = true;
+        this.mouseClickCount = e.getClickCount();
     }
 
     @Override

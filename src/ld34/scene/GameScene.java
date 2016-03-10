@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
+import ld34.Configs;
 import ld34.Game;
 import level.Level;
 
@@ -38,7 +39,7 @@ public class GameScene extends Scene {
         
         this.level = new Level(this.nbLevel);
         this.cam = new Camera(0, 0, w, h, this.level);
-        this.player = new Player(32, 460, this.level, this.game.listener, this.cam, this.game.configs[1]);
+        this.player = new Player(32, 460, this.level, this.game.listener, this.cam, (int)Configs.getInstance().getConfigValue("Difficulty"));
         
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -58,7 +59,7 @@ public class GameScene extends Scene {
         this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
         
-        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[this.game.configs[0]]);
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
         
         this.deathMsg = this.bundle.getString("deathMsg");
         this.startTxt1 = this.bundle.getString("startTxt1");
@@ -96,34 +97,37 @@ public class GameScene extends Scene {
     
     @Override
     public Scene update() {
-        if(this.player.win){
-            reinit(1);
-        }
-        else{
-            if(this.displayEnd){
-                return new EndScene(this.w, this.h, this.game);
-            }
-            else if(this.displayStart){
-                if(this.game.listener.next.enabled){
-                    this.displayStart = false;
-                    this.alpha = 0;
-                }
-                return this;
-            }
-            else if(this.player.isDead){
-                if(this.game.listener.next.enabled){
-                    reinit(0);
-                    this.player.isDead = false;
-                    this.player.score = 0;
-                }
-                this.player.update();
+        if(!this.game.listener.mouseExited){
+            
+            if(this.player.win){
+                reinit(1);
             }
             else{
-                this.level.update();
+                if(this.displayEnd){
+                    return new EndScene(this.w, this.h, this.game);
+                }
+                else if(this.displayStart){
+                    if(this.game.listener.next.enabled){
+                        this.displayStart = false;
+                        this.alpha = 0;
+                    }
+                    return this;
+                }
+                else if(this.player.isDead){
+                    if(this.game.listener.next.enabled){
+                        reinit(0);
+                        this.player.isDead = false;
+                        this.player.score = 0;
+                    }
+                    this.player.update();
+                }
+                else{
+                    this.level.update();
 
-                this.player.update();
+                    this.player.update();
 
-                this.cam.update(this.player);
+                    this.cam.update(this.player);
+                }
             }
         }
         return this;

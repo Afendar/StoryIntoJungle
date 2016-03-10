@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import ld34.Configs;
 import ld34.Game;
 
 public class EndScene extends Scene {
@@ -40,7 +41,7 @@ public class EndScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[this.game.configs[0]]);
+        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
         
         this.text1 = this.bundle.getString("text1");
         this.text2 = this.bundle.getString("text2");
