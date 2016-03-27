@@ -11,9 +11,9 @@ import java.io.PrintWriter;
 
 public class Configs {
     
-    public String[] configsLabels = {"Lang", "Difficulty", "Jump", "Walk"};
+    public String[] configsLabels = {"Lang", "Difficulty", "Jump", "Walk", "sex", "spicies"};
     public String fileOptions = "settings.dat";
-    public Object[] configsDefaultValues = {0, 0, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL};
+    public Object[] configsDefaultValues = {0, 0, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL, 0, 0};
     public Object[] configsValues;
     
     private Configs(){

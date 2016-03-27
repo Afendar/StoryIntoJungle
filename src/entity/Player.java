@@ -117,6 +117,11 @@ public class Player extends Entity {
             Sound.bonus.play();  
         }
         
+        //checkpoint
+        if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 8){
+            System.out.println("Checkoint !");
+        }
+        
         //end level test
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 7){
             this.win = true;

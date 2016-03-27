@@ -5,8 +5,6 @@
  */
 package level.tiles;
 
-import java.awt.Graphics;
-
 public class Empty extends Tile {
     
     public Empty(int imgX, int imgY){

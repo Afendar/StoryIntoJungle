@@ -7,22 +7,30 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javax.imageio.ImageIO;
 import ld34.Configs;
 import ld34.Game;
+import ld34.OptionButton;
 
 public class OptionsScene extends Scene {
     
     public Font font, fontL, fontU;
-    public String title, btnBack, difficulty, easy, medium, hard, language, french, english, commands;
+    public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
+            name, sexe, type, volume, controlJump, controlWalk;
+    public BufferedImage background2, btnCharacter, btnConfig, btnControls;
     public int[][] btnCoords;
-    public int selectedItem;
-    
+    public int selectedItem, currentTab;
+    public ArrayList<OptionButton> optionButtons = new ArrayList<>();
+   
     public OptionsScene(int w, int h, Game game){
         
         super(w, h, game);
@@ -37,16 +45,40 @@ public class OptionsScene extends Scene {
             this.fontU = this.font;
             this.fontU = this.fontU.deriveFont(fontAttributes);
             
+            url = this.getClass().getResource("/backgroundoptions.png");
+            this.background2 = ImageIO.read(url);
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
         
         int [][]coords = {
-            {(3*this.w/4) - 80, 455},
-            {(this.w/4) - 80, 455}
+            {(3*this.w/4) - 80, 455}
         };
+        
+        OptionButton btn1 = new OptionButton(
+                KeyEvent.getKeyText((int)Configs.getInstance().getConfigValue("Jump")), 
+                "Jump", 
+                250, 
+                200
+        );
+        btn1.setFont(this.font);
+        this.optionButtons.add(btn1);
+        OptionButton btn2 = new OptionButton(
+                KeyEvent.getKeyText((int)Configs.getInstance().getConfigValue("Walk")), 
+                "Walk", 
+                250, 
+                250
+        );
+        btn2.setFont(this.font);
+        this.optionButtons.add(btn2);
+        
         this.btnCoords = coords;
         this.selectedItem = 0;
+        this.currentTab = 0;
+        
+        this.btnCharacter = this.spritesheetGui.getSubimage(0, 110, 50, 50);
+        this.btnConfig = this.spritesheetGui.getSubimage(50, 110, 50, 50);
+        this.btnControls = this.spritesheetGui.getSubimage(100, 110, 50, 50);
         
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
         
@@ -56,44 +88,81 @@ public class OptionsScene extends Scene {
         this.easy = this.bundle.getString("easy");
         this.medium = this.bundle.getString("medium");
         this.hard = this.bundle.getString("hard");
+        this.hardcore = this.bundle.getString("hardcore");
         this.language = this.bundle.getString("language");
         this.french = this.bundle.getString("french");
         this.english = this.bundle.getString("english");
         this.commands = this.bundle.getString("commands");
+        this.name = this.bundle.getString("name");
+        this.sexe = this.bundle.getString("sexe");
+        this.type = this.bundle.getString("type");
+        this.volume = this.bundle.getString("volume");
+        this.controlJump = this.bundle.getString("ctrlJump");
+        this.controlWalk = this.bundle.getString("ctrlWalk");
     }
 
     @Override
-    public Scene update() {
+    public Scene update(){
         processHover();
+        
+        if(this.game.listener.e != null){
+            this.processKey(this.game.listener.e);
+        }
         
         if(this.game.listener.mousePressed){
             int mouseX = this.game.listener.mouseX;
             int mouseY = this.game.listener.mouseY;
-            
-            if(mouseX > this.w/4 - 54 && mouseX < (this.w/4 - 54) + 107 &&
-                    mouseY > 210 && mouseY < 210 + 40){
-                Configs.getInstance().setConfigValue("Difficulty", 0);
-            }
-            else if(mouseX > this.w/4 - 54 && mouseX < (this.w/4 - 54) + 107 &&
-                    mouseY > 270 && mouseY < 270 + 40){
-                Configs.getInstance().setConfigValue("Difficulty", 2);
-            }
-            else if(mouseX > this.w/4 - 54 && mouseX < (this.w/4 - 54) + 107 &&
-                    mouseY > 330 && mouseY < 330 + 40){
-                Configs.getInstance().setConfigValue("Difficulty", 4);
-            }
-            else if(mouseX > 3*this.w/4 - 51 && mouseX < (3*this.w/4 - 51) + 107 &&
-                    mouseY > 210 && mouseY < 210 + 40){
-                Configs.getInstance().setConfigValue("Lang", 0);
-                this.reloadLangs();
-            }
-            else if(mouseX > 3*this.w/4 - 51 && mouseX < (3*this.w/4 - 51) + 107 &&
-                    mouseY > 270 && mouseY < 270 + 40){
-                Configs.getInstance().setConfigValue("Lang", 1);
-                this.reloadLangs();
+            switch(this.currentTab){
+                case 0:
+                    if(mouseX > 230 && mouseX < 280 && mouseY > 190 && mouseY < 240){
+                        //male btn
+                        Configs.getInstance().setConfigValue("sex", 0);
+                    }
+                    else if(mouseX > 310 && mouseX < 360 && mouseY > 190 && mouseY < 240){
+                        //female btn
+                        Configs.getInstance().setConfigValue("sex", 1);
+                    }
+                    else if(mouseX > 230 && mouseX < 280 && mouseY > 270 && mouseY < 320){
+                        //grandpanda btn
+                        Configs.getInstance().setConfigValue("spicies", 0);
+                    }
+                    else if(mouseX > 310 && mouseX < 360 && mouseY > 270 && mouseY < 320){
+                        //panda roux btn
+                        Configs.getInstance().setConfigValue("spicies", 1);
+                    }
+                    break;
+                case 1:
+                    if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
+                            mouseY > 200 && mouseY < 200 + 40){
+                        Configs.getInstance().setConfigValue("Difficulty", 0);
+                    }
+                    else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/4) + 107 &&
+                            mouseY > 200 && mouseY < 200 + 40){
+                        Configs.getInstance().setConfigValue("Difficulty", 2);
+                    }
+                    else if(mouseX > 3*this.w/5 && mouseX < (3*this.w/5) + 107 &&
+                            mouseY > 200 && mouseY < 200 + 40){
+                        Configs.getInstance().setConfigValue("Difficulty", 4);
+                    }
+                    else if(mouseX > 4*this.w/5 && mouseX < (4*this.w/5) + 107 &&
+                            mouseY > 200 && mouseY < 200 + 40){
+                        Configs.getInstance().setConfigValue("Difficulty", 5);
+                    }
+                    else if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
+                            mouseY > 290 && mouseY < 290 + 40){
+                        Configs.getInstance().setConfigValue("Lang", 0);
+                        this.reloadLangs();
+                    }
+                    else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/5) + 107 &&
+                            mouseY > 290 && mouseY < 290 + 40){
+                        Configs.getInstance().setConfigValue("Lang", 1);
+                        this.reloadLangs();
+                    }
+                    break;
+                case 2:
+                    break;
             }
         }
-        
         return processClick();
     }
 
@@ -106,105 +175,66 @@ public class OptionsScene extends Scene {
         this.easy = this.bundle.getString("easy");
         this.medium = this.bundle.getString("medium");
         this.hard = this.bundle.getString("hard");
+        this.hardcore = this.bundle.getString("hardcore");
         this.language = this.bundle.getString("language");
         this.french = this.bundle.getString("french");
         this.english = this.bundle.getString("english");
         this.commands = this.bundle.getString("commands");
+        this.name = this.bundle.getString("name");
+        this.sexe = this.bundle.getString("sexe");
+        this.type = this.bundle.getString("type");
+        this.volume = this.bundle.getString("volume");
+        this.controlJump = this.bundle.getString("ctrlJump");
+        this.controlWalk = this.bundle.getString("ctrlWalk");
     }
     
-    public void render(Graphics g) {
+    public void render(Graphics g){
         
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(this.background, 0, 0, null);
+        g.drawImage(this.background2, 0, 0, null);
+        
+        //draw menu options
+        g.setColor(new Color(146, 171, 63));
+        if(this.currentTab == 0){
+            g.fillRect(0, 165, 92, 80);
+        }
+        else if(this.currentTab == 1){
+            g.fillRect(0, 245, 92, 80);
+        }
+        else if(this.currentTab == 2){
+            g.fillRect(0, 325, 92, 80);
+        }
+        g.drawImage(this.btnCharacter, 21, 180, null);
+        g.drawImage(this.btnConfig, 21, 260, null);
+        g.drawImage(this.btnControls, 21, 340, null);
+        
+        //End menu options
+        
+        switch(this.currentTab){
+            case 0:
+                this.renderPlayerSettings(g);
+                break;
+            case 1:
+                this.renderGameSettings(g);
+                break;
+            case 2:
+                this.renderControlsSettings(g);
+                break;
+            default:
+                break;
+        }
         
         FontMetrics metrics = g.getFontMetrics(this.fontL);
         g.setFont(this.fontL);
         g.setColor(Color.BLACK);
         int titlewidth = metrics.stringWidth(this.title);
         g.drawString(this.title, this.w/2 - titlewidth/2, 60);
-        
-        //difficulty
-        
-        g.setFont(this.font);
-        metrics = g.getFontMetrics(this.font);
-        int difficultyWidth = metrics.stringWidth(this.difficulty);
-        g.drawString(this.difficulty, this.w/4 - difficultyWidth/2, 180);
-        
-        if((int)Configs.getInstance().getConfigValue("Difficulty") == 0){
-            g.setFont(this.fontU);
-        }else{
-            g.setFont(this.font);
-        }
-        
-        int easyWidth = metrics.stringWidth(this.easy);
-        g.drawImage(this.bgBtnSmall, this.w/4 - easyWidth/2 - 30, 210, null);
-        g.setColor(new Color(0, 64, 0));
-        g.drawString(this.easy, this.w/4 - easyWidth/2, 235);
-        
-        if((int)Configs.getInstance().getConfigValue("Difficulty") == 2){
-            g.setFont(this.fontU);
-        }else{
-            g.setFont(this.font);
-        }
-        
-        int mediumWidth = metrics.stringWidth(this.medium);
-        g.drawImage(this.bgBtnSmall, this.w/4 - easyWidth/2 - 30, 270, null);
-        g.setColor(new Color(0, 0, 128));
-        g.drawString(this.medium, this.w/4 - mediumWidth/2, 295);
-        
-        if((int)Configs.getInstance().getConfigValue("Difficulty") == 4){
-            g.setFont(this.fontU);
-        }else{
-            g.setFont(this.font);
-        }
 
-        int hardWidth = metrics.stringWidth(this.hard);
-        g.drawImage(this.bgBtnSmall, this.w/4 - easyWidth/2 - 30, 330, null);
-        g.setColor(new Color(136, 0, 21));
-        g.drawString(this.hard, this.w/4 - hardWidth/2, 355);
-        
-        //languages
-        g.setFont(this.font);
-        g.setColor(Color.BLACK);
-        int languageW = metrics.stringWidth(this.language);
-        g.drawString(this.language, 3*this.w/4 - difficultyWidth/2, 180);
-        
-        int englishW = metrics.stringWidth(this.english);
-        if((int)Configs.getInstance().getConfigValue("Lang") == 0){
-            g.setFont(this.fontU);
-        }else{
-            g.setFont(this.font);
-        }
-        g.drawImage(this.bgBtnSmall, 3*this.w/4 - englishW/2 - 25, 210, null);
-        g.drawString(this.english, 3*this.w/4 - englishW/2, 235);
-        
-        int frenchW = metrics.stringWidth(this.french);
-        if((int)Configs.getInstance().getConfigValue("Lang") == 1){
-            g.setFont(this.fontU);
-        }else{
-            g.setFont(this.font);
-        }
-        g.drawImage(this.bgBtnSmall, 3*this.w/4 - englishW/2 - 25, 270, null);
-        g.drawString(this.french, 3*this.w/4 - frenchW/2, 295);
-        
-        //controls btn
-        int commandsW = metrics.stringWidth(this.commands);
-        g.setFont(this.font);
-        g.drawImage(this.bgBtn, this.w/4 - commandsW/2 -25, 455, null);
-        if(this.selectedItem == 2){
-            g2d.rotate(-0.1, (this.w/4) + 45, 495);
-            g.setColor(this.darkGreen);
-            g.drawString(this.commands, (this.w/4) + 45 - commandsW/2, 495);
-            g2d.rotate(0.1, (this.w/4) + 45, 495);
-        }
-        else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.commands, (this.w/4) + 45 - commandsW/2, 495);
-        }
-        
         //end btn
+        metrics = g.getFontMetrics(this.font);
         g.setFont(this.font);
         int backWidth = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
@@ -218,7 +248,6 @@ public class OptionsScene extends Scene {
             g.setColor(Color.BLACK);
             g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
         }
-        
         g.drawImage(this.foreground2, 0, 0, null);
     }
     
@@ -231,10 +260,18 @@ public class OptionsScene extends Scene {
             //if btn Back
             this.selectedItem = 1;
         }
-        else if(mouseX > this.btnCoords[1][0] && mouseX < this.btnCoords[1][0] + 214 &&
-                mouseY > this.btnCoords[1][1] && mouseY < this.btnCoords[1][1] + 70){
-            //if btn commands
+        else if(mouseX > 21 && mouseX < 71 &&
+                mouseY > 180 && mouseY < 230){
             this.selectedItem = 2;
+        }
+        else if(mouseX > 21 && mouseX < 71 &&
+                mouseY > 260 && mouseY < 310){
+            this.selectedItem = 3;
+        }
+        else if(mouseX > 21 && mouseX < 71 &&
+                mouseY > 340 && mouseY < 390){
+            //if btn controls
+            this.selectedItem = 4;
         }
         else{
             this.selectedItem = 0;
@@ -246,21 +283,204 @@ public class OptionsScene extends Scene {
         Scene currentScene = this;
         
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
+            
+            this.processButtonsClick();
+            
             switch(this.selectedItem){
                 case 1:
                     Configs.getInstance().saveConfig();
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;
                 case 2:
+                    //player infos tab
+                    this.currentTab = 0;
                     Configs.getInstance().saveConfig();
-                    currentScene = new CommandsScene(this.w, this.h, this.game);
+                    break;
+                case 3:
+                    //settings tab
+                    this.currentTab = 1;
+                    Configs.getInstance().saveConfig();
+                    break;
+                case 4:
+                    //controls tab
+                    this.currentTab = 2;
+                    Configs.getInstance().saveConfig();
+                    //currentScene = new CommandsScene(this.w, this.h, this.game);
                     break;
                 default:
                     currentScene = this;
                     break;
             }
         }
-        
         return currentScene;
     }
+    
+    public void renderPlayerSettings(Graphics g){
+        g.setColor(Color.BLACK);
+        g.setFont(this.font);
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        int nameW = metrics.stringWidth(this.name);
+        g.drawString(this.name, 150, 150);
+        
+        int sexeW = metrics.stringWidth(this.sexe);
+        g.drawString(this.sexe, 150, 220);
+        
+        //male
+        g.setColor(Color.GRAY);
+        g.fillRect(230, 190, 50, 50);
+        //female
+        g.fillRect(310, 190, 50, 50);
+        
+        switch((int)Configs.getInstance().getConfigValue("sex")){
+            case 0:
+                g.setColor(Color.RED);
+                g.drawRect(230, 190, 50, 50);
+                break;
+            case 1:
+                g.setColor(Color.RED);
+                g.drawRect(310, 190, 50, 50);
+                break;
+        }
+        
+        g.setColor(Color.BLACK);
+        int typeW = metrics.stringWidth(this.type);
+        g.drawString(this.type, 150, 300);
+        
+        g.setColor(Color.GRAY);
+        //Grand panda
+        g.fillRect(230, 270, 50, 50);
+        //Panda roux
+        g.fillRect(310, 270, 50, 50);
+        
+        switch((int)Configs.getInstance().getConfigValue("spicies")){
+            case 0:
+                g.setColor(Color.RED);
+                g.drawRect(230, 270, 50, 50);
+                break;
+            case 1:
+                g.setColor(Color.RED);
+                g.drawRect(310, 270, 50, 50);
+                break;
+        }
+    }
+    
+    public void renderGameSettings(Graphics g){
+        //difficulty
+        g.setColor(Color.BLACK);
+        g.setFont(this.font);
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        int difficultyWidth = metrics.stringWidth(this.difficulty);
+        g.drawString(this.difficulty, 150, 180);
+        int easyWidth = metrics.stringWidth(this.easy);
+        
+        if((int)Configs.getInstance().getConfigValue("Difficulty") == 0){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, this.w/5, 200, null);
+        }else{
+            g.setFont(this.font);
+            g.drawImage(this.bgBtnSmall, this.w/5, 200, null);
+        }
+        
+        g.drawString(this.easy, this.w/5 - easyWidth/2 + 50, 225);
+        
+        int mediumWidth = metrics.stringWidth(this.medium);
+        if((int)Configs.getInstance().getConfigValue("Difficulty") == 2){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, 2*(this.w/5), 200, null);
+        }else{
+            g.setFont(this.font);
+            g.drawImage(this.bgBtnSmall, 2*(this.w/5), 200, null);
+        }
+        g.drawString(this.medium, 2*(this.w/5) - mediumWidth/2 + 50, 225);
+        
+        if((int)Configs.getInstance().getConfigValue("Difficulty") == 4){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, 3*(this.w/5), 200, null);
+        }else{
+            g.setFont(this.font);
+            g.drawImage(this.bgBtnSmall, 3*(this.w/5), 200, null);
+        }
+
+        int hardWidth = metrics.stringWidth(this.hard);
+        g.drawString(this.hard, 3*(this.w/5) - hardWidth/2 + 50, 225);
+        
+        if((int)Configs.getInstance().getConfigValue("Difficulty") == 5){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, 4*this.w/5, 200, null);
+        }else{
+            g.setFont(this.font);
+            g.drawImage(this.bgBtnSmall, 4*this.w/5, 200, null);
+        }
+        
+        int hardcoreW = metrics.stringWidth(this.hardcore);
+        g.drawString(this.hardcore, 4*this.w/5 - hardcoreW/2 + 50, 225);
+        
+        //languages
+        g.setFont(this.font);
+        g.setColor(Color.BLACK);
+        int languageW = metrics.stringWidth(this.language);
+        g.drawString(this.language, 150, 270);
+        
+        int englishW = metrics.stringWidth(this.english);
+        if((int)Configs.getInstance().getConfigValue("Lang") == 0){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, this.w/5, 290, null);
+        }else{
+            g.setFont(this.font);
+            g.drawImage(this.bgBtnSmall, this.w/5, 290, null);
+        }
+        g.drawString(this.english, this.w/4 - englishW/2 + 10, 315);
+        
+        int frenchW = metrics.stringWidth(this.french);
+        if((int)Configs.getInstance().getConfigValue("Lang") == 1){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, 2*this.w/5, 290, null);
+        }else{
+            g.setFont(this.font);
+            g.drawImage(this.bgBtnSmall, 2*this.w/5, 290, null);
+        }
+        g.drawString(this.french, 2*this.w/5 - frenchW/2 + 52, 315);
+        
+        g.setFont(this.font);
+        g.drawString(this.volume, 150, 380);
+    }
+    
+    public void renderControlsSettings(Graphics g){
+        
+        FontMetrics metrics = g.getFontMetrics(this.fontL);
+        g.setFont(this.fontL);
+        g.setColor(Color.BLACK);
+        int titlewidth = metrics.stringWidth(this.title);
+        g.drawString(this.title, this.w/2 - titlewidth/2, 60);
+        
+        g.setFont(this.font);
+        metrics = g.getFontMetrics(this.font);
+        g.drawString(this.controlJump, 150, 200);
+        
+        g.drawString(this.controlWalk, 150, 250);
+        
+        for(int i=0;i<this.optionButtons.size();i++){
+            this.optionButtons.get(i).render(g);
+        }
+    }
+
+    public void processKey(KeyEvent e){
+        for(int i=0;i<this.optionButtons.size();i++){
+            if(this.optionButtons.get(i).isEditing()){
+                this.optionButtons.get(i).processKey(e);
+            }
+        }
+    }
+    
+    public void processButtonsClick(){
+        for(int i=0;i<this.optionButtons.size();i++){
+            if(this.optionButtons.get(i).isEditing())
+                return;
+        }
+        
+        for(int i=0;i<this.optionButtons.size();i++){
+            this.optionButtons.get(i).processClick(this.game.listener.mouseX, this.game.listener.mouseY);
+        }
+    }
 }
+

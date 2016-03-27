@@ -61,7 +61,6 @@ public class CommandsScene extends Scene {
         btn2.setFont(this.font);
         this.optionButtons.add(btn2);
         
-        
         int [][]coords = {
             {(3*this.w/4) - 80, 455}
         };
@@ -137,7 +136,6 @@ public class CommandsScene extends Scene {
         else{
             this.selectedItem = 0;
         }
-        
     }
     
     public void processKey(KeyEvent e){

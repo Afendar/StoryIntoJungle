@@ -1,23 +1,22 @@
 package ld34;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import ld34.scene.GameScene;
 import ld34.scene.MenuScene;
 import ld34.scene.Scene;
 
 public class Game extends Canvas implements Runnable {
 
-    public boolean running;
+    public boolean running, paused;
     public Thread tgame;
     public Scene gs;
     public InputsListeners listener;
@@ -25,10 +24,12 @@ public class Game extends Canvas implements Runnable {
     public Font font;
     public int w;
     public int h;
+    public ResourceBundle bundle;
     
     public Game(int w, int h){
         
         this.running = false;
+        this.paused = false;
         
         this.w = w;
         this.h = h;
@@ -112,8 +113,11 @@ public class Game extends Canvas implements Runnable {
     public void update(){
         this.requestFocus();
         
-        if(this.hasFocus()){
+        if(this.hasFocus() && !this.paused){
             this.gs = this.gs.update();
+        }
+        if(this.paused && this.gs instanceof GameScene){
+            this.gs = ((GameScene)(this.gs)).updatePause();
         }
         this.listener.update();
     }
@@ -131,24 +135,15 @@ public class Game extends Canvas implements Runnable {
         
         this.gs.render(g);
         
-        if((!this.hasFocus() && this.gs instanceof GameScene) || (this.listener.mouseExited && this.gs instanceof GameScene)){
-            this.renderNeedFocus(g);
+        if(     (!this.hasFocus() && this.gs instanceof GameScene) || 
+                (this.listener.mouseExited && this.gs instanceof GameScene) ||
+                (this.paused && this.gs instanceof GameScene)
+            ){
+            this.paused = true;
+            ((GameScene)(this.gs)).renderPause(g);
         }
 
         g.dispose();
         bs.show();
-    }
-    
-    public void renderNeedFocus(Graphics g){
-        String msg = "Game in Pause";
-        
-        g.setColor(new Color(127, 127, 127, 210));
-        g.fillRect(0, 0, w, h);
-        
-        g.setFont(this.font);
-        FontMetrics metrics = g.getFontMetrics(this.font);
-        int msgWidth = metrics.stringWidth(msg);
-        g.setColor(Color.BLACK);
-        g.drawString(msg, this.w/2 - msgWidth/2, this.h/2 - 25);
     }
 }

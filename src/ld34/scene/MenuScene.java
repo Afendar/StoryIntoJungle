@@ -7,16 +7,19 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javax.imageio.ImageIO;
 import ld34.Configs;
 import ld34.Game;
 
 public class MenuScene extends Scene {
     
+    public BufferedImage background2;
     public Font font, fontL, fontS;
-    public String title, btnNewGame, btnOptions, btnCredits, btnQuit;
+    public String title, btnNewGame, btnOptions, btnBestScores, btnCredits, btnQuit;
     public int[][] btnCoords;
     public int selectedItem;
     
@@ -31,6 +34,9 @@ public class MenuScene extends Scene {
             this.fontS = this.font.deriveFont(18.0f);
             this.font = this.font.deriveFont(22.0f);
             this.fontL = this.font.deriveFont(52.0f);
+            
+            url = runtimeClass.getResource("/background3.png");
+            this.background2 = ImageIO.read(url);
 
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
@@ -40,17 +46,20 @@ public class MenuScene extends Scene {
         
         //new game
         int [][]coords = {
-            {this.w/2 - 107, 185},
-            {this.w/2 - 107, 275},
-            {(this.w/2) - 130, 410},
-            {(this.w/2) + 20, 410}
+            {this.w/2 - 107, 165},
+            {this.w/2 - 107, 255},
+            {this.w/2 - 107, 345},
+            {(this.w/2) - 130, 440},
+            {(this.w/2) + 20, 440}
         };
+        
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        this.title = "Story Into Jungle";
+//        this.title = "Story Into Jungle";
         this.btnNewGame = bundle.getString("newGame");
         this.btnOptions = bundle.getString("settings");
+        this.btnBestScores = bundle.getString("bestScores");
         this.btnCredits = bundle.getString("about");
         this.btnQuit = bundle.getString("quit");
     }
@@ -68,13 +77,13 @@ public class MenuScene extends Scene {
         
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.drawImage(this.background, 0, 0, null);
+        g.drawImage(this.background2, 0, 0, null);
         
         FontMetrics metrics = g.getFontMetrics(this.fontL);
-        g.setFont(this.fontL);
-        g.setColor(Color.BLACK);
-        int titlewidth = metrics.stringWidth(this.title);
-        g.drawString(this.title, this.w/2 - titlewidth/2, 80);
+//        g.setFont(this.fontL);
+//        g.setColor(Color.BLACK);
+//        int titlewidth = metrics.stringWidth(this.title);
+//        g.drawString(this.title, this.w/2 - titlewidth/2, 80);
 
         //draw btn
         g.setFont(this.font);
@@ -83,56 +92,70 @@ public class MenuScene extends Scene {
         
         g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
         if(this.selectedItem == 1){
-            g2d.rotate(0.07, this.w/2, 200 );
+            g2d.rotate(0.07, this.w/2, 180 );
             g.setColor(this.darkGreen);
-            g.drawString(this.btnNewGame, this.w/2 - newGameWidth/2, 225);
-            g2d.rotate(-0.07, this.w/2, 200);
+            g.drawString(this.btnNewGame, this.w/2 - newGameWidth/2, 208);
+            g2d.rotate(-0.07, this.w/2, 180);
         }
         else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnNewGame, this.w/2 - newGameWidth/2, 225);
+            g.drawString(this.btnNewGame, this.w/2 - newGameWidth/2, 208);
         }
         
         int optionsWidth = metrics.stringWidth(this.btnOptions);
         g.drawImage(this.bgBtn, this.btnCoords[1][0], this.btnCoords[1][1], null);
         if(this.selectedItem == 2){
-            g2d.rotate(-0.1, this.w/2, 325);
+            g2d.rotate(-0.1, this.w/2, 315);
             g.setColor(this.darkGreen);
-            g.drawString(this.btnOptions, this.w/2 - optionsWidth/2, 317);
-            g2d.rotate(0.1, this.w/2, 325);
+            g.drawString(this.btnOptions, this.w/2 - optionsWidth/2, 297);
+            g2d.rotate(0.1, this.w/2, 315);
         }
         else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnOptions, this.w/2 - optionsWidth/2, 317);
+            g.drawString(this.btnOptions, this.w/2 - optionsWidth/2, 297);
+        }
+        
+        //btn Hightest score
+        int scoreW = metrics.stringWidth(this.btnBestScores);
+        g.drawImage(this.bgBtn, this.btnCoords[2][0], this.btnCoords[2][1], null);
+        if(this.selectedItem == 3){
+            g2d.rotate(0.07, this.w/2, 450);
+            g.setColor(this.darkGreen);
+            g.drawString(this.btnBestScores, this.w/2 - scoreW/2, 389);
+            g2d.rotate(-0.07, this.w/2, 450);
+        }
+        else{
+            g.setColor(Color.BLACK);
+            g.drawString(this.btnBestScores, this.w/2 - scoreW/2, 389);
         }
         
         //small btns
         g.setFont(this.fontS);
         metrics = g.getFontMetrics(this.fontS);
         int creditsWidth = metrics.stringWidth(this.btnCredits);
-        g.drawImage(this.bgBtnSmall, this.btnCoords[2][0], this.btnCoords[2][1], null);
+        g.drawImage(this.bgBtnSmall, this.btnCoords[3][0], this.btnCoords[3][1], null);
         if(this.selectedItem == 4){
-            g2d.rotate(0.11, this.w/2 - 75, 435 );
+            g2d.rotate(0.11, this.w/2 - 75, 465 );
             g.setColor(this.darkGreen);
-            g.drawString(this.btnCredits, this.w/2 - creditsWidth/2 - 80, 435);
-            g2d.rotate(-0.11, this.w/2 - 75, 435);
+            g.drawString(this.btnCredits, this.w/2 - creditsWidth/2 - 80, 465);
+            g2d.rotate(-0.11, this.w/2 - 75, 465);
         }else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnCredits, this.w/2 - creditsWidth/2 - 80, 435);
+            g.drawString(this.btnCredits, this.w/2 - creditsWidth/2 - 80, 465);
         }
         
         int quitWidth = metrics.stringWidth(this.btnQuit);
 
-        g.drawImage(this.bgBtnSmall, this.btnCoords[3][0], this.btnCoords[3][1], null);
+        g.drawImage(this.bgBtnSmall, this.btnCoords[4][0], this.btnCoords[4][1], null);
         if(this.selectedItem == 5){
-            g2d.rotate(-0.13, this.w/2 + 75, 435);
+            g2d.rotate(-0.13, this.w/2 + 75, 465);
             g.setColor(this.darkGreen);
-            g.drawString(this.btnQuit, this.w/2 - quitWidth/2 + 70, 435);
-            g2d.rotate(0.13, this.w/2 + 75, 435);
+            g.drawString(this.btnQuit, this.w/2 - quitWidth/2 + 70, 465);
+            g2d.rotate(0.13, this.w/2 + 75, 465);
         }
         else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnQuit, this.w/2 - quitWidth/2 + 70, 435);
+            g.drawString(this.btnQuit, this.w/2 - quitWidth/2 + 70, 465);
         }
         
         g.drawImage(this.foreground, 0, -25, null);
@@ -153,13 +176,18 @@ public class MenuScene extends Scene {
             //if btn settings
             this.selectedItem = 2;
         }
-        else if(mouseX > this.btnCoords[2][0] && mouseX < this.btnCoords[2][0] + 107 &&
-                mouseY > this.btnCoords[2][1] && mouseY < this.btnCoords[2][1] + 40){
-            //if btn credits
-            this.selectedItem = 4;
+        else if(mouseX > this.btnCoords[2][0] && mouseX < this.btnCoords[2][0] + 214 &&
+                mouseY > this.btnCoords[2][1] && mouseY < this.btnCoords[2][1] + 70){
+            //if btn meilleur scores
+            this.selectedItem = 3;
         }
         else if(mouseX > this.btnCoords[3][0] && mouseX < this.btnCoords[3][0] + 107 &&
                 mouseY > this.btnCoords[3][1] && mouseY < this.btnCoords[3][1] + 40){
+            //if btn credits
+            this.selectedItem = 4;
+        }
+        else if(mouseX > this.btnCoords[4][0] && mouseX < this.btnCoords[4][0] + 107 &&
+                mouseY > this.btnCoords[4][1] && mouseY < this.btnCoords[4][1] + 40){
             //if btn quit
             this.selectedItem = 5;
         }
@@ -179,6 +207,9 @@ public class MenuScene extends Scene {
                     break;
                 case 2:
                     currentScene = new OptionsScene(this.w, this.h, this.game);
+                    break;
+                case 3:
+                    currentScene = new BestScores(this.w, this.h, this.game);
                     break;
                 case 4:
                     currentScene = new CreditsScene(this.w, this.h, this.game);

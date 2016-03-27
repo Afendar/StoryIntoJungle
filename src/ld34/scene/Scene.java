@@ -11,7 +11,8 @@ import ld34.Game;
 
 public abstract class Scene{
     
-    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3;
+    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3,
+            bgBtnSmallRed;
     
     public int w, h;
     public Game game;
@@ -43,7 +44,8 @@ public abstract class Scene{
         }
         
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
-        this.bgBtnSmall = this.spritesheetGui.getSubimage(0, 71, 107, 40);
+        this.bgBtnSmall = this.spritesheetGui.getSubimage(0, 71, 107, 39);
+        this.bgBtnSmallRed = this.spritesheetGui.getSubimage(107, 71, 107, 39);
     }
     
     
