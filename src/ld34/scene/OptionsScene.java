@@ -26,9 +26,10 @@ public class OptionsScene extends Scene {
     public Font font, fontL, fontU;
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
-    public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, bgHeadsRed;
+    public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, 
+            bgHeadsRed, soundBar;
     public int[][] btnCoords;
-    public int selectedItem, currentTab;
+    public int selectedItem, currentTab, posBar;
     public ArrayList<OptionButton> optionButtons = new ArrayList<>();
    
     public OptionsScene(int w, int h, Game game){
@@ -76,6 +77,9 @@ public class OptionsScene extends Scene {
         this.selectedItem = 0;
         this.currentTab = 0;
         
+        int volume = (int)Configs.getInstance().getConfigValue("sound");
+        this.posBar = (int)(153 + (2*volume));
+        
         this.btnCharacter = this.spritesheetGui.getSubimage(0, 110, 50, 50);
         this.btnConfig = this.spritesheetGui.getSubimage(50, 110, 50, 50);
         this.btnControls = this.spritesheetGui.getSubimage(100, 110, 50, 50);
@@ -85,6 +89,7 @@ public class OptionsScene extends Scene {
         this.spRoux = this.spritesheetGui.getSubimage(50, 208, 50, 48);
         this.bgHeads = this.spritesheetGui.getSubimage(100, 160, 50, 48);
         this.bgHeadsRed = this.spritesheetGui.getSubimage(100, 208, 50, 48);
+        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
         
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
         
@@ -171,6 +176,13 @@ public class OptionsScene extends Scene {
                             mouseY > 290 && mouseY < 290 + 40){
                         Configs.getInstance().setConfigValue("Lang", 1);
                         this.reloadLangs();
+                    }
+                    else if(mouseX >= 153 && mouseX <= 353 && mouseY > 400 && mouseY < 425){
+                        this.posBar = mouseX;
+                        int newVolume = (int)((153 - posBar)/ -2);
+                        //posBar = (int)(153 + (2 * volume));
+                        //volume = (int)((153 - posBar)/(-2));
+                        Configs.getInstance().setConfigValue("sound", newVolume);
                     }
                     break;
                 case 2:
@@ -453,8 +465,22 @@ public class OptionsScene extends Scene {
         }
         g.drawString(this.french, 2*this.w/5 - frenchW/2 + 52, 315);
         
+        //Volume
+        
         g.setFont(this.font);
         g.drawString(this.volume, 150, 380);
+        
+        int red = 255;
+        int green = 0;
+        for(int i=0;i<255;i++){
+            g.setColor(new Color(red, green, 0));
+            g.fillRect((int)(153 + (i * 0.8)), 403, 1, 19);
+            red--;
+            green++;
+        }
+        g.drawImage(this.soundBar, 150, 400, null);
+        g.setColor(Color.BLACK);
+        g.fillRect(posBar, 405, 4, 15);
     }
     
     public void renderControlsSettings(Graphics g){

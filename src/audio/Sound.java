@@ -8,6 +8,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import ld34.Configs;
 
 public class Sound {
     
@@ -17,9 +18,11 @@ public class Sound {
     public static Sound levelup = new Sound("/levelup.wav");
     
     public String path;
+    public int volume;
     
     private Sound(String path){
         this.path = path;
+        this.volume = (int)Configs.getInstance().getConfigValue("sound");
     }
     
     public void play(){
@@ -29,7 +32,8 @@ public class Sound {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(-10.0f);
+            float attenuation = -80 + (80 * this.volume / 100);
+            gainControl.setValue(attenuation);
             clip.start();
         }catch(IOException|UnsupportedAudioFileException|LineUnavailableException e)
         {
