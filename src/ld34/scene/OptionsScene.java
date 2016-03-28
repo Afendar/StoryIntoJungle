@@ -26,7 +26,7 @@ public class OptionsScene extends Scene {
     public Font font, fontL, fontU;
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
-    public BufferedImage background2, btnCharacter, btnConfig, btnControls;
+    public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, bgHeadsRed;
     public int[][] btnCoords;
     public int selectedItem, currentTab;
     public ArrayList<OptionButton> optionButtons = new ArrayList<>();
@@ -79,6 +79,12 @@ public class OptionsScene extends Scene {
         this.btnCharacter = this.spritesheetGui.getSubimage(0, 110, 50, 50);
         this.btnConfig = this.spritesheetGui.getSubimage(50, 110, 50, 50);
         this.btnControls = this.spritesheetGui.getSubimage(100, 110, 50, 50);
+        this.sGirl = this.spritesheetGui.getSubimage(0, 160, 50, 48);
+        this.sBoy = this.spritesheetGui.getSubimage(50, 160, 50, 48);
+        this.sPanda = this.spritesheetGui.getSubimage(50, 160, 50, 48);
+        this.spRoux = this.spritesheetGui.getSubimage(50, 208, 50, 48);
+        this.bgHeads = this.spritesheetGui.getSubimage(100, 160, 50, 48);
+        this.bgHeadsRed = this.spritesheetGui.getSubimage(100, 208, 50, 48);
         
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
         
@@ -116,18 +122,26 @@ public class OptionsScene extends Scene {
                 case 0:
                     if(mouseX > 230 && mouseX < 280 && mouseY > 190 && mouseY < 240){
                         //male btn
+                        this.sPanda = this.spritesheetGui.getSubimage(50, 160, 50, 48);
+                        this.spRoux = this.spritesheetGui.getSubimage(50, 208, 50, 48);
                         Configs.getInstance().setConfigValue("sex", 0);
                     }
                     else if(mouseX > 310 && mouseX < 360 && mouseY > 190 && mouseY < 240){
                         //female btn
+                        this.sPanda = this.spritesheetGui.getSubimage(0, 160, 50, 48);
+                        this.spRoux = this.spritesheetGui.getSubimage(0, 208, 50, 48);
                         Configs.getInstance().setConfigValue("sex", 1);
                     }
                     else if(mouseX > 230 && mouseX < 280 && mouseY > 270 && mouseY < 320){
                         //grandpanda btn
+                        this.sBoy = this.spritesheetGui.getSubimage(50, 160, 50, 48);
+                        this.sGirl = this.spritesheetGui.getSubimage(0, 160, 50, 48);
                         Configs.getInstance().setConfigValue("spicies", 0);
                     }
                     else if(mouseX > 310 && mouseX < 360 && mouseY > 270 && mouseY < 320){
                         //panda roux btn
+                        this.sBoy = this.spritesheetGui.getSubimage(50, 208, 50, 48);
+                        this.sGirl = this.spritesheetGui.getSubimage(0, 208, 50, 48);
                         Configs.getInstance().setConfigValue("spicies", 1);
                     }
                     break;
@@ -325,43 +339,41 @@ public class OptionsScene extends Scene {
         int sexeW = metrics.stringWidth(this.sexe);
         g.drawString(this.sexe, 150, 220);
         
-        //male
-        g.setColor(Color.GRAY);
-        g.fillRect(230, 190, 50, 50);
-        //female
-        g.fillRect(310, 190, 50, 50);
-        
         switch((int)Configs.getInstance().getConfigValue("sex")){
             case 0:
-                g.setColor(Color.RED);
-                g.drawRect(230, 190, 50, 50);
+                g.drawImage(this.bgHeadsRed, 230, 191, null);
+                g.drawImage(this.bgHeads, 310, 191, null);
                 break;
             case 1:
-                g.setColor(Color.RED);
-                g.drawRect(310, 190, 50, 50);
+                g.drawImage(this.bgHeads, 230, 191, null);
+                g.drawImage(this.bgHeadsRed, 310, 191, null);
                 break;
         }
+        
+        //male
+        g.drawImage(this.sBoy, 230, 191, null);
+        //female
+        g.drawImage(this.sGirl, 310, 191, null);
         
         g.setColor(Color.BLACK);
         int typeW = metrics.stringWidth(this.type);
         g.drawString(this.type, 150, 300);
-        
-        g.setColor(Color.GRAY);
-        //Grand panda
-        g.fillRect(230, 270, 50, 50);
-        //Panda roux
-        g.fillRect(310, 270, 50, 50);
-        
+
         switch((int)Configs.getInstance().getConfigValue("spicies")){
             case 0:
-                g.setColor(Color.RED);
-                g.drawRect(230, 270, 50, 50);
+                g.drawImage(this.bgHeadsRed, 230, 271, null);
+                g.drawImage(this.bgHeads, 310, 271, null);
                 break;
             case 1:
-                g.setColor(Color.RED);
-                g.drawRect(310, 270, 50, 50);
+                g.drawImage(this.bgHeads, 230, 271, null);
+                g.drawImage(this.bgHeadsRed, 310, 271, null);
                 break;
         }
+        
+        //Grand panda
+        g.drawImage(this.sPanda, 230, 271, null);
+        //Panda roux
+        g.drawImage(this.spRoux, 310, 271, null);
     }
     
     public void renderGameSettings(Graphics g){
@@ -483,4 +495,3 @@ public class OptionsScene extends Scene {
         }
     }
 }
-
