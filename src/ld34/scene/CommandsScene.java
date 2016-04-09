@@ -45,7 +45,7 @@ public class CommandsScene extends Scene {
         }
         
         OptionButton btn1 = new OptionButton(
-                KeyEvent.getKeyText((int)Configs.getInstance().getConfigValue("Jump")), 
+                KeyEvent.getKeyText(Integer.parseInt(Configs.getInstance().getConfigValue("Jump"))), 
                 "Jump", 
                 150, 
                 200
@@ -53,7 +53,7 @@ public class CommandsScene extends Scene {
         btn1.setFont(this.font);
         this.optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
-                KeyEvent.getKeyText((int)Configs.getInstance().getConfigValue("Walk")), 
+                KeyEvent.getKeyText(Integer.parseInt(Configs.getInstance().getConfigValue("Walk"))), 
                 "Walk", 
                 150, 
                 250
@@ -68,7 +68,8 @@ public class CommandsScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        this.bundle = ResourceBundle.getBundle("lang.commands", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
+        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        this.bundle = ResourceBundle.getBundle("lang.commands", this.game.langs[localeIndex]);
         
         this.btnBack = this.bundle.getString("backToMain");
         this.title = this.bundle.getString("title");

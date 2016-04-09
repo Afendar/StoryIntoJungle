@@ -41,8 +41,8 @@ public class MenuScene extends Scene {
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
-        
-        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
+
+        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[Integer.parseInt(Configs.getInstance().getConfigValue("Lang"))]);
         
         //new game
         int [][]coords = {

@@ -1,7 +1,9 @@
 package entity;
 
 import audio.Sound;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -42,12 +44,12 @@ public class Player extends Entity {
         this.difficulty = difficulty;
         this.score = 0;
         this.animX = 0;
-        this.animY = 2;
+        this.animY = 3;
         this.timeAnim = 5;
-        this.PLAYER_SIZE = 32;
+        this.PLAYER_SIZE = 64;
         
         try{
-            URL url = this.getClass().getResource("/spritesheet.png");
+            URL url = this.getClass().getResource("/pandas_boy_sprites.png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();
@@ -72,19 +74,19 @@ public class Player extends Entity {
             }
         }
         
-        int x0 = (int)(posX+2)/ Defines.TILE_SIZE;
-        int y0 = (int)(posY+2) / Defines.TILE_SIZE;
-        int x1 = (int)(posX - 2 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
-        int y1 = (int)(posY - 2 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
-
+        int x0 = (int)(posX)/ Defines.TILE_SIZE;
+        int y0 = (int)(posY) / Defines.TILE_SIZE;
+        int x1 = (int)(posX + this.PLAYER_SIZE) / Defines.TILE_SIZE;
+        int y1 = (int)(posY + this.PLAYER_SIZE) / Defines.TILE_SIZE;
+        
         if(listener.jump.enabled && !this.isJumping){
             Sound.jump.play();
             this.isJumping = true;
-            this.velY = - 5;
+            this.velY = - 6;
         }
         
         //On the bridge
-        if(y1 + 1 < this.level.nbTilesH - 1 && 
+        if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 3 && 
                 !listener.slow.enabled){
             this.level.removeTile(x1, y1+1);
@@ -93,9 +95,10 @@ public class Player extends Entity {
             this.velX = 0;
             this.velY = 8;
         }
-        else if(y1 + 1 < this.level.nbTilesH - 1 && 
+        else if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 3 && 
                 !listener.slow.enabled){
+            System.out.print("pont");
             this.level.removeTile(x0, y1+1);
             this.isJumping = true;
             this.isFalling = true;
@@ -140,6 +143,7 @@ public class Player extends Entity {
             this.velX = 0;
         }else{
             if(listener.mouseX + this.cam.x < (int)this.posX){
+                //Right Pose
                 if(listener.slow.enabled)
                     this.velX = (-(Defines.SPEED + this.difficulty))/2;
                 else
@@ -157,7 +161,8 @@ public class Player extends Entity {
                 
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
-            else if(listener.mouseX + this.cam.x > (int)this.posX + 32){
+            else if(listener.mouseX + this.cam.x > (int)this.posX + this.PLAYER_SIZE){
+                //Left Pose
                 if(listener.slow.enabled)
                     this.velX = (Defines.SPEED + this.difficulty)/2;
                 else
@@ -177,15 +182,17 @@ public class Player extends Entity {
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
             else if(listener.mouseX + this.cam.x < (int)this.posX + 32 && listener.mouseX + this.cam.x > (int)this.posX){
+                //Stand Pose
+                
                 this.velX = 0;
                 
                 if(this.timeAnim == 0){
                     this.animY = 2*this.PLAYER_SIZE;
                     this.animX += this.PLAYER_SIZE;
-                    if(this.animX > 3*this.PLAYER_SIZE){
+                    if(this.animX > 2*this.PLAYER_SIZE){
                         this.animX = 0;
                     }
-                    this.timeAnim = 20;
+                    this.timeAnim = 40;
                 }
                 
                 this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, this.PLAYER_SIZE, this.PLAYER_SIZE);
@@ -195,17 +202,17 @@ public class Player extends Entity {
         }
         
         //LEFT
-        if((int)(posX + velX) / Defines.TILE_SIZE > 0 &&
+        if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
                 (!TileAtlas.atlas.get(this.level.getTile((int)(posX + velX) / Defines.TILE_SIZE, y0)).canPass() || 
                 !TileAtlas.atlas.get(this.level.getTile((int)(posX + velX) / Defines.TILE_SIZE, y1)).canPass())){
             this.velX = 0;
         }
         //RIGHT
-        else if((int)(posX + this.PLAYER_SIZE + velX) / Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
+        else if((int)(posX + this.PLAYER_SIZE + velX)/ Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
                 (!TileAtlas.atlas.get(this.level.getTile((int)(posX + this.PLAYER_SIZE + velX) / Defines.TILE_SIZE, y0)).canPass() || 
                 !TileAtlas.atlas.get(this.level.getTile((int)(posX + this.PLAYER_SIZE + velX) / Defines.TILE_SIZE, y1)).canPass())){
              this.velX = 0; 
-        } 
+        }
         
         if(!this.move(velX, velY)){
             this.velX = 0;
@@ -223,10 +230,10 @@ public class Player extends Entity {
         float posX0 = this.posX + x;
         float posY0 = this.posY + y;
         
-        int x0 = (int)(posX0 + 1) / Defines.TILE_SIZE;
-        int y0 = (int)(posY0 + 1) / Defines.TILE_SIZE;
-        int x1 = (int)(posX0 - 1 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
-        int y1 = (int)(posY0 - 1 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
+        int x0 = (int)(posX0) / Defines.TILE_SIZE;
+        int y0 = (int)(posY0) / Defines.TILE_SIZE;
+        int x1 = (int)(posX0 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
+        int y1 = (int)(posY0 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
         
         if(x1 >= this.level.nbTilesW)
             x1 = this.level.nbTilesW - 1;
@@ -239,9 +246,6 @@ public class Player extends Entity {
             this.isJumping = false;
             return false;
         }
-        
-        //UP
-        
         this.posX += x;
         this.posY += y;
         
@@ -271,6 +275,9 @@ public class Player extends Entity {
     @Override
     public void render(Graphics g) {
         g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
+        g.setColor(Color.red);
+        Rectangle bounds = this.getBounds();
+        g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
     
     public void reloadSpritesheet(int lvl){
@@ -278,5 +285,10 @@ public class Player extends Entity {
             URL url = this.getClass().getResource("/spritesheet"+lvl+".png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){e.printStackTrace();}
+    }
+    
+    public Rectangle getBounds(){
+//        return new Rectangle((int)this.posX + 5, (int)this.posY + 17, this.PLAYER_SIZE - 10 ,this.PLAYER_SIZE - 17);
+        return new Rectangle((int)this.posX, (int)this.posY, this.PLAYER_SIZE ,this.PLAYER_SIZE);
     }
 }

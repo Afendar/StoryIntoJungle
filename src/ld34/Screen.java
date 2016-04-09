@@ -1,7 +1,6 @@
 package ld34;
 
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;

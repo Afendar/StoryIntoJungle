@@ -41,7 +41,8 @@ public class EndScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
+        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[localeIndex]);
         
         this.text1 = this.bundle.getString("text1");
         this.text2 = this.bundle.getString("text2");

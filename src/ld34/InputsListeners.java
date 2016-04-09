@@ -52,8 +52,10 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     }
     
     public void processKey(KeyEvent e, boolean enabled){
-        if(e.getKeyCode() == (int)Configs.getInstance().getConfigValue("Jump")) jump.switched(enabled);
-        if(e.getKeyCode() == (int)Configs.getInstance().getConfigValue("Walk")) slow.switched(enabled);
+        if(e.getKeyCode() == Integer.parseInt(Configs.getInstance().getConfigValue("Jump"))) 
+            jump.switched(enabled);
+        if(e.getKeyCode() == Integer.parseInt(Configs.getInstance().getConfigValue("Walk")))
+            slow.switched(enabled);
         if(e.getKeyCode() == KeyEvent.VK_ENTER) next.switched(enabled);
     }
     
@@ -76,7 +78,8 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     
     @Override
     public void mouseDragged(MouseEvent e) {
-        
+        this.mouseX = e.getX();
+        this.mouseY = e.getY();
     }
 
     @Override

@@ -22,7 +22,7 @@ public class Sound {
     
     private Sound(String path){
         this.path = path;
-        this.volume = (int)Configs.getInstance().getConfigValue("sound");
+        this.volume = Integer.parseInt(Configs.getInstance().getConfigValue("Sound"));
     }
     
     public void play(){

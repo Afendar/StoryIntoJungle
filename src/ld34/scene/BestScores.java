@@ -49,8 +49,8 @@ public class BestScores extends Scene {
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
-        
-        this.bundle = ResourceBundle.getBundle("lang.bestscores", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
+        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        this.bundle = ResourceBundle.getBundle("lang.bestscores", this.game.langs[localeIndex]);
         
         this.title = this.bundle.getString("title");
         this.btnBack = this.bundle.getString("backToMain");

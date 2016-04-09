@@ -11,10 +11,10 @@ import java.io.PrintWriter;
 
 public class Configs {
     
-    public String[] configsLabels = {"Lang", "Difficulty", "Jump", "Walk", "sex", "spicies", "sound"};
+    public String[] configsLabels = {"Lang", "Difficulty", "Jump", "Walk", "Sex", "Spicies", "Sound", "Name"};
     public String fileOptions = "settings.dat";
-    public Object[] configsDefaultValues = {0, 0, KeyEvent.VK_SPACE, KeyEvent.VK_CONTROL, 0, 0, 100};
-    public Object[] configsValues;
+    public String[] configsDefaultValues = {"0", "0", ""+KeyEvent.VK_SPACE, ""+KeyEvent.VK_CONTROL, "0", "0", "100", ""};
+    public String[] configsValues;
     
     private Configs(){
         this.loadConfigs();
@@ -39,8 +39,7 @@ public class Configs {
                     String[] strSplited = line.split(":");
                     for(int i=0;i<this.configsLabels.length;i++){
                         if(this.configsLabels[i].equals(strSplited[0])){
-                            System.out.println(strSplited[1]);
-                            this.configsValues[i] = Integer.parseInt(strSplited[1]);
+                            this.configsValues[i] = strSplited[1];
                         }
                     }
                 }
@@ -56,7 +55,7 @@ public class Configs {
         }
     }
     
-    public void setConfigValue(String key, Object value){
+    public void setConfigValue(String key, String value){
         for(int i=0;i<this.configsLabels.length;i++){
             if(this.configsLabels[i].equals(key)){
                 this.configsValues[i] = value;
@@ -64,15 +63,21 @@ public class Configs {
         }
     }
     
-    public Object getConfigValue(String key){
+    public String getConfigValue(String key){
         
         for(int i=0;i<this.configsLabels.length;i++){
             if(this.configsLabels[i].equals(key)){
-                return this.configsValues[i];
+                if((configsValues[i].toString().substring(0, 1)).equals("\"")){
+                    System.out.println("string");
+                }
+                else
+                {
+                    return this.configsValues[i];
+                }
             }
         }
         //not found...
-        return false;
+        return null;
     }
     
     public void saveConfig(){

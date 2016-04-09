@@ -23,10 +23,11 @@ import javax.imageio.ImageIO;
 import ld34.Camera;
 import ld34.Configs;
 import ld34.Game;
+import ld34.TimerThread;
 import level.Level;
 
 public class GameScene extends Scene {
-    
+
     public Font font, fontS, fontM, fontB, fontSM;
     public Player player;
     public Level level;
@@ -37,6 +38,9 @@ public class GameScene extends Scene {
     public String bestScores = "best_scores.dat";
     public boolean displayEnd, displayStart;
     public int alpha, alphaMax;
+    public int time = 0;
+    public int timeF = 0;
+    public boolean timer = false;
     
     public GameScene(int w, int h, Game game){
         super(w, h, game);
@@ -47,7 +51,7 @@ public class GameScene extends Scene {
         
         this.level = new Level(this.nbLevel);
         this.cam = new Camera(0, 0, w, h, this.level);
-        this.player = new Player(32, 460, this.level, this.game.listener, this.cam, (int)Configs.getInstance().getConfigValue("Difficulty"));
+        this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")));
         
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -68,7 +72,7 @@ public class GameScene extends Scene {
         this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
         
-        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[(int)Configs.getInstance().getConfigValue("Lang")]);
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Configs.getInstance().getConfigValue("Lang"))]);
         
         this.btnBack = this.bundle.getString("backToMain");
         this.pausemsg = this.bundle.getString("pauseMsg");
@@ -84,10 +88,15 @@ public class GameScene extends Scene {
         
         this.alpha = 255;
         this.alphaMax = 128;
+        
+        this.timer = true;
+        this.timeF = TimerThread.MILLI;
     }
 
     public void reinit(int lvl){
         this.alpha = 0;
+        this.timeF = TimerThread.MILLI;
+        
         if(this.nbLevel < 3 || this.player.isDead){
             this.nbLevel+= lvl;
             this.level = new Level(this.nbLevel);
@@ -184,7 +193,7 @@ public class GameScene extends Scene {
             g.setColor(new Color(153, 217, 234));
             g.fillRect(0, 0, this.w, this.h);
 
-            //Backoud render
+            //Background render
             g.drawImage(this.background, 0, this.h - 24 - this.background.getHeight(), null);
 
             g2d.translate(-this.cam.x, -this.cam.y);
@@ -228,6 +237,12 @@ public class GameScene extends Scene {
             //END REDNERING
             ///////////////////////////////////////////
             g.drawImage(this.foreground2, 0, 0, null);
+            
+            if(this.timer){
+                int minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
+                int secondes = (int)((double)(TimerThread.MILLI - this.timeF - minutes*60000)/1000);
+                g.drawString(minutes+":"+secondes, 50, 50);
+            }
         }
     }
     

@@ -10,11 +10,11 @@ import javax.swing.JComponent;
 public class OptionButton extends JComponent{
     
     private boolean isEditing;
-    private Object value;
+    private String value;
     private int x, y, w, h;
     private String text, name;
     
-    public OptionButton(Object value, String name, int x, int y){
+    public OptionButton(String value, String name, int x, int y){
         super();
         this.text = value.toString();
         this.name = name;
@@ -28,7 +28,7 @@ public class OptionButton extends JComponent{
         this.w = metrics.stringWidth(this.text);
     }
     
-    public OptionButton(Object value, String name){
+    public OptionButton(String value, String name){
         this(value, name, 0, 0);
     }
     
@@ -50,9 +50,9 @@ public class OptionButton extends JComponent{
     
     private void configure(KeyEvent e){
         this.isEditing = false;
-        this.value = e.getKeyCode();
+        this.value = Integer.toString(e.getKeyCode());
         Configs.getInstance().setConfigValue(this.name, this.value);
-        this.setText(KeyEvent.getKeyText((int)this.value));
+        this.setText(KeyEvent.getKeyText(e.getKeyCode()));
     }
     
     public Object getValue(){

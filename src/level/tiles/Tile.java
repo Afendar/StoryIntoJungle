@@ -20,7 +20,7 @@ public abstract class Tile {
         this.ID = ID;
         
         try{
-            URL url = this.getClass().getResource("/tileset.png");
+            URL url = this.getClass().getResource("/tilesetv2.png");
             this.tileset = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();

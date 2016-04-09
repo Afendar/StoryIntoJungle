@@ -78,7 +78,7 @@ public class Level {
     
     public void loadLevel(int nbLevel){
         try{
-            URL url = this.getClass().getResource("/lvl"+nbLevel+".png");
+            URL url = this.getClass().getResource("/lvl"+nbLevel+"_dev.png");
             BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
