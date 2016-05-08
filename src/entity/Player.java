@@ -74,10 +74,10 @@ public class Player extends Entity {
             }
         }
         
-        int x0 = (int)(posX)/ Defines.TILE_SIZE;
-        int y0 = (int)(posY) / Defines.TILE_SIZE;
-        int x1 = (int)(posX + this.PLAYER_SIZE) / Defines.TILE_SIZE;
-        int y1 = (int)(posY + this.PLAYER_SIZE) / Defines.TILE_SIZE;
+        int x0 = (int)(this.getBounds().x)/ Defines.TILE_SIZE;
+        int y0 = (int)(this.getBounds().y) / Defines.TILE_SIZE;
+        int x1 = (int)(this.getBounds().x + this.getBounds().width) / Defines.TILE_SIZE;
+        int y1 = (int)(this.getBounds().y + this.getBounds().height) / Defines.TILE_SIZE;
         
         if(listener.jump.enabled && !this.isJumping){
             Sound.jump.play();
@@ -142,7 +142,7 @@ public class Player extends Entity {
         if(listener.mouseExited){
             this.velX = 0;
         }else{
-            if(listener.mouseX + this.cam.x < (int)this.posX){
+            if(listener.mouseX + this.cam.x < (int)this.getBounds().x){
                 //Right Pose
                 if(listener.slow.enabled)
                     this.velX = (-(Defines.SPEED + this.difficulty))/2;
@@ -161,7 +161,7 @@ public class Player extends Entity {
                 
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
-            else if(listener.mouseX + this.cam.x > (int)this.posX + this.PLAYER_SIZE){
+            else if(listener.mouseX + this.cam.x > (int)this.getBounds().x + this.PLAYER_SIZE){
                 //Left Pose
                 if(listener.slow.enabled)
                     this.velX = (Defines.SPEED + this.difficulty)/2;
@@ -181,7 +181,7 @@ public class Player extends Entity {
                 
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
-            else if(listener.mouseX + this.cam.x < (int)this.posX + 32 && listener.mouseX + this.cam.x > (int)this.posX){
+            else if(listener.mouseX + this.cam.x < (int)this.getBounds().x + this.getBounds().width && listener.mouseX + this.cam.x > (int)this.getBounds().x){
                 //Stand Pose
                 
                 this.velX = 0;
@@ -200,17 +200,17 @@ public class Player extends Entity {
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
         }
-        
+
         //LEFT
         if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(posX + velX) / Defines.TILE_SIZE, y0)).canPass() || 
-                !TileAtlas.atlas.get(this.level.getTile((int)(posX + velX) / Defines.TILE_SIZE, y1)).canPass())){
+                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE)).canPass() || 
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass())){
             this.velX = 0;
         }
         //RIGHT
-        else if((int)(posX + this.PLAYER_SIZE + velX)/ Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(posX + this.PLAYER_SIZE + velX) / Defines.TILE_SIZE, y0)).canPass() || 
-                !TileAtlas.atlas.get(this.level.getTile((int)(posX + this.PLAYER_SIZE + velX) / Defines.TILE_SIZE, y1)).canPass())){
+        else if((int)(this.getBounds().x + this.getBounds().width + velX)/ Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
+                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE )).canPass() || 
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass())){
              this.velX = 0; 
         }
         
@@ -226,14 +226,14 @@ public class Player extends Entity {
     }
 
     public boolean move(float x, float y){
-
-        float posX0 = this.posX + x;
-        float posY0 = this.posY + y;
+        
+        float posX0 = this.getBounds().x + x;
+        float posY0 = this.getBounds().y + y;
         
         int x0 = (int)(posX0) / Defines.TILE_SIZE;
         int y0 = (int)(posY0) / Defines.TILE_SIZE;
-        int x1 = (int)(posX0 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
-        int y1 = (int)(posY0 + this.PLAYER_SIZE) / Defines.TILE_SIZE;
+        int x1 = (int)(posX0 + this.getBounds().width) / Defines.TILE_SIZE;
+        int y1 = (int)(posY0 + this.getBounds().height) / Defines.TILE_SIZE;
         
         if(x1 >= this.level.nbTilesW)
             x1 = this.level.nbTilesW - 1;
@@ -246,6 +246,7 @@ public class Player extends Entity {
             this.isJumping = false;
             return false;
         }
+        
         this.posX += x;
         this.posY += y;
         
@@ -257,18 +258,17 @@ public class Player extends Entity {
             this.posY = 0;
             return false;
         }
-        if(this.posX + this.PLAYER_SIZE > this.level.w){
-            this.posX = this.level.w - this.PLAYER_SIZE;
+        if(this.getBounds().x + this.getBounds().width > this.level.w){
+            this.posX = this.level.w - this.getBounds().width;
             return false;
         }
-        if(this.posY + this.PLAYER_SIZE > this.level.h){
-            this.posY = this.level.h - this.PLAYER_SIZE;
+        if(this.getBounds().y + this.getBounds().height > this.level.h){
+            this.posY = this.level.h - this.getBounds().height;
             this.isDead = true;
             this.sprite = this.spritesheet.getSubimage(3 * this.PLAYER_SIZE, 10, this.PLAYER_SIZE, this.PLAYER_SIZE);
             Sound.death.play();
             return false;
         }
-        
         return true;
     }
     
@@ -288,7 +288,7 @@ public class Player extends Entity {
     }
     
     public Rectangle getBounds(){
-//        return new Rectangle((int)this.posX + 5, (int)this.posY + 17, this.PLAYER_SIZE - 10 ,this.PLAYER_SIZE - 17);
-        return new Rectangle((int)this.posX, (int)this.posY, this.PLAYER_SIZE ,this.PLAYER_SIZE);
+//        return new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10 ,this.PLAYER_SIZE - 20);
+        return new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10, this.PLAYER_SIZE - 20);
     }
 }
