@@ -35,6 +35,7 @@ public class Game extends Canvas implements Runnable {
         this.h = h;
         this.setMinimumSize(new Dimension(w, h));
         this.setMaximumSize(new Dimension(w, h));
+        this.setPreferredSize(new Dimension(w, h));
         this.setSize(new Dimension(w, h));
         
         this.listener = new InputsListeners(this);
@@ -103,7 +104,7 @@ public class Game extends Canvas implements Runnable {
             
             if(System.currentTimeMillis() - startTime >= 1000)
             {
-                //System.out.println("FPS : " + frame);
+                System.out.println("FPS : " + frame);
                 frame = 0;
                 startTime = System.currentTimeMillis();
             }

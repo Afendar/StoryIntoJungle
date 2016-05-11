@@ -158,7 +158,7 @@ public class MenuScene extends Scene {
             g.drawString(this.btnQuit, this.w/2 - quitWidth/2 + 70, 465);
         }
         
-        g.drawImage(this.foreground, 0, -25, null);
+        g.drawImage(this.foreground, 0, 0, null);
     }
     
     public void processHover(){

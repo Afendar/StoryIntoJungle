@@ -13,6 +13,7 @@ public class Level {
     
     public int w, h;
     public int nbTilesW, nbTilesH;
+    protected int nbTilesInScreenX, nbTilesInScreenY;
     public int[][] map;
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
@@ -33,10 +34,33 @@ public class Level {
         
     }
     
+    public void setNbTilesInScreenX(int screenWidth){
+        this.nbTilesInScreenX = (int)(screenWidth / Defines.TILE_SIZE);
+    }
+    
+    public void setNbTilesInScreenY(int screenHeight){
+        this.nbTilesInScreenY = (int)(screenHeight / Defines.TILE_SIZE);
+    }
+    
+    public int getNbTilesInScreenX(){
+        return this.nbTilesInScreenX;
+    }
+    
+    public int getNbTilesInScreenY(){
+        return this.nbTilesInScreenY;
+    }
+    
+    public void render(Graphics g){
+        this.render(g, 0, 0);
+    }
+    
     public void render(Graphics g, int startX, int startY){
         
-        for(int i=0;i<this.nbTilesW;i++){
-            for(int j=0;j<this.nbTilesH;j++){
+        int endX = (startX + this.nbTilesInScreenX + 2 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 2 : this.nbTilesW;
+        int endY = (startY + this.nbTilesInScreenY + 2 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 2 : this.nbTilesH;
+        
+        for(int i = startX;i<endX;i++){
+            for(int j = startY;j<endY;j++){
                 switch(this.map[i][j]){
                     case 1:
                         TileAtlas.floor.render(g, i, j);
@@ -78,7 +102,7 @@ public class Level {
     
     public void loadLevel(int nbLevel){
         try{
-            URL url = this.getClass().getResource("/lvl"+nbLevel+"_dev.png");
+            URL url = this.getClass().getResource("/lvl"+nbLevel+".png");
             BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();

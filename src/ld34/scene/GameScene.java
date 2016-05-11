@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
 import ld34.Configs;
+import ld34.Defines;
 import ld34.Game;
 import ld34.TimerThread;
 import level.Level;
@@ -50,6 +51,9 @@ public class GameScene extends Scene {
         this.displayStart = true;
         
         this.level = new Level(this.nbLevel);
+        this.level.setNbTilesInScreenX(game.w);
+        this.level.setNbTilesInScreenY(game.h);
+        
         this.cam = new Camera(0, 0, w, h, this.level);
         this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")));
         
@@ -101,14 +105,25 @@ public class GameScene extends Scene {
             this.nbLevel+= lvl;
             this.level = new Level(this.nbLevel);
             this.player.level = this.level;
-            this.player.setPosX(32);
+            if(this.player.checkpointX != 0){
+                this.player.setPosX(this.player.checkpointX);
+            }
+            else{
+                this.player.setPosX(32);
+            }
+            
             if(lvl != 0){
                 this.player.setPosY(460 - ((this.nbLevel-1)*8));
                 this.player.PLAYER_SIZE += 8;
                 this.player.reloadSpritesheet(this.nbLevel);
             }
             else{
-                this.player.setPosY(460);
+                if(this.player.checkpointY != 0){
+                    this.player.setPosY(this.player.checkpointY);
+                }
+                else{
+                    this.player.setPosY(460);
+                }
             }
             this.player.win = false;
         }
@@ -199,7 +214,13 @@ public class GameScene extends Scene {
             g2d.translate(-this.cam.x, -this.cam.y);
 
             //Map Render
-            this.level.render(g, 0, 0);
+            
+            int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
+            int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
+            if(startX < 0)startX = 0;
+            if(startY < 0)startY = 0;
+            
+            this.level.render(g, startX, startY);
             
             this.player.render(g);
 

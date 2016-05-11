@@ -1,6 +1,6 @@
 package ld34;
 
-import com.sun.glass.events.KeyEvent;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,9 +37,11 @@ public class Configs {
                 String line = null;
                 while((line = br.readLine()) != null){
                     String[] strSplited = line.split(":");
-                    for(int i=0;i<this.configsLabels.length;i++){
-                        if(this.configsLabels[i].equals(strSplited[0])){
-                            this.configsValues[i] = strSplited[1];
+                    if(strSplited.length > 1){
+                        for(int i=0;i<this.configsLabels.length;i++){
+                            if(this.configsLabels[i].equals(strSplited[0])){
+                                this.configsValues[i] = strSplited[1];
+                            }
                         }
                     }
                 }
@@ -67,13 +69,7 @@ public class Configs {
         
         for(int i=0;i<this.configsLabels.length;i++){
             if(this.configsLabels[i].equals(key)){
-                if((configsValues[i].toString().substring(0, 1)).equals("\"")){
-                    System.out.println("string");
-                }
-                else
-                {
-                    return this.configsValues[i];
-                }
+                return this.configsValues[i];
             }
         }
         //not found...

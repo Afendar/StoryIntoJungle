@@ -28,6 +28,7 @@ public class Player extends Entity {
     public int score;
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
+    public int checkpointX, checkpointY;
     
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
@@ -47,6 +48,7 @@ public class Player extends Entity {
         this.animY = 3;
         this.timeAnim = 5;
         this.PLAYER_SIZE = 64;
+        this.checkpointX = this.checkpointY = 0;
         
         try{
             URL url = this.getClass().getResource("/pandas_boy_sprites.png");
@@ -85,7 +87,7 @@ public class Player extends Entity {
             this.velY = - 6;
         }
         
-        //On the bridge
+        //On the bridge        
         if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 3 && 
                 !listener.slow.enabled){
@@ -122,7 +124,8 @@ public class Player extends Entity {
         
         //checkpoint
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 8){
-            System.out.println("Checkoint !");
+            this.checkpointX = x1 * Defines.TILE_SIZE;
+            this.checkpointY = y1 * Defines.TILE_SIZE;
         }
         
         //end level test
@@ -200,7 +203,7 @@ public class Player extends Entity {
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
         }
-
+        
         //LEFT
         if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
                 (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE)).canPass() || 
@@ -212,6 +215,14 @@ public class Player extends Entity {
                 (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE )).canPass() || 
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass())){
              this.velX = 0; 
+        }
+        
+        //DOWN 
+        if(((this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE) < this.level.nbTilesH && (
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass() ||
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass())){
+            this.isJumping = false;
+            this.velY = 0;
         }
         
         if(!this.move(velX, velY)){
@@ -239,13 +250,6 @@ public class Player extends Entity {
             x1 = this.level.nbTilesW - 1;
         if(y1 >= this.level.nbTilesH)
             y1 = this.level.nbTilesH - 1;
-        
-        //DOWN 
-        if(!TileAtlas.atlas.get(this.level.getTile(x0, y1)).canPass() ||
-                !TileAtlas.atlas.get(this.level.getTile(x1, y1)).canPass()){
-            this.isJumping = false;
-            return false;
-        }
         
         this.posX += x;
         this.posY += y;
@@ -275,9 +279,9 @@ public class Player extends Entity {
     @Override
     public void render(Graphics g) {
         g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
-        g.setColor(Color.red);
-        Rectangle bounds = this.getBounds();
-        g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        //g.setColor(Color.red);
+        //Rectangle bounds = this.getBounds();
+        //g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
     
     public void reloadSpritesheet(int lvl){
