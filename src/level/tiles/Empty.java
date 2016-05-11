@@ -5,6 +5,8 @@
  */
 package level.tiles;
 
+import java.awt.Graphics;
+
 public class Empty extends Tile {
     
     public Empty(int imgX, int imgY){
@@ -18,6 +20,11 @@ public class Empty extends Tile {
 
     @Override
     public void update() {
+        
+    }
+    
+    @Override
+    public void render(Graphics g, int x, int y){
         
     }
 

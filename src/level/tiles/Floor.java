@@ -5,6 +5,9 @@
  */
 package level.tiles;
 
+import java.awt.Graphics;
+import ld34.Defines;
+
 
 public class Floor extends Tile {
     
@@ -20,5 +23,23 @@ public class Floor extends Tile {
     @Override
     public void update(){
         
+    }
+    
+    public void render(Graphics g, int x, int y){
+        
+    }
+    
+    public void render(Graphics g, int x, int y, boolean left, boolean right){
+        if(left && right){
+            this.tile = this.tileset.getSubimage((this.imgX * Defines.TILE_SIZE) + (Defines.TILE_SIZE/2), this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        }
+        else if(left){
+            this.tile = this.tileset.getSubimage((this.imgX + 1) * Defines.TILE_SIZE, this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        }
+        else if(right){
+            this.tile = this.tileset.getSubimage((this.imgX * Defines.TILE_SIZE), this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        }
+        
+        g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
     }
 }

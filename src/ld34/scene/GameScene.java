@@ -104,6 +104,8 @@ public class GameScene extends Scene {
         if(this.nbLevel < 3 || this.player.isDead){
             this.nbLevel+= lvl;
             this.level = new Level(this.nbLevel);
+            this.level.setNbTilesInScreenX(game.w);
+            this.level.setNbTilesInScreenY(game.h);
             this.player.level = this.level;
             if(this.player.checkpointX != 0){
                 this.player.setPosX(this.player.checkpointX);

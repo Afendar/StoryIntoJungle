@@ -63,7 +63,19 @@ public class Level {
             for(int j = startY;j<endY;j++){
                 switch(this.map[i][j]){
                     case 1:
-                        TileAtlas.floor.render(g, i, j);
+                        boolean left = false;
+                        boolean right = false;
+                        if(i > 0){
+                            if(this.map[i-1][j] == 1){
+                                left = true;
+                            }
+                        }
+                        if(i < this.nbTilesW - 2){
+                            if(this.map[i+1][j] == 1){
+                                right = true;
+                            }
+                        }
+                        TileAtlas.floor.render(g, i, j, left, right);
                         break;
                     case 2:
                         TileAtlas.bamboo.render(g, i, j);
