@@ -25,6 +25,7 @@ public class Game extends Canvas implements Runnable {
     public int w;
     public int h;
     public ResourceBundle bundle;
+    public int elapsedTime, lastTime;
     
     public Game(int w, int h){
         
@@ -75,10 +76,11 @@ public class Game extends Canvas implements Runnable {
         double nsms = 1000000000 / 60;
         
         boolean needUpdate = true;
+        this.lastTime = TimerThread.MILLI;
         
         while(this.running)
         {
-            long current = System.nanoTime();            
+            long current = System.nanoTime(); 
             
             try{
                 Thread.sleep(2);
@@ -113,12 +115,14 @@ public class Game extends Canvas implements Runnable {
     
     public void update(){
         this.requestFocus();
+        this.elapsedTime = TimerThread.MILLI - this.lastTime;
+        this.lastTime = TimerThread.MILLI;
         
         if(this.hasFocus() && !this.paused){
             this.gs = this.gs.update();
         }
         if(this.paused && this.gs instanceof GameScene){
-            this.gs = ((GameScene)(this.gs)).updatePause();
+            this.gs = ((GameScene)(this.gs)).updatePause(this.elapsedTime);
         }
         this.listener.update();
     }

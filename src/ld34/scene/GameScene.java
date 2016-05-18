@@ -41,6 +41,9 @@ public class GameScene extends Scene {
     public int alpha, alphaMax;
     public int time = 0;
     public int timeF = 0;
+    public int minutes = 0;
+    public int secondes = 0;
+    public int maxTimeHardcore = 1;
     public boolean timer = false;
     
     public GameScene(int w, int h, Game game){
@@ -137,37 +140,43 @@ public class GameScene extends Scene {
     
     @Override
     public Scene update() {
-        if(!this.game.listener.mouseExited){
+        if(this.game.listener.mouseExited){
+            return this;
+        }
             
-            if(this.player.win){
-                reinit(1);
+        if(this.player.win){
+            reinit(1);
+        }
+        else{
+            if(this.displayEnd){
+                return new EndScene(this.w, this.h, this.game);
+            }
+            else if(this.displayStart){
+                if(this.game.listener.next.enabled){
+                    this.displayStart = false;
+                    this.alpha = 0;
+                }
+                return this;
+            }
+            else if(this.player.isDead){
+                if(this.game.listener.next.enabled){
+                    saveScore();
+                    reinit(0);
+                    this.player.isDead = false;
+                    this.player.score = 0;
+                }
+                this.player.update();
             }
             else{
-                if(this.displayEnd){
-                    return new EndScene(this.w, this.h, this.game);
-                }
-                else if(this.displayStart){
-                    if(this.game.listener.next.enabled){
-                        this.displayStart = false;
-                        this.alpha = 0;
-                    }
-                    return this;
-                }
-                else if(this.player.isDead){
-                    if(this.game.listener.next.enabled){
-                        saveScore();
-                        reinit(0);
-                        this.player.isDead = false;
-                        this.player.score = 0;
-                    }
-                    this.player.update();
-                }
-                else{
-                    this.level.update();
+                this.level.update();
 
-                    this.player.update();
+                this.player.update();
 
-                    this.cam.update(this.player);
+                this.cam.update(this.player);
+                
+                if(this.minutes >= this.maxTimeHardcore)
+                {
+                    this.player.isDead = true;
                 }
             }
         }
@@ -236,6 +245,14 @@ public class GameScene extends Scene {
             g.drawImage(this.bgGui, this.w/2 + 20, 0, null);
             g.drawString(this.bundle.getString("levelTxt") + this.nbLevel, this.w/2 + 90, 26);
             
+            if(this.timer){
+                if(!this.player.isDead){
+                    this.minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
+                    this.secondes = (int)((double)(TimerThread.MILLI - this.timeF - this.minutes*60000)/1000);
+                }
+                g.drawString(this.minutes+":"+this.secondes, 380, 80);
+            }
+            
             if(this.player.isDead){
                 if(this.alpha < this.alphaMax){
                     this.alpha += 1;
@@ -260,12 +277,6 @@ public class GameScene extends Scene {
             //END REDNERING
             ///////////////////////////////////////////
             g.drawImage(this.foreground2, 0, 0, null);
-            
-            if(this.timer){
-                int minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
-                int secondes = (int)((double)(TimerThread.MILLI - this.timeF - minutes*60000)/1000);
-                g.drawString(minutes+":"+secondes, 50, 50);
-            }
         }
     }
     
@@ -377,9 +388,11 @@ public class GameScene extends Scene {
         g.drawString(this.btnBack, 2*this.w/3 - backW/2, this.h - 188);
     }
     
-    public Scene updatePause(){
+    public Scene updatePause(int elapsedTime){
         this.hoverPause();
-
+        
+        this.timeF += elapsedTime;
+        
         return this.clickPause();
     }
     

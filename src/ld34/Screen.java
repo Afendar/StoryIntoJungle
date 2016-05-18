@@ -12,7 +12,7 @@ public class Screen extends JFrame {
         
         this.setTitle("Story Into Jungle - v1.1 beta");
         this.add(g);
-        this.setPreferredSize(new Dimension(800, 600));
+        this.getContentPane().setPreferredSize(new Dimension(800, 600));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLayout(null);
