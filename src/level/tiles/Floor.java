@@ -39,6 +39,9 @@ public class Floor extends Tile {
         else if(right){
             this.tile = this.tileset.getSubimage((this.imgX * Defines.TILE_SIZE), this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
+        else{
+            this.tile = this.tileset.getSubimage(0, 3 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        }
         
         g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
     }
