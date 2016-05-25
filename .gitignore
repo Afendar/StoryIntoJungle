@@ -4,3 +4,4 @@ build.xml
 build/*
 manifest.mf
 settings.dat
+/dist/

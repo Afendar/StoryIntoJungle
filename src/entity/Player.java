@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Camera;
+import ld34.Configs;
 import ld34.Defines;
 import ld34.InputsListeners;
 import level.Level;
@@ -26,6 +27,7 @@ public class Player extends Entity {
     public boolean isDead, win;
     public int difficulty;
     public int score;
+    public String sex;
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
     public int checkpointX, checkpointY;
@@ -50,8 +52,17 @@ public class Player extends Entity {
         this.PLAYER_SIZE = 64;
         this.checkpointX = this.checkpointY = 0;
         
+        switch(Integer.parseInt(Configs.getInstance().getConfigValue("Sex"))){
+            case 0:
+                this.sex = "boy";
+                break;
+            case 1:
+                this.sex = "girl";
+                break;
+        }
+        
         try{
-            URL url = this.getClass().getResource("/pandas_boy_sprites.png");
+            URL url = this.getClass().getResource("/pandas_"+this.sex+"_sprites.png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();

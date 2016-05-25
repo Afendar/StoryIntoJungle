@@ -6,7 +6,7 @@ import ld34.Defines;
 
 public class Bridge extends Tile {
     
-    int timeanim = 7;
+    int timeanim = 15;
     float rotation;
     
     public Bridge(int imgX, int imgY){
@@ -32,7 +32,7 @@ public class Bridge extends Tile {
                 else{
                     this.rotation = 0.07f;
                 }
-                this.timeanim = 7;
+                this.timeanim = 15;
             }
 
             if(this.timeanim > 0){
