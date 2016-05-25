@@ -122,7 +122,8 @@ public class BestScores extends Scene {
         
         g.setFont(this.font);
         g.setColor(Color.BLACK);
-        for(int i=0; i<this.savedScores.size();i++){
+        int max = this.savedScores.size() > 5 ? 5 : this.savedScores.size();
+        for(int i=0; i<max;i++){
             g.drawString(i+1 +".", 200, (i * 50) + 170 );
             g.drawString(this.savedScores.get(i), 250, (i * 50) + 170);
         }

@@ -100,7 +100,6 @@ public class Player extends Entity {
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 3 && 
                 !listener.slow.enabled){
-            System.out.print("pont");
             this.level.removeTile(x0, y1+1);
             this.isJumping = true;
             this.isFalling = true;

@@ -26,6 +26,7 @@ import ld34.Defines;
 import ld34.Game;
 import ld34.TimerThread;
 import level.Level;
+import level.tiles.TileAtlas;
 
 public class GameScene extends Scene {
 
@@ -34,7 +35,7 @@ public class GameScene extends Scene {
     public Level level;
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnBack, pausemsg, btnContinue;
-    public BufferedImage background2, bgGui, gui, bgGui2;
+    public BufferedImage background2, bgGui, gui, bgGui2, clockGui;
     public int nbLevel, selectedItem;
     public String bestScores = "best_scores.dat";
     public boolean displayEnd, displayStart;
@@ -60,6 +61,8 @@ public class GameScene extends Scene {
         this.cam = new Camera(0, 0, w, h, this.level);
         this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")));
         
+        this.level.addPlayer(this.player);
+        
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
@@ -78,6 +81,7 @@ public class GameScene extends Scene {
         
         this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
+        this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
         
         this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Configs.getInstance().getConfigValue("Lang"))]);
         
@@ -95,9 +99,10 @@ public class GameScene extends Scene {
         
         this.alpha = 255;
         this.alphaMax = 128;
-        
-        this.timer = true;
-        this.timeF = TimerThread.MILLI;
+        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5){
+            this.timer = true;
+            this.timeF = TimerThread.MILLI;
+        }
     }
 
     public void reinit(int lvl){
@@ -110,6 +115,7 @@ public class GameScene extends Scene {
             this.level.setNbTilesInScreenX(game.w);
             this.level.setNbTilesInScreenY(game.h);
             this.player.level = this.level;
+            this.level.addPlayer(this.player);
             if(this.player.checkpointX != 0){
                 this.player.setPosX(this.player.checkpointX);
             }
@@ -171,7 +177,7 @@ public class GameScene extends Scene {
                 this.level.update();
 
                 this.player.update();
-
+                
                 this.cam.update(this.player);
                 
                 if(this.minutes >= this.maxTimeHardcore)
@@ -194,7 +200,7 @@ public class GameScene extends Scene {
             if(this.alpha > 0)
                 this.alpha--;
             
-            g.drawImage(this.background2, 0, -10, null);
+            g.drawImage(this.background2, 0, 0, null);
             g.setColor(Color.BLACK);
             g.setFont(this.fontM);
             FontMetrics metrics = g.getFontMetrics(this.fontM);
@@ -220,7 +226,7 @@ public class GameScene extends Scene {
             g.fillRect(0, 0, this.w, this.h);
 
             //Background render
-            g.drawImage(this.background, 0, this.h - 24 - this.background.getHeight(), null);
+            g.drawImage(this.background, 0, this.h - this.background.getHeight(), null);
 
             g2d.translate(-this.cam.x, -this.cam.y);
 
@@ -245,12 +251,17 @@ public class GameScene extends Scene {
             g.drawImage(this.bgGui, this.w/2 + 20, 0, null);
             g.drawString(this.bundle.getString("levelTxt") + this.nbLevel, this.w/2 + 90, 26);
             
-            if(this.timer){
-                if(!this.player.isDead){
-                    this.minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
-                    this.secondes = (int)((double)(TimerThread.MILLI - this.timeF - this.minutes*60000)/1000);
+            if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5)
+            {
+                g.drawImage(this.clockGui, this.w/3 + 40, 50, null);
+                if(this.timer){
+                    if(!this.player.isDead){
+                        this.minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
+                        this.secondes = (int)((double)(TimerThread.MILLI - this.timeF - this.minutes*60000)/1000);
+                    }
+                    g.setFont(this.fontSM);
+                    g.drawString((this.minutes)+":"+(this.secondes), 380, 90);
                 }
-                g.drawString(this.minutes+":"+this.secondes, 380, 80);
             }
             
             if(this.player.isDead){

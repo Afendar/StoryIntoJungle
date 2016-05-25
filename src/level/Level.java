@@ -1,5 +1,6 @@
 package level;
 
+import entity.Player;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -15,6 +16,7 @@ public class Level {
     public int nbTilesW, nbTilesH;
     protected int nbTilesInScreenX, nbTilesInScreenY;
     public int[][] map;
+    public Player player;
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -81,7 +83,11 @@ public class Level {
                         TileAtlas.bamboo.render(g, i, j);
                         break;
                     case 3:
-                        TileAtlas.bridge.render(g, i, j);
+                        int playerX = (int)this.player.getPosX() / Defines.TILE_SIZE;
+                        int playerY = (int)this.player.getPosY() / Defines.TILE_SIZE;
+                        boolean onBridge = false;
+                        if(playerX == i && playerY == j - 2){onBridge = true;}
+                        TileAtlas.bridge.render(g, i, j, onBridge);
                         break;
                     case 4:
                         TileAtlas.apple.render(g, i, j);
@@ -182,5 +188,9 @@ public class Level {
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+    
+    public void addPlayer(Player p){
+        this.player = p;
     }
 }
