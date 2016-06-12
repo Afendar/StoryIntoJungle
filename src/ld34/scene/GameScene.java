@@ -50,7 +50,7 @@ public class GameScene extends Scene {
     public GameScene(int w, int h, Game game){
         super(w, h, game);
         
-        this.nbLevel = 1;
+        this.nbLevel = 2;
         this.displayEnd = false;
         this.displayStart = true;
         
@@ -125,7 +125,6 @@ public class GameScene extends Scene {
             
             if(lvl != 0){
                 this.player.setPosY(460 - ((this.nbLevel-1)*8));
-                this.player.PLAYER_SIZE += 8;
                 this.player.reloadSpritesheet(this.nbLevel);
             }
             else{
@@ -378,6 +377,8 @@ public class GameScene extends Scene {
     }   
     
     public void renderPause(Graphics g){
+        Graphics2D g2d = (Graphics2D) g;
+        
         g.setColor(new Color(127, 127, 127, 210));
         g.fillRect(0, 0, w, h);
         
@@ -392,11 +393,31 @@ public class GameScene extends Scene {
         
         int continueW = metrics.stringWidth(this.btnContinue);
         g.drawImage(this.bgBtn, this.w/3 - 107, this.h - 230, null);
-        g.drawString(this.btnContinue, this.w/3 - continueW/2, this.h - 188);
+        if(this.selectedItem == 1)
+        {
+            g.setColor(this.darkGreen);
+            g2d.rotate(0.1, this.w/3, this.h - 195);
+            g.drawString(this.btnContinue, this.w/3 - continueW/2, this.h - 188);
+            g2d.rotate(-0.1, this.w/3, this.h - 195);
+        }
+        else
+        {
+            g.setColor(Color.BLACK);
+            g.drawString(this.btnContinue, this.w/3 - continueW/2, this.h - 188);
+        }
         
         int backW = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, 2*this.w/3 - 107, this.h - 230, null);
-        g.drawString(this.btnBack, 2*this.w/3 - backW/2, this.h - 188);
+        if(this.selectedItem == 2){
+            g.setColor(this.darkGreen);
+            g2d.rotate(-0.1, 2*this.w/3, this.h - 195);
+            g.drawString(this.btnBack, 2*this.w/3 - backW/2, this.h - 188);
+            g2d.rotate(0.1, 2*this.w/3, this.h - 195);
+        }
+        else{
+            g.setColor(Color.BLACK);
+            g.drawString(this.btnBack, 2*this.w/3 - backW/2, this.h - 188);
+        }
     }
     
     public Scene updatePause(int elapsedTime){
@@ -408,7 +429,17 @@ public class GameScene extends Scene {
     }
     
     public void hoverPause(){
-        
+        int mouseX = this.game.listener.mouseX;
+        int mouseY = this.game.listener.mouseY;
+        if(mouseX > this.w/3 - 107 && mouseX < this.w/3 + 107 && mouseY > this.h - 230 && mouseY < this.h - 160){
+            this.selectedItem = 1;
+        }
+        else if(mouseX > 2*this.w/3 - 107 && mouseX < 2*this.w/3 + 107 && mouseY > this.h - 230 && mouseY < this.h - 160){
+            this.selectedItem = 2;
+        }
+        else{
+            this.selectedItem = 0;
+        }
     }
     
     public Scene clickPause(){
@@ -416,10 +447,10 @@ public class GameScene extends Scene {
         
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItem){
-                case 0:
+                case 1:
                     this.game.paused = false;
                     break;
-                case 1:
+                case 2:
                     this.game.paused = false;
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;

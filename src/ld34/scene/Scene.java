@@ -48,7 +48,6 @@ public abstract class Scene{
         this.bgBtnSmallRed = this.spritesheetGui.getSubimage(107, 71, 107, 39);
     }
     
-    
     public abstract Scene update();
     
     public abstract void render(Graphics g);

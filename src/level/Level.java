@@ -17,6 +17,7 @@ public class Level {
     protected int nbTilesInScreenX, nbTilesInScreenY;
     public int[][] map;
     public Player player;
+    public int nbLevel;
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -29,6 +30,7 @@ public class Level {
     public static final int PINK = 16711808;//RGB(255, 0, 128) CHECKPOINTS
     
     public Level(int nbLevel){
+        this.nbLevel = nbLevel;
         this.loadLevel(nbLevel);
     }
     
@@ -72,7 +74,7 @@ public class Level {
                                 left = true;
                             }
                         }
-                        if(i < this.nbTilesW - 2){
+                        if(i < this.nbTilesW - 1){
                             if(this.map[i+1][j] == 1){
                                 right = true;
                             }

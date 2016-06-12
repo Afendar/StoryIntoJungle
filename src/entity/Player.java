@@ -27,7 +27,7 @@ public class Player extends Entity {
     public boolean isDead, win;
     public int difficulty;
     public int score;
-    public String sex;
+    public String sex, age;
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
     public int checkpointX, checkpointY;
@@ -61,8 +61,20 @@ public class Player extends Entity {
                 break;
         }
         
+        switch(this.level.nbLevel){
+            case 1:
+                this.age = "baby";
+                break;
+            case 2:
+                this.age = "teen";
+                break;
+            case 3:
+                this.age = "adult";
+                break;
+        }
+        
         try{
-            URL url = this.getClass().getResource("/pandas_"+this.sex+"_sprites.png");
+            URL url = this.getClass().getResource("/panda_"+this.sex+"_"+this.age+".png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){
             e.printStackTrace();
@@ -295,14 +307,41 @@ public class Player extends Entity {
     }
     
     public void reloadSpritesheet(int lvl){
+        
+        switch(lvl){
+            case 1:
+                this.age = "baby";
+                break;
+            case 2:
+                this.age = "teen";
+                break;
+            case 3:
+                this.age = "adult";
+                break;
+        }
+        
         try{
-            URL url = this.getClass().getResource("/spritesheet"+lvl+".png");
+            URL url = this.getClass().getResource("/panda_"+this.sex+"_"+this.age+".png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){e.printStackTrace();}
+        
     }
     
     public Rectangle getBounds(){
+        Rectangle bounds;
 //        return new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10 ,this.PLAYER_SIZE - 20);
-        return new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10, this.PLAYER_SIZE - 20);
+        switch(this.age){
+            default:
+            case "baby":
+                bounds = new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10, this.PLAYER_SIZE - 20);
+                break;
+            case "teen":
+                bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 16, this.PLAYER_SIZE - 6, this.PLAYER_SIZE - 16);
+                break;
+            case "adult":
+                bounds = new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10, this.PLAYER_SIZE - 20);
+                break;
+        }
+        return bounds;
     }
 }
