@@ -1,7 +1,6 @@
 package entity;
 
 import audio.Sound;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -27,7 +26,7 @@ public class Player extends Entity {
     public boolean isDead, win;
     public int difficulty;
     public int score;
-    public String sex, age;
+    public String sex, age, spicies;
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
     public int checkpointX, checkpointY;
@@ -52,6 +51,16 @@ public class Player extends Entity {
         this.PLAYER_SIZE = 64;
         this.checkpointX = this.checkpointY = 0;
         
+        switch(Integer.parseInt(Configs.getInstance().getConfigValue("Spicies")))
+        {
+            case 0:
+                this.spicies = "panda";
+                break;
+            case 1:
+                this.spicies = "redpanda";
+                break;
+        }
+        
         switch(Integer.parseInt(Configs.getInstance().getConfigValue("Sex"))){
             case 0:
                 this.sex = "boy";
@@ -74,10 +83,10 @@ public class Player extends Entity {
         }
         
         try{
-            URL url = this.getClass().getResource("/panda_"+this.sex+"_"+this.age+".png");
+            URL url = this.getClass().getResource("/"+this.spicies+"_"+this.sex+"_"+this.age+".png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         
         this.sprite = this.spritesheet.getSubimage(this.animX, this.animY*this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
@@ -101,8 +110,8 @@ public class Player extends Entity {
         
         int x0 = (int)(this.getBounds().x)/ Defines.TILE_SIZE;
         int y0 = (int)(this.getBounds().y) / Defines.TILE_SIZE;
-        int x1 = (int)(this.getBounds().x + this.getBounds().width) / Defines.TILE_SIZE;
-        int y1 = (int)(this.getBounds().y + this.getBounds().height) / Defines.TILE_SIZE;
+        int x1 = (int)(this.getBounds().x-1 + this.getBounds().width) / Defines.TILE_SIZE;
+        int y1 = (int)(this.getBounds().y-1 + this.getBounds().height) / Defines.TILE_SIZE;
         
         if(listener.jump.enabled && !this.isJumping){
             Sound.jump.play();
@@ -259,20 +268,6 @@ public class Player extends Entity {
     }
 
     public boolean move(float x, float y){
-        
-        float posX0 = this.getBounds().x + x;
-        float posY0 = this.getBounds().y + y;
-        
-        int x0 = (int)(posX0) / Defines.TILE_SIZE;
-        int y0 = (int)(posY0) / Defines.TILE_SIZE;
-        int x1 = (int)(posX0 + this.getBounds().width) / Defines.TILE_SIZE;
-        int y1 = (int)(posY0 + this.getBounds().height) / Defines.TILE_SIZE;
-        
-        if(x1 >= this.level.nbTilesW)
-            x1 = this.level.nbTilesW - 1;
-        if(y1 >= this.level.nbTilesH)
-            y1 = this.level.nbTilesH - 1;
-        
         this.posX += x;
         this.posY += y;
         
@@ -301,9 +296,6 @@ public class Player extends Entity {
     @Override
     public void render(Graphics g) {
         g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
-        //g.setColor(Color.red);
-        //Rectangle bounds = this.getBounds();
-        //g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
     
     public void reloadSpritesheet(int lvl){
@@ -321,15 +313,15 @@ public class Player extends Entity {
         }
         
         try{
-            URL url = this.getClass().getResource("/panda_"+this.sex+"_"+this.age+".png");
+            URL url = this.getClass().getResource("/"+this.spicies+"_"+this.sex+"_"+this.age+".png");
             this.spritesheet = ImageIO.read(url);
-        }catch(IOException e){e.printStackTrace();}
-        
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }
     }
     
     public Rectangle getBounds(){
         Rectangle bounds;
-//        return new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10 ,this.PLAYER_SIZE - 20);
         switch(this.age){
             default:
             case "baby":
@@ -339,7 +331,7 @@ public class Player extends Entity {
                 bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 16, this.PLAYER_SIZE - 6, this.PLAYER_SIZE - 16);
                 break;
             case "adult":
-                bounds = new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10, this.PLAYER_SIZE - 20);
+                bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 8, this.PLAYER_SIZE - 6, this.PLAYER_SIZE - 8);
                 break;
         }
         return bounds;

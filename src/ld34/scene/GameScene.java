@@ -26,7 +26,6 @@ import ld34.Defines;
 import ld34.Game;
 import ld34.TimerThread;
 import level.Level;
-import level.tiles.TileAtlas;
 
 public class GameScene extends Scene {
 
@@ -50,7 +49,7 @@ public class GameScene extends Scene {
     public GameScene(int w, int h, Game game){
         super(w, h, game);
         
-        this.nbLevel = 2;
+        this.nbLevel = 1;
         this.displayEnd = false;
         this.displayStart = true;
         
@@ -76,7 +75,7 @@ public class GameScene extends Scene {
             this.background2 = ImageIO.read(url);
             
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
@@ -306,10 +305,10 @@ public class GameScene extends Scene {
                 int index = 0;
                 int insertion = -1;
 
-                while((line = br.readLine()) != null){
+                while((line = br.readLine()) != null && index < 4){
                     savedScores.add(line);
-                    //String[] lineSplited = line.split(":");
-                    if(this.player.score >= Integer.parseInt(line)){
+                    String[] lineSplited = line.split(":");
+                    if(this.player.score >= Integer.parseInt(lineSplited[1]) && insertion == -1){
                         insertion = index;
                     }
                     index++;
@@ -318,26 +317,16 @@ public class GameScene extends Scene {
                 int initSize = savedScores.size();
                 
                 if(insertion != -1){
-
-                    for(int i = initSize - 1 ; i>=0 ; i--){
-                        if(i != insertion){
-                            if(i == initSize){
-                                savedScores.add(savedScores.get(i));
-                            }
-                            else{
-                                savedScores.add(i+1, savedScores.get(i));
-                            }
-                        }
-                        else{
-                            if(insertion == initSize){
-                                savedScores.add(Integer.toString(this.player.score));
-                            }
-                            else{
-                                savedScores.add(insertion, Integer.toString(this.player.score));
-                            }
-                            break;
-                        }
+                    if(insertion == initSize){
+                        savedScores.add(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
                     }
+                    else{
+                        savedScores.add(insertion, Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
+                    }
+                }
+                else
+                {
+                    savedScores.add(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
                 }
                 
                 //Ecriture
@@ -367,7 +356,7 @@ public class GameScene extends Scene {
                                 new BufferedWriter(
                                     new FileWriter(this.bestScores)));
             
-            pw.print(Integer.toString(this.player.score));
+            pw.print(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
             
             pw.close();
         }
