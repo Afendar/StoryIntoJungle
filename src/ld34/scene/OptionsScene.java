@@ -28,7 +28,7 @@ public class OptionsScene extends Scene {
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
     public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, 
-            bgHeadsRed, soundBar;
+            bgHeadsRed, soundBar, pandaRender;
     public CustomTextField nameField;
     public int[][] btnCoords;
     public int selectedItem, currentTab, posBar;
@@ -50,6 +50,10 @@ public class OptionsScene extends Scene {
             
             url = this.getClass().getResource("/backgroundoptions.png");
             this.background2 = ImageIO.read(url);
+            
+            url = this.getClass().getResource("/panda_render.png");
+            this.pandaRender = ImageIO.read(url);
+            
         }catch(FontFormatException|IOException e){
             e.printStackTrace();
         }
@@ -407,6 +411,8 @@ public class OptionsScene extends Scene {
         
         
         this.nameField.render(g);
+        
+        g.drawImage(this.pandaRender, 2*(this.w/3), 180, null);
     }
     
     public void renderGameSettings(Graphics g){

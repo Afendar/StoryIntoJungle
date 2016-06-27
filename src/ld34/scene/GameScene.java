@@ -34,12 +34,13 @@ public class GameScene extends Scene {
     public Level level;
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnBack, pausemsg, btnContinue;
-    public BufferedImage background2, bgGui, gui, bgGui2, clockGui;
+    public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
+            backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll;
     public int nbLevel, selectedItem;
     public String bestScores = "best_scores.dat";
     public boolean displayEnd, displayStart;
     public int alpha, alphaMax;
-    public int time = 0;
+    public int time = 0, glueX = 0, glueX2 = 0, glueTopX = 0, glueTopX2 = 0;
     public int timeF = 0;
     public int minutes = 0;
     public int secondes = 0;
@@ -74,6 +75,15 @@ public class GameScene extends Scene {
             url = this.getClass().getResource("/background2.png");
             this.background2 = ImageIO.read(url);
             
+            url = this.getClass().getResource("/background_bottom.png");
+            this.backgroundBottomAll = ImageIO.read(url);
+            this.backgroundBottom = this.backgroundBottomAll.getSubimage(0, 0, 800, 600);
+            this.backgroundBottom2 = this.backgroundBottomAll.getSubimage(800, 0, 800, 600);
+            url = this.getClass().getResource("/background_top.png");
+            this.backgroundTopAll = ImageIO.read(url);
+            this.backgroundTop = this.backgroundTopAll.getSubimage(0, 0, 800, 600);
+            this.backgroundTop2 = this.backgroundTopAll.getSubimage(800, 0, 800, 600);
+            
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
@@ -102,6 +112,9 @@ public class GameScene extends Scene {
             this.timer = true;
             this.timeF = TimerThread.MILLI;
         }
+        
+        this.glueX2 = this.backgroundBottom.getWidth();
+        this.glueTopX2 = this.backgroundTop2.getWidth();
     }
 
     public void reinit(int lvl){
@@ -149,6 +162,7 @@ public class GameScene extends Scene {
         }
             
         if(this.player.win){
+            this.player.checkpointX = 0;
             reinit(1);
         }
         else{
@@ -224,8 +238,40 @@ public class GameScene extends Scene {
             g.fillRect(0, 0, this.w, this.h);
 
             //Background render
-            g.drawImage(this.background, 0, this.h - this.background.getHeight(), null);
-
+            if(this.player.getPosX() + this.player.getBounds().width > this.glueX + this.backgroundBottom.getWidth() + (this.backgroundBottom.getWidth()/2))
+            {
+                this.glueX += 2*this.backgroundBottom.getWidth();
+            }
+            else
+            {
+                if(this.glueX > 0)
+                    this.glueX -= 2* this.backgroundBottom.getWidth();
+            }
+            if(this.player.getPosX() + this.player.getBounds().width > this.glueX2 + this.backgroundBottom2.getWidth() + (this.backgroundBottom2.getWidth()/2))
+            {
+                this.glueX2 += 2*this.backgroundBottom2.getWidth();
+            }
+            else
+            {
+                if(this.glueX2 > 0)
+                    this.glueX2 -= 2*this.backgroundBottom2.getWidth();
+            }
+            
+            g.drawImage(this.backgroundBottom, (int)(this.glueX - this.cam.x), this.h - this.backgroundBottom.getHeight(), null);
+            g.drawImage(this.backgroundBottom2, (int)(this.glueX2 - this.cam.x), this.h - this.backgroundBottom2.getHeight(), null);
+            
+            if(this.player.getPosX() > this.glueTopX + this.backgroundTop.getWidth() + (this.backgroundTop.getWidth()/2))
+            {
+                this.glueTopX += 2*this.backgroundTop.getWidth();
+            }
+            if(this.player.getPosX() > this.glueTopX2 + this.backgroundTop2.getWidth() + (this.backgroundTop2.getWidth()/2))
+            {
+                this.glueTopX2 += 2*this.backgroundTop2.getWidth();
+            }
+            
+            g.drawImage(this.backgroundTop, (int)(this.glueTopX - (this.cam.x)), this.h - this.backgroundTop.getHeight(), null);
+            g.drawImage(this.backgroundTop2, (int)(this.glueTopX2 - (this.cam.x)), this.h - this.backgroundTop2.getHeight(), null);
+            
             g2d.translate(-this.cam.x, -this.cam.y);
 
             //Map Render
