@@ -30,6 +30,7 @@ public class Player extends Entity {
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
     public int checkpointX, checkpointY;
+    public int direction;
     
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
@@ -50,6 +51,7 @@ public class Player extends Entity {
         this.timeAnim = 5;
         this.PLAYER_SIZE = 64;
         this.checkpointX = this.checkpointY = 0;
+        this.direction = 0;
         
         switch(Integer.parseInt(Configs.getInstance().getConfigValue("Spicies")))
         {
@@ -178,6 +180,7 @@ public class Player extends Entity {
         }else{
             if(listener.mouseX + this.cam.x < (int)this.getBounds().x){
                 //Right Pose
+                this.direction = 1;
                 if(listener.slow.enabled)
                     this.velX = (-(Defines.SPEED + this.difficulty))/2;
                 else
@@ -197,6 +200,7 @@ public class Player extends Entity {
             }
             else if(listener.mouseX + this.cam.x > (int)this.getBounds().x + this.PLAYER_SIZE){
                 //Left Pose
+                this.direction = 0;
                 if(listener.slow.enabled)
                     this.velX = (Defines.SPEED + this.difficulty)/2;
                 else
@@ -217,7 +221,6 @@ public class Player extends Entity {
             }
             else if(listener.mouseX + this.cam.x < (int)this.getBounds().x + this.getBounds().width && listener.mouseX + this.cam.x > (int)this.getBounds().x){
                 //Stand Pose
-                
                 this.velX = 0;
                 
                 if(this.timeAnim == 0){
