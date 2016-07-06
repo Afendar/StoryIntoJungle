@@ -26,11 +26,13 @@ import ld34.Defines;
 import ld34.Game;
 import ld34.TimerThread;
 import level.Level;
+import profiler.Profiler;
 
 public class GameScene extends Scene {
 
     public Font font, fontS, fontM, fontB, fontSM;
     public Player player;
+    public Profiler profiler;
     public Level level;
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnBack, pausemsg, btnContinue;
@@ -60,6 +62,8 @@ public class GameScene extends Scene {
         
         this.cam = new Camera(0, 0, w, h, this.level);
         this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")));
+        
+        this.profiler = new Profiler();
         
         this.level.addPlayer(this.player);
         
@@ -157,10 +161,14 @@ public class GameScene extends Scene {
     
     @Override
     public Scene update() {
-        if(this.game.listener.mouseExited){
+        if(this.game.listener.mouseExited || this.game.listener.pause.enabled){
             return this;
         }
-            
+        
+        if(this.game.listener.profiler.enabled){
+            this.profiler.toggleVisible();
+        }
+        
         if(this.player.win){
             this.player.checkpointX = 0;
             reinit(1);
@@ -245,7 +253,9 @@ public class GameScene extends Scene {
             else if(this.player.getPosX() < this.glueX - (this.background.getWidth()/2))
             {
                 if(this.glueX > 0)
+                {
                     this.glueX -= 2 * this.backgroundBottom.getWidth();
+                }
             }
             if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueX2 + 1.5 * this.backgroundBottom2.getWidth())
             {
@@ -254,37 +264,43 @@ public class GameScene extends Scene {
             else if(this.player.getPosX() < this.glueX2 - (this.background2.getWidth()/2))
             {
                 if(this.glueX2 > this.background.getWidth())
+                {
                     this.glueX2 -= 2 * this.backgroundBottom2.getWidth();
+                }
             }
             
             g.drawImage(this.backgroundBottom, (int)(this.glueX - this.cam.x), this.h - this.backgroundBottom.getHeight(), null);
             g.drawImage(this.backgroundBottom2, (int)(this.glueX2 - this.cam.x), this.h - this.backgroundBottom2.getHeight(), null);
             
-            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueTopX + 1.5 * this.backgroundTop.getWidth() - (this.cam.x/2))
+            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueTopX + 1.5 * this.backgroundTop.getWidth() - (this.cam.x/4))
             {
                 this.glueTopX += 2 * this.backgroundTop.getWidth();
             }
-            else if(this.player.getPosX() < this.glueTopX - (this.background.getWidth()/2) - (this.cam.x/2))
+            else if(this.player.getPosX() < this.glueTopX - (this.background.getWidth()/2) - (this.cam.x/4))
             {
                 if(this.glueTopX > 0)
+                {
                     this.glueTopX -= 2 * this.backgroundTop.getWidth();
+                }
             }
-            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueTopX2 + 1.5 * this.backgroundTop2.getWidth() - (this.cam.x/2))
+            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueTopX2 + 1.5 * this.backgroundTop2.getWidth() - (this.cam.x/4))
             {
                 this.glueTopX2 += 2 * this.backgroundTop2.getWidth();
             }
-            else if(this.player.getPosX() < this.glueTopX2 - (this.backgroundTop2.getWidth()/2) - (this.cam.x/2))
+            else if(this.player.getPosX() < this.glueTopX2 - (this.backgroundTop2.getWidth()/2) - (this.cam.x/4))
             {
                 if(this.glueTopX2 > this.background.getWidth())
+                {
                     this.glueTopX2 -= 2 * this.backgroundTop2.getWidth();
+                }
             }
             
-            g2d.translate(-this.cam.x/2, 0);
+            g2d.translate(-this.cam.x/4, 0);
             
             g.drawImage(this.backgroundTop, (int)(this.glueTopX - (this.cam.x)), this.h - this.backgroundTop.getHeight(), null);
             g.drawImage(this.backgroundTop2, (int)(this.glueTopX2 - (this.cam.x)), this.h - this.backgroundTop2.getHeight(), null);
             
-            g2d.translate(this.cam.x/2, 0);
+            g2d.translate(this.cam.x/4, 0);
             
             
             g2d.translate(-this.cam.x, -this.cam.y);
@@ -357,10 +373,8 @@ public class GameScene extends Scene {
         if(f.exists() && !f.isDirectory()){
             //save best scores
             try{
-                
                 String line = null;
                 ArrayList<String> savedScores = new ArrayList<>();
-
                 BufferedReader br = new BufferedReader(new FileReader(this.bestScores));
 
                 int index = 0;
@@ -378,7 +392,8 @@ public class GameScene extends Scene {
                 int initSize = savedScores.size();
                 
                 if(insertion != -1){
-                    if(insertion == initSize){
+                    if(insertion == initSize)
+                    {
                         savedScores.add(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
                     }
                     else{
@@ -472,9 +487,7 @@ public class GameScene extends Scene {
     
     public Scene updatePause(int elapsedTime){
         this.hoverPause();
-        
         this.timeF += elapsedTime;
-        
         return this.clickPause();
     }
     

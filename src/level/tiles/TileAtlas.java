@@ -15,4 +15,6 @@ public class TileAtlas {
     public static Pious pious = new Pious(2, 2);
     public static LevelUp levelup = new LevelUp(3, 1);
     public static Checkpoint checkpoint = new Checkpoint(0, 2);
+    public static Sand sand = new Sand(1, 3);
+    public static JumpingPad jumpingPad = new JumpingPad(2, 3);
 }

@@ -10,7 +10,7 @@ public class Screen extends JFrame {
     public Screen(){
         Game g = new Game(800, 600);
         
-        this.setTitle("Story Into Jungle - v1.1 beta");
+        this.setTitle("Story Into Jungle - v2.1 beta");
         this.add(g);
         this.getContentPane().setPreferredSize(new Dimension(800, 600));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

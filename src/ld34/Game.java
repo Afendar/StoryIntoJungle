@@ -25,7 +25,7 @@ public class Game extends Canvas implements Runnable {
     public int w;
     public int h;
     public ResourceBundle bundle;
-    public int elapsedTime, lastTime;
+    public int elapsedTime, lastTime, pauseTime;
     
     public Game(int w, int h){
         
@@ -77,6 +77,7 @@ public class Game extends Canvas implements Runnable {
         
         boolean needUpdate = true;
         this.lastTime = TimerThread.MILLI;
+        this.pauseTime= 0;
         
         while(this.running)
         {
@@ -117,12 +118,12 @@ public class Game extends Canvas implements Runnable {
         this.requestFocus();
         this.elapsedTime = TimerThread.MILLI - this.lastTime;
         this.lastTime = TimerThread.MILLI;
+        if(this.paused  && this.gs instanceof GameScene){
+            this.gs = ((GameScene)(this.gs)).updatePause(this.elapsedTime);
+        }
         
         if(this.hasFocus() && !this.paused){
             this.gs = this.gs.update();
-        }
-        if(this.paused && this.gs instanceof GameScene){
-            this.gs = ((GameScene)(this.gs)).updatePause(this.elapsedTime);
         }
         this.listener.update();
     }
@@ -140,14 +141,22 @@ public class Game extends Canvas implements Runnable {
         
         this.gs.render(g);
         
-        if(     (!this.hasFocus() && this.gs instanceof GameScene) || 
-                (this.listener.mouseExited && this.gs instanceof GameScene) ||
-                (this.paused && this.gs instanceof GameScene)
-            ){
+        if(!this.paused && (!this.hasFocus() || this.listener.mouseExited || this.listener.pause.enabled) && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
+        {
+            this.pauseTime = TimerThread.MILLI;
             this.paused = true;
-            ((GameScene)(this.gs)).renderPause(g);
+        }
+        if(this.paused && this.listener.pause.enabled && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
+        {
+            this.pauseTime = TimerThread.MILLI;
+            this.paused = false;
         }
 
+        if(this.paused && this.gs instanceof GameScene)
+        {
+            ((GameScene)(this.gs)).renderPause(g);
+        }
+        
         g.dispose();
         bs.show();
     }

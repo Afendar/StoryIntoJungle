@@ -29,6 +29,8 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     public Action jump = new Action();
     public Action slow = new Action();
     public Action next = new Action();
+    public Action profiler = new Action();
+    public Action pause = new Action();
     public int mouseX, mouseY, mouseClickCount;
     public boolean mouseExited, mousePressed;
     public KeyEvent e = null;
@@ -56,7 +58,12 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
             jump.switched(enabled);
         if(e.getKeyCode() == Integer.parseInt(Configs.getInstance().getConfigValue("Walk")))
             slow.switched(enabled);
-        if(e.getKeyCode() == KeyEvent.VK_ENTER) next.switched(enabled);
+        if(e.getKeyCode() == KeyEvent.VK_ENTER) 
+            next.switched(enabled);
+        if(e.getKeyCode() == KeyEvent.VK_F3)
+            profiler.switched(enabled);
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            pause.switched(enabled);
     }
     
     @Override
