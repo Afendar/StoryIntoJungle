@@ -157,6 +157,7 @@ public class Player extends Entity {
         
         //checkpoint
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 8){
+            TileAtlas.atlas.get(this.level.getTile(x1, y1)).update();
             this.checkpointX = x1 * Defines.TILE_SIZE;
             this.checkpointY = y1 * Defines.TILE_SIZE;
         }
@@ -180,6 +181,9 @@ public class Player extends Entity {
         }else{
             if(listener.mouseX + this.cam.x < (int)this.getBounds().x){
                 //Right Pose
+                if(this.direction == 0){
+                    this.timeAnim = 0;
+                }
                 this.direction = 1;
                 if(listener.slow.enabled)
                     this.velX = (-(Defines.SPEED + this.difficulty))/2;
@@ -200,6 +204,9 @@ public class Player extends Entity {
             }
             else if(listener.mouseX + this.cam.x > (int)this.getBounds().x + this.PLAYER_SIZE){
                 //Left Pose
+                if(this.direction == 1){
+                    this.timeAnim = 0;
+                }
                 this.direction = 0;
                 if(listener.slow.enabled)
                     this.velX = (Defines.SPEED + this.difficulty)/2;

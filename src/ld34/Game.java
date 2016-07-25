@@ -26,12 +26,13 @@ public class Game extends Canvas implements Runnable {
     public int h;
     public ResourceBundle bundle;
     public int elapsedTime, lastTime, pauseTime;
+    public Runtime instance;
     
     public Game(int w, int h){
         
         this.running = false;
         this.paused = false;
-        
+        this.instance = Runtime.getRuntime();
         this.w = w;
         this.h = h;
         this.setMinimumSize(new Dimension(w, h));
@@ -107,6 +108,8 @@ public class Game extends Canvas implements Runnable {
             
             if(System.currentTimeMillis() - startTime >= 1000)
             {
+                System.out.println("Used Memory: "
+                        + (instance.totalMemory() - instance.freeMemory()) / 1024 + " Ko");
                 System.out.println("FPS : " + frame);
                 frame = 0;
                 startTime = System.currentTimeMillis();

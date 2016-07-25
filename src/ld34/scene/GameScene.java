@@ -1,5 +1,6 @@
 package ld34.scene;
 
+import audio.Sound;
 import entity.Player;
 import java.awt.Color;
 import java.awt.Font;
@@ -46,7 +47,7 @@ public class GameScene extends Scene {
     public int timeF = 0;
     public int minutes = 0;
     public int secondes = 0;
-    public int maxTimeHardcore = 1;
+    public int maxTimeHardcore = 1, soundPlayed, timeSound;
     public boolean timer = false;
     
     public GameScene(int w, int h, Game game){
@@ -119,6 +120,10 @@ public class GameScene extends Scene {
         
         this.glueX2 = this.backgroundBottom.getWidth();
         this.glueTopX2 = this.backgroundTop2.getWidth();
+        
+        this.timeSound = TimerThread.MILLI;
+        this.soundPlayed = 1;
+        Sound.sf_jungle01.play();
     }
 
     public void reinit(int lvl){
@@ -163,6 +168,19 @@ public class GameScene extends Scene {
     public Scene update() {
         if(this.game.listener.mouseExited || this.game.listener.pause.enabled){
             return this;
+        }
+        
+        if(this.soundPlayed == 1 && ( TimerThread.MILLI - this.timeSound ) > 36000)
+        {
+            this.timeSound = TimerThread.MILLI;
+            this.soundPlayed = 2;
+            Sound.sf_jungle01.play();
+        }
+        else if(this.soundPlayed == 2 && ( TimerThread.MILLI - this.soundPlayed ) > 28000)
+        {
+            this.timeSound = TimerThread.MILLI;
+            this.soundPlayed = 1;
+            Sound.sf_jungle02.play();
         }
         
         if(this.game.listener.profiler.enabled){

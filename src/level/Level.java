@@ -29,6 +29,7 @@ public class Level {
     public static final int PURPLE = 10354846;//RGB(158, 0, 158) LEVELUP
     public static final int PINK = 16711808;//RGB(255, 0, 128) CHECKPOINTS
     public static final int SAND = 15721648;//RGB(239, 228, 176) SAND
+    public static final int CAGE = 8355711;//RGB(127, 127, 127) CAGE
     
     public Level(int nbLevel){
         this.nbLevel = nbLevel;
@@ -110,6 +111,9 @@ public class Level {
                     case 9:
                         TileAtlas.sand.render(g, i, j);
                         break;
+                    case 11:
+                        TileAtlas.cage.render(g, i, j);
+                        break;
                     default:
                         break;
                 }
@@ -182,6 +186,9 @@ public class Level {
                             break;
                         case SAND:
                             map[col][row] = TileAtlas.sand.ID;
+                            break;
+                        case CAGE:
+                            map[col][row] = TileAtlas.cage.ID;
                             break;
                         default:
                             break;

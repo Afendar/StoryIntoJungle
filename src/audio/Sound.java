@@ -19,6 +19,8 @@ public class Sound {
     public static Sound death = new Sound("/death.wav");
     public static Sound jump = new Sound("/jump.wav");
     public static Sound levelup = new Sound("/levelup.wav");
+    public static Sound sf_jungle01 = new Sound("/jungle01.wav");
+    public static Sound sf_jungle02 = new Sound("/jungle02.wav");
     
     public String path;
     public int volume;
@@ -62,7 +64,8 @@ public class Sound {
                     int nBytesWritten = sourceLine.write(abData, 0, nBytesRead);
                 }
             }
-            
+            sourceLine.drain();
+            sourceLine.close();
         }catch(IOException|UnsupportedAudioFileException|LineUnavailableException e)
         {
             e.printStackTrace();
