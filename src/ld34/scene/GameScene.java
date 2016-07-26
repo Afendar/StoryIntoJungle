@@ -123,7 +123,7 @@ public class GameScene extends Scene {
         
         this.timeSound = TimerThread.MILLI;
         this.soundPlayed = 1;
-        Sound.sf_jungle01.play();
+        new Thread(Sound.sf_jungle01::play).start();
     }
 
     public void reinit(int lvl){
@@ -174,13 +174,13 @@ public class GameScene extends Scene {
         {
             this.timeSound = TimerThread.MILLI;
             this.soundPlayed = 2;
-            Sound.sf_jungle01.play();
+            new Thread(Sound.sf_jungle01::play).start();
         }
         else if(this.soundPlayed == 2 && ( TimerThread.MILLI - this.soundPlayed ) > 28000)
         {
             this.timeSound = TimerThread.MILLI;
             this.soundPlayed = 1;
-            Sound.sf_jungle02.play();
+            new Thread(Sound.sf_jungle02::play).start();
         }
         
         if(this.game.listener.profiler.enabled){

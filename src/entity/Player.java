@@ -116,7 +116,7 @@ public class Player extends Entity {
         int y1 = (int)(this.getBounds().y-1 + this.getBounds().height) / Defines.TILE_SIZE;
         
         if(listener.jump.enabled && !this.isJumping){
-            Sound.jump.play();
+            new Thread(Sound.jump::play).start();
             this.isJumping = true;
             this.velY = - 6;
         }
@@ -146,13 +146,13 @@ public class Player extends Entity {
                 || TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 5){
             this.score += TileAtlas.atlas.get(this.level.getTile(x1, y1)).bonus;
             this.level.removeTile(x1, y1);
-            Sound.bonus.play();
+            new Thread(Sound.bonus::play).start();
         }
         else if(TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 4
                 || TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 5){
             this.score += TileAtlas.atlas.get(this.level.getTile(x0, y1)).bonus;
             this.level.removeTile(x0, y1);
-            Sound.bonus.play();  
+            new Thread(Sound.bonus::play).start();  
         }
         
         //checkpoint
@@ -165,7 +165,7 @@ public class Player extends Entity {
         //end level test
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 7){
             this.win = true;
-            Sound.levelup.play();
+            new Thread(Sound.levelup::play).start();
         }
         
         //spikes
@@ -173,7 +173,7 @@ public class Player extends Entity {
                 TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 6 ||
                 TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 6){
             this.isDead = true;
-            Sound.death.play();
+            new Thread(Sound.death::play).start();
         }
         
         if(listener.mouseExited){
@@ -297,7 +297,7 @@ public class Player extends Entity {
             this.posY = this.level.h - this.getBounds().height;
             this.isDead = true;
             this.sprite = this.spritesheet.getSubimage(3 * this.PLAYER_SIZE, 10, this.PLAYER_SIZE, this.PLAYER_SIZE);
-            Sound.death.play();
+            new Thread(Sound.death::play).start();
             return false;
         }
         return true;

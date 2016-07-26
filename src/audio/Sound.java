@@ -31,6 +31,7 @@ public class Sound {
     }
     
     public void play(){
+        this.volume = Integer.parseInt(Configs.getInstance().getConfigValue("Sound"));
         try{
             URL url = this.getClass().getResource(this.path);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
