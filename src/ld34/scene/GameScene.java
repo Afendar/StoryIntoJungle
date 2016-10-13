@@ -50,12 +50,17 @@ public class GameScene extends Scene {
     public int maxTimeHardcore = 1, soundPlayed, timeSound;
     public boolean timer = false;
     
-    public GameScene(int w, int h, Game game){
+    public GameScene(int w, int h, Game game, int lvl){
         super(w, h, game);
         
-        this.nbLevel = 1;
+        this.nbLevel = lvl;
         this.displayEnd = false;
         this.displayStart = true;
+        System.out.println("level:"+this.nbLevel);
+        if(this.nbLevel > 1){
+            this.displayStart = false;
+        }
+        
         
         this.level = new Level(this.nbLevel);
         this.level.setNbTilesInScreenX(game.w);
@@ -112,6 +117,9 @@ public class GameScene extends Scene {
         this.selectedItem = 0;
         
         this.alpha = 255;
+        if(lvl > 1){
+            this.alpha = 0;
+        }
         this.alphaMax = 128;
         if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5){
             this.timer = true;
@@ -126,12 +134,16 @@ public class GameScene extends Scene {
         new Thread(Sound.sf_jungle01::play).start();
     }
 
+    public GameScene(int w, int h, Game game){
+        this(w, h, game, 1);
+    }
+    
     public void reinit(int lvl){
         this.alpha = 0;
         this.timeF = TimerThread.MILLI;
         
-        if(this.nbLevel < 3 || this.player.isDead){
-            this.nbLevel+= lvl;
+        if(this.nbLevel < Defines.LEVEL_MAX || this.player.isDead){
+            this.nbLevel += lvl;
             this.level = new Level(this.nbLevel);
             this.level.setNbTilesInScreenX(game.w);
             this.level.setNbTilesInScreenY(game.h);
@@ -162,6 +174,7 @@ public class GameScene extends Scene {
             this.displayEnd = true;
             this.player.win = false;
         }
+        System.out.println("alpha:" + this.alpha);
     }
     
     @Override
@@ -189,7 +202,12 @@ public class GameScene extends Scene {
         
         if(this.player.win){
             this.player.checkpointX = 0;
-            reinit(1);
+            if(this.nbLevel < Defines.LEVEL_MAX){
+                return new MapScene(this.w, this.h, this.game, this.nbLevel);
+            }
+            else{
+                reinit(this.nbLevel);
+            }
         }
         else{
             if(this.displayEnd){
@@ -358,6 +376,7 @@ public class GameScene extends Scene {
             }
             
             if(this.player.isDead){
+                System.out.println("alpha:" + this.alpha);
                 if(this.alpha < this.alphaMax){
                     this.alpha += 1;
                 }

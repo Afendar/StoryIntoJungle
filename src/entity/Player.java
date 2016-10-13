@@ -11,6 +11,7 @@ import ld34.Camera;
 import ld34.Configs;
 import ld34.Defines;
 import ld34.InputsListeners;
+import ld34.TimerThread;
 import level.Level;
 import level.tiles.TileAtlas;
 
@@ -19,18 +20,19 @@ public class Player extends Entity {
     public Level level;
     public float velX, velY;
     protected boolean isFalling;
-    protected boolean isJumping;
+    protected boolean isJumping, renderJump, renderJumpEnd;
     InputsListeners listener;
-    BufferedImage spritesheet, sprite;
+    BufferedImage spritesheet, sprite, spritefx, spritesheetfx, spritesheetfxend, spritefxend;
     public Camera cam;
     public boolean isDead, win;
     public int difficulty;
     public int score;
-    public String sex, age, spicies;
+    public String sex, age, species;
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
     public int checkpointX, checkpointY;
-    public int direction;
+    public int direction, timeJAnim, offset, oldposX, oldposY, offset2, timeJEndAnim;
+    public Thread jumpParticles, endJumpParticles;
     
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
@@ -40,6 +42,7 @@ public class Player extends Entity {
         this.isFalling = true;
         this.isJumping = false;
         this.isDead = false;
+        this.renderJump = this.renderJumpEnd = false;
         this.level = level;
         this.win = false;
         this.listener = listener;
@@ -51,15 +54,16 @@ public class Player extends Entity {
         this.timeAnim = 5;
         this.PLAYER_SIZE = 64;
         this.checkpointX = this.checkpointY = 0;
-        this.direction = 0;
+        this.direction = this.timeJEndAnim = 0;
+        this.timeJAnim = offset = oldposX = oldposY = offset2 = 0;
         
         switch(Integer.parseInt(Configs.getInstance().getConfigValue("Spicies")))
         {
             case 0:
-                this.spicies = "panda";
+                this.species = "panda";
                 break;
             case 1:
-                this.spicies = "redpanda";
+                this.species = "redpanda";
                 break;
         }
         
@@ -85,12 +89,17 @@ public class Player extends Entity {
         }
         
         try{
-            URL url = this.getClass().getResource("/"+this.spicies+"_"+this.sex+"_"+this.age+".png");
+            URL url = this.getClass().getResource("/"+this.species+"_"+this.sex+"_"+this.age+".png");
             this.spritesheet = ImageIO.read(url);
+            url = this.getClass().getResource("/effects_jump.png");
+            this.spritesheetfx = ImageIO.read(url);
+            url = this.getClass().getResource("/effects_end.png");
+            this.spritesheetfxend = ImageIO.read(url);
         }catch(IOException e){
             System.out.println(e.getMessage());
         }
-        
+        this.spritefx = this.spritesheetfx.getSubimage(0, 0, 60, 32);
+        this.spritefxend = this.spritesheetfxend.getSubimage(0, 0, 60, 32);
         this.sprite = this.spritesheet.getSubimage(this.animX, this.animY*this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
     }
 
@@ -117,6 +126,11 @@ public class Player extends Entity {
         
         if(listener.jump.enabled && !this.isJumping){
             new Thread(Sound.jump::play).start();
+            this.renderJump = true;
+            this.offset = 0;
+            this.oldposX = (int)this.posX;
+            this.oldposY = (int)this.posY;
+            this.timeJAnim = TimerThread.MILLI;
             this.isJumping = true;
             this.velY = - 6;
         }
@@ -263,7 +277,40 @@ public class Player extends Entity {
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass() ||
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass())){
             this.isJumping = false;
+            this.renderJump = false;
+            
+            if(this.velY > 0){
+                this.renderJumpEnd = true;
+                this.offset2 = 0;
+                this.oldposX = (int)this.posX;
+                this.oldposY = (int)this.posY;
+                this.timeJEndAnim = TimerThread.MILLI;
+            }
+            else
+            {
+                this.renderJumpEnd = false;
+            }
             this.velY = 0;
+        }
+        
+        if(this.renderJump && TimerThread.MILLI - this.timeJAnim > 80){
+            this.timeJAnim = TimerThread.MILLI;
+            this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
+            this.offset++;
+            if(this.offset > 4){
+                this.offset = 0;
+                this.renderJump = false;
+            }
+        }
+        
+        if(this.renderJumpEnd && TimerThread.MILLI - this.timeJEndAnim > 80){
+            this.timeJEndAnim = TimerThread.MILLI;
+            this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
+            this.offset2++;
+            if(this.offset2 > 4){
+                this.offset2 = 0;
+                this.renderJumpEnd = false;
+            }
         }
         
         if(!this.move(velX, velY)){
@@ -271,6 +318,7 @@ public class Player extends Entity {
             this.velY = 0;
             this.isFalling = false;
             this.isJumping = false;
+            this.renderJump = false;
         }
         else{
             this.isFalling = true;
@@ -305,6 +353,13 @@ public class Player extends Entity {
     
     @Override
     public void render(Graphics g) {
+        if(this.renderJump){
+           g.drawImage(spritefx, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
+        }
+        if(this.renderJumpEnd){
+            g.drawImage(spritefxend, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
+        }
+        
         g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
     }
     
@@ -323,7 +378,7 @@ public class Player extends Entity {
         }
         
         try{
-            URL url = this.getClass().getResource("/"+this.spicies+"_"+this.sex+"_"+this.age+".png");
+            URL url = this.getClass().getResource("/"+this.species+"_"+this.sex+"_"+this.age+".png");
             this.spritesheet = ImageIO.read(url);
         }catch(IOException e){
             System.out.println(e.getMessage());

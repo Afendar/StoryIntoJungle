@@ -5,3 +5,4 @@ build/*
 manifest.mf
 settings.dat
 /dist/
+*.log

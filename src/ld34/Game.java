@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import ld34.scene.GameScene;
+import ld34.scene.MapScene;
 import ld34.scene.MenuScene;
 import ld34.scene.Scene;
 
@@ -27,6 +28,7 @@ public class Game extends Canvas implements Runnable {
     public ResourceBundle bundle;
     public int elapsedTime, lastTime, pauseTime;
     public Runtime instance;
+    public boolean DEBUG_MODE = false;
     
     public Game(int w, int h){
         
@@ -129,6 +131,11 @@ public class Game extends Canvas implements Runnable {
             this.gs = this.gs.update();
         }
         this.listener.update();
+        
+        if(this.listener.profiler.enabled )
+        {
+            this.DEBUG_MODE = !this.DEBUG_MODE;
+        }
     }
     
     public void render(){
@@ -160,7 +167,17 @@ public class Game extends Canvas implements Runnable {
             ((GameScene)(this.gs)).renderPause(g);
         }
         
+        if(this.DEBUG_MODE)
+        {
+            this.renderDebug();
+        }
+        
         g.dispose();
         bs.show();
+    }
+    
+    public void renderDebug()
+    {
+        
     }
 }
