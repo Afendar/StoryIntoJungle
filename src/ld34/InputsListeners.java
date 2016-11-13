@@ -12,6 +12,7 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     public class Action{
         
         public boolean enabled, typed;
+        public int pressCpt, absorbCpt;
         
         public Action(){
             actions.add(this);
@@ -20,6 +21,19 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
         public void switched(boolean enabled){
             if(enabled != this.enabled)
                 this.enabled = enabled;
+            if(enabled){
+                this.pressCpt++;
+            }
+        }
+        
+        public void update(){
+            if(this.absorbCpt < this.pressCpt){
+                this.absorbCpt++;
+                this.typed = true;
+            }
+            else{
+                this.typed = false;
+            }
         }
     }
     
@@ -31,6 +45,7 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     public Action next = new Action();
     public Action profiler = new Action();
     public Action pause = new Action();
+    public Action minimap = new Action();
     public int mouseX, mouseY, mouseClickCount;
     public boolean mouseExited, mousePressed;
     public KeyEvent e = null;
@@ -51,6 +66,9 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     
     public void update(){
         this.mouseClickCount = 0;
+        for(int i=0; i<this.actions.size();i++){
+            actions.get(i).update();
+        }
     }
     
     public void processKey(KeyEvent e, boolean enabled){
@@ -64,6 +82,8 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
             profiler.switched(enabled);
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
             pause.switched(enabled);
+        if(e.getKeyCode() == KeyEvent.VK_M)
+            minimap.switched(enabled);
     }
     
     @Override

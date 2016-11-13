@@ -1,5 +1,6 @@
 package ld34.scene;
 
+import audio.Sound;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -124,7 +125,7 @@ public class OptionsScene extends Scene {
     }
 
     @Override
-    public Scene update(){
+    public Scene update(double dt){
         processHover();
         
         if(this.game.listener.e != null){
@@ -296,19 +297,24 @@ public class OptionsScene extends Scene {
         if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 214 &&
                 mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 70){
             //if btn Back
+            if(this.selectedItem != 1)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 1;
         }
         else if(mouseX > 21 && mouseX < 71 &&
                 mouseY > 180 && mouseY < 230){
+            if(this.selectedItem != 2)
             this.selectedItem = 2;
         }
         else if(mouseX > 21 && mouseX < 71 &&
                 mouseY > 260 && mouseY < 310){
+            if(this.selectedItem != 3)
             this.selectedItem = 3;
         }
         else if(mouseX > 21 && mouseX < 71 &&
                 mouseY > 340 && mouseY < 390){
             //if btn controls
+            if(this.selectedItem != 4)
             this.selectedItem = 4;
         }
         else{
@@ -324,9 +330,11 @@ public class OptionsScene extends Scene {
             
             switch(this.currentTab){
                 case 0:
+                    new Thread(Sound.select::play).start();
                     this.nameField.processClick(this.game.listener.mouseX, this.game.listener.mouseY);
                     break;
                 case 1:
+                    new Thread(Sound.select::play).start();
                     break;
                 case 2:
                     this.processButtonsClick();

@@ -54,7 +54,7 @@ public class EndScene extends Scene {
     }
     
     @Override
-    public Scene update() {
+    public Scene update(double dt) {
         processHover();
 
         return processClick();

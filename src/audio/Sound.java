@@ -21,6 +21,8 @@ public class Sound {
     public static Sound levelup = new Sound("/levelup.wav");
     public static Sound sf_jungle01 = new Sound("/jungle01.wav");
     public static Sound sf_jungle02 = new Sound("/jungle02.wav");
+    public static Sound hover = new Sound("/hover3.wav");
+    public static Sound select = new Sound("/select3.wav");
     
     public String path;
     public int volume;
@@ -43,10 +45,6 @@ public class Sound {
             
             SourceDataLine sourceLine = (SourceDataLine) AudioSystem.getLine(info);
             sourceLine.open(audioFormat);
-            
-            //clip.open(audioInputStream);
-            
-            //FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             
             if(sourceLine.isControlSupported(FloatControl.Type.MASTER_GAIN)){
                 FloatControl gainControl = (FloatControl) sourceLine.getControl(FloatControl.Type.MASTER_GAIN);

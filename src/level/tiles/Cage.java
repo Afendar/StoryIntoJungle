@@ -21,7 +21,7 @@ public class Cage extends Tile {
         return false;
     }
     
-    public void update(){
+    public void update(double dt){
         
     }
     

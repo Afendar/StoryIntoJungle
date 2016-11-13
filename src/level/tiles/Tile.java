@@ -32,7 +32,7 @@ public abstract class Tile {
     }
     
     public abstract boolean canPass();
-    public abstract void update();
+    public abstract void update(double dt);
     
     public void render(Graphics g, int x, int y){
         g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);

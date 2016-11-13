@@ -1,18 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package level.tiles;
 
-/**
- *
- * @author Mickaël
- */
 public class Sand extends Tile {
+    
+    public boolean startBreak;
+    public double dt;
     
     public Sand(int imgX, int imgY){
         super(imgX, imgY, 9);
+        this.startBreak = false;
+        this.dt = 0;
     }
     
     @Override
@@ -20,8 +16,19 @@ public class Sand extends Tile {
         return false;
     }
     
-    @Override
-    public void update(){
+    public void startBreak()
+    {
+        this.startBreak = true;
+    }
+    
+    public void update(double dt){
         
+        if(this.startBreak){
+            this.dt += dt;
+            if(this.dt % 2 > 1.5)
+            {
+                
+            }
+        }
     }
 }

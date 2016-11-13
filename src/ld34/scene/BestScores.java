@@ -5,6 +5,7 @@
  */
 package ld34.scene;
 
+import audio.Sound;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -65,7 +66,7 @@ public class BestScores extends Scene {
         loadScores();
     }
     
-    public Scene update() {
+    public Scene update(double dt) {
         
         this.processHover();
         
@@ -79,12 +80,13 @@ public class BestScores extends Scene {
         if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 214 &&
                 mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 70){
             //if btn Back
+            if(this.selectedItem != 1)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 1;
         }
         else{
             this.selectedItem = 0;
         }
-        
     }
     
     public Scene processClick(){
@@ -94,6 +96,7 @@ public class BestScores extends Scene {
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItem){
                 case 1:
+                    new Thread(Sound.select::play).start();
                     Configs.getInstance().saveConfig();
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;

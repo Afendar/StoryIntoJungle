@@ -27,7 +27,7 @@ public class Checkpoint extends Tile{
     }
 
     @Override
-    public void update() {
+    public void update(double dt) {
         this.animated = true;
         this.timeAnim = TimerThread.MILLI;
         this.counter = 0;

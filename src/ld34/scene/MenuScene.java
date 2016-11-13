@@ -1,5 +1,6 @@
 package ld34.scene;
 
+import audio.Sound;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -65,7 +66,7 @@ public class MenuScene extends Scene {
     }
 
     @Override
-    public Scene update() {
+    public Scene update(double dt) {
         
         processHover();
 
@@ -169,26 +170,36 @@ public class MenuScene extends Scene {
         if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 214 &&
                 mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 70){
             //if btn new game
+            if(this.selectedItem != 1)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 1;
         }
         else if(mouseX > this.btnCoords[1][0] && mouseX < this.btnCoords[1][0] + 214 &&
                 mouseY > this.btnCoords[1][1] && mouseY < this.btnCoords[1][1] + 70){
             //if btn settings
+            if(this.selectedItem != 2)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 2;
         }
         else if(mouseX > this.btnCoords[2][0] && mouseX < this.btnCoords[2][0] + 214 &&
                 mouseY > this.btnCoords[2][1] && mouseY < this.btnCoords[2][1] + 70){
             //if btn meilleur scores
+            if(this.selectedItem != 3)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 3;
         }
         else if(mouseX > this.btnCoords[3][0] && mouseX < this.btnCoords[3][0] + 107 &&
                 mouseY > this.btnCoords[3][1] && mouseY < this.btnCoords[3][1] + 40){
             //if btn credits
+            if(this.selectedItem != 4)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 4;
         }
         else if(mouseX > this.btnCoords[4][0] && mouseX < this.btnCoords[4][0] + 107 &&
                 mouseY > this.btnCoords[4][1] && mouseY < this.btnCoords[4][1] + 40){
             //if btn quit
+            if(this.selectedItem != 5)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 5;
         }
         else{
@@ -203,18 +214,23 @@ public class MenuScene extends Scene {
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItem){
                 case 1:
+                    new Thread(Sound.select::play).start();
                     currentScene =new GameScene(this.w, this.h, this.game);
                     break;
                 case 2:
+                    new Thread(Sound.select::play).start();
                     currentScene = new OptionsScene(this.w, this.h, this.game);
                     break;
                 case 3:
+                    new Thread(Sound.select::play).start();
                     currentScene = new BestScores(this.w, this.h, this.game);
                     break;
                 case 4:
+                    new Thread(Sound.select::play).start();
                     currentScene = new CreditsScene(this.w, this.h, this.game);
                     break;
                 case 5:
+                    new Thread(Sound.select::play).start();
                     System.exit(0);
                     break;
                 default:

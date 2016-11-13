@@ -13,6 +13,7 @@ import ld34.Defines;
 import ld34.InputsListeners;
 import ld34.TimerThread;
 import level.Level;
+import level.tiles.Sand;
 import level.tiles.TileAtlas;
 
 public class Player extends Entity {
@@ -104,7 +105,7 @@ public class Player extends Entity {
     }
 
     @Override
-    public void update() {
+    public void update(double dt) {
 
         if(this.isDead){
             this.sprite = this.spritesheet.getSubimage(3*this.PLAYER_SIZE, 10, this.PLAYER_SIZE, this.PLAYER_SIZE);
@@ -155,6 +156,26 @@ public class Player extends Entity {
             this.velX = 0; 
         }
         
+        //Sand
+        if(y1 + 1 <= this.level.nbTilesH - 1 && 
+                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9){
+            Sand sand = (Sand)TileAtlas.atlas.get(this.level.getTile(x1, y1+1));
+            sand.startBreak();
+            this.isJumping = true;
+            this.isFalling = true;
+            this.velX = 0;
+            this.velY = 8;
+        }
+        else if(y1 + 1 <= this.level.nbTilesH - 1 && 
+                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 9){
+            Sand sand = (Sand)TileAtlas.atlas.get(this.level.getTile(x0, y1+1));
+            sand.startBreak();
+            this.isJumping = true;
+            this.isFalling = true;
+            this.velY = 8;  
+            this.velX = 0; 
+        }
+        
         //bonus test
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 4
                 || TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 5){
@@ -171,7 +192,7 @@ public class Player extends Entity {
         
         //checkpoint
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 8){
-            TileAtlas.atlas.get(this.level.getTile(x1, y1)).update();
+            TileAtlas.atlas.get(this.level.getTile(x1, y1)).update(dt);
             this.checkpointX = x1 * Defines.TILE_SIZE;
             this.checkpointY = y1 * Defines.TILE_SIZE;
         }
@@ -258,7 +279,6 @@ public class Player extends Entity {
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
         }
-        
         //LEFT
         if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
                 (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE)).canPass() || 
@@ -277,6 +297,7 @@ public class Player extends Entity {
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass() ||
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass())){
             this.isJumping = false;
+            this.isFalling = false;
             this.renderJump = false;
             
             if(this.velY > 0){
@@ -285,10 +306,6 @@ public class Player extends Entity {
                 this.oldposX = (int)this.posX;
                 this.oldposY = (int)this.posY;
                 this.timeJEndAnim = TimerThread.MILLI;
-            }
-            else
-            {
-                this.renderJumpEnd = false;
             }
             this.velY = 0;
         }

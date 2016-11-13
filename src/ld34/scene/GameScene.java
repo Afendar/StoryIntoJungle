@@ -25,6 +25,7 @@ import ld34.Camera;
 import ld34.Configs;
 import ld34.Defines;
 import ld34.Game;
+import ld34.Minimap;
 import ld34.TimerThread;
 import level.Level;
 import profiler.Profiler;
@@ -49,6 +50,7 @@ public class GameScene extends Scene {
     public int secondes = 0;
     public int maxTimeHardcore = 1, soundPlayed, timeSound;
     public boolean timer = false;
+    public Minimap minimap;
     
     public GameScene(int w, int h, Game game, int lvl){
         super(w, h, game);
@@ -60,7 +62,6 @@ public class GameScene extends Scene {
         if(this.nbLevel > 1){
             this.displayStart = false;
         }
-        
         
         this.level = new Level(this.nbLevel);
         this.level.setNbTilesInScreenX(game.w);
@@ -129,6 +130,8 @@ public class GameScene extends Scene {
         this.glueX2 = this.backgroundBottom.getWidth();
         this.glueTopX2 = this.backgroundTop2.getWidth();
         
+        this.minimap = new Minimap(this.w, this.h, (int)this.player.getPosX(), (int)this.player.getPosY(), this.level);
+        
         this.timeSound = TimerThread.MILLI;
         this.soundPlayed = 1;
         new Thread(Sound.sf_jungle01::play).start();
@@ -178,8 +181,8 @@ public class GameScene extends Scene {
     }
     
     @Override
-    public Scene update() {
-        if(this.game.listener.mouseExited || this.game.listener.pause.enabled){
+    public Scene update(double dt) {
+        if(this.game.listener.mouseExited || this.game.listener.pause.typed){
             return this;
         }
         
@@ -214,26 +217,30 @@ public class GameScene extends Scene {
                 return new EndScene(this.w, this.h, this.game);
             }
             else if(this.displayStart){
-                if(this.game.listener.next.enabled){
+                if(this.game.listener.next.typed){
                     this.displayStart = false;
                     this.alpha = 0;
                 }
                 return this;
             }
             else if(this.player.isDead){
-                if(this.game.listener.next.enabled){
+                if(this.game.listener.next.typed){
                     saveScore();
                     reinit(0);
                     this.player.isDead = false;
                     this.player.score = 0;
                 }
-                this.player.update();
+                this.player.update(dt);
             }
             else{
-                this.level.update();
+                int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
+                int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
+                if(startX < 0)startX = 0;
+                if(startY < 0)startY = 0;
+                this.level.update(dt, startX, startY);
 
-                this.player.update();
-                
+                this.player.update(dt);
+                this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
                 this.cam.update(this.player);
                 
                 if(this.minutes >= this.maxTimeHardcore)
@@ -376,7 +383,6 @@ public class GameScene extends Scene {
             }
             
             if(this.player.isDead){
-                System.out.println("alpha:" + this.alpha);
                 if(this.alpha < this.alphaMax){
                     this.alpha += 1;
                 }
@@ -400,6 +406,11 @@ public class GameScene extends Scene {
             //END REDNERING
             ///////////////////////////////////////////
             g.drawImage(this.foreground2, 0, 0, null);
+            
+            //MINIMAP RENDERING
+            if(this.game.listener.minimap.enabled){
+                minimap.render(g);
+            }
         }
     }
     
@@ -532,9 +543,13 @@ public class GameScene extends Scene {
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
         if(mouseX > this.w/3 - 107 && mouseX < this.w/3 + 107 && mouseY > this.h - 230 && mouseY < this.h - 160){
+            if(this.selectedItem != 1)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 1;
         }
         else if(mouseX > 2*this.w/3 - 107 && mouseX < 2*this.w/3 + 107 && mouseY > this.h - 230 && mouseY < this.h - 160){
+            if(this.selectedItem != 2)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 2;
         }
         else{
@@ -548,9 +563,11 @@ public class GameScene extends Scene {
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItem){
                 case 1:
+                    new Thread(Sound.select::play).start();
                     this.game.paused = false;
                     break;
                 case 2:
+                    new Thread(Sound.select::play).start();
                     this.game.paused = false;
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;

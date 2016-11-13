@@ -36,8 +36,48 @@ public class Level {
         this.loadLevel(nbLevel);
     }
     
-    public void update(){
+    public void update(double dt, int startX, int startY){
+        int endX = (startX + this.nbTilesInScreenX + 2 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 2 : this.nbTilesW;
+        int endY = (startY + this.nbTilesInScreenY + 2 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 2 : this.nbTilesH;
         
+        for(int i = startX;i<endX;i++){
+            for(int j = startY;j<endY;j++){
+                switch(this.map[i][j]){
+                    case 1:
+                        TileAtlas.floor.update(dt);
+                        break;
+                    case 2:
+                        TileAtlas.bamboo.update(dt);
+                        break;
+                    case 3:
+                        TileAtlas.bridge.update(dt);
+                        break;
+                    case 4:
+                        TileAtlas.apple.update(dt);
+                        break;
+                    case 5:
+                        TileAtlas.leaves.update(dt);
+                        break;
+                    case 6:
+                        TileAtlas.pious.update(dt);
+                        break;
+                    case 7:
+                        TileAtlas.levelup.update(dt);
+                        break;
+                    case 8:
+                        TileAtlas.checkpoint.update(dt);
+                        break;
+                    case 9:
+                        TileAtlas.sand.update(dt);
+                        break;
+                    case 11:
+                        TileAtlas.cage.update(dt);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
     
     public void setNbTilesInScreenX(int screenWidth){

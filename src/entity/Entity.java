@@ -27,7 +27,7 @@ public abstract class Entity {
         return posY;
     }
     
-    public abstract void update();
+    public abstract void update(double dt);
     public abstract void render(Graphics g);
     
 }

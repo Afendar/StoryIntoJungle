@@ -21,7 +21,7 @@ public class LevelUp extends Tile{
     }
 
     @Override
-    public void update() {
+    public void update(double dt) {
         
     }
     

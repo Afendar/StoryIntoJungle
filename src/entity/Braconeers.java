@@ -18,7 +18,7 @@ public class Braconeers extends Entity {
     }
     
     @Override
-    public void update()
+    public void update(double dt)
     {
         
     }

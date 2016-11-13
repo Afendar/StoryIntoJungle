@@ -15,7 +15,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
@@ -120,7 +119,7 @@ public class MapScene extends Scene {
         points = new ArrayList<>(25);
     }
     
-    public Scene update() {
+    public Scene update(double dt) {
         processHover();
         
         if(this.points.size() != 0)

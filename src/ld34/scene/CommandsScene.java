@@ -77,7 +77,7 @@ public class CommandsScene extends Scene {
         this.controlWalk = this.bundle.getString("ctrlWalk");
     }
     
-    public Scene update() {
+    public Scene update(double dt) {
         processHover();
         
         if(this.game.listener.e != null){

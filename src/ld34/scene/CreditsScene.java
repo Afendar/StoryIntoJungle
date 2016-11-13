@@ -1,5 +1,6 @@
 package ld34.scene;
 
+import audio.Sound;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -51,7 +52,7 @@ public class CreditsScene extends Scene {
     }
 
     @Override
-    public Scene update() {
+    public Scene update(double dt) {
         
         processHover();
         
@@ -107,6 +108,8 @@ public class CreditsScene extends Scene {
         if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 214 &&
                 mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 70){
             //if btn Back
+            if(this.selectedItem != 1)
+                new Thread(Sound.hover::play).start();
             this.selectedItem = 1;
         }
         else{
@@ -121,6 +124,7 @@ public class CreditsScene extends Scene {
         if(this.game.listener.mousePressed){
             switch(this.selectedItem){
                 case 1:
+                    new Thread(Sound.select::play).start();
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;
                 default:

@@ -1,5 +1,6 @@
 package ld34;
 
+import audio.Sound;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -75,6 +76,7 @@ public class OptionButton extends JComponent{
     
     public void processClick(int x, int y){
         if(x > this.x - 15 && x < this.x + this.w + 15 && y < this.y + 7 && y > this.y - this.h - 7){
+            new Thread(Sound.select::play).start();
             editing();
         }
     }

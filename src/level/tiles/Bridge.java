@@ -19,7 +19,7 @@ public class Bridge extends Tile {
     }
 
     @Override
-    public void update() {
+    public void update(double dt) {
     }
     
     public void render(Graphics g, int x, int y, boolean onBridge){

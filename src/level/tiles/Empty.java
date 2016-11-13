@@ -19,7 +19,7 @@ public class Empty extends Tile {
     }
 
     @Override
-    public void update() {
+    public void update(double dt) {
         
     }
     
