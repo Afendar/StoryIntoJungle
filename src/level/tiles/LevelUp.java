@@ -3,6 +3,7 @@ package level.tiles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import ld34.Defines;
+import level.Level;
 
 public class LevelUp extends Tile{
 
@@ -16,12 +17,12 @@ public class LevelUp extends Tile{
     }
     
     @Override
-    public boolean canPass() {
+    public boolean canPass(Level level, int x, int y) {
         return true;
     }
 
     @Override
-    public void update(double dt) {
+    public void update(Level level, int x, int y, double dt) {
         
     }
     

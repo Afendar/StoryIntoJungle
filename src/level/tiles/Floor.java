@@ -7,7 +7,7 @@ package level.tiles;
 
 import java.awt.Graphics;
 import ld34.Defines;
-
+import level.Level;
 
 public class Floor extends Tile {
     
@@ -16,12 +16,12 @@ public class Floor extends Tile {
     }
     
     @Override
-    public boolean canPass(){
+    public boolean canPass(Level level, int x, int y){
         return false;
     }
     
     @Override
-    public void update(double dt){
+    public void update(Level level, int x, int y, double dt){
         
     }
     

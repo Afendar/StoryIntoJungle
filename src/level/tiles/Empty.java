@@ -6,6 +6,7 @@
 package level.tiles;
 
 import java.awt.Graphics;
+import level.Level;
 
 public class Empty extends Tile {
     
@@ -14,12 +15,12 @@ public class Empty extends Tile {
     }
 
     @Override
-    public boolean canPass() {
+    public boolean canPass(Level level, int x, int y) {
         return true;
     }
 
     @Override
-    public void update(double dt) {
+    public void update(Level level, int x, int y, double dt) {
         
     }
     

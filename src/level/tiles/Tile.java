@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Defines;
+import level.Level;
 
 public abstract class Tile {
     
@@ -31,8 +32,8 @@ public abstract class Tile {
         TileAtlas.atlas.add(this);
     }
     
-    public abstract boolean canPass();
-    public abstract void update(double dt);
+    public abstract boolean canPass(Level level, int x, int y);
+    public abstract void update(Level level, int x, int y, double dt);
     
     public void render(Graphics g, int x, int y){
         g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);

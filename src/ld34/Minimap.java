@@ -12,13 +12,13 @@ public class Minimap {
     public Minimap(int w, int h, int playerX, int playerY, Level lvl){
         this.w = w;
         this.h = h;
-        this.playerX = ((playerX) / 32) + 100;
+        this.playerX = ((playerX) / 32) + 50;
         this.playerY = ((playerY * 2) / 32) + 282;
         this.lvl = lvl;
     }
     
     public void update(int playerX, int playerY){
-        this.playerX = ((playerX) / 32) + 100;
+        this.playerX = ((playerX) / 32) + 50;
         this.playerY = ((playerY * 2) / 32) + 282;
     }
     
@@ -31,7 +31,7 @@ public class Minimap {
                 switch(lvl.map[i][j]){
                     case 1:
                         g.setColor(Color.WHITE);
-                        g.fillRect((i*2) + 100, (j*4) + 282, 2, 2);
+                        g.fillRect((i*3) + 50, (j*4) + 282, 3, 3);
                         break;
                     default:
                         break;
@@ -40,7 +40,6 @@ public class Minimap {
         }
         
         g.setColor(Color.RED);
-        System.out.println("playerX:"+this.playerX+" playerY:"+this.playerY);
-        g.fillRect(this.playerX, this.playerY, 2, 2);
+        g.fillRect(this.playerX, this.playerY, 3, 3);
     }
 }

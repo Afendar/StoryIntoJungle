@@ -5,10 +5,8 @@
  */
 package level.tiles;
 
-/**
- *
- * @author Mickaël
- */
+import level.Level;
+
 public class JumpingPad extends Tile {
     
     public JumpingPad(int imgX, int imgY){
@@ -16,12 +14,12 @@ public class JumpingPad extends Tile {
     }
     
     @Override
-    public boolean canPass(){
+    public boolean canPass(Level level, int x, int y){
         return false;
     }
     
     @Override
-    public void update(double dt){
+    public void update(Level level, int x, int y, double dt){
         
     }
     

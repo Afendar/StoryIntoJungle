@@ -3,6 +3,7 @@ package level.tiles;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import ld34.Defines;
+import level.Level;
 
 public class Bridge extends Tile {
     
@@ -14,12 +15,12 @@ public class Bridge extends Tile {
     }
 
     @Override
-    public boolean canPass() {
+    public boolean canPass(Level level, int x, int y) {
         return false;
     }
 
     @Override
-    public void update(double dt) {
+    public void update(Level level, int x, int y, double dt) {
     }
     
     public void render(Graphics g, int x, int y, boolean onBridge){

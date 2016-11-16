@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import ld34.Defines;
 import ld34.TimerThread;
+import level.Level;
 
 public class Checkpoint extends Tile{
     
@@ -22,12 +23,12 @@ public class Checkpoint extends Tile{
     }
     
     @Override
-    public boolean canPass() {
+    public boolean canPass(Level level, int x, int y) {
         return true;
     }
 
     @Override
-    public void update(double dt) {
+    public void update(Level level, int x, int y, double dt) {
         this.animated = true;
         this.timeAnim = TimerThread.MILLI;
         this.counter = 0;

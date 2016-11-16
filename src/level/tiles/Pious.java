@@ -1,5 +1,7 @@
 package level.tiles;
 
+import level.Level;
+
 public class Pious extends Tile {
     
     public Pious(int imgX, int imgY){
@@ -7,12 +9,12 @@ public class Pious extends Tile {
     }
 
     @Override
-    public boolean canPass() {
+    public boolean canPass(Level level, int x, int y) {
         return true;
     }
 
     @Override
-    public void update(double dt) {
+    public void update(Level level, int x, int y, double dt) {
         
     }
     

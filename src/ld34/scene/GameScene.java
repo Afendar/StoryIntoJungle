@@ -240,6 +240,7 @@ public class GameScene extends Scene {
                 this.level.update(dt, startX, startY);
 
                 this.player.update(dt);
+                
                 this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
                 this.cam.update(this.player);
                 
@@ -361,26 +362,8 @@ public class GameScene extends Scene {
 
             g2d.translate(this.cam.x, this.cam.y);
 
-            g.drawImage(this.bgGui, this.w/2 - 210, 0, null);
-            g.setColor(Color.BLACK);
-            g.setFont(this.fontS);
-            g.drawString("Score : " + this.player.score, this.w/2 - 190  , 23);
-            
-            g.drawImage(this.bgGui, this.w/2 + 20, 0, null);
-            g.drawString(this.bundle.getString("levelTxt") + this.nbLevel, this.w/2 + 90, 26);
-            
-            if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5)
-            {
-                g.drawImage(this.clockGui, this.w/3 + 40, 50, null);
-                if(this.timer){
-                    if(!this.player.isDead){
-                        this.minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
-                        this.secondes = (int)((double)(TimerThread.MILLI - this.timeF - this.minutes*60000)/1000);
-                    }
-                    g.setFont(this.fontSM);
-                    g.drawString((this.minutes)+":"+(this.secondes), 380, 90);
-                }
-            }
+            //Render GUI
+            this.renderGUI(g);
             
             if(this.player.isDead){
                 if(this.alpha < this.alphaMax){
@@ -410,6 +393,31 @@ public class GameScene extends Scene {
             //MINIMAP RENDERING
             if(this.game.listener.minimap.enabled){
                 minimap.render(g);
+            }
+        }
+    }
+    
+    public void renderGUI(Graphics g){
+        g.drawImage(this.bgGui, this.w/2 - 210, 0, null);
+        g.setColor(Color.BLACK);
+        g.setFont(this.fontS);
+        g.drawString("Score : " + this.player.score, this.w/2 - 190  , 23);
+
+        g.drawImage(this.bgGui, this.w/2 + 20, 0, null);
+        g.drawString(this.bundle.getString("levelTxt") + this.nbLevel, this.w/2 + 90, 26);
+        
+        g.drawString("" + this.level.nbCages, this.w/2 - 40, 75);
+
+        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5)
+        {
+            g.drawImage(this.clockGui, this.w/3 + 40, 50, null);
+            if(this.timer){
+                if(!this.player.isDead){
+                    this.minutes = (int)((double)(TimerThread.MILLI - this.timeF)/60000);
+                    this.secondes = (int)((double)(TimerThread.MILLI - this.timeF - this.minutes*60000)/1000);
+                }
+                g.setFont(this.fontSM);
+                g.drawString((this.minutes)+":"+(this.secondes), 380, 90);
             }
         }
     }

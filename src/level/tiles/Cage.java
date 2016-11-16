@@ -3,6 +3,7 @@ package level.tiles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import ld34.Defines;
+import level.Level;
 
 public class Cage extends Tile {
     
@@ -17,18 +18,19 @@ public class Cage extends Tile {
         this.bottomRightSprite = this.tileset.getSubimage((int)((imgX + 1) * Defines.TILE_SIZE), (int)((imgY + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
     }
     
-    public boolean canPass(){
+    public boolean canPass(Level level, int x, int y){
         return false;
     }
     
-    public void update(double dt){
+    @Override
+    public void update(Level level, int x, int y, double dt){
         
     }
     
     public void render(Graphics g, int x, int y){
-        g.drawImage(this.topLeftSprite, x * Defines.TILE_SIZE, ((y-1) * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
-        g.drawImage(this.topRightSprite, (x+1) * Defines.TILE_SIZE, ((y-1) * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
-        g.drawImage(this.bottomLeftSprite, x * Defines.TILE_SIZE, (y * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
-        g.drawImage(this.bottomRightSprite, (x+1) * Defines.TILE_SIZE, (y * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
+        g.drawImage(this.topLeftSprite, x * Defines.TILE_SIZE, ((y-2) * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
+        g.drawImage(this.topRightSprite, (x+1) * Defines.TILE_SIZE, ((y-2) * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
+        g.drawImage(this.bottomLeftSprite, x * Defines.TILE_SIZE, ((y-1) * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
+        g.drawImage(this.bottomRightSprite, (x+1) * Defines.TILE_SIZE, ((y-1) * Defines.TILE_SIZE) + (3*Defines.TILE_SIZE/4), null);
     }
 }

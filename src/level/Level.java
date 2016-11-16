@@ -16,8 +16,11 @@ public class Level {
     public int nbTilesW, nbTilesH;
     protected int nbTilesInScreenX, nbTilesInScreenY;
     public int[][] map;
+    public int[][] topMap;
+    public int[][] data;
     public Player player;
     public int nbLevel;
+    public int nbCages;
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -33,6 +36,8 @@ public class Level {
     
     public Level(int nbLevel){
         this.nbLevel = nbLevel;
+        this.nbCages = 0;
+        
         this.loadLevel(nbLevel);
     }
     
@@ -44,34 +49,34 @@ public class Level {
             for(int j = startY;j<endY;j++){
                 switch(this.map[i][j]){
                     case 1:
-                        TileAtlas.floor.update(dt);
+                        TileAtlas.floor.update(this, i, j, dt);
                         break;
                     case 2:
-                        TileAtlas.bamboo.update(dt);
+                        TileAtlas.bamboo.update(this, i, j, dt);
                         break;
                     case 3:
-                        TileAtlas.bridge.update(dt);
+                        TileAtlas.bridge.update(this, i, j, dt);
                         break;
                     case 4:
-                        TileAtlas.apple.update(dt);
+                        TileAtlas.apple.update(this, i, j, dt);
                         break;
                     case 5:
-                        TileAtlas.leaves.update(dt);
+                        TileAtlas.leaves.update(this, i, j, dt);
                         break;
                     case 6:
-                        TileAtlas.pious.update(dt);
+                        TileAtlas.pious.update(this, i, j, dt);
                         break;
                     case 7:
-                        TileAtlas.levelup.update(dt);
+                        TileAtlas.levelup.update(this, i, j, dt);
                         break;
                     case 8:
-                        TileAtlas.checkpoint.update(dt);
+                        TileAtlas.checkpoint.update(this, i, j, dt);
                         break;
                     case 9:
-                        TileAtlas.sand.update(dt);
+                        TileAtlas.sand.update(this, i, j, dt);
                         break;
                     case 11:
-                        TileAtlas.cage.update(dt);
+                        TileAtlas.cage.update(this, i, j, dt);
                         break;
                     default:
                         break;
@@ -149,7 +154,9 @@ public class Level {
                         TileAtlas.checkpoint.render(g, i, j);
                         break;
                     case 9:
-                        TileAtlas.sand.render(g, i, j);
+                        if(this.data[i][j] != 2){
+                            TileAtlas.sand.render(g, i, j);
+                        }
                         break;
                     case 11:
                         TileAtlas.cage.render(g, i, j);
@@ -169,6 +176,14 @@ public class Level {
         this.map[x][y] = 0;
     }
     
+    public void setData(int x, int y, int val){
+        this.data[x][y] = val;
+    }
+    
+    public int getData(int x, int y){
+        return this.data[x][y];
+    }
+    
     public void loadLevel(int nbLevel){
         try{
             URL url = this.getClass().getResource("/lvl"+nbLevel+".png");
@@ -184,6 +199,14 @@ public class Level {
             this.nbTilesW = width;
             
             this.map = new int[width][height];
+            this.data = new int[width][height];
+            this.topMap = new int[width][height];
+            
+            for(int i=0;i<this.data.length;i++){
+                for(int j=0;j<this.data[i].length;j++){
+                    this.data[i][j] = 0;
+                }
+            }
             
             boolean hasAlpha = true;
             
@@ -228,6 +251,7 @@ public class Level {
                             map[col][row] = TileAtlas.sand.ID;
                             break;
                         case CAGE:
+                            this.nbCages++;
                             map[col][row] = TileAtlas.cage.ID;
                             break;
                         default:

@@ -129,6 +129,7 @@ public class Player extends Entity {
             new Thread(Sound.jump::play).start();
             this.renderJump = true;
             this.offset = 0;
+            this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
             this.oldposX = (int)this.posX;
             this.oldposY = (int)this.posY;
             this.timeJAnim = TimerThread.MILLI;
@@ -158,18 +159,18 @@ public class Player extends Entity {
         
         //Sand
         if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9){
-            Sand sand = (Sand)TileAtlas.atlas.get(this.level.getTile(x1, y1+1));
-            sand.startBreak();
+                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9 &&
+                this.level.getData(x1, y1 + 1) != 2){
+            this.level.setData(x1, y1+1, 1);
             this.isJumping = true;
             this.isFalling = true;
             this.velX = 0;
             this.velY = 8;
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 9){
-            Sand sand = (Sand)TileAtlas.atlas.get(this.level.getTile(x0, y1+1));
-            sand.startBreak();
+                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 9 &&
+                this.level.getData(x1, y1 + 1) != 2){
+            this.level.setData(x0, y1+1, 1);
             this.isJumping = true;
             this.isFalling = true;
             this.velY = 8;  
@@ -192,7 +193,7 @@ public class Player extends Entity {
         
         //checkpoint
         if(TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 8){
-            TileAtlas.atlas.get(this.level.getTile(x1, y1)).update(dt);
+            TileAtlas.atlas.get(this.level.getTile(x1, y1)).update(this.level, x1, y1, dt);
             this.checkpointX = x1 * Defines.TILE_SIZE;
             this.checkpointY = y1 * Defines.TILE_SIZE;
         }
@@ -281,21 +282,21 @@ public class Player extends Entity {
         }
         //LEFT
         if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE)).canPass() || 
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass())){
+                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE) || 
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
             this.velX = 0;
         }
         //RIGHT
         else if((int)(this.getBounds().x + this.getBounds().width + velX)/ Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE )).canPass() || 
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass())){
+                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE )).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE) || 
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
              this.velX = 0; 
         }
         
         //DOWN 
         if(((this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE) < this.level.nbTilesH && (
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass() ||
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass())){
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE) ||
+                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE))){
             this.isJumping = false;
             this.isFalling = false;
             this.renderJump = false;
@@ -303,30 +304,40 @@ public class Player extends Entity {
             if(this.velY > 0){
                 this.renderJumpEnd = true;
                 this.offset2 = 0;
+                this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
                 this.oldposX = (int)this.posX;
                 this.oldposY = (int)this.posY;
                 this.timeJEndAnim = TimerThread.MILLI;
             }
             this.velY = 0;
         }
+        else{
+            this.isFalling = true;
+        }
         
         if(this.renderJump && TimerThread.MILLI - this.timeJAnim > 80){
             this.timeJAnim = TimerThread.MILLI;
-            this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
             this.offset++;
             if(this.offset > 4){
                 this.offset = 0;
                 this.renderJump = false;
             }
+            else
+            {
+                this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
+            }
         }
         
         if(this.renderJumpEnd && TimerThread.MILLI - this.timeJEndAnim > 80){
             this.timeJEndAnim = TimerThread.MILLI;
-            this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
             this.offset2++;
-            if(this.offset2 > 4){
+            if(this.offset2 > 3){
                 this.offset2 = 0;
                 this.renderJumpEnd = false;
+            }
+            else
+            {
+                this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
             }
         }
         
@@ -336,9 +347,6 @@ public class Player extends Entity {
             this.isFalling = false;
             this.isJumping = false;
             this.renderJump = false;
-        }
-        else{
-            this.isFalling = true;
         }
     }
 
@@ -370,11 +378,12 @@ public class Player extends Entity {
     
     @Override
     public void render(Graphics g) {
+        
         if(this.renderJump){
-           g.drawImage(spritefx, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
+           g.drawImage(this.spritefx, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
         }
         if(this.renderJumpEnd){
-            g.drawImage(spritefxend, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
+            g.drawImage(this.spritefxend, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
         }
         
         g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
