@@ -157,6 +157,17 @@ public class Player extends Entity {
             this.velX = 0; 
         }
         
+        if(y1 + 1 <= this.level.nbTilesH - 1 &&
+                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 11 &&
+                this.level.getData(x1, y1 + 1) != 2){
+            this.level.setData(x1, y1+1, 1);
+        }
+        else if(y1 + 1 <= this.level.nbTilesH - 1 && 
+                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9 &&
+                this.level.getData(x1, y1 + 1) != 2){
+            this.level.setData(x0, y1+1, 1);
+        }
+        
         //Sand
         if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9 &&
@@ -282,13 +293,13 @@ public class Player extends Entity {
         }
         //LEFT
         if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, this.getBounds().y/Defines.TILE_SIZE) || 
+                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2)/Defines.TILE_SIZE) || 
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
             this.velX = 0;
         }
         //RIGHT
         else if((int)(this.getBounds().x + this.getBounds().width + velX)/ Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE )).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, this.getBounds().y / Defines.TILE_SIZE) || 
+                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2) / Defines.TILE_SIZE )).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2) / Defines.TILE_SIZE) || 
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
              this.velX = 0; 
         }

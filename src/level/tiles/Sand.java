@@ -27,10 +27,7 @@ public class Sand extends Tile {
         return this.isBroken;
     }
     
-    public void startBreak(){
-        this.startBreak = true;
-    }
-    
+    @Override
     public void update(Level level, int x, int y, double dt){
         
         if(level.getData(x, y) == 1){

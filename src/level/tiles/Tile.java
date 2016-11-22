@@ -38,4 +38,8 @@ public abstract class Tile {
     public void render(Graphics g, int x, int y){
         g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
     }
+    
+    public void renderTop(Graphics g, int x, int y){
+        
+    }
 }

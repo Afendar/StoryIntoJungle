@@ -12,7 +12,7 @@ import ld34.Game;
 public abstract class Scene{
     
     public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3,
-            bgBtnSmallRed;
+            bgBtnSmallRed, foregroundGame;
     
     public int w, h;
     public Game game;
@@ -37,6 +37,7 @@ public abstract class Scene{
             this.foreground = ImageIO.read(url);
             url = runtimeClass.getResource("/foreground2.png");
             this.foreground2 = ImageIO.read(url);
+            this.foregroundGame = this.foreground2.getSubimage(0, 300, 800, 300);
             url = runtimeClass.getResource("/foreground3.png");
             this.foreground3 = ImageIO.read(url);
         }catch(IOException e){

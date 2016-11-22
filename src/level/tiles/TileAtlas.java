@@ -18,4 +18,7 @@ public class TileAtlas {
     public static Sand sand = new Sand(1, 3);
     public static JumpingPad jumpingPad = new JumpingPad(2, 3);
     public static Cage cage = new Cage(0, 4);
+    public static Bush bush = new Bush(2, 4);
+    public static Tree tallTree = new Tree(Tree.TALL, 5, 3);
+    public static Tree smallTree = new Tree(Tree.SMALL, 3, 5);
 }

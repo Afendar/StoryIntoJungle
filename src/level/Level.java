@@ -9,6 +9,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Defines;
 import level.tiles.TileAtlas;
+import level.tiles.Tree;
 
 public class Level {
     
@@ -101,11 +102,7 @@ public class Level {
         return this.nbTilesInScreenY;
     }
     
-    public void render(Graphics g){
-        this.render(g, 0, 0);
-    }
-    
-    public void render(Graphics g, int startX, int startY){
+    public void renderFirstLayer(Graphics g, int startX, int startY){
         
         int endX = (startX + this.nbTilesInScreenX + 2 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 2 : this.nbTilesW;
         int endY = (startY + this.nbTilesInScreenY + 2 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 2 : this.nbTilesH;
@@ -159,7 +156,46 @@ public class Level {
                         }
                         break;
                     case 11:
-                        TileAtlas.cage.render(g, i, j);
+                        if(this.data[i][j] != 2){
+                            TileAtlas.cage.render(g, i, j);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    
+    public void renderSecondLayer(Graphics g, int startX, int startY){
+        
+        startX = startX - 3;
+        if(startX < 0)
+            startX = 0;
+        
+        startY = startY - 2;
+        if(startY < 0)
+            startY = 0;
+        
+        int endX = (startX + this.nbTilesInScreenX + 6 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 6 : this.nbTilesW;
+        int endY = (startY + this.nbTilesInScreenY + 4 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 4 : this.nbTilesH;
+        
+        for(int i = startX;i<endX;i++){
+            for(int j = startY;j<endY;j++){
+                switch(this.topMap[i][j]){
+                    case 11:
+                        if(this.data[i][j] != 2){
+                            TileAtlas.cage.renderTop(g, i, j);
+                        }
+                        break;
+                    case 12:
+                        TileAtlas.bush.render(g, i, j);
+                        break;
+                    case 13:
+                        TileAtlas.tallTree.render(g, i, j, Tree.TALL);
+                        break;
+                    case 14:
+                        TileAtlas.smallTree.render(g, i, j, Tree.SMALL);
                         break;
                     default:
                         break;
@@ -185,6 +221,12 @@ public class Level {
     }
     
     public void loadLevel(int nbLevel){
+        
+        this.loadFirstLayer(nbLevel);
+        this.loadTopLayer(nbLevel);
+    }
+    
+    public void loadFirstLayer(int nbLevel){
         try{
             URL url = this.getClass().getResource("/lvl"+nbLevel+".png");
             BufferedImage lvlImg = ImageIO.read(url);
@@ -192,7 +234,6 @@ public class Level {
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
             int width = lvlImg.getWidth();
             int height = lvlImg.getHeight();
-            
             this.w = width * Defines.TILE_SIZE;
             this.h = height * Defines.TILE_SIZE;
             this.nbTilesH = height;
@@ -266,6 +307,58 @@ public class Level {
                 }
             }
             
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void loadTopLayer(int nbLevel){
+        try{
+            URL url = this.getClass().getResource("/lvl"+nbLevel+"-top.png");
+            BufferedImage lvlImg = ImageIO.read(url);
+            
+            byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
+            int width = lvlImg.getWidth();
+            int height = lvlImg.getHeight();
+            
+            boolean hasAlpha = true;
+            
+            if (hasAlpha) {
+                final int pixelLength = 4;
+                for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+                   int argb = 0;
+                   argb += 0; // alpha
+                   argb += ((int) pixels[pixel + 1] & 0xff); // blue
+                   argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
+                   argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
+                   //System.out.println(argb);
+                   switch(argb){
+                        case WHITE:
+                            this.topMap[col][row] = TileAtlas.empty.ID;
+                            break;
+                        case GREEN:
+                            this.topMap[col][row] = TileAtlas.bush.ID;
+                            break;
+                        case BROWN:
+                            this.topMap[col][row] = TileAtlas.tallTree.ID;
+                            break;
+                        case ORANGE:
+                            this.topMap[col][row] = TileAtlas.smallTree.ID;
+                            break;
+                        case CAGE:
+                            this.topMap[col][row] = TileAtlas.cage.ID;
+                            break;
+                        default:
+                            break;
+                   }
+
+                   col++;
+                   if (col == width) {
+                      col = 0;
+                      row++;
+                    }
+                }
+            }
         }catch(IOException e){
             e.printStackTrace();
         }
