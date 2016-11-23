@@ -173,22 +173,29 @@ public class Player extends Entity {
         
         //Sand
         if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9 &&
-                this.level.getData(x1, y1 + 1) != 2){
-            this.level.setData(x1, y1+1, 1);
-            this.isJumping = true;
-            this.isFalling = true;
-            this.velX = 0;
-            this.velY = 8;
+                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9){
+            if(this.level.getData(x1, y1 + 1) < 1){
+                this.level.setData(x1, y1+1, 1);
+            }
+            else if(this.level.getData(x1, y1 + 1) == 2){
+                this.isJumping = true;
+                this.isFalling = true;
+                this.velX = 0;
+                this.velY = 8;
+            }
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 9 &&
-                this.level.getData(x1, y1 + 1) != 2){
-            this.level.setData(x0, y1+1, 1);
-            this.isJumping = true;
-            this.isFalling = true;
-            this.velY = 8;  
-            this.velX = 0; 
+                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 9){
+            if(this.level.getData(x0, y1 + 1) < 1){
+                this.level.setData(x0, y1+1, 1);
+            }
+            else if(this.level.getData(x0, y1 + 1) == 2)
+            {
+                this.isJumping = true;
+                this.isFalling = true;
+                this.velY = 8;  
+                this.velX = 0;
+            }
         }
         
         //bonus test

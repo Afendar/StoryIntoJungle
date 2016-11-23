@@ -37,7 +37,7 @@ public class GameScene extends Scene {
     public Profiler profiler;
     public Level level;
     public Camera cam;
-    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnBack, pausemsg, btnContinue;
+    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnBack, pausemsg, btnContinue, warningTxt;
     public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
             backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll, guiAssets, scoreIcon, timeIcon, levelIcon, cagesIcon;
     public int nbLevel, selectedItem;
@@ -121,6 +121,7 @@ public class GameScene extends Scene {
         this.startTxt4 = this.bundle.getString("startTxt4");
         this.respawn = this.bundle.getString("respawn");
         this.btnContinue = this.bundle.getString("continue");
+        this.warningTxt = this.bundle.getString("alert");
         
         this.selectedItem = 0;
         
@@ -159,6 +160,14 @@ public class GameScene extends Scene {
                 this.level = new Level(this.nbLevel);
                 this.level.setNbTilesInScreenX(game.w);
                 this.level.setNbTilesInScreenY(game.h);
+            }
+            else
+            {
+                int[][] data = this.level.data;
+                this.level = new Level(this.nbLevel);
+                this.level.setNbTilesInScreenX(game.w);
+                this.level.setNbTilesInScreenY(game.h);
+                this.level.setData(data);
             }
             this.player.level = this.level;
             this.level.addPlayer(this.player);
@@ -288,6 +297,10 @@ public class GameScene extends Scene {
             metrics = g.getFontMetrics(this.fontS);
             int txt4W = metrics.stringWidth(this.startTxt4);
             g.drawString(this.startTxt4, this.w/2-txt4W/2, 520);
+            
+            g.setColor(new Color(180, 14, 22));
+            int txt5 = metrics.stringWidth(this.warningTxt);
+            g.drawString(this.warningTxt, this.w/2 - txt5/2, 550);
             
             g.setColor(new Color(0, 0, 0, this.alpha));
             g.fillRect(0, 0, this.w, this.h);

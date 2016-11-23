@@ -212,6 +212,20 @@ public class Level {
         this.map[x][y] = 0;
     }
     
+    public void setData(int[][] data){
+        for(int i=0;i< data.length;i++){
+            for(int j=0;j<data[i].length;j++){
+                if(this.map[i][j] == 11 && data[i][j] == 2){
+                    this.nbCages--;
+                }
+                if(this.map[i][j] == 9 && data[i][j] == 2){
+                    data[i][j] = 0;
+                }
+            }
+        }
+        this.data = data;
+    }
+    
     public void setData(int x, int y, int val){
         this.data[x][y] = val;
     }
