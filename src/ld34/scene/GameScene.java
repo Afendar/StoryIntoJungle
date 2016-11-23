@@ -52,7 +52,7 @@ public class GameScene extends Scene {
     public boolean timer = false;
     public Minimap minimap;
     
-    public GameScene(int w, int h, Game game, int lvl){
+    public GameScene(int w, int h, Game game, int lvl, int score){
         super(w, h, game);
         
         this.nbLevel = lvl;
@@ -69,7 +69,7 @@ public class GameScene extends Scene {
         
         this.cam = new Camera(0, 0, w, h, this.level);
         this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")));
-        
+        this.player.score = score;
         this.profiler = new Profiler();
         
         this.level.addPlayer(this.player);
@@ -145,7 +145,7 @@ public class GameScene extends Scene {
     }
 
     public GameScene(int w, int h, Game game){
-        this(w, h, game, 1);
+        this(w, h, game, 1, 0);
     }
     
     public void reinit(int lvl){
@@ -154,9 +154,12 @@ public class GameScene extends Scene {
         
         if(this.nbLevel < Defines.LEVEL_MAX || this.player.isDead){
             this.nbLevel += lvl;
-            this.level = new Level(this.nbLevel);
-            this.level.setNbTilesInScreenX(game.w);
-            this.level.setNbTilesInScreenY(game.h);
+            
+            if(lvl != 0){
+                this.level = new Level(this.nbLevel);
+                this.level.setNbTilesInScreenX(game.w);
+                this.level.setNbTilesInScreenY(game.h);
+            }
             this.player.level = this.level;
             this.level.addPlayer(this.player);
             if(this.player.checkpointX != 0){
@@ -184,7 +187,6 @@ public class GameScene extends Scene {
             this.displayEnd = true;
             this.player.win = false;
         }
-        System.out.println("alpha:" + this.alpha);
     }
     
     @Override
@@ -213,7 +215,7 @@ public class GameScene extends Scene {
         if(this.player.win){
             this.player.checkpointX = 0;
             if(this.nbLevel < Defines.LEVEL_MAX){
-                return new MapScene(this.w, this.h, this.game, this.nbLevel);
+                return new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score);
             }
             else{
                 reinit(this.nbLevel);

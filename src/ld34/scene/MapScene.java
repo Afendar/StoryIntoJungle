@@ -38,7 +38,7 @@ public class MapScene extends Scene {
     public BufferedImage mapBg, panda;
     public Font font;
     public int[][] btnCoords;
-    public int selectedItem, currentLvl;
+    public int selectedItem, currentLvl, currentScore;
     private int[][] coordsPins = {
         {86, 348},
         {182, 407},
@@ -54,7 +54,7 @@ public class MapScene extends Scene {
     private QuadCurve2D[] curve = new QuadCurve2D[5];
     private boolean animated = false;
     
-    public MapScene(int w, int h, Game game, int currentLvl){
+    public MapScene(int w, int h, Game game, int currentLvl, int currentScore){
         super(w, h, game);
         
         try{
@@ -79,6 +79,7 @@ public class MapScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         this.currentLvl = currentLvl;
+        this.currentScore = currentScore;
         
         int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.levelmap", this.game.langs[localeIndex]);
@@ -259,7 +260,7 @@ public class MapScene extends Scene {
                 this.pos.getX() == this.coordsPins[this.currentLvl - 1][0] && 
                 this.pos.getY() == this.coordsPins[this.currentLvl - 1][1])
         {
-            currentScene = new GameScene(this.w, this.h, this.game, this.currentLvl);
+            currentScene = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
         }
         
         return currentScene;

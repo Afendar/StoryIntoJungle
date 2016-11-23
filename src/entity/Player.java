@@ -79,12 +79,15 @@ public class Player extends Entity {
         
         switch(this.level.nbLevel){
             case 1:
+            case 2:
                 this.age = "baby";
                 break;
-            case 2:
+            case 3:
+            case 4:
                 this.age = "teen";
                 break;
-            case 3:
+            case 5:
+            case 6:
                 this.age = "adult";
                 break;
         }
@@ -404,12 +407,15 @@ public class Player extends Entity {
         
         switch(lvl){
             case 1:
+            case 2:
                 this.age = "baby";
                 break;
-            case 2:
+            case 3:
+            case 4:
                 this.age = "teen";
                 break;
-            case 3:
+            case 5:
+            case 6:
                 this.age = "adult";
                 break;
         }
