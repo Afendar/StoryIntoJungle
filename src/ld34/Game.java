@@ -50,7 +50,7 @@ public class Game extends Canvas implements Runnable {
         
         this.listener = new InputsListeners(this);
         
-        this.gs = new MenuScene(w, h, this);
+        this.gs = new SplashScene(w, h, this);
         
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");

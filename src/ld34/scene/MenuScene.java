@@ -11,10 +11,12 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Configs;
 import ld34.Game;
+import particles.Leaf;
 
 public class MenuScene extends Scene {
     
@@ -23,6 +25,7 @@ public class MenuScene extends Scene {
     public String title, btnNewGame, btnOptions, btnBestScores, btnCredits, btnQuit;
     public int[][] btnCoords;
     public int selectedItem;
+    private ArrayList<Leaf> leavesList = new ArrayList<Leaf>(5);
     
     public MenuScene(int w, int h, Game game){
         
@@ -63,6 +66,10 @@ public class MenuScene extends Scene {
         this.btnBestScores = bundle.getString("bestScores");
         this.btnCredits = bundle.getString("about");
         this.btnQuit = bundle.getString("quit");
+        
+        for(int i = 0;i<5;i++){
+            this.leavesList.add(new Leaf(5, 0, 0, this.w, this.h));
+        }
     }
 
     @Override
@@ -70,6 +77,15 @@ public class MenuScene extends Scene {
         
         processHover();
 
+        for(int i=0; i< this.leavesList.size(); i++){
+            Leaf leaf = this.leavesList.get(i);
+            if(!leaf.isGenStartX())
+            {
+                leaf.genRandStartX();
+            }
+            leaf.update(dt);
+        }
+        
         return processClick();
     }
 
@@ -79,6 +95,11 @@ public class MenuScene extends Scene {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.drawImage(this.background2, 0, 0, null);
+        
+        for(int i=0; i < this.leavesList.size(); i++){
+            Leaf leaf = this.leavesList.get(i);
+            leaf.render(g2d);
+        }
         
         FontMetrics metrics = g.getFontMetrics(this.fontL);
 //        g.setFont(this.fontL);

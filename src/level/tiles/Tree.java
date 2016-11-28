@@ -6,14 +6,17 @@
 package level.tiles;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 import ld34.Defines;
 import level.Level;
+import particles.Leaf;
 
 public class Tree extends Tile{
     
     public static final int TALL = 1;
     public static final int SMALL = 2;
     public int size;
+    public ArrayList<Leaf> leaves = new ArrayList<Leaf>(3);
     
     public Tree(int size, int imgX, int imgY){
         super(imgX, imgY, (size == Tree.TALL) ? 13 : 14);
@@ -22,6 +25,10 @@ public class Tree extends Tile{
             this.tile = this.tileset.getSubimage(4 * Defines.TILE_SIZE, 0, 5 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE);
         else
             this.tile = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+    
+        for(int i=0;i<3;i++){
+            this.leaves.add(new Leaf(5, 0, 0, 800, 600));
+        }
     }
     
     @Override
@@ -31,7 +38,14 @@ public class Tree extends Tile{
 
     @Override
     public void update(Level level, int x, int y, double dt) {
-        
+        for(int i=0; i< this.leaves.size(); i++){
+            Leaf leaf = this.leaves.get(i);
+            if(!leaf.isGenStartX())
+            {
+                leaf.genRandStartX();
+            }
+            leaf.update(dt);
+        }
     }
     
     @Override
