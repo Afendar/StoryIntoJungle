@@ -12,7 +12,13 @@ public class Screen extends JFrame {
     public Screen(){
         Game g = new Game(800, 600);
         
-        this.setTitle("Story Into Jungle - v2.1 beta | pre release");
+        this.init(g);
+        
+        g.start();
+    }
+    
+    private void init(Game g){
+        this.setTitle("Story Into Jungle - v" + Defines.VERSION);
         this.add(g);
         this.getContentPane().setPreferredSize(new Dimension(800, 600));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,8 +32,6 @@ public class Screen extends JFrame {
         URL iconUrl = getClass().getResource("/storyintojungle.png");
         ImageIcon icon = new ImageIcon(iconUrl);
         this.setIconImage(icon.getImage());
-        
-        g.start();
     }
     
 }

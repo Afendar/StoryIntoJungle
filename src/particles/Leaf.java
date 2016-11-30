@@ -1,5 +1,6 @@
 package particles;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -8,11 +9,11 @@ import java.net.URL;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
-public class Leaf {
+public class Leaf extends Particle {
     private int x, y, size, startX, startY;
-    private final int winW, winH;
+    private int winW, winH;
     private double dx, dy, perturb, influence, speed, dt, theta, angle;
-    private boolean genStartX;
+    private boolean genStartX, dead;
     private Random rnd = new Random();
     private BufferedImage spriteSheet, leafSprites[], sprite;
     
@@ -34,17 +35,25 @@ public class Leaf {
         this.winH = winH;
         this.dt = 0;
         this.genStartX = false;
-        this.genRandStartX();
         this.startX = startX;
         this.startY = startY;
+        this.genRandStartX();
     }
     
     public boolean isGenStartX(){
         return this.genStartX;
     }
     
+    public void setZone(int startX, int startY, int winW, int winH){
+        this.startX = startX;
+        this.startY = startY;
+        this.winW = winW;
+        this.winH = winH;
+    }
+    
     public void genRandStartX(){
-        this.x = this.rnd.nextInt(this.startX + this.winW - this.size);
+        this.x = this.rnd.nextInt((this.startX + this.winW) - this.startX) + this.startX;
+        System.out.println("startX:"+this.startX+" x:"+this.x);
         this.y = this.startY - this.sprite.getHeight();
         this.speed = Math.random() * 4 + 1;
         this.genStartX = true;
@@ -53,6 +62,7 @@ public class Leaf {
         this.theta = rnd.nextInt(91-0)+0;
     }
     
+    @Override
     public void update(double dt){
         this.dt += dt;
         if(this.dt > 1.5)
@@ -62,15 +72,21 @@ public class Leaf {
             this.dx = speed * Math.cos(this.perturb);
             this.angle = Math.cos(this.perturb/1.5);
             this.x += this.dx;
-            if (this.y <= this.startY + this.winH) {
+            if (this.y <= this.startY + this.winH - this.sprite.getHeight()) {
                 this.y += this.dy;
             } else {
                 this.genStartX = false;
+                this.dead = true;
             }
             this.perturb += this.influence;
         }
     }
     
+    public boolean isDead(){
+        return this.dead;
+    }
+    
+    @Override
     public void render(Graphics g){
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.rotate(this.angle, this.x, this.y);

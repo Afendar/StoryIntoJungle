@@ -6,10 +6,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import ld34.Defines;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
+import particles.Leaf;
+import particles.Particle;
 
 public class Level {
     
@@ -22,6 +26,7 @@ public class Level {
     public Player player;
     public int nbLevel;
     public int nbCages;
+    public List<Particle> particles = new ArrayList<>();
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -82,6 +87,34 @@ public class Level {
                     default:
                         break;
                 }
+            }
+        }
+        
+        for(int i = startX;i<endX;i++){
+            for(int j = startY;j<endY;j++){
+                switch(this.topMap[i][j]){
+                    case 13:
+                        if(this.particles.size() < 4){
+                            for(int k = 0; k < 4;k++){
+                                this.particles.add(new Leaf(5,
+                                        (i * Defines.TILE_SIZE) - Defines.TILE_SIZE + 32,
+                                        (j * Defines.TILE_SIZE) - (Defines.TILE_SIZE + 32),
+                                        4*Defines.TILE_SIZE,
+                                        3*Defines.TILE_SIZE - 32
+                                        ));
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+        
+        for(int i=0; i<this.particles.size();i++){
+            Particle p = this.particles.get(i);
+            p.update(dt);
+            if(p.isDead()){
+                System.out.println("remove");
+                this.particles.remove(i);
             }
         }
     }
@@ -192,6 +225,10 @@ public class Level {
                         TileAtlas.bush.render(g, i, j);
                         break;
                     case 13:
+                        for(int k=0;k<this.particles.size();k++){
+                            Particle p = this.particles.get(k);
+                            p.render(g);
+                        }
                         TileAtlas.tallTree.render(g, i, j, Tree.TALL);
                         break;
                     case 14:
@@ -376,6 +413,14 @@ public class Level {
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+    
+    public void addParticle(Particle p){
+        if(!(p instanceof Particle)){
+            return;
+        }
+        
+        this.particles.add(p);
     }
     
     public void addPlayer(Player p){

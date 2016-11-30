@@ -28,7 +28,7 @@ public class Game extends Canvas implements Runnable {
     public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
     public Font font, fontD;
     public int w;
-    public int h;
+    public int h, nbEntities;
     public ResourceBundle bundle;
     public int elapsedTime, lastTime, pauseTime;
     public Runtime instance;
@@ -46,11 +46,11 @@ public class Game extends Canvas implements Runnable {
         this.setMaximumSize(new Dimension(w, h));
         this.setPreferredSize(new Dimension(w, h));
         this.setSize(new Dimension(w, h));
-        this.frame = this.memoryUsed = 0;
+        this.frame = this.memoryUsed = this.nbEntities = 0;
         
         this.listener = new InputsListeners(this);
         
-        this.gs = new SplashScene(w, h, this);
+        this.gs = new MenuScene(w, h, this);
         
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -207,6 +207,21 @@ public class Game extends Canvas implements Runnable {
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 60);
         
+        if(this.gs instanceof GameScene){
+            GameScene gs = (GameScene) this.gs;
+            this.nbEntities = gs.level.particles.size();
+        }
+        else
+        {
+            this.nbEntities = 0;
+        }
+        text = "Entities : " + this.nbEntities;
+        rect = fm.getStringBounds(text, g);
+        g.setColor(new Color(0,0,0,150));
+        g.fillRect(0, 84 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.setColor(Color.WHITE);
+        g.drawString(text, 30, 90);
+        
         text = "Java : " + System.getProperty("java.version") + "  x" + System.getProperty("sun.arch.data.model") + " bit";
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
@@ -214,7 +229,7 @@ public class Game extends Canvas implements Runnable {
         g.setColor(Color.WHITE);
         g.drawString(text, this.w - (int)rect.getWidth() - 30, 30);
                 
-        text = "Story Into Jungle : v" + Defines.version;
+        text = "Story Into Jungle : v" + Defines.VERSION;
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
         g.fillRect(this.w - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);

@@ -94,6 +94,7 @@ public class MenuScene extends Scene {
         
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
         g.drawImage(this.background2, 0, 0, null);
         
         for(int i=0; i < this.leavesList.size(); i++){
@@ -101,15 +102,9 @@ public class MenuScene extends Scene {
             leaf.render(g2d);
         }
         
-        FontMetrics metrics = g.getFontMetrics(this.fontL);
-//        g.setFont(this.fontL);
-//        g.setColor(Color.BLACK);
-//        int titlewidth = metrics.stringWidth(this.title);
-//        g.drawString(this.title, this.w/2 - titlewidth/2, 80);
-
         //draw btn
         g.setFont(this.font);
-        metrics = g.getFontMetrics(this.font);
+        FontMetrics metrics = g.getFontMetrics(this.font);
         int newGameWidth = metrics.stringWidth(this.btnNewGame);
         
         g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);

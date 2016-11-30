@@ -7,5 +7,5 @@ public class Defines {
     public static int TILE_SIZE = 64;
     public static int SPEED = 5;
     public static int LEVEL_MAX = 6;
-    public static String version = "2.1 Beta";
+    public static String VERSION = "2.1";
 }
