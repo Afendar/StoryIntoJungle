@@ -29,22 +29,5 @@ public class Sand extends Tile {
     
     @Override
     public void update(Level level, int x, int y, double dt){
-        
-        if(level.getData(x, y) == 1){
-            this.dt += dt;
-            if(this.dt % 2 > 1.5)
-            {
-                //animation sable.
-            }
-            
-            if(this.dt > 90)
-            {
-                this.isBroken = true;
-                level.setData(x, y, 2);
-            }
-        }
-        else{
-            this.dt = 0;
-        }
     }
 }

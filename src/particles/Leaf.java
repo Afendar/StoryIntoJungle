@@ -1,6 +1,5 @@
 package particles;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -53,7 +52,6 @@ public class Leaf extends Particle {
     
     public void genRandStartX(){
         this.x = this.rnd.nextInt((this.startX + this.winW) - this.startX) + this.startX;
-        System.out.println("startX:"+this.startX+" x:"+this.x);
         this.y = this.startY - this.sprite.getHeight();
         this.speed = Math.random() * 4 + 1;
         this.genStartX = true;

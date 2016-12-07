@@ -1,6 +1,7 @@
 package level;
 
 import entity.Player;
+import entity.SandEntity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -27,6 +28,7 @@ public class Level {
     public int nbLevel;
     public int nbCages;
     public List<Particle> particles = new ArrayList<>();
+    public List<SandEntity> sandEntity = new ArrayList<>();
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -113,9 +115,13 @@ public class Level {
             Particle p = this.particles.get(i);
             p.update(dt);
             if(p.isDead()){
-                System.out.println("remove");
                 this.particles.remove(i);
             }
+        }
+        
+        for(int i=0;i<this.sandEntity.size();i++){
+            SandEntity se = this.sandEntity.get(i);
+            se.update(dt);
         }
     }
     
@@ -189,7 +195,7 @@ public class Level {
                         }
                         break;
                     case 11:
-                        if(this.data[i][j] != 2){
+                        if(this.data[i][j] != 2 && this.map[i-1][j] != 11){
                             TileAtlas.cage.render(g, i, j);
                         }
                         break;
@@ -279,7 +285,7 @@ public class Level {
     
     public void loadFirstLayer(int nbLevel){
         try{
-            URL url = this.getClass().getResource("/lvl"+nbLevel+".png");
+            URL url = this.getClass().getResource("/lvl-test"+nbLevel+".png");
             BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
@@ -341,17 +347,21 @@ public class Level {
                             break;
                         case SAND:
                             map[col][row] = TileAtlas.sand.ID;
+                            this.sandEntity.add(new SandEntity(this, col, row));
                             break;
                         case CAGE:
                             this.nbCages++;
                             map[col][row] = TileAtlas.cage.ID;
+                            map[col+1][row] = TileAtlas.cage.ID;
+                            col++;
+                            pixel += pixelLength;
                             break;
                         default:
                             break;
                    }
 
                    col++;
-                   if (col == width) {
+                   if (col >= width) {
                       col = 0;
                       row++;
                     }
@@ -365,7 +375,7 @@ public class Level {
     
     public void loadTopLayer(int nbLevel){
         try{
-            URL url = this.getClass().getResource("/lvl"+nbLevel+"-top.png");
+            URL url = this.getClass().getResource("/lvl-test"+nbLevel+"-top.png");
             BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();

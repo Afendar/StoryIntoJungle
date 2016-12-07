@@ -13,7 +13,6 @@ import ld34.Defines;
 import ld34.InputsListeners;
 import ld34.TimerThread;
 import level.Level;
-import level.tiles.Sand;
 import level.tiles.TileAtlas;
 
 public class Player extends Entity {
@@ -160,15 +159,16 @@ public class Player extends Entity {
             this.velX = 0; 
         }
         
+        //cage
         if(y1 + 1 <= this.level.nbTilesH - 1 &&
                 TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 11 &&
                 this.level.getData(x1, y1 + 1) != 2){
-            this.level.setData(x1, y1+1, 1);
+            //this.level.setData(x1, y1+1, 1);
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9 &&
-                this.level.getData(x1, y1 + 1) != 2){
-            this.level.setData(x0, y1+1, 1);
+                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 11 &&
+                this.level.getData(x0, y1 + 1) != 2){
+            //this.level.setData(x0, y1+1, 1);
         }
         
         //Sand
@@ -301,17 +301,18 @@ public class Player extends Entity {
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
         }
+
         //LEFT
-        if((int)(x0 + velX) / Defines.TILE_SIZE > 0 &&
-                (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2)/Defines.TILE_SIZE) || 
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, ( this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
+        if((int)(this.getBounds().x + this.velX) / Defines.TILE_SIZE > 0 &&
+                (!TileAtlas.atlas.get(this.level.getTile(((int)(this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + 2)/Defines.TILE_SIZE)).canPass(this.level, ((int)(this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + 2)/Defines.TILE_SIZE) || 
+                !TileAtlas.atlas.get(this.level.getTile(((int)(this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, ((int)(this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
             this.velX = 0;
         }
         //RIGHT
         else if((int)(this.getBounds().x + this.getBounds().width + velX)/ Defines.TILE_SIZE < this.level.nbTilesW - 1 &&
                 (!TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2) / Defines.TILE_SIZE )).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2) / Defines.TILE_SIZE) || 
                 !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2)/Defines.TILE_SIZE))){
-             this.velX = 0; 
+            this.velX = 0; 
         }
         
         //DOWN 
