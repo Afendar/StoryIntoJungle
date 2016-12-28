@@ -8,4 +8,5 @@ public class Defines {
     public static int SPEED = 5;
     public static int LEVEL_MAX = 6;
     public static String VERSION = "2.1";
+    public static boolean DEV = false;
 }

@@ -1,5 +1,7 @@
 package level;
 
+import entity.Braconeers;
+import entity.CageEntity;
 import entity.Player;
 import entity.SandEntity;
 import java.awt.Graphics;
@@ -29,6 +31,8 @@ public class Level {
     public int nbCages;
     public List<Particle> particles = new ArrayList<>();
     public List<SandEntity> sandEntity = new ArrayList<>();
+    public List<CageEntity> cageEntity = new ArrayList<>();
+    public List<Braconeers> braconeers = new ArrayList<>();
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -41,6 +45,7 @@ public class Level {
     public static final int PINK = 16711808;//RGB(255, 0, 128) CHECKPOINTS
     public static final int SAND = 15721648;//RGB(239, 228, 176) SAND
     public static final int CAGE = 8355711;//RGB(127, 127, 127) CAGE
+    public static final int BRACONEER = 32960;//RGB(0, 128, 192) BRACONEERS
     
     public Level(int nbLevel){
         this.nbLevel = nbLevel;
@@ -123,6 +128,16 @@ public class Level {
             SandEntity se = this.sandEntity.get(i);
             se.update(dt);
         }
+        
+        for(int i=0;i<this.cageEntity.size();i++){
+            CageEntity ce = this.cageEntity.get(i);
+            ce.update(dt);
+        }
+        
+        for(int i=0;i<this.braconeers.size();i++){
+            Braconeers b = this.braconeers.get(i);
+            b.update(dt);
+        }
     }
     
     public void setNbTilesInScreenX(int screenWidth){
@@ -195,8 +210,10 @@ public class Level {
                         }
                         break;
                     case 11:
-                        if(this.data[i][j] != 2 && this.map[i-1][j] != 11){
-                            TileAtlas.cage.render(g, i, j);
+                        if(this.map[i-1][j] != 11){
+                            CageEntity ce = this.getCageEntity(i, j);
+                            if(ce != null)
+                                ce.render(g);
                         }
                         break;
                     default:
@@ -204,6 +221,21 @@ public class Level {
                 }
             }
         }
+        
+        for(int i=0;i<this.braconeers.size();i++){
+            Braconeers b = this.braconeers.get(i);
+            b.render(g);
+        }
+    }
+    
+    public CageEntity getCageEntity(int x, int y){
+        for(int i=0;i< this.cageEntity.size();i++){
+            CageEntity ce = this.cageEntity.get(i);
+            if(ce.getPosX() == x * Defines.TILE_SIZE && ce.getPosY() == y * Defines.TILE_SIZE){
+                return ce;
+            }
+        }
+        return null;
     }
     
     public void renderSecondLayer(Graphics g, int startX, int startY){
@@ -223,9 +255,9 @@ public class Level {
             for(int j = startY;j<endY;j++){
                 switch(this.topMap[i][j]){
                     case 11:
-                        if(this.data[i][j] != 2){
-                            TileAtlas.cage.renderTop(g, i, j);
-                        }
+                        CageEntity ce = this.getCageEntity(i, j);
+                        if(ce != null)
+                            ce.renderTop(g);
                         break;
                     case 12:
                         TileAtlas.bush.render(g, i, j);
@@ -285,7 +317,7 @@ public class Level {
     
     public void loadFirstLayer(int nbLevel){
         try{
-            URL url = this.getClass().getResource("/lvl-test"+nbLevel+".png");
+            URL url = this.getClass().getResource("/lvl" + ((Defines.DEV)? "-dev" : "") + nbLevel + ".png");
             BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
@@ -351,10 +383,15 @@ public class Level {
                             break;
                         case CAGE:
                             this.nbCages++;
+                            this.cageEntity.add(new CageEntity(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE));
                             map[col][row] = TileAtlas.cage.ID;
                             map[col+1][row] = TileAtlas.cage.ID;
+                            System.out.println(col + ":" + row);
                             col++;
                             pixel += pixelLength;
+                            break;
+                        case BRACONEER:
+                            this.braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE));
                             break;
                         default:
                             break;
@@ -375,7 +412,7 @@ public class Level {
     
     public void loadTopLayer(int nbLevel){
         try{
-            URL url = this.getClass().getResource("/lvl-test"+nbLevel+"-top.png");
+            URL url = this.getClass().getResource("/lvl"+ ((Defines.DEV)? "-dev" : "") + nbLevel +"-top.png");
             BufferedImage lvlImg = ImageIO.read(url);
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();

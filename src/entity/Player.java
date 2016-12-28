@@ -99,7 +99,7 @@ public class Player extends Entity {
             url = this.getClass().getResource("/effects_end.png");
             this.spritesheetfxend = ImageIO.read(url);
         }catch(IOException e){
-            System.out.println(e.getMessage());
+            e.getMessage();
         }
         this.spritefx = this.spritesheetfx.getSubimage(0, 0, 60, 32);
         this.spritefxend = this.spritesheetfxend.getSubimage(0, 0, 60, 32);
@@ -161,14 +161,14 @@ public class Player extends Entity {
         
         //cage
         if(y1 + 1 <= this.level.nbTilesH - 1 &&
-                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 11 &&
-                this.level.getData(x1, y1 + 1) != 2){
-            //this.level.setData(x1, y1+1, 1);
+                TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 11){
+            CageEntity ce = this.level.getCageEntity(x1, y1 + 1);
+            System.out.println(ce.posX);
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 11 &&
-                this.level.getData(x0, y1 + 1) != 2){
-            //this.level.setData(x0, y1+1, 1);
+                TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 11){
+            CageEntity ce = this.level.getCageEntity(x0, y1 + 1);
+            System.out.println(ce.posX);
         }
         
         //Sand

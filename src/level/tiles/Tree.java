@@ -24,7 +24,7 @@ public class Tree extends Tile{
         if(size == Tree.TALL)
             this.tile = this.tileset.getSubimage(4 * Defines.TILE_SIZE, 0, 5 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE);
         else
-            this.tile = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+            this.tile = this.tileset.getSubimage(1 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
     
         for(int i=0;i<3;i++){
             this.leaves.add(new Leaf(5, 0, 0, 800, 600));

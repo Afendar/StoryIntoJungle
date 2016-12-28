@@ -58,7 +58,6 @@ public class GameScene extends Scene {
         this.nbLevel = lvl;
         this.displayEnd = false;
         this.displayStart = true;
-        System.out.println("level:"+this.nbLevel);
         if(this.nbLevel > 1){
             this.displayStart = false;
         }
@@ -457,7 +456,7 @@ public class GameScene extends Scene {
                 }
                 g.setColor(Color.WHITE);
                 g.setFont(this.fontSM);
-                g.drawString((String.format("%02x", this.minutes))+":"+(String.format("%02x", this.secondes)), 650, 50);
+                g.drawString((String.format("%02d", this.minutes))+":"+(String.format("%02d", this.secondes)), 650, 50);
             }
         }
     }
@@ -469,7 +468,7 @@ public class GameScene extends Scene {
         if(f.exists() && !f.isDirectory()){
             //save best scores
             try{
-                String line = null;
+                String line;
                 ArrayList<String> savedScores = new ArrayList<>();
                 BufferedReader br = new BufferedReader(new FileReader(this.bestScores));
 

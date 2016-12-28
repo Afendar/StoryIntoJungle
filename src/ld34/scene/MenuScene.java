@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Configs;
 import ld34.Game;
+import ld34.profile.SaveManager;
 import particles.Leaf;
 
 public class MenuScene extends Scene {
@@ -26,6 +27,7 @@ public class MenuScene extends Scene {
     public int[][] btnCoords;
     public int selectedItem;
     private ArrayList<Leaf> leavesList = new ArrayList<Leaf>(5);
+    protected SaveManager saveManager;
     
     public MenuScene(int w, int h, Game game){
         
@@ -60,7 +62,8 @@ public class MenuScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-//        this.title = "Story Into Jungle";
+        this.saveManager = new SaveManager();
+        
         this.btnNewGame = bundle.getString("newGame");
         this.btnOptions = bundle.getString("settings");
         this.btnBestScores = bundle.getString("bestScores");

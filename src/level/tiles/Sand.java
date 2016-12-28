@@ -18,9 +18,7 @@ public class Sand extends Tile {
     
     @Override
     public boolean canPass(Level level, int x, int y){
-        if(level.getData(x, y) == 2)
-            return true;
-        return false;
+        return level.getData(x, y) == 2;
     }
     
     public boolean isBroken(){

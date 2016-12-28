@@ -176,7 +176,7 @@ public class Game extends Canvas implements Runnable {
 
         if(this.paused && this.gs instanceof GameScene)
         {
-            ((GameScene)(this.gs)).renderPause(g);
+            //((GameScene)(this.gs)).renderPause(g);
         }
         
         if(this.DEBUG_MODE)
