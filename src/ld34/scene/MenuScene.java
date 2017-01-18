@@ -212,7 +212,7 @@ public class MenuScene extends Scene {
         }
         
         if(this.selectedItem != 0 && this.selectedItem != oldSelected){
-            new Thread(Sound.hover::play).start();
+            new Thread(Sound.hover::play2).start();
         }
     }
     
@@ -224,27 +224,27 @@ public class MenuScene extends Scene {
             if(this.displayLoad){
                 switch(this.selectedItem){
                     case 1:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new GameScene(this.w, this.h, this.game);
                         break;
                     case 2:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new SavesScene(this.w, this.h, this.game);
                         break;
                     case 3:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new OptionsScene(this.w, this.h, this.game);
                         break;
                     case 4:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new BestScoresScene(this.w, this.h, this.game);
                         break;
                     case 5:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new CreditsScene(this.w, this.h, this.game);
                         break;
                     case 6:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         System.exit(0);
                         break;
                     default:
@@ -254,23 +254,23 @@ public class MenuScene extends Scene {
             else{
                 switch(this.selectedItem){
                     case 1:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene =new GameScene(this.w, this.h, this.game);
                         break;
                     case 2:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new OptionsScene(this.w, this.h, this.game);
                         break;
                     case 3:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new BestScoresScene(this.w, this.h, this.game);
                         break;
                     case 4:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         currentScene = new CreditsScene(this.w, this.h, this.game);
                         break;
                     case 5:
-                        new Thread(Sound.select::play).start();
+                        new Thread(Sound.select::play2).start();
                         System.exit(0);
                         break;
                     default:
