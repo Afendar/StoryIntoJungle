@@ -11,7 +11,7 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.Game;
 
 public class CreditsScene extends Scene {
@@ -30,7 +30,7 @@ public class CreditsScene extends Scene {
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
@@ -41,7 +41,7 @@ public class CreditsScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.credits", this.game.langs[localeIndex]);
         
         this.title = this.bundle.getString("title");

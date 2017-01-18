@@ -22,26 +22,25 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.Defines;
 import ld34.Game;
 import ld34.Minimap;
 import ld34.TimerThread;
+import ld34.profile.BestScores;
 import level.Level;
-import profiler.Profiler;
+import sun.security.krb5.Config;
 
 public class GameScene extends Scene {
 
     public Font font, fontS, fontM, fontB, fontSM;
     public Player player;
-    public Profiler profiler;
     public Level level;
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnBack, pausemsg, btnContinue, warningTxt;
     public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
             backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll, guiAssets, scoreIcon, timeIcon, levelIcon, cagesIcon;
     public int nbLevel, selectedItem;
-    public String bestScores = "best_scores.dat";
     public boolean displayEnd, displayStart;
     public int alpha, alphaMax;
     public int time = 0, glueX = 0, glueX2 = 0, glueTopX = 0, glueTopX2 = 0;
@@ -51,6 +50,88 @@ public class GameScene extends Scene {
     public int maxTimeHardcore = 1, soundPlayed, timeSound;
     public boolean timer = false;
     public Minimap minimap;
+    
+    public GameScene(int w, int h, Game game, Level level, Player player){
+        super(w, h, game);
+        this.displayStart = false;
+        this.displayEnd = false;
+        this.level = level;
+        this.level.setNbTilesInScreenX(game.w);
+        this.level.setNbTilesInScreenY(game.h);
+        this.level.addPlayer(player);
+        this.nbLevel = level.nbLevel;
+        this.cam = new Camera((int)player.getPosX(), (int)player.getPosY(), w, h, this.level);
+        this.player = player;
+        this.player.cam = this.cam;
+        
+        try{
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
+            this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
+            this.fontSM = this.font.deriveFont(Font.PLAIN, 22.0f);
+            this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
+            this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
+            this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
+            
+            url = this.getClass().getResource("/background2.png");
+            this.background2 = ImageIO.read(url);
+            
+            url = this.getClass().getResource("/background_bottom.png");
+            this.backgroundBottomAll = ImageIO.read(url);
+            this.backgroundBottom = this.backgroundBottomAll.getSubimage(0, 0, 800, 600);
+            this.backgroundBottom2 = this.backgroundBottomAll.getSubimage(800, 0, 800, 600);
+            url = this.getClass().getResource("/background_top.png");
+            this.backgroundTopAll = ImageIO.read(url);
+            this.backgroundTop = this.backgroundTopAll.getSubimage(0, 0, 800, 600);
+            this.backgroundTop2 = this.backgroundTopAll.getSubimage(800, 0, 800, 600);
+            
+            url = this.getClass().getResource("/gui2.png");
+            this.guiAssets = ImageIO.read(url);
+            this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
+            this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
+            this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
+            this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
+            
+        }catch(FontFormatException|IOException e){
+            e.getMessage();
+        }
+        
+        this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
+        this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
+        this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
+        
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
+        
+        this.btnBack = this.bundle.getString("backToMain");
+        this.pausemsg = this.bundle.getString("pauseMsg");
+        this.deathMsg = this.bundle.getString("deathMsg");
+        this.startTxt1 = this.bundle.getString("startTxt1");
+        this.startTxt2 = this.bundle.getString("startTxt2");
+        this.startTxt3 = this.bundle.getString("startTxt3");
+        this.startTxt4 = this.bundle.getString("startTxt4");
+        this.respawn = this.bundle.getString("respawn");
+        this.btnContinue = this.bundle.getString("continue");
+        this.warningTxt = this.bundle.getString("alert");
+        
+        this.selectedItem = 0;
+        
+        this.alpha = 0;
+        this.alphaMax = 128;
+        
+        if(this.player.difficulty == 5){
+            this.timer = true;
+            this.timeF = TimerThread.MILLI;
+        }
+        
+        this.glueX2 = this.backgroundBottom.getWidth();
+        this.glueTopX2 = this.backgroundTop2.getWidth();
+        
+        this.minimap = new Minimap(this.w, this.h, (int)this.player.getPosX(), (int)this.player.getPosY(), this.level);
+        
+        this.timeSound = TimerThread.MILLI;
+        this.soundPlayed = 1;
+        new Thread(Sound.sf_jungle01::play).start();
+    }
     
     public GameScene(int w, int h, Game game, int lvl, int score){
         super(w, h, game);
@@ -67,9 +148,8 @@ public class GameScene extends Scene {
         this.level.setNbTilesInScreenY(game.h);
         
         this.cam = new Camera(0, 0, w, h, this.level);
-        this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")));
+        this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")));
         this.player.score = score;
-        this.profiler = new Profiler();
         
         this.level.addPlayer(this.player);
         
@@ -109,7 +189,7 @@ public class GameScene extends Scene {
         this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
         this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
         
-        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Configs.getInstance().getConfigValue("Lang"))]);
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
         
         this.btnBack = this.bundle.getString("backToMain");
         this.pausemsg = this.bundle.getString("pauseMsg");
@@ -129,7 +209,7 @@ public class GameScene extends Scene {
             this.alpha = 0;
         }
         this.alphaMax = 128;
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5){
             this.timer = true;
             this.timeF = TimerThread.MILLI;
         }
@@ -167,6 +247,7 @@ public class GameScene extends Scene {
                 this.level.setNbTilesInScreenX(game.w);
                 this.level.setNbTilesInScreenY(game.h);
                 this.level.setData(data);
+                this.player.setIsRespawning(true);
             }
             this.player.level = this.level;
             this.level.addPlayer(this.player);
@@ -216,10 +297,6 @@ public class GameScene extends Scene {
             new Thread(Sound.sf_jungle02::play).start();
         }
         
-        if(this.game.listener.profiler.enabled){
-            this.profiler.toggleVisible();
-        }
-        
         if(this.player.win){
             this.player.checkpointX = 0;
             if(this.nbLevel < Defines.LEVEL_MAX){
@@ -242,7 +319,7 @@ public class GameScene extends Scene {
             }
             else if(this.player.isDead){
                 if(this.game.listener.next.typed){
-                    saveScore();
+                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("Name"), this.player.score);
                     reinit(0);
                     this.player.isDead = false;
                     this.player.score = 0;
@@ -444,7 +521,7 @@ public class GameScene extends Scene {
         
         g.drawString("" + this.level.nbCages, 210, 47);
 
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5)
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5)
         { 
             g.setColor(new Color(0,0,0,160));
             g.fillRoundRect(640, 27, 100, 30, 5, 5);
@@ -460,81 +537,6 @@ public class GameScene extends Scene {
             }
         }
     }
-    
-    public void saveScore(){
-        
-        File f = new File(this.bestScores);
-         
-        if(f.exists() && !f.isDirectory()){
-            //save best scores
-            try{
-                String line;
-                ArrayList<String> savedScores = new ArrayList<>();
-                BufferedReader br = new BufferedReader(new FileReader(this.bestScores));
-
-                int index = 0;
-                int insertion = -1;
-
-                while((line = br.readLine()) != null && index < 4){
-                    savedScores.add(line);
-                    String[] lineSplited = line.split(":");
-                    if(this.player.score >= Integer.parseInt(lineSplited[1]) && insertion == -1){
-                        insertion = index;
-                    }
-                    index++;
-                }
-
-                int initSize = savedScores.size();
-                
-                if(insertion != -1){
-                    if(insertion == initSize)
-                    {
-                        savedScores.add(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
-                    }
-                    else{
-                        savedScores.add(insertion, Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
-                    }
-                }
-                else
-                {
-                    savedScores.add(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
-                }
-                
-                //Ecriture
-                PrintWriter pw = new PrintWriter(
-                                    new BufferedWriter(
-                                        new FileWriter(this.bestScores)));
-
-                for(int i=0;i<savedScores.size();i++){
-                    pw.println(savedScores.get(i));
-                }
-                
-                pw.close();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-        else{
-            //file not exist add default configuration file
-            this.createFile();
-        }
-    }
-    
-    public void createFile(){
-        try{
-            PrintWriter pw = new PrintWriter(
-                                new BufferedWriter(
-                                    new FileWriter(this.bestScores)));
-            
-            pw.print(Configs.getInstance().getConfigValue("Name") + ":" + Integer.toString(this.player.score));
-            
-            pw.close();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-    }   
     
     public void renderPause(Graphics g){
         Graphics2D g2d = (Graphics2D) g;

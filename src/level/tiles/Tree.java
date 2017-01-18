@@ -19,7 +19,7 @@ public class Tree extends Tile{
     public ArrayList<Leaf> leaves = new ArrayList<Leaf>(3);
     
     public Tree(int size, int imgX, int imgY){
-        super(imgX, imgY, (size == Tree.TALL) ? 13 : 14);
+        super(imgX, imgY, (size == Tree.TALL) ? 12 : 13);
         this.size = size;
         if(size == Tree.TALL)
             this.tile = this.tileset.getSubimage(4 * Defines.TILE_SIZE, 0, 5 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE);

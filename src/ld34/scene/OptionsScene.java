@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.CustomTextField;
 import ld34.Game;
 import ld34.OptionButton;
@@ -44,7 +44,7 @@ public class OptionsScene extends Scene {
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
-            Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
+            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
             fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
             this.fontU = this.font;
             this.fontU = this.fontU.deriveFont(fontAttributes);
@@ -56,7 +56,7 @@ public class OptionsScene extends Scene {
             this.pandaRender = ImageIO.read(url);
             
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         int [][]coords = {
@@ -64,7 +64,7 @@ public class OptionsScene extends Scene {
         };
         
         OptionButton btn1 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Configs.getInstance().getConfigValue("Jump"))), 
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
                 "Jump", 
                 250, 
                 200
@@ -72,7 +72,7 @@ public class OptionsScene extends Scene {
         btn1.setFont(this.font);
         this.optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Configs.getInstance().getConfigValue("Walk"))), 
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
                 "Walk", 
                 250, 
                 250
@@ -84,7 +84,7 @@ public class OptionsScene extends Scene {
         this.selectedItem = 0;
         this.currentTab = 0;
         
-        int volume = Integer.parseInt(Configs.getInstance().getConfigValue("Sound"));
+        int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
         this.posBar = (int)(153 + (2*volume));
         
         this.btnCharacter = this.spritesheetGui.getSubimage(0, 110, 50, 50);
@@ -98,7 +98,7 @@ public class OptionsScene extends Scene {
         this.bgHeadsRed = this.spritesheetGui.getSubimage(100, 208, 50, 48);
         this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
         
-        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[localeIndex]);
         
@@ -120,7 +120,7 @@ public class OptionsScene extends Scene {
         this.controlJump = this.bundle.getString("ctrlJump");
         this.controlWalk = this.bundle.getString("ctrlWalk");
         
-        this.nameField = new CustomTextField("name", Configs.getInstance().getConfigValue("Name").toString(), 230, 150, 250, 15);
+        this.nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 230, 150, 250, 15);
         this.nameField.setFont(this.font);
     }
 
@@ -141,52 +141,52 @@ public class OptionsScene extends Scene {
                         //male btn
                         this.sPanda = this.spritesheetGui.getSubimage(50, 160, 50, 48);
                         this.spRoux = this.spritesheetGui.getSubimage(50, 208, 50, 48);
-                        Configs.getInstance().setConfigValue("Sex", "0");
+                        Settings.getInstance().setConfigValue("Sex", "0");
                     }
                     else if(mouseX > 310 && mouseX < 360 && mouseY > 190 && mouseY < 240){
                         //female btn
                         this.sPanda = this.spritesheetGui.getSubimage(0, 160, 50, 48);
                         this.spRoux = this.spritesheetGui.getSubimage(0, 208, 50, 48);
-                        Configs.getInstance().setConfigValue("Sex", "1");
+                        Settings.getInstance().setConfigValue("Sex", "1");
                     }
                     else if(mouseX > 230 && mouseX < 280 && mouseY > 270 && mouseY < 320){
                         //grandpanda btn
                         this.sBoy = this.spritesheetGui.getSubimage(50, 160, 50, 48);
                         this.sGirl = this.spritesheetGui.getSubimage(0, 160, 50, 48);
-                        Configs.getInstance().setConfigValue("Spicies", "0");
+                        Settings.getInstance().setConfigValue("Spicies", "0");
                     }
                     else if(mouseX > 310 && mouseX < 360 && mouseY > 270 && mouseY < 320){
                         //panda roux btn
                         this.sBoy = this.spritesheetGui.getSubimage(50, 208, 50, 48);
                         this.sGirl = this.spritesheetGui.getSubimage(0, 208, 50, 48);
-                        Configs.getInstance().setConfigValue("Spicies", "1");
+                        Settings.getInstance().setConfigValue("Spicies", "1");
                     }
                     break;
                 case 1:
                     if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
-                        Configs.getInstance().setConfigValue("Difficulty", "0");
+                        Settings.getInstance().setConfigValue("Difficulty", "0");
                     }
                     else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/4) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
-                        Configs.getInstance().setConfigValue("Difficulty", "2");
+                        Settings.getInstance().setConfigValue("Difficulty", "2");
                     }
                     else if(mouseX > 3*this.w/5 && mouseX < (3*this.w/5) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
-                        Configs.getInstance().setConfigValue("Difficulty", "4");
+                        Settings.getInstance().setConfigValue("Difficulty", "4");
                     }
                     else if(mouseX > 4*this.w/5 && mouseX < (4*this.w/5) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
-                        Configs.getInstance().setConfigValue("Difficulty", "5");
+                        Settings.getInstance().setConfigValue("Difficulty", "5");
                     }
                     else if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
                             mouseY > 290 && mouseY < 290 + 40){
-                        Configs.getInstance().setConfigValue("Lang", "0");
+                        Settings.getInstance().setConfigValue("Lang", "0");
                         this.reloadLangs();
                     }
                     else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/5) + 107 &&
                             mouseY > 290 && mouseY < 290 + 40){
-                        Configs.getInstance().setConfigValue("Lang", "1");
+                        Settings.getInstance().setConfigValue("Lang", "1");
                         this.reloadLangs();
                     }
                     else if(mouseX >= 153 && mouseX <= 353 && mouseY > 400 && mouseY < 425){
@@ -194,7 +194,7 @@ public class OptionsScene extends Scene {
                         int newVolume = (int)((153 - posBar)/ -2);
                         //posBar = (int)(153 + (2 * volume));
                         //volume = (int)((153 - posBar)/(-2));
-                        Configs.getInstance().setConfigValue("Sound", Integer.toString(newVolume));
+                        Settings.getInstance().setConfigValue("Sound", Integer.toString(newVolume));
                     }
                     break;
                 case 2:
@@ -205,7 +205,7 @@ public class OptionsScene extends Scene {
     }
 
     public void reloadLangs(){
-        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[localeIndex]);
         
         this.title = this.bundle.getString("title");
@@ -227,6 +227,7 @@ public class OptionsScene extends Scene {
         this.controlWalk = this.bundle.getString("ctrlWalk");
     }
     
+    @Override
     public void render(Graphics g){
         
         Graphics2D g2d = (Graphics2D) g;
@@ -237,14 +238,16 @@ public class OptionsScene extends Scene {
         
         //draw menu options
         g.setColor(new Color(146, 171, 63));
-        if(this.currentTab == 0){
-            g.fillRect(0, 165, 92, 80);
-        }
-        else if(this.currentTab == 1){
-            g.fillRect(0, 245, 92, 80);
-        }
-        else if(this.currentTab == 2){
-            g.fillRect(0, 325, 92, 80);
+        switch(this.currentTab){
+            case 0:
+                g.fillRect(0, 165, 92, 80);
+                break;
+            case 1:
+                g.fillRect(0, 245, 92, 80);
+                break;
+            case 2:
+                g.fillRect(0, 325, 92, 80);
+                break;
         }
         g.drawImage(this.btnCharacter, 21, 180, null);
         g.drawImage(this.btnConfig, 21, 260, null);
@@ -344,24 +347,23 @@ public class OptionsScene extends Scene {
             
             switch(this.selectedItem){
                 case 1:
-                    Configs.getInstance().saveConfig();
+                    Settings.getInstance().saveConfig();
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;
                 case 2:
                     //player infos tab
                     this.currentTab = 0;
-                    Configs.getInstance().saveConfig();
+                    Settings.getInstance().saveConfig();
                     break;
                 case 3:
                     //settings tab
                     this.currentTab = 1;
-                    Configs.getInstance().saveConfig();
+                    Settings.getInstance().saveConfig();
                     break;
                 case 4:
                     //controls tab
                     this.currentTab = 2;
-                    Configs.getInstance().saveConfig();
-                    //currentScene = new CommandsScene(this.w, this.h, this.game);
+                    Settings.getInstance().saveConfig();
                     break;
                 default:
                     currentScene = this;
@@ -381,7 +383,7 @@ public class OptionsScene extends Scene {
         int sexeW = metrics.stringWidth(this.sexe);
         g.drawString(this.sexe, 150, 220);
         
-        switch(Integer.parseInt(Configs.getInstance().getConfigValue("Sex"))){
+        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))){
             case 0:
                 g.drawImage(this.bgHeadsRed, 230, 191, null);
                 g.drawImage(this.bgHeads, 310, 191, null);
@@ -401,7 +403,7 @@ public class OptionsScene extends Scene {
         int typeW = metrics.stringWidth(this.type);
         g.drawString(this.type, 150, 300);
 
-        switch(Integer.parseInt(Configs.getInstance().getConfigValue("Spicies"))){
+        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"))){
             case 0:
                 g.drawImage(this.bgHeadsRed, 230, 271, null);
                 g.drawImage(this.bgHeads, 310, 271, null);
@@ -432,7 +434,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.difficulty, 150, 180);
         int easyWidth = metrics.stringWidth(this.easy);
         
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 0){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 0){
             g.setFont(this.fontU);
             g.drawImage(this.bgBtnSmallRed, this.w/5, 200, null);
         }else{
@@ -443,7 +445,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.easy, this.w/5 - easyWidth/2 + 50, 225);
         
         int mediumWidth = metrics.stringWidth(this.medium);
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 2){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 2){
             g.setFont(this.fontU);
             g.drawImage(this.bgBtnSmallRed, 2*(this.w/5), 200, null);
         }else{
@@ -452,7 +454,7 @@ public class OptionsScene extends Scene {
         }
         g.drawString(this.medium, 2*(this.w/5) - mediumWidth/2 + 50, 225);
         
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 4){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 4){
             g.setFont(this.fontU);
             g.drawImage(this.bgBtnSmallRed, 3*(this.w/5), 200, null);
         }else{
@@ -463,7 +465,7 @@ public class OptionsScene extends Scene {
         int hardWidth = metrics.stringWidth(this.hard);
         g.drawString(this.hard, 3*(this.w/5) - hardWidth/2 + 50, 225);
         
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Difficulty")) == 5){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5){
             g.setFont(this.fontU);
             g.drawImage(this.bgBtnSmallRed, 4*this.w/5, 200, null);
         }else{
@@ -481,7 +483,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.language, 150, 270);
         
         int englishW = metrics.stringWidth(this.english);
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Lang")) == 0){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 0){
             g.setFont(this.fontU);
             g.drawImage(this.bgBtnSmallRed, this.w/5, 290, null);
         }else{
@@ -491,7 +493,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.english, this.w/4 - englishW/2 + 10, 315);
         
         int frenchW = metrics.stringWidth(this.french);
-        if(Integer.parseInt(Configs.getInstance().getConfigValue("Lang")) == 1){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 1){
             g.setFont(this.fontU);
             g.drawImage(this.bgBtnSmallRed, 2*this.w/5, 290, null);
         }else{
@@ -527,9 +529,7 @@ public class OptionsScene extends Scene {
         g.drawString(this.title, this.w/2 - titlewidth/2, 60);
         
         g.setFont(this.font);
-        metrics = g.getFontMetrics(this.font);
         g.drawString(this.controlJump, 150, 200);
-        
         g.drawString(this.controlWalk, 150, 250);
         
         for(int i=0;i<this.optionButtons.size();i++){

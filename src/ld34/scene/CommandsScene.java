@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.Game;
 import ld34.OptionButton;
 
@@ -35,17 +35,17 @@ public class CommandsScene extends Scene {
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
-            Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
+            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
             fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
             this.fontU = this.font;
             this.fontU = this.fontU.deriveFont(fontAttributes);
             
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         OptionButton btn1 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Configs.getInstance().getConfigValue("Jump"))), 
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
                 "Jump", 
                 150, 
                 200
@@ -53,7 +53,7 @@ public class CommandsScene extends Scene {
         btn1.setFont(this.font);
         this.optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Configs.getInstance().getConfigValue("Walk"))), 
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
                 "Walk", 
                 150, 
                 250
@@ -68,7 +68,7 @@ public class CommandsScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.commands", this.game.langs[localeIndex]);
         
         this.btnBack = this.bundle.getString("backToMain");
@@ -77,6 +77,7 @@ public class CommandsScene extends Scene {
         this.controlWalk = this.bundle.getString("ctrlWalk");
     }
     
+    @Override
     public Scene update(double dt) {
         processHover();
         
@@ -86,6 +87,7 @@ public class CommandsScene extends Scene {
         return processClick();
     }
 
+    @Override
     public void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -104,7 +106,6 @@ public class CommandsScene extends Scene {
         
         g.drawString(this.controlWalk, 50, 250);
         
-        //end btn
         int backWidth = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
         if(this.selectedItem == 1){
@@ -156,7 +157,7 @@ public class CommandsScene extends Scene {
             
             switch(this.selectedItem){
                 case 1:
-                    Configs.getInstance().saveConfig();
+                    Settings.getInstance().saveConfig();
                     currentScene = new OptionsScene(this.w, this.h, this.game);
                     break;
                 default:

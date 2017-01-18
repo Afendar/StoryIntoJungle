@@ -1,23 +1,21 @@
 package ld34;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import ld34.profile.Save;
 import ld34.scene.GameScene;
-import ld34.scene.MapScene;
 import ld34.scene.MenuScene;
+import ld34.scene.SavesScene;
 import ld34.scene.Scene;
-import ld34.scene.SplashScene;
+import profiler.Profiler;
 
 public class Game extends Canvas implements Runnable {
 
@@ -32,7 +30,7 @@ public class Game extends Canvas implements Runnable {
     public ResourceBundle bundle;
     public int elapsedTime, lastTime, pauseTime;
     public Runtime instance;
-    public boolean DEBUG_MODE = false;
+    public Profiler profiler;
     public int frame, memoryUsed;
     
     public Game(int w, int h){
@@ -51,6 +49,7 @@ public class Game extends Canvas implements Runnable {
         this.listener = new InputsListeners(this);
         
         this.gs = new MenuScene(w, h, this);
+        this.profiler = new Profiler(this);
         
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -62,7 +61,7 @@ public class Game extends Canvas implements Runnable {
             this.fontD = this.fontD.deriveFont(Font.PLAIN, 18.0f);
         }
         catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
     }
     
@@ -88,7 +87,7 @@ public class Game extends Canvas implements Runnable {
         double nsms = 1000000000 / 60;
         int frameCpt = 0;
         
-        boolean needUpdate = true;
+        boolean needUpdate;
         this.lastTime = TimerThread.MILLI;
         this.pauseTime= 0;
         
@@ -122,11 +121,10 @@ public class Game extends Canvas implements Runnable {
             if(System.currentTimeMillis() - startTime >= 1000)
             {
                 this.memoryUsed = (int)((instance.totalMemory() - instance.freeMemory()) / 1024) / 1024;
-                //System.out.println("Used Memory: " + this.memoryUsed + " Mo");
                 this.frame = frameCpt;
-                //System.out.println("FPS : " + this.frame);
                 frameCpt = 0;
                 startTime = System.currentTimeMillis();
+                this.profiler.update(Integer.toString(this.frame), Integer.toString(this.memoryUsed));
             }
         }
     }
@@ -145,7 +143,7 @@ public class Game extends Canvas implements Runnable {
         
         if(this.listener.profiler.typed )
         {
-            this.DEBUG_MODE = !this.DEBUG_MODE;
+            this.profiler.toggleVisible();
         }
     }
     
@@ -176,64 +174,15 @@ public class Game extends Canvas implements Runnable {
 
         if(this.paused && this.gs instanceof GameScene)
         {
-            //((GameScene)(this.gs)).renderPause(g);
+            ((GameScene)(this.gs)).renderPause(g);
         }
         
-        if(this.DEBUG_MODE)
+        if(this.profiler.isVisible())
         {
-            this.renderDebug(g);
+            this.profiler.render(g);
         }
         
         g.dispose();
         bs.show();
-    }
-    
-    public void renderDebug(Graphics g)
-    {
-        FontMetrics fm = g.getFontMetrics(this.fontD);
-        String text = "FPS : ";
-        text += this.frame;
-        Rectangle2D rect = fm.getStringBounds(text, g);
-        g.setFont(this.fontD);
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(0, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
-        g.setColor(Color.WHITE);
-        g.drawString(text, 30, 30);
-        
-        text = "Memory : " + this.memoryUsed + "Mo";
-        rect = fm.getStringBounds(text, g);
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(0, 57 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
-        g.setColor(Color.WHITE);
-        g.drawString(text, 30, 60);
-        
-        if(this.gs instanceof GameScene){
-            GameScene gs = (GameScene) this.gs;
-            this.nbEntities = gs.level.particles.size();
-        }
-        else
-        {
-            this.nbEntities = 0;
-        }
-        text = "Entities : " + this.nbEntities;
-        rect = fm.getStringBounds(text, g);
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(0, 84 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
-        g.setColor(Color.WHITE);
-        g.drawString(text, 30, 90);
-        
-        text = "Java : " + System.getProperty("java.version") + "  x" + System.getProperty("sun.arch.data.model") + " bit";
-        rect = fm.getStringBounds(text, g);
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(this.w - (int)rect.getWidth() - 40, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
-        g.setColor(Color.WHITE);
-        g.drawString(text, this.w - (int)rect.getWidth() - 30, 30);
-                
-        text = "Story Into Jungle : v" + Defines.VERSION;
-        rect = fm.getStringBounds(text, g);
-        g.setColor(new Color(0,0,0,150));
-        g.fillRect(this.w - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
-        g.setColor(Color.WHITE);
-        g.drawString(text, this.w - (int)rect.getWidth() - 30, 60);
     }
 }

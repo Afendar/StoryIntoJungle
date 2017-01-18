@@ -1,5 +1,6 @@
 package ld34;
 
+import ld34.profile.Settings;
 import audio.Sound;
 import java.awt.Color;
 import java.awt.Font;
@@ -8,7 +9,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
 
-public class OptionButton extends JComponent{
+public final class OptionButton extends JComponent{
     
     private boolean isEditing;
     private String value;
@@ -17,7 +18,7 @@ public class OptionButton extends JComponent{
     
     public OptionButton(String value, String name, int x, int y){
         super();
-        this.text = value.toString();
+        this.text = value;
         this.name = name;
         this.value = value;
         this.x = x;
@@ -39,6 +40,7 @@ public class OptionButton extends JComponent{
         this.w = metrics.stringWidth(this.text);
     }
     
+    @Override
     public void setFont(Font font){
         super.setFont(font);
         FontMetrics metrics = this.getFontMetrics(this.getFont());
@@ -52,7 +54,7 @@ public class OptionButton extends JComponent{
     private void configure(KeyEvent e){
         this.isEditing = false;
         this.value = Integer.toString(e.getKeyCode());
-        Configs.getInstance().setConfigValue(this.name, this.value);
+        Settings.getInstance().setConfigValue(this.name, this.value);
         this.setText(KeyEvent.getKeyText(e.getKeyCode()));
     }
     

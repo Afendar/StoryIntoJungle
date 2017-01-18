@@ -15,6 +15,7 @@ public class CageEntity extends Entity {
     private int brokenStep;
     private boolean isBreak, renderHurt;
     public BufferedImage tileset, topLeftSprite, topRightSprite, bottomLeftSprite, bottomRightSprite;
+    private int timerender;
     
     public CageEntity(Level level, int posX, int posY){
         super(posX, posY);
@@ -22,6 +23,7 @@ public class CageEntity extends Entity {
         this.level = level;
         this.brokenStep = 0;
         this.isBreak = this.renderHurt = false;
+        this.timerender = 0;
         
         try{
             URL url = this.getClass().getResource("/tileset2.png");
@@ -31,15 +33,19 @@ public class CageEntity extends Entity {
         }
         
         this.topLeftSprite = this.tileset.getSubimage(0 * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.bottomLeftSprite = this.tileset.getSubimage(0 * Defines.TILE_SIZE, (int)((6 + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.topRightSprite = this.tileset.getSubimage((int)((0 + 1) * Defines.TILE_SIZE), 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.bottomRightSprite = this.tileset.getSubimage((int)((0 + 1) * Defines.TILE_SIZE), (int)((6 + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.bottomLeftSprite = this.tileset.getSubimage(0 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.topRightSprite = this.tileset.getSubimage(Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.bottomRightSprite = this.tileset.getSubimage(Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
     }
     
     public void hurt(){
-        if(this.brokenStep < 3){
+        if(this.brokenStep < 3 && !this.renderHurt){
             this.brokenStep++;
             this.renderHurt = true;
+            this.topLeftSprite = this.tileset.getSubimage(2 * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            this.bottomLeftSprite = this.tileset.getSubimage(2 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            this.topRightSprite = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            this.bottomRightSprite = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         
         if(this.brokenStep == 3)
@@ -49,7 +55,17 @@ public class CageEntity extends Entity {
     @Override
     public void update(double dt) {
         if(this.renderHurt){
-            
+            if(this.timerender > 10){
+                this.renderHurt = false;
+                this.timerender = 0;
+                this.topLeftSprite = this.tileset.getSubimage(0 * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+                this.bottomLeftSprite = this.tileset.getSubimage(0 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+                this.topRightSprite = this.tileset.getSubimage(Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+                this.bottomRightSprite = this.tileset.getSubimage(Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            }
+            else{
+                this.timerender += dt;
+            }
         }
     }
 

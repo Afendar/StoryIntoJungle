@@ -1,5 +1,6 @@
 package ld34;
 
+import ld34.profile.Settings;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -7,7 +8,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
 
-public class CustomTextField extends JComponent {
+public final class CustomTextField extends JComponent {
     private boolean isEditing;
     private String value, name;
     private int x, y, w, h;
@@ -32,6 +33,7 @@ public class CustomTextField extends JComponent {
         this(name, value, 0, 0, w, h);
     }
     
+    @Override
     public void setFont(Font font){
         super.setFont(font);
     }
@@ -48,7 +50,7 @@ public class CustomTextField extends JComponent {
             
             if(now - lastPress > threshold && charW < this.w){
                 this.value += e.getKeyChar();
-                Configs.getInstance().setConfigValue("Name", this.value);
+                Settings.getInstance().setConfigValue("Name", this.value);
                 lastPress = now;
             }
         }
@@ -66,7 +68,7 @@ public class CustomTextField extends JComponent {
                 else{
                     this.value = "";
                 }
-                Configs.getInstance().setConfigValue("Name", this.value);
+                Settings.getInstance().setConfigValue("Name", this.value);
             }
         }
     }
@@ -99,7 +101,7 @@ public class CustomTextField extends JComponent {
             if(this.value.equals("Enter name")){
                 this.value = "";
             }
-            Configs.getInstance().setConfigValue("Name", this.value);
+            Settings.getInstance().setConfigValue("Name", this.value);
         }
     }
     

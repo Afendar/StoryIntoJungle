@@ -48,6 +48,7 @@ public class Level {
     public static final int BRACONEER = 32960;//RGB(0, 128, 192) BRACONEERS
     
     public Level(int nbLevel){
+        System.out.println("Loading level : " + nbLevel);
         this.nbLevel = nbLevel;
         this.nbCages = 0;
         
@@ -88,7 +89,7 @@ public class Level {
                     case 9:
                         TileAtlas.sand.update(this, i, j, dt);
                         break;
-                    case 11:
+                    case 10:
                         TileAtlas.cage.update(this, i, j, dt);
                         break;
                     default:
@@ -100,7 +101,7 @@ public class Level {
         for(int i = startX;i<endX;i++){
             for(int j = startY;j<endY;j++){
                 switch(this.topMap[i][j]){
-                    case 13:
+                    case 12:
                         if(this.particles.size() < 4){
                             for(int k = 0; k < 4;k++){
                                 this.particles.add(new Leaf(5,
@@ -209,7 +210,7 @@ public class Level {
                             TileAtlas.sand.render(g, i, j);
                         }
                         break;
-                    case 11:
+                    case 10:
                         if(this.map[i-1][j] != 11){
                             CageEntity ce = this.getCageEntity(i, j);
                             if(ce != null)
@@ -254,22 +255,22 @@ public class Level {
         for(int i = startX;i<endX;i++){
             for(int j = startY;j<endY;j++){
                 switch(this.topMap[i][j]){
-                    case 11:
+                    case 10:
                         CageEntity ce = this.getCageEntity(i, j);
                         if(ce != null)
                             ce.renderTop(g);
                         break;
-                    case 12:
+                    case 11:
                         TileAtlas.bush.render(g, i, j);
                         break;
-                    case 13:
+                    case 12:
                         for(int k=0;k<this.particles.size();k++){
                             Particle p = this.particles.get(k);
                             p.render(g);
                         }
                         TileAtlas.tallTree.render(g, i, j, Tree.TALL);
                         break;
-                    case 14:
+                    case 13:
                         TileAtlas.smallTree.render(g, i, j, Tree.SMALL);
                         break;
                     default:
@@ -290,7 +291,7 @@ public class Level {
     public void setData(int[][] data){
         for(int i=0;i< data.length;i++){
             for(int j=0;j<data[i].length;j++){
-                if(this.map[i][j] == 11 && data[i][j] == 2){
+                if(this.map[i][j] == 10 && data[i][j] == 2){
                     this.nbCages--;
                 }
                 if(this.map[i][j] == 9 && data[i][j] == 2){
@@ -386,7 +387,6 @@ public class Level {
                             this.cageEntity.add(new CageEntity(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE));
                             map[col][row] = TileAtlas.cage.ID;
                             map[col+1][row] = TileAtlas.cage.ID;
-                            System.out.println(col + ":" + row);
                             col++;
                             pixel += pixelLength;
                             break;
@@ -406,7 +406,7 @@ public class Level {
             }
             
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
     }
     
@@ -458,7 +458,7 @@ public class Level {
                 }
             }
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
     }
     

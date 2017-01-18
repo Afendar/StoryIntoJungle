@@ -41,7 +41,7 @@ public abstract class Scene{
             url = runtimeClass.getResource("/foreground3.png");
             this.foreground3 = ImageIO.read(url);
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);

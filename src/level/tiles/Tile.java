@@ -24,7 +24,7 @@ public abstract class Tile {
             URL url = this.getClass().getResource("/tileset2.png");
             this.tileset = ImageIO.read(url);
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.tile = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);

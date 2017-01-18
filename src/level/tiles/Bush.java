@@ -9,7 +9,7 @@ public class Bush extends Tile {
     public BufferedImage topSprite, bottomSprite;
     
     public Bush(int imgX, int imgY){
-        super(imgX, imgY, 12);
+        super(imgX, imgY, 11);
     }
 
     @Override

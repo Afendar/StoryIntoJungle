@@ -26,6 +26,7 @@ public class LevelUp extends Tile{
         
     }
     
+    @Override
     public void render(Graphics g, int x, int y){
         g.drawImage(this.topSprite, x * Defines.TILE_SIZE, (y-1) * Defines.TILE_SIZE, null);
         g.drawImage(this.bottomSprite, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);

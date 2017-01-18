@@ -28,7 +28,7 @@ public class Leaf extends Particle {
             this.sprite = this.leafSprites[rnd.nextInt(4-0)+0];
         }
         catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         this.winW = winW;
         this.winH = winH;
@@ -50,7 +50,7 @@ public class Leaf extends Particle {
         this.winH = winH;
     }
     
-    public void genRandStartX(){
+    public final void genRandStartX(){
         this.x = this.rnd.nextInt((this.startX + this.winW) - this.startX) + this.startX;
         this.y = this.startY - this.sprite.getHeight();
         this.speed = Math.random() * 4 + 1;
@@ -80,6 +80,7 @@ public class Leaf extends Particle {
         }
     }
     
+    @Override
     public boolean isDead(){
         return this.dead;
     }

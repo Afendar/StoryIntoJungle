@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ld34.scene;
 
 import java.awt.BasicStroke;
@@ -25,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.Game;
 
 /**
@@ -47,7 +42,7 @@ public class MapScene extends Scene {
         {381, 172},
         {571, 324}
     };
-    private Rectangle rect;
+    private final Rectangle rect;
     private List<Point2D> points;
     private int index;
     private Point2D pos;
@@ -67,7 +62,7 @@ public class MapScene extends Scene {
             this.panda = ImageIO.read(url);
             
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         int [][]coords = {
@@ -81,7 +76,7 @@ public class MapScene extends Scene {
         this.currentLvl = currentLvl;
         this.currentScore = currentScore;
         
-        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.levelmap", this.game.langs[localeIndex]);
         
         this.btnBack = this.bundle.getString("backToMain");
@@ -120,13 +115,14 @@ public class MapScene extends Scene {
         points = new ArrayList<>(25);
     }
     
+    @Override
     public Scene update(double dt) {
         processHover();
         
-        if(this.points.size() != 0)
+        if(!this.points.isEmpty())
         {
             if(this.index < this.points.size() - 1)
-            this.index++;
+                this.index++;
         
             this.pos = this.points.get(index);
         }
@@ -134,6 +130,7 @@ public class MapScene extends Scene {
         return processClick();
     }
     
+    @Override
     public void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -245,10 +242,6 @@ public class MapScene extends Scene {
                     //save
                     break;
                 case 3:
-                    //nextlvl
-                    /*
-                    this.currentLvl++;
-                    currentScene = new GameScene(this.w, this.h, this.game, this.currentLvl);*/
                     this.animated = true;
                     this.currentLvl++;
                     this.followNext();

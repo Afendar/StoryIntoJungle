@@ -7,7 +7,7 @@ public class Sand extends Tile {
     public boolean startBreak;
     public double dt;
     
-    private boolean isBroken;
+    private final boolean isBroken;
     
     public Sand(int imgX, int imgY){
         super(imgX, imgY, 9);

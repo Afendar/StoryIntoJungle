@@ -1,5 +1,6 @@
 package ld34;
 
+import ld34.profile.Settings;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -38,7 +39,7 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     }
     
     public boolean[] keys;
-    public ArrayList<Action> actions = new ArrayList<Action>();
+    public ArrayList<Action> actions = new ArrayList<>();
     
     public Action jump = new Action();
     public Action slow = new Action();
@@ -72,9 +73,9 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     }
     
     public void processKey(KeyEvent e, boolean enabled){
-        if(e.getKeyCode() == Integer.parseInt(Configs.getInstance().getConfigValue("Jump"))) 
+        if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))) 
             jump.switched(enabled);
-        if(e.getKeyCode() == Integer.parseInt(Configs.getInstance().getConfigValue("Walk")))
+        if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Walk")))
             slow.switched(enabled);
         if(e.getKeyCode() == KeyEvent.VK_ENTER) 
             next.switched(enabled);

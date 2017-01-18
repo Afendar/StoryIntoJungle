@@ -1,14 +1,16 @@
 package entity;
 
 import audio.Sound;
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import ld34.Camera;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.Defines;
 import ld34.InputsListeners;
 import ld34.TimerThread;
@@ -19,7 +21,7 @@ public class Player extends Entity {
     
     public Level level;
     public float velX, velY;
-    protected boolean isFalling;
+    protected boolean isFalling, isRespawn;
     protected boolean isJumping, renderJump, renderJumpEnd;
     InputsListeners listener;
     BufferedImage spritesheet, sprite, spritefx, spritesheetfx, spritesheetfxend, spritefxend;
@@ -27,12 +29,13 @@ public class Player extends Entity {
     public boolean isDead, win;
     public int difficulty;
     public int score;
-    public String sex, age, species;
+    public String sex, age, species, name;
     private int animX, animY, timeAnim;
     public int PLAYER_SIZE;
     public int checkpointX, checkpointY;
     public int direction, timeJAnim, offset, oldposX, oldposY, offset2, timeJEndAnim;
     public Thread jumpParticles, endJumpParticles;
+    private double timeRespawn, timeLastBlink;
     
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
@@ -41,6 +44,7 @@ public class Player extends Entity {
         this.velY = 0;
         this.isFalling = true;
         this.isJumping = false;
+        this.isRespawn = false;
         this.isDead = false;
         this.renderJump = this.renderJumpEnd = false;
         this.level = level;
@@ -56,8 +60,10 @@ public class Player extends Entity {
         this.checkpointX = this.checkpointY = 0;
         this.direction = this.timeJEndAnim = 0;
         this.timeJAnim = offset = oldposX = oldposY = offset2 = 0;
+        this.timeRespawn = 0;
+        this.timeLastBlink = 0;
         
-        switch(Integer.parseInt(Configs.getInstance().getConfigValue("Spicies")))
+        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")))
         {
             case 0:
                 this.species = "panda";
@@ -67,7 +73,7 @@ public class Player extends Entity {
                 break;
         }
         
-        switch(Integer.parseInt(Configs.getInstance().getConfigValue("Sex"))){
+        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))){
             case 0:
                 this.sex = "boy";
                 break;
@@ -106,9 +112,24 @@ public class Player extends Entity {
         this.sprite = this.spritesheet.getSubimage(this.animX, this.animY*this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
     }
 
+    public void setIsRespawning(boolean isRespawning){
+        this.isRespawn = isRespawning;
+        this.sprite = this.spritesheet.getSubimage(0, 2 * this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
+    }
+    
     @Override
     public void update(double dt) {
 
+        if(this.isRespawn){
+            this.timeRespawn += dt;
+            this.timeLastBlink += dt;
+            if(this.timeRespawn > 200){
+                this.timeRespawn = 0;
+                this.isRespawn = false;
+            }
+            return;
+        }
+        
         if(this.isDead){
             this.sprite = this.spritesheet.getSubimage(3*this.PLAYER_SIZE, 10, this.PLAYER_SIZE, this.PLAYER_SIZE);
             return;
@@ -161,14 +182,18 @@ public class Player extends Entity {
         
         //cage
         if(y1 + 1 <= this.level.nbTilesH - 1 &&
-                TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 11){
+                TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 10 &&
+                this.isJumping){
             CageEntity ce = this.level.getCageEntity(x1, y1 + 1);
-            System.out.println(ce.posX);
+            if(ce != null)
+                ce.hurt();
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 11){
+                TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 10 &&
+                this.isJumping){
             CageEntity ce = this.level.getCageEntity(x0, y1 + 1);
-            System.out.println(ce.posX);
+            if(ce != null)
+                ce.hurt();
         }
         
         //Sand
@@ -373,9 +398,10 @@ public class Player extends Entity {
     }
 
     public boolean move(float x, float y){
+        
         this.posX += x;
         this.posY += y;
-        
+
         if(this.posX < 0){
             this.posX = 0;
             return false;
@@ -408,7 +434,18 @@ public class Player extends Entity {
             g.drawImage(this.spritefxend, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
         }
         
-        g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
+        if(this.timeLastBlink > 20){
+            if(this.timeLastBlink > 30){
+                this.timeLastBlink = 0;
+            }
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
+            g2d.drawImage(this.sprite, (int) this.posX, (int) this.posY, null);
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
+        else{
+            g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
+        }
     }
     
     public void reloadSpritesheet(int lvl){
@@ -451,5 +488,9 @@ public class Player extends Entity {
                 break;
         }
         return bounds;
+    }
+    
+    public boolean isJumping(){
+        return this.isJumping;
     }
 }

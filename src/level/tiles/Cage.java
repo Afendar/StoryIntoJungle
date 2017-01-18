@@ -11,7 +11,7 @@ public class Cage extends Tile {
     public double dt;
     
     public Cage(int imgX, int imgY){
-        super(imgX, imgY, 11);
+        super(imgX, imgY, 10);
         
         this.topLeftSprite = this.tile;
         this.bottomLeftSprite = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, (int)((imgY + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);

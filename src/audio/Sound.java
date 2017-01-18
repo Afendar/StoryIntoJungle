@@ -11,7 +11,7 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import ld34.Configs;
+import ld34.profile.Settings;
 
 public class Sound {
     
@@ -29,11 +29,11 @@ public class Sound {
     
     private Sound(String path){
         this.path = path;
-        this.volume = Integer.parseInt(Configs.getInstance().getConfigValue("Sound"));
+        this.volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
     }
     
     public void play(){
-        this.volume = Integer.parseInt(Configs.getInstance().getConfigValue("Sound"));
+        this.volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
         try{
             URL url = this.getClass().getResource(this.path);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);

@@ -17,5 +17,4 @@ public class Pious extends Tile {
     public void update(Level level, int x, int y, double dt) {
         
     }
-    
 }

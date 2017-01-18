@@ -10,7 +10,7 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import ld34.Configs;
+import ld34.profile.Settings;
 import ld34.Game;
 
 public class EndScene extends Scene {
@@ -31,7 +31,7 @@ public class EndScene extends Scene {
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
 
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
 
         //new game
@@ -41,7 +41,7 @@ public class EndScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         
-        int localeIndex = Integer.parseInt(Configs.getInstance().getConfigValue("Lang"));
+        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[localeIndex]);
         
         this.text1 = this.bundle.getString("text1");
