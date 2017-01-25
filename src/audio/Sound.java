@@ -22,14 +22,14 @@ import static javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
 
 public class Sound {
     
-    public static Sound bonus = new Sound("/bonus.ogg");
-    public static Sound death = new Sound("/death.ogg");
-    public static Sound jump = new Sound("/jump.ogg");
-    public static Sound levelup = new Sound("/levelup.ogg");
-    public static Sound sf_jungle01 = new Sound("/jungle01.ogg");
-    public static Sound sf_jungle02 = new Sound("/jungle02.ogg");
-    public static Sound hover = new Sound("/hover3.ogg");
-    public static Sound select = new Sound("/select3.ogg");
+    public static Sound bonus = new Sound("/bonus.wav");
+    public static Sound death = new Sound("/death.wav");
+    public static Sound jump = new Sound("/jump.wav");
+    public static Sound levelup = new Sound("/levelup.wav");
+    public static Sound sf_jungle01 = new Sound("/jungle01.wav");
+    public static Sound sf_jungle02 = new Sound("/jungle02.wav");
+    public static Sound hover = new Sound("/hover3.wav");
+    public static Sound select = new Sound("/select3.wav");
     
     public String path;
     public int volume;
