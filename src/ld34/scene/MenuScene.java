@@ -212,7 +212,7 @@ public class MenuScene extends Scene {
         }
         
         if(this.selectedItem != 0 && this.selectedItem != oldSelected){
-            new Thread(Sound.hover::play2).start();
+            new Thread(Sound.hover::play).start();
         }
     }
     

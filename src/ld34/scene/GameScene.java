@@ -12,13 +12,16 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
+import ld34.CustomTextField;
 import ld34.profile.Settings;
 import ld34.Defines;
 import ld34.Game;
 import ld34.Minimap;
+import ld34.OptionButton;
 import ld34.TimerThread;
 import ld34.profile.BestScores;
 import level.Level;
@@ -29,10 +32,10 @@ public class GameScene extends Scene {
     public Player player;
     public Level level;
     public Camera cam;
-    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnSettings, btnBack, btnSave, pausemsg, btnContinue, warningTxt;
+    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnSettings, btnBack, btnSave, pausemsg, btnContinue, warningTxt, title;
     public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
             backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll, guiAssets, scoreIcon, timeIcon, levelIcon, cagesIcon;
-    public int nbLevel, selectedItem;
+    public int nbLevel, selectedItemMenu, selectedItemSaves, selectedItemSettings;
     public boolean displayEnd, displayStart;
     public int alpha, alphaMax;
     public int time = 0, glueX = 0, glueX2 = 0, glueTopX = 0, glueTopX2 = 0;
@@ -44,6 +47,11 @@ public class GameScene extends Scene {
     public Minimap minimap;
     public popinsScenes currentScene;
     public enum popinsScenes { NONE, MENU, SETTINGS, SAVES };
+    
+    public ArrayList<OptionButton> optionButtons = new ArrayList<>();
+    public String language, french, english, commands, volume, controlJump, controlWalk;
+    public CustomTextField nameField;
+    public int posBar;
     
     
     public GameScene(int w, int h, Game game, Level level, Player player){
@@ -99,7 +107,7 @@ public class GameScene extends Scene {
         
         this.btnBack = this.bundle.getString("backToMain");
         this.btnSave = this.bundle.getString("save");
-        this.pausemsg = this.bundle.getString("pauseMsg");
+        this.title = this.pausemsg = this.bundle.getString("pauseMsg");
         this.deathMsg = this.bundle.getString("deathMsg");
         this.startTxt1 = this.bundle.getString("startTxt1");
         this.startTxt2 = this.bundle.getString("startTxt2");
@@ -110,7 +118,12 @@ public class GameScene extends Scene {
         this.btnContinue = this.bundle.getString("continue");
         this.warningTxt = this.bundle.getString("alert");
         
-        this.selectedItem = 0;
+        this.language = this.bundle.getString("language");
+        this.french = this.bundle.getString("french");
+        this.english = this.bundle.getString("english");
+        this.commands = this.bundle.getString("commands");
+        
+        this.selectedItemMenu = this.selectedItemSaves = this.selectedItemSettings = 0;
         this.currentScene = popinsScenes.NONE;
         
         this.alpha = 0;
@@ -129,6 +142,9 @@ public class GameScene extends Scene {
         this.timeSound = TimerThread.MILLI;
         this.soundPlayed = 1;
         new Thread(Sound.sf_jungle01::play).start();
+        
+        int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+        this.posBar = (int)(153 + (2*volume));
     }
     
     public GameScene(int w, int h, Game game, int lvl, int score){
@@ -190,7 +206,7 @@ public class GameScene extends Scene {
         this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
         
         this.btnBack = this.bundle.getString("backToMain");
-        this.pausemsg = this.bundle.getString("pauseMsg");
+        this.title = this.pausemsg = this.bundle.getString("pauseMsg");
         this.deathMsg = this.bundle.getString("deathMsg");
         this.startTxt1 = this.bundle.getString("startTxt1");
         this.startTxt2 = this.bundle.getString("startTxt2");
@@ -202,7 +218,7 @@ public class GameScene extends Scene {
         this.btnSettings = this.bundle.getString("settings");
         this.warningTxt = this.bundle.getString("alert");
         
-        this.selectedItem = 0;
+        this.selectedItemMenu = this.selectedItemSaves = this.selectedItemSettings = 0;
         
         this.alpha = 255;
         if(lvl > 1){
@@ -284,14 +300,12 @@ public class GameScene extends Scene {
             return this;
         }
         
-        if(this.soundPlayed == 1 && ( TimerThread.MILLI - this.timeSound ) > 36000)
-        {
+        if(this.soundPlayed == 1 && ( TimerThread.MILLI - this.timeSound ) > 36000){
             this.timeSound = TimerThread.MILLI;
             this.soundPlayed = 2;
             new Thread(Sound.sf_jungle01::play).start();
         }
-        else if(this.soundPlayed == 2 && ( TimerThread.MILLI - this.soundPlayed ) > 28000)
-        {
+        else if(this.soundPlayed == 2 && ( TimerThread.MILLI - this.soundPlayed ) > 28000){
             this.timeSound = TimerThread.MILLI;
             this.soundPlayed = 1;
             new Thread(Sound.sf_jungle02::play).start();
@@ -540,14 +554,20 @@ public class GameScene extends Scene {
     
     public void renderPause(Graphics g){
         
+        g.setColor(new Color(127, 127, 127, 210));
+        g.fillRect(0, 0, w, h);
+        
         switch(this.currentScene){
             case MENU:
+                this.title = this.pausemsg;
                 this.renderMenu(g);
                 break;
             case SETTINGS:
+                this.title = this.pausemsg + " - " + this.btnSettings;
                 this.renderSettings(g);
                 break;
             case SAVES:
+                this.title = this.pausemsg + " - " + this.btnSave;
                 this.renderSaves(g);
                 break;
         }
@@ -558,21 +578,18 @@ public class GameScene extends Scene {
         
         Graphics2D g2d = (Graphics2D) g;
         
-        g.setColor(new Color(127, 127, 127, 210));
-        g.fillRect(0, 0, w, h);
-        
         g.setFont(this.font);
         FontMetrics metrics = g.getFontMetrics(this.font);
-        int msgWidth = metrics.stringWidth(this.pausemsg);
+        int msgWidth = metrics.stringWidth(this.title);
         g.setColor(Color.BLACK);
-        g.drawString(this.pausemsg, this.w/2 - msgWidth/2, 150);
+        g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
         g.setFont(this.fontSM);
         metrics = g.getFontMetrics(this.fontSM);
 
         int continueW = metrics.stringWidth(this.btnContinue);
         g.drawImage(this.bgBtn, this.w/2 - 107, 200, null);
-        if(this.selectedItem == 1)
+        if(this.selectedItemMenu == 1)
         {
             g.setColor(this.darkGreen);
             g2d.rotate(0.1, this.w/2, 235);
@@ -587,7 +604,7 @@ public class GameScene extends Scene {
         
         int saveW = metrics.stringWidth(this.btnSave);
         g.drawImage(this.bgBtn, this.w/2 - 107, 290, null);
-        if(this.selectedItem == 2){
+        if(this.selectedItemMenu == 2){
             g.setColor(this.darkGreen);
             g2d.rotate(-0.1, this.w/2, 325);
             g.drawString(this.btnSave, this.w/2 - saveW/2, 308 + metrics.getAscent());
@@ -600,7 +617,7 @@ public class GameScene extends Scene {
         
         int settingsW = metrics.stringWidth(this.btnSettings);
         g.drawImage(this.bgBtn, this.w/2 - 107, 380, null);
-        if(this.selectedItem == 3){
+        if(this.selectedItemMenu == 3){
             g.setColor(this.darkGreen);
             g2d.rotate(0.1, this.w/2, 415);
             g.drawString(this.btnSettings, this.w/2 - settingsW/2, 398 + metrics.getAscent());
@@ -613,7 +630,7 @@ public class GameScene extends Scene {
         
         int backW = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, this.w/2 - 107, 470, null);
-        if(this.selectedItem == 4){
+        if(this.selectedItemMenu == 4){
             g.setColor(this.darkGreen);
             g2d.rotate(-0.1, this.w/2, 505);
             g.drawString(this.btnBack, this.w/2 - backW/2, 488 + metrics.getAscent());
@@ -627,14 +644,47 @@ public class GameScene extends Scene {
     }
     
     public void renderSettings(Graphics g){
+        g.setFont(this.font);
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        int msgWidth = metrics.stringWidth(this.title);
+        g.setColor(Color.BLACK);
+        g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
+        
+        g.setFont(this.fontM);
+        metrics = g.getFontMetrics(this.fontM);
+        int btnBackW = metrics.stringWidth(this.btnBack);
+        g.drawImage(this.bgBtn, 2 * this.w/3, this.h - 120, null);
+        g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
     }
     
     public void renderSaves(Graphics g){
+        g.setFont(this.font);
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        int msgWidth = metrics.stringWidth(this.title);
+        g.setColor(Color.BLACK);
+        g.drawString(this.title, this.w/2 - msgWidth/2, 100);
+        
+        g.setFont(this.fontM);
+        metrics = g.getFontMetrics(this.fontM);
+        int btnBackW = metrics.stringWidth(this.btnBack);
+        g.drawImage(this.bgBtn, 2 * this.w/3, this.h - 120, null);
+        if(this.selectedItemSaves == 1){
+            g.setColor(this.darkGreen);
+            g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
+        }
+        else{
+            g.setColor(Color.BLACK);
+            g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
+        }
         
     }
     
     public Scene updatePause(int elapsedTime){
+        if(this.game.listener.pause.typed && this.currentScene != popinsScenes.MENU && this.currentScene != popinsScenes.NONE){
+            this.currentScene = popinsScenes.MENU;
+        }
+        
         this.hoverPause();
         this.timeF += elapsedTime;
         return this.clickPause();
@@ -643,53 +693,119 @@ public class GameScene extends Scene {
     public void hoverPause(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
+        switch(this.currentScene){
+            case MENU:
+                this.hoverMenu(mouseX, mouseY);
+                break;
+            case SETTINGS:
+                this.hoverSettings(mouseX, mouseY);
+                break;
+            case SAVES:
+                this.hoverSaves(mouseX, mouseY);
+                break;
+        }
+    }
+    
+    public void hoverMenu(int mouseX, int mouseY){
         if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 200 && mouseY < 270){
-            if(this.selectedItem != 1)
+            if(this.selectedItemMenu != 1)
                 new Thread(Sound.hover::play).start();
-            this.selectedItem = 1;
+            this.selectedItemMenu = 1;
         }
         else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 290 && mouseY < 360){
-            if(this.selectedItem != 2)
+            if(this.selectedItemMenu != 2)
                 new Thread(Sound.hover::play).start();
-            this.selectedItem = 2;
+            this.selectedItemMenu = 2;
         }
         else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 380 && mouseY < 450){
-            if(this.selectedItem != 3)
+            if(this.selectedItemMenu != 3)
                 new Thread(Sound.hover::play).start();
-            this.selectedItem = 3;
+            this.selectedItemMenu = 3;
         }
         else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 470 && mouseY < 540){
-            if(this.selectedItem != 4)
+            if(this.selectedItemMenu != 4)
                 new Thread(Sound.hover::play).start();
-            this.selectedItem = 4;
+            this.selectedItemMenu = 4;
         }
         else{
-            this.selectedItem = 0;
+            this.selectedItemMenu = 0;
+        }
+    }
+    
+    public void hoverSettings(int mouseX, int mouseY){
+        
+    }
+    
+    public void hoverSaves(int mouseX, int mouseY){
+        if(mouseX > 2 * this.w/3 && mouseX < 2 * this.w/3 + 214 && mouseY > this.w - 120 && mouseY < this.h - 50){
+            this.selectedItemSaves = 1;
+        }
+        else{
+            this.selectedItemSaves = 0;
         }
     }
     
     public Scene clickPause(){
         Scene currentScene = this;
         
+        switch(this.currentScene){
+            case MENU:
+                currentScene = this.clickPauseMenu(currentScene);
+                break;
+            case SAVES:
+                currentScene = this.clickPauseSaves(currentScene);
+                break;
+            case SETTINGS:
+                currentScene = this.clickPauseSettings(currentScene);
+                break;
+            default:
+                break;
+        }
+        
+        return currentScene;
+    }
+    
+    public Scene clickPauseMenu(Scene currentScene){
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
-            switch(this.selectedItem){
+            switch(this.selectedItemMenu){
                 case 1:
-                    new Thread(Sound.select::play).start();
                     this.game.paused = false;
                     break;
                 case 2:
-                    new Thread(Sound.select::play).start();
-                    //TODO Render save scene
+                    this.currentScene = popinsScenes.SAVES;
                     break;
                 case 3:
-                    new Thread(Sound.select::play).start();
-                    //TODO Render options scene
+                    this.currentScene = popinsScenes.SETTINGS;
                     break;
                 case 4:
-                    new Thread(Sound.select::play).start();
                     this.game.paused = false;
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;
+                default:
+                    break;
+            }
+        }
+        
+        return currentScene;
+    }
+    
+    public Scene clickPauseSaves(Scene currentScene){
+        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
+            switch(this.selectedItemSettings){
+                case 1:
+                    this.currentScene = popinsScenes.MENU;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        return currentScene;
+    }
+    
+    public Scene clickPauseSettings(Scene currentScene){
+        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
+            switch(this.selectedItemSettings){
                 default:
                     break;
             }

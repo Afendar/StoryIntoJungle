@@ -170,9 +170,9 @@ public class Game extends Canvas implements Runnable {
         }
         if(this.paused && this.listener.pause.enabled && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
         {
-            GameScene scene = (GameScene)this.gs;
-            if(scene.currentScene != GameScene.popinsScenes.MENU && scene.currentScene != GameScene.popinsScenes.NONE){
-                scene.currentScene = GameScene.popinsScenes.MENU;
+            if(((GameScene)this.gs).currentScene != GameScene.popinsScenes.MENU && ((GameScene)this.gs).currentScene != GameScene.popinsScenes.NONE){
+                this.listener.pause.enabled = false;
+                ((GameScene)this.gs).currentScene = GameScene.popinsScenes.MENU;
             }
             else{
                 this.pauseTime = TimerThread.MILLI;
