@@ -225,6 +225,10 @@ public class OptionsScene extends Scene {
         this.volume = this.bundle.getString("volume");
         this.controlJump = this.bundle.getString("ctrlJump");
         this.controlWalk = this.bundle.getString("ctrlWalk");
+        
+        for(int i=0;i<this.optionButtons.size();i++){
+            this.optionButtons.get(i).initLocales();
+        }
     }
     
     @Override

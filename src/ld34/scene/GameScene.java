@@ -19,7 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import ld34.Camera;
+import ld34.CustomDialog;
 import ld34.CustomTextField;
 import ld34.profile.Settings;
 import ld34.Defines;
@@ -58,11 +61,10 @@ public class GameScene extends Scene {
     public ArrayList<OptionButton> optionButtons = new ArrayList<>();
     public String language, french, english, commands, volume, controlJump, controlWalk, emptyTxt;
     public CustomTextField nameField;
-    public int posBar;
+    public int posBar, selectedSave;
     public BufferedImage soundBar, bgSave, cageSavesIcon, levelSavesIcon, dollardSavesIcon;
     public JSONObject jsonSaves;
     public Color kaki;
-    
     
     public GameScene(int w, int h, Game game, Level level, Player player){
         super(w, h, game);
@@ -149,26 +151,27 @@ public class GameScene extends Scene {
         new Thread(Sound.sf_jungle01::play).start();
         
         int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        this.posBar = (int)(153 + (2*volume));
+        this.posBar = (int)(123 + (2*volume));
         
         this.jsonSaves = Save.getInstance().getSaves();
         
         OptionButton btn1 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
                 "Jump", 
-                250, 
-                200
+                580, 
+                230
         );
-        btn1.setFont(this.font);
+        btn1.setFont(this.fontS);
         this.optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
                 "Walk", 
-                250, 
-                250
+                580, 
+                290
         );
         btn2.setFont(this.font);
         this.optionButtons.add(btn2);
+        this.selectedSave = 0;
     }
     
     public GameScene(int w, int h, Game game, int lvl, int score){
@@ -265,26 +268,27 @@ public class GameScene extends Scene {
         new Thread(Sound.sf_jungle01::play).start();
         
         int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        this.posBar = (int)(153 + (2*volume));
+        this.posBar = (int)(123 + (2*volume));
         
         this.jsonSaves = Save.getInstance().getSaves();
         
         OptionButton btn1 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
                 "Jump", 
-                300, 
-                470
+                580, 
+                230
         );
         btn1.setFont(this.fontS);
         this.optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
                 "Walk", 
-                300, 
-                520
+                580, 
+                290
         );
         btn2.setFont(this.fontS);
         this.optionButtons.add(btn2);
+        this.selectedSave = 0;
     }
 
     public GameScene(int w, int h, Game game){
@@ -319,6 +323,10 @@ public class GameScene extends Scene {
         this.hardcore = this.bundle.getString("hardcore");
         this.controlJump = this.bundle.getString("ctrlJump");
         this.controlWalk = this.bundle.getString("ctrlWalk");
+        
+        for(int i=0;i<this.optionButtons.size();i++){
+            this.optionButtons.get(i).initLocales();
+        }
     }
     
     public void reinit(int lvl){
@@ -730,48 +738,48 @@ public class GameScene extends Scene {
         g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
         g.setFont(this.fontM);
-        g.drawString(this.language, 150, 180);
+        g.drawString(this.language, 100, 180);
         
         metrics = g.getFontMetrics(this.fontS);
         int englishW = metrics.stringWidth(this.english);
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 0){
             g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, this.w/5, 220, null);
+            g.drawImage(this.bgBtnSmallRed, this.w/7, 220, null);
         }else{
             g.setFont(this.fontS);
-            g.drawImage(this.bgBtnSmall, this.w/5, 220, null);
+            g.drawImage(this.bgBtnSmall, this.w/7, 220, null);
         }
-        g.drawString(this.english, (this.w/5) + 53 - (englishW/2), 245);
+        g.drawString(this.english, (this.w/7) + 53 - (englishW/2), 245);
         
         int frenchW = metrics.stringWidth(this.french);
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 1){
             g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, 2*this.w/5, 220, null);
+            g.drawImage(this.bgBtnSmallRed, 2*this.w/7, 220, null);
         }else{
             g.setFont(this.fontS);
-            g.drawImage(this.bgBtnSmall, 2*this.w/5, 220, null);
+            g.drawImage(this.bgBtnSmall, 2*this.w/7, 220, null);
         }
-        g.drawString(this.french, 2*this.w/5 - frenchW/2 + 53, 245);
+        g.drawString(this.french, 2*this.w/7 - frenchW/2 + 53, 245);
         
         g.setFont(this.fontM);
-        g.drawString(this.volume, 150, 310);
+        g.drawString(this.volume, 100, 310);
         int red = 255;
         int green = 0;
         for(int i=0;i<255;i++){
             g.setColor(new Color(red, green, 0));
-            g.fillRect((int)(153 + (i * 0.8)), 333, 1, 19);
+            g.fillRect((int)(123 + (i * 0.8)), 333, 1, 19);
             red--;
             green++;
         }
-        g.drawImage(this.soundBar, 150, 330, null);
+        g.drawImage(this.soundBar, 120, 330, null);
         g.setColor(Color.BLACK);
         g.fillRect(this.posBar, 335, 4, 15);
         
-        g.drawString(this.commands, 150, 430);
+        g.drawString(this.commands, 450, 180);
         
         g.setFont(this.fontS);
-        g.drawString(this.controlJump, 190, 470);
-        g.drawString(this.controlWalk, 190, 520);
+        g.drawString(this.controlJump, 470, 230);
+        g.drawString(this.controlWalk, 470, 290);
         
         for(int i=0;i<this.optionButtons.size();i++){
             this.optionButtons.get(i).render(g);
@@ -804,7 +812,13 @@ public class GameScene extends Scene {
         g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
         for(int i=0;i<this.jsonSaves.size();i++){
-            g.drawImage(this.bgSave, 150, (i * 120) + 120, null);
+            
+            if(this.selectedSave == i+1){
+                g.drawImage(this.gui.getSubimage(0, 400, 500, 118), 150, (i * 120) + 120, null);
+            }
+            else{
+                g.drawImage(this.bgSave, 150, (i * 120) + 120, null);
+            }
             
             JSONObject save = (JSONObject) this.jsonSaves.get("Slot" + i);
             
@@ -909,6 +923,18 @@ public class GameScene extends Scene {
             this.currentScene = popinsScenes.MENU;
         }
         
+        switch(this.currentScene){
+            case MENU:
+                break;
+            case SAVES:
+                break;
+            case SETTINGS:
+                if(this.game.listener.e != null){
+                    this.processKeyPause(this.game.listener.e);
+                }
+                break;
+        }
+        
         this.hoverPause();
         this.timeF += elapsedTime;
         return this.clickPause();
@@ -972,6 +998,19 @@ public class GameScene extends Scene {
         else{
             this.selectedItemSaves = 0;
         }
+        
+        if(mouseX > 150 && mouseX < 650 && mouseY > 120 && mouseY < 238 ){
+            this.selectedSave = 1;
+        }
+        else if(mouseX > 150 && mouseX < 650 && mouseY > 240 && mouseY < 358){
+            this.selectedSave = 2;
+        }
+        else if(mouseX > 150 && mouseX < 650 && mouseY > 360 && mouseY < 478){
+            this.selectedSave = 3;
+        }
+        else{
+            this.selectedSave = 0;
+        }
     }
     
     public Scene clickPause(){
@@ -1027,19 +1066,75 @@ public class GameScene extends Scene {
                 default:
                     break;
             }
+            
+            if(this.selectedSave != 0){
+                JSONObject save = Save.getInstance().getSave(this.selectedSave - 1);
+                if(!save.isEmpty()){
+                    CustomDialog dialog = new CustomDialog();
+                    JFrame frame = (JFrame)SwingUtilities.getWindowAncestor(this.game);
+                    dialog.setRootPane(frame.getRootPane());
+                    int response = dialog.show();
+                    if(response == 0){
+                        //TODO erase save
+                    }
+                }
+                else{
+                    //TODO create new save
+                }
+            }
         }
         
         return currentScene;
     }
     
+    public void processKeyPause(KeyEvent e){
+        for(int i=0;i<this.optionButtons.size();i++){
+            if(this.optionButtons.get(i).isEditing()){
+                this.optionButtons.get(i).processKey(e);
+            }
+        }
+    }
+    
     public Scene clickPauseSettings(Scene currentScene){
-        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
-            switch(this.selectedItemSettings){
-                case 1:
-                    this.currentScene = popinsScenes.MENU;
-                    break;
-                default:
-                    break;
+        if(this.game.listener.mousePressed){
+            
+            int mouseX = this.game.listener.mouseX;
+            int mouseY = this.game.listener.mouseY;
+            
+            if(this.game.listener.mouseClickCount == 1){
+                switch(this.selectedItemSettings){
+                    case 1:
+                        this.currentScene = popinsScenes.MENU;
+                        Settings.getInstance().saveConfig();
+                        break;
+                    default:
+                        break;
+                }
+                
+                for(int i=0;i<this.optionButtons.size();i++){
+                    if(this.optionButtons.get(i).isEditing())
+                        break;
+                }
+
+                for(int i=0;i<this.optionButtons.size();i++){
+                    this.optionButtons.get(i).processClick(mouseX, mouseY);
+                }
+            }
+            
+            if(mouseX > this.w/7 && mouseX < (this.w/7) + 107 && mouseY > 220 && mouseY < 260){
+                Settings.getInstance().setConfigValue("Lang", "0");
+                this.initLocales();
+            }
+            else if(mouseX > ((2*this.w)/7) && mouseX < ((2*this.w)/7) + 107 && mouseY > 220 && mouseY < 260){
+                Settings.getInstance().setConfigValue("Lang", "1");
+                this.initLocales();
+            }
+            else if(mouseX > 123 && mouseX < 323 && mouseY > 330 && mouseY < 355){
+                this.posBar = mouseX;
+                int newVolume = (int)((123 - posBar)/ -2);
+                //posBar = (int)(153 + (2 * volume));
+                //volume = (int)((153 - posBar)/(-2));
+                Settings.getInstance().setConfigValue("Sound", Integer.toString(newVolume));
             }
         }
         

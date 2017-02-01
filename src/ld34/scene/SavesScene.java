@@ -103,18 +103,18 @@ public class SavesScene extends Scene {
             this.selectedItem = 0;
         }
          
-         if(mouseX > 150 && mouseX < 650 && mouseY > 80 && mouseY < 198 ){
-             this.selectedSave = 1;
-         }
-         else if(mouseX > 150 && mouseX < 650 && mouseY > 205 && mouseY < 323){
-             this.selectedSave = 2;
-         }
-         else if(mouseX > 150 && mouseX < 650 && mouseY > 330 && mouseY < 448){
-             this.selectedSave = 3;
-         }
-         else{
-             this.selectedSave = 0;
-         }
+        if(mouseX > 150 && mouseX < 650 && mouseY > 80 && mouseY < 198 ){
+            this.selectedSave = 1;
+        }
+        else if(mouseX > 150 && mouseX < 650 && mouseY > 205 && mouseY < 323){
+            this.selectedSave = 2;
+        }
+        else if(mouseX > 150 && mouseX < 650 && mouseY > 330 && mouseY < 448){
+            this.selectedSave = 3;
+        }
+        else{
+            this.selectedSave = 0;
+        }
          
          this.selectRemove = 0;
          this.selectLoad = 0;

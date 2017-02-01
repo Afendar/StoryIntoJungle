@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.JComponent;
 
 public final class OptionButton extends JComponent{
@@ -14,7 +16,9 @@ public final class OptionButton extends JComponent{
     private boolean isEditing;
     private String value;
     private int x, y, w, h;
-    private String text, name;
+    private String text, name, pressKey;
+    public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
+    public ResourceBundle bundle;
     
     public OptionButton(String value, String name, int x, int y){
         super();
@@ -28,6 +32,13 @@ public final class OptionButton extends JComponent{
         FontMetrics metrics = this.getFontMetrics(this.getFont());
         this.h = metrics.getHeight();
         this.w = metrics.stringWidth(this.text);
+        
+        this.initLocales();
+    }
+    
+    public void initLocales(){
+        this.bundle = ResourceBundle.getBundle("lang.options", this.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
+        this.pressKey = this.bundle.getString("pressKey");
     }
     
     public OptionButton(String value, String name){
@@ -65,7 +76,7 @@ public final class OptionButton extends JComponent{
     private void editing(){
         this.requestFocus(true);
         this.isEditing = true;
-        this.setText("Press a key");
+        this.setText(this.pressKey);
     }
     
     public void render(Graphics g){
