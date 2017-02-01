@@ -9,10 +9,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.Camera;
@@ -24,15 +28,18 @@ import ld34.Minimap;
 import ld34.OptionButton;
 import ld34.TimerThread;
 import ld34.profile.BestScores;
+import ld34.profile.Save;
 import level.Level;
+import org.json.simple.JSONObject;
 
 public class GameScene extends Scene {
 
-    public Font font, fontS, fontM, fontB, fontSM;
+    public Font font, fontS, fontM, fontB, fontSM, fontU;
     public Player player;
     public Level level;
     public Camera cam;
-    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnSettings, btnBack, btnSave, pausemsg, btnContinue, warningTxt, title;
+    public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnSettings, btnBack, btnSave, pausemsg, btnContinue, warningTxt, title,
+            easy, medium, hard, hardcore;
     public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
             backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll, guiAssets, scoreIcon, timeIcon, levelIcon, cagesIcon;
     public int nbLevel, selectedItemMenu, selectedItemSaves, selectedItemSettings;
@@ -49,9 +56,12 @@ public class GameScene extends Scene {
     public enum popinsScenes { NONE, MENU, SETTINGS, SAVES };
     
     public ArrayList<OptionButton> optionButtons = new ArrayList<>();
-    public String language, french, english, commands, volume, controlJump, controlWalk;
+    public String language, french, english, commands, volume, controlJump, controlWalk, emptyTxt;
     public CustomTextField nameField;
     public int posBar;
+    public BufferedImage soundBar, bgSave, cageSavesIcon, levelSavesIcon, dollardSavesIcon;
+    public JSONObject jsonSaves;
+    public Color kaki;
     
     
     public GameScene(int w, int h, Game game, Level level, Player player){
@@ -66,6 +76,7 @@ public class GameScene extends Scene {
         this.cam = new Camera((int)player.getPosX(), (int)player.getPosY(), w, h, this.level);
         this.player = player;
         this.player.cam = this.cam;
+        this.kaki = new Color(176, 173, 137);
         
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -75,6 +86,10 @@ public class GameScene extends Scene {
             this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
             this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
+            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
+            fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            this.fontU = this.fontS;
+            this.fontU = this.fontU.deriveFont(fontAttributes);
             
             url = this.getClass().getResource("/background2.png");
             this.background2 = ImageIO.read(url);
@@ -88,12 +103,18 @@ public class GameScene extends Scene {
             this.backgroundTop = this.backgroundTopAll.getSubimage(0, 0, 800, 600);
             this.backgroundTop2 = this.backgroundTopAll.getSubimage(800, 0, 800, 600);
             
-            url = this.getClass().getResource("/gui2.png");
+            url = this.getClass().getResource("/gui.png");
             this.guiAssets = ImageIO.read(url);
             this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
             this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
             this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
             this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
+            
+            url = this.getClass().getResource("/gui.png");
+            this.gui = ImageIO.read(url);
+            this.cageSavesIcon = this.gui.getSubimage(150, 130, 33, 32);
+            this.levelSavesIcon = this.gui.getSubimage(183, 135, 32, 26);
+            this.dollardSavesIcon = this.gui.getSubimage(154, 188, 20, 24);
             
         }catch(FontFormatException|IOException e){
             e.getMessage();
@@ -102,26 +123,10 @@ public class GameScene extends Scene {
         this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
         this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
+        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
+        this.bgSave = this.spritesheetGui.getSubimage(0, 282, 500, 118);
         
-        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
-        
-        this.btnBack = this.bundle.getString("backToMain");
-        this.btnSave = this.bundle.getString("save");
-        this.title = this.pausemsg = this.bundle.getString("pauseMsg");
-        this.deathMsg = this.bundle.getString("deathMsg");
-        this.startTxt1 = this.bundle.getString("startTxt1");
-        this.startTxt2 = this.bundle.getString("startTxt2");
-        this.startTxt3 = this.bundle.getString("startTxt3");
-        this.startTxt4 = this.bundle.getString("startTxt4");
-        this.respawn = this.bundle.getString("respawn");
-        this.btnSettings = this.bundle.getString("settings");
-        this.btnContinue = this.bundle.getString("continue");
-        this.warningTxt = this.bundle.getString("alert");
-        
-        this.language = this.bundle.getString("language");
-        this.french = this.bundle.getString("french");
-        this.english = this.bundle.getString("english");
-        this.commands = this.bundle.getString("commands");
+        this.initLocales();
         
         this.selectedItemMenu = this.selectedItemSaves = this.selectedItemSettings = 0;
         this.currentScene = popinsScenes.NONE;
@@ -145,6 +150,25 @@ public class GameScene extends Scene {
         
         int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
         this.posBar = (int)(153 + (2*volume));
+        
+        this.jsonSaves = Save.getInstance().getSaves();
+        
+        OptionButton btn1 = new OptionButton(
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
+                "Jump", 
+                250, 
+                200
+        );
+        btn1.setFont(this.font);
+        this.optionButtons.add(btn1);
+        OptionButton btn2 = new OptionButton(
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
+                "Walk", 
+                250, 
+                250
+        );
+        btn2.setFont(this.font);
+        this.optionButtons.add(btn2);
     }
     
     public GameScene(int w, int h, Game game, int lvl, int score){
@@ -153,6 +177,8 @@ public class GameScene extends Scene {
         this.nbLevel = lvl;
         this.displayEnd = false;
         this.displayStart = true;
+        this.kaki = new Color(176, 173, 137);
+        
         if(this.nbLevel > 1){
             this.displayStart = false;
         }
@@ -175,6 +201,10 @@ public class GameScene extends Scene {
             this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
             this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
+            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
+            fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            this.fontU = this.fontS;
+            this.fontU = this.fontU.deriveFont(fontAttributes);
             
             url = this.getClass().getResource("/background2.png");
             this.background2 = ImageIO.read(url);
@@ -195,6 +225,12 @@ public class GameScene extends Scene {
             this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
             this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
             
+            url = this.getClass().getResource("/gui.png");
+            this.gui = ImageIO.read(url);
+            this.cageSavesIcon = this.gui.getSubimage(150, 130, 33, 32);
+            this.levelSavesIcon = this.gui.getSubimage(183, 135, 32, 26);
+            this.dollardSavesIcon = this.gui.getSubimage(154, 188, 20, 24);
+            
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
@@ -202,21 +238,10 @@ public class GameScene extends Scene {
         this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
         this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
         this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
+        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
+        this.bgSave = this.spritesheetGui.getSubimage(0, 282, 500, 118);
         
-        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
-        
-        this.btnBack = this.bundle.getString("backToMain");
-        this.title = this.pausemsg = this.bundle.getString("pauseMsg");
-        this.deathMsg = this.bundle.getString("deathMsg");
-        this.startTxt1 = this.bundle.getString("startTxt1");
-        this.startTxt2 = this.bundle.getString("startTxt2");
-        this.startTxt3 = this.bundle.getString("startTxt3");
-        this.startTxt4 = this.bundle.getString("startTxt4");
-        this.respawn = this.bundle.getString("respawn");
-        this.btnContinue = this.bundle.getString("continue");
-        this.btnSave = this.bundle.getString("save");
-        this.btnSettings = this.bundle.getString("settings");
-        this.warningTxt = this.bundle.getString("alert");
+        this.initLocales();
         
         this.selectedItemMenu = this.selectedItemSaves = this.selectedItemSettings = 0;
         
@@ -238,10 +263,62 @@ public class GameScene extends Scene {
         this.timeSound = TimerThread.MILLI;
         this.soundPlayed = 1;
         new Thread(Sound.sf_jungle01::play).start();
+        
+        int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+        this.posBar = (int)(153 + (2*volume));
+        
+        this.jsonSaves = Save.getInstance().getSaves();
+        
+        OptionButton btn1 = new OptionButton(
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
+                "Jump", 
+                300, 
+                470
+        );
+        btn1.setFont(this.fontS);
+        this.optionButtons.add(btn1);
+        OptionButton btn2 = new OptionButton(
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
+                "Walk", 
+                300, 
+                520
+        );
+        btn2.setFont(this.fontS);
+        this.optionButtons.add(btn2);
     }
 
     public GameScene(int w, int h, Game game){
         this(w, h, game, 1, 0);
+    }
+    
+    public void initLocales(){
+        this.bundle = ResourceBundle.getBundle("lang.game", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
+        
+        this.btnBack = this.bundle.getString("backToMain");
+        this.title = this.pausemsg = this.bundle.getString("pauseMsg");
+        this.deathMsg = this.bundle.getString("deathMsg");
+        this.startTxt1 = this.bundle.getString("startTxt1");
+        this.startTxt2 = this.bundle.getString("startTxt2");
+        this.startTxt3 = this.bundle.getString("startTxt3");
+        this.startTxt4 = this.bundle.getString("startTxt4");
+        this.respawn = this.bundle.getString("respawn");
+        this.btnContinue = this.bundle.getString("continue");
+        this.btnSave = this.bundle.getString("save");
+        this.btnSettings = this.bundle.getString("settings");
+        this.warningTxt = this.bundle.getString("alert");
+        
+        this.language = this.bundle.getString("language");
+        this.french = this.bundle.getString("french");
+        this.english = this.bundle.getString("english");
+        this.commands = this.bundle.getString("commands");
+        this.volume = this.bundle.getString("volume");
+        this.emptyTxt = this.bundle.getString("empty");
+        this.easy = this.bundle.getString("easy");
+        this.medium = this.bundle.getString("medium");
+        this.hard = this.bundle.getString("hard");
+        this.hardcore = this.bundle.getString("hardcore");
+        this.controlJump = this.bundle.getString("ctrlJump");
+        this.controlWalk = this.bundle.getString("ctrlWalk");
     }
     
     public void reinit(int lvl){
@@ -588,90 +665,237 @@ public class GameScene extends Scene {
         metrics = g.getFontMetrics(this.fontSM);
 
         int continueW = metrics.stringWidth(this.btnContinue);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 200, null);
+        g.drawImage(this.bgBtn, this.w/2 - 107, 170, null);
         if(this.selectedItemMenu == 1)
         {
             g.setColor(this.darkGreen);
             g2d.rotate(0.1, this.w/2, 235);
-            g.drawString(this.btnContinue, this.w/2 - continueW/2, 218 + metrics.getAscent());
+            g.drawString(this.btnContinue, this.w/2 - continueW/2, 188 + metrics.getAscent());
             g2d.rotate(-0.1, this.w/2, 235);
         }
         else
         {
             g.setColor(Color.BLACK);
-            g.drawString(this.btnContinue, this.w/2 - continueW/2, 218 + metrics.getAscent());
+            g.drawString(this.btnContinue, this.w/2 - continueW/2, 188 + metrics.getAscent());
         }
         
         int saveW = metrics.stringWidth(this.btnSave);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 290, null);
+        g.drawImage(this.bgBtn, this.w/2 - 107, 260, null);
         if(this.selectedItemMenu == 2){
             g.setColor(this.darkGreen);
             g2d.rotate(-0.1, this.w/2, 325);
-            g.drawString(this.btnSave, this.w/2 - saveW/2, 308 + metrics.getAscent());
+            g.drawString(this.btnSave, this.w/2 - saveW/2, 278 + metrics.getAscent());
             g2d.rotate(0.1, this.w/2, 325);
         }
         else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnSave, this.w/2 - saveW/2, 308 + metrics.getAscent());
+            g.drawString(this.btnSave, this.w/2 - saveW/2, 278 + metrics.getAscent());
         }
         
         int settingsW = metrics.stringWidth(this.btnSettings);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 380, null);
+        g.drawImage(this.bgBtn, this.w/2 - 107, 350, null);
         if(this.selectedItemMenu == 3){
             g.setColor(this.darkGreen);
             g2d.rotate(0.1, this.w/2, 415);
-            g.drawString(this.btnSettings, this.w/2 - settingsW/2, 398 + metrics.getAscent());
+            g.drawString(this.btnSettings, this.w/2 - settingsW/2, 368 + metrics.getAscent());
             g2d.rotate(-0.1, this.w/2, 415);
         }
         else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnSettings, this.w/2 - settingsW/2, 398 + metrics.getAscent());
+            g.drawString(this.btnSettings, this.w/2 - settingsW/2, 368 + metrics.getAscent());
         }
         
         int backW = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 470, null);
+        g.drawImage(this.bgBtn, this.w/2 - 107, 440, null);
         if(this.selectedItemMenu == 4){
             g.setColor(this.darkGreen);
             g2d.rotate(-0.1, this.w/2, 505);
-            g.drawString(this.btnBack, this.w/2 - backW/2, 488 + metrics.getAscent());
+            g.drawString(this.btnBack, this.w/2 - backW/2, 458 + metrics.getAscent());
             g2d.rotate(0.1, this.w/2, 505);
         }
         else{
             g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, this.w/2 - backW/2, 488 + metrics.getAscent());
+            g.drawString(this.btnBack, this.w/2 - backW/2, 458 + metrics.getAscent());
         }
         
     }
     
     public void renderSettings(Graphics g){
+        Graphics2D g2d = (Graphics2D) g;
+        
         g.setFont(this.font);
         FontMetrics metrics = g.getFontMetrics(this.font);
         int msgWidth = metrics.stringWidth(this.title);
         g.setColor(Color.BLACK);
         g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
+        g.setFont(this.fontM);
+        g.drawString(this.language, 150, 180);
+        
+        metrics = g.getFontMetrics(this.fontS);
+        int englishW = metrics.stringWidth(this.english);
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 0){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, this.w/5, 220, null);
+        }else{
+            g.setFont(this.fontS);
+            g.drawImage(this.bgBtnSmall, this.w/5, 220, null);
+        }
+        g.drawString(this.english, (this.w/5) + 53 - (englishW/2), 245);
+        
+        int frenchW = metrics.stringWidth(this.french);
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 1){
+            g.setFont(this.fontU);
+            g.drawImage(this.bgBtnSmallRed, 2*this.w/5, 220, null);
+        }else{
+            g.setFont(this.fontS);
+            g.drawImage(this.bgBtnSmall, 2*this.w/5, 220, null);
+        }
+        g.drawString(this.french, 2*this.w/5 - frenchW/2 + 53, 245);
+        
+        g.setFont(this.fontM);
+        g.drawString(this.volume, 150, 310);
+        int red = 255;
+        int green = 0;
+        for(int i=0;i<255;i++){
+            g.setColor(new Color(red, green, 0));
+            g.fillRect((int)(153 + (i * 0.8)), 333, 1, 19);
+            red--;
+            green++;
+        }
+        g.drawImage(this.soundBar, 150, 330, null);
+        g.setColor(Color.BLACK);
+        g.fillRect(this.posBar, 335, 4, 15);
+        
+        g.drawString(this.commands, 150, 430);
+        
+        g.setFont(this.fontS);
+        g.drawString(this.controlJump, 190, 470);
+        g.drawString(this.controlWalk, 190, 520);
+        
+        for(int i=0;i<this.optionButtons.size();i++){
+            this.optionButtons.get(i).render(g);
+        }
         
         g.setFont(this.fontM);
         metrics = g.getFontMetrics(this.fontM);
         int btnBackW = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, 2 * this.w/3, this.h - 120, null);
-        g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
+        
+        if(this.selectedItemSettings == 1){
+            g.setColor(this.darkGreen);
+            g2d.rotate(-0.1, 2 * this.w/3 + 107, this.h - 85);
+            g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
+            g2d.rotate(0.1, 2 * this.w/3 + 107, this.h - 85);
+        }
+        else{
+            g.setColor(Color.BLACK);
+            g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent() * 1.5));
+        }
     }
     
     public void renderSaves(Graphics g){
+        Graphics2D g2d = (Graphics2D) g;
+        
         g.setFont(this.font);
         FontMetrics metrics = g.getFontMetrics(this.font);
         int msgWidth = metrics.stringWidth(this.title);
         g.setColor(Color.BLACK);
         g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
+        for(int i=0;i<this.jsonSaves.size();i++){
+            g.drawImage(this.bgSave, 150, (i * 120) + 120, null);
+            
+            JSONObject save = (JSONObject) this.jsonSaves.get("Slot" + i);
+            
+            g.setFont(this.fontS);
+            g.setColor(Color.BLACK);
+            metrics = g.getFontMetrics(this.fontS);
+            if(save.isEmpty()){
+                int emptyTxtWidth = metrics.stringWidth(this.emptyTxt);
+                g.drawString(this.emptyTxt, (this.w - emptyTxtWidth)/2, (i * 120) + 120 + ((118 + metrics.getAscent())/2));
+            }
+            else{
+                
+                String slotNumber = "#" + (i + 1);
+                g.drawString(slotNumber, 170, ( i * 120) + 155);
+                
+                g.setColor(this.kaki);
+                g.fillRoundRect(208, (i * 120) + 144 , 70, 70, 5, 5);
+                g.fillRoundRect(290, (i * 120) + 144, 150, 32, 5, 5);
+                g.fillRoundRect(290, (i * 120) + 182, 70, 32, 5, 5);
+                g.fillRoundRect(365, (i * 120) + 182, 90, 32, 5, 5);
+                g.fillRoundRect(445, (i * 120) + 144, 150, 32, 5, 5);
+                g.fillRoundRect(460, (i * 120) + 182, 90, 32, 5, 5);
+                g.fillRoundRect(555, (i * 120) + 182, 40, 32, 5, 5);
+                
+                g.setColor(Color.BLACK);
+                JSONObject player = (JSONObject) save.get("player");
+                String name = (String) player.get("name");
+                int sex = Integer.parseInt((String) player.get("sex"));
+                int spicies = Integer.parseInt((String) player.get("spicies"));
+                
+                g.drawString(name, 298, (i * 120) + 149 + metrics.getAscent());
+                
+                int x = 0;
+                int y = 160;
+                if(sex == 0){
+                    x = 50;
+                }
+                if(spicies == 1){
+                    y = 208;
+                }
+                
+                g.drawImage(this.spritesheetGui.getSubimage(x, y, 50, 48), 219, (i * 120) + 155, null);
+                
+                g.drawImage(this.dollardSavesIcon, 450, (i * 120) + 148 ,null);
+                String score =  (String) player.get("score");
+                int scoreWidth = metrics.stringWidth(score);
+                g.drawString(score, this.w - 215 - scoreWidth, (i * 120) + 149 + metrics.getAscent());
+                
+                g.drawImage(this.levelSavesIcon, 295, (i * 120) + 184, null);
+                JSONObject jsonLevel = (JSONObject) save.get("level");
+                String levelNumber = (String) jsonLevel.get("number");
+                int levelNumberW = metrics.stringWidth(levelNumber);
+                g.drawString(levelNumber, 333, (i * 120) + 186 + metrics.getAscent());
+                
+                g.drawImage(this.cageSavesIcon, 367, (i * 120) + 181, null);
+                String cageNumbers = (String) jsonLevel.get("freeCages") + "/30";
+                g.drawString(cageNumbers, 403, (i * 120) + 186 + metrics.getAscent());
+                
+                String complete = (String) jsonLevel.get("complete") + "%";
+                int completeW = metrics.stringWidth(complete);
+                g.drawString(complete, this.w - 210 - completeW, (i * 120) + 186 + metrics.getAscent());
+                
+                int difficulty = Integer.parseInt((String) jsonLevel.get("difficulty"));
+                switch(difficulty){
+                    case 0:
+                        g.drawString(this.easy, 470, (i * 120) + 186 + metrics.getAscent());
+                        break;
+                    case 2:
+                        g.drawString(this.medium, 470, (i * 120) + 186 + metrics.getAscent());
+                        break;
+                    case 4:
+                        g.drawString(this.hard, 470, (i * 120) + 186 + metrics.getAscent());
+                        break;
+                    case 5:
+                        g.drawString(this.hardcore, 470, (i * 120) + 186 + metrics.getAscent());
+                        break;
+                }
+            }
+        }
+        
+        //Back BTN
         g.setFont(this.fontM);
         metrics = g.getFontMetrics(this.fontM);
         int btnBackW = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, 2 * this.w/3, this.h - 120, null);
+        
         if(this.selectedItemSaves == 1){
             g.setColor(this.darkGreen);
+            g2d.rotate(-0.1, 2 * this.w/3 + 107, this.h - 85);
             g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
+            g2d.rotate(0.1, 2 * this.w/3 + 107, this.h - 85);
         }
         else{
             g.setColor(Color.BLACK);
@@ -707,22 +931,22 @@ public class GameScene extends Scene {
     }
     
     public void hoverMenu(int mouseX, int mouseY){
-        if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 200 && mouseY < 270){
+        if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 170 && mouseY < 240){
             if(this.selectedItemMenu != 1)
                 new Thread(Sound.hover::play).start();
             this.selectedItemMenu = 1;
         }
-        else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 290 && mouseY < 360){
+        else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 260 && mouseY < 330){
             if(this.selectedItemMenu != 2)
                 new Thread(Sound.hover::play).start();
             this.selectedItemMenu = 2;
         }
-        else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 380 && mouseY < 450){
+        else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 350 && mouseY < 420){
             if(this.selectedItemMenu != 3)
                 new Thread(Sound.hover::play).start();
             this.selectedItemMenu = 3;
         }
-        else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 470 && mouseY < 540){
+        else if(mouseX > this.w/2 - 107 && mouseX < this.w/2 + 107 && mouseY > 440 && mouseY < 510){
             if(this.selectedItemMenu != 4)
                 new Thread(Sound.hover::play).start();
             this.selectedItemMenu = 4;
@@ -733,11 +957,16 @@ public class GameScene extends Scene {
     }
     
     public void hoverSettings(int mouseX, int mouseY){
-        
+        if(mouseX > (2 * this.w/3) && mouseX < 2 * this.w/3 + 214 && mouseY > this.h - 120 && mouseY < this.h - 50){
+            this.selectedItemSettings = 1;
+        }
+        else{
+            this.selectedItemSettings = 0;
+        }
     }
     
     public void hoverSaves(int mouseX, int mouseY){
-        if(mouseX > 2 * this.w/3 && mouseX < 2 * this.w/3 + 214 && mouseY > this.w - 120 && mouseY < this.h - 50){
+        if(mouseX > (2 * this.w/3) && mouseX < 2 * this.w/3 + 214 && mouseY > this.h - 120 && mouseY < this.h - 50){
             this.selectedItemSaves = 1;
         }
         else{
@@ -791,7 +1020,7 @@ public class GameScene extends Scene {
     
     public Scene clickPauseSaves(Scene currentScene){
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
-            switch(this.selectedItemSettings){
+            switch(this.selectedItemSaves){
                 case 1:
                     this.currentScene = popinsScenes.MENU;
                     break;
@@ -806,6 +1035,9 @@ public class GameScene extends Scene {
     public Scene clickPauseSettings(Scene currentScene){
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItemSettings){
+                case 1:
+                    this.currentScene = popinsScenes.MENU;
+                    break;
                 default:
                     break;
             }
