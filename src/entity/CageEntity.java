@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import ld34.Defines;
+import core.Defines;
+import java.awt.Color;
+import java.awt.Rectangle;
 import level.Level;
 
 public class CageEntity extends Entity {
@@ -39,7 +41,7 @@ public class CageEntity extends Entity {
     }
     
     public void hurt(){
-        if(this.brokenStep < 3 && !this.renderHurt){
+        if(this.brokenStep < 4 && !this.renderHurt){
             this.brokenStep++;
             this.renderHurt = true;
             this.topLeftSprite = this.tileset.getSubimage(2 * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
@@ -48,7 +50,7 @@ public class CageEntity extends Entity {
             this.bottomRightSprite = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         
-        if(this.brokenStep == 3)
+        if(this.brokenStep == 4)
             this.isBreak = true;
     }
     
@@ -70,14 +72,28 @@ public class CageEntity extends Entity {
     }
 
     @Override
-    public void render(Graphics g) {
-        g.drawRect((int)posX, (int)posY - Defines.TILE_SIZE + 25, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+    public Rectangle getBounds(){
+        return new Rectangle((int)posX, (int)posY - Defines.TILE_SIZE + 25, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+    }
+    
+    @Override
+    public void render(Graphics g, Boolean debug) {
         g.drawImage(this.topLeftSprite, (int)posX, (int)(posY - Defines.TILE_SIZE + 25), null);
         g.drawImage(this.topRightSprite, (int)(posX + Defines.TILE_SIZE), (int)(posY - Defines.TILE_SIZE + 25), null);
+        
+        if(debug){
+            this.renderHitbox(g);
+        }
     }
     
     public void renderTop(Graphics g){
         g.drawImage(this.bottomLeftSprite, (int)posX, (int)(posY + 25), null);
         g.drawImage(this.bottomRightSprite, (int)(posX + Defines.TILE_SIZE), (int)(posY + 25), null);
+    }
+    
+    public void renderHitbox(Graphics g){
+        Rectangle rect = this.getBounds();
+        g.setColor(Color.MAGENTA);
+        g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
     }
 }

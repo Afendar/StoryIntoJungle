@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import ld34.Game;
+import core.Game;
 
 public abstract class Scene{
     

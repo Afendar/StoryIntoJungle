@@ -21,15 +21,15 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import ld34.Camera;
-import ld34.CustomDialog;
-import ld34.CustomTextField;
+import core.Camera;
+import core.CustomDialog;
+import core.CustomTextField;
 import ld34.profile.Settings;
-import ld34.Defines;
-import ld34.Game;
-import ld34.Minimap;
-import ld34.OptionButton;
-import ld34.TimerThread;
+import core.Defines;
+import core.Game;
+import core.Minimap;
+import core.OptionButton;
+import core.TimerThread;
 import ld34.profile.BestScores;
 import ld34.profile.Save;
 import level.Level;
@@ -65,9 +65,11 @@ public class GameScene extends Scene {
     public BufferedImage soundBar, bgSave, cageSavesIcon, levelSavesIcon, dollardSavesIcon;
     public JSONObject jsonSaves;
     public Color kaki;
+    public CustomDialog dialog;
     
     public GameScene(int w, int h, Game game, Level level, Player player){
         super(w, h, game);
+        this.dialog = null;
         this.displayStart = false;
         this.displayEnd = false;
         this.level = level;
@@ -181,6 +183,7 @@ public class GameScene extends Scene {
         this.displayEnd = false;
         this.displayStart = true;
         this.kaki = new Color(176, 173, 137);
+        this.dialog = null;
         
         if(this.nbLevel > 1){
             this.displayStart = false;
@@ -381,65 +384,71 @@ public class GameScene extends Scene {
     
     @Override
     public Scene update(double dt) {
-        if(this.game.listener.mouseExited || this.game.listener.pause.typed){
-            return this;
-        }
-        
-        if(this.soundPlayed == 1 && ( TimerThread.MILLI - this.timeSound ) > 36000){
-            this.timeSound = TimerThread.MILLI;
-            this.soundPlayed = 2;
-            new Thread(Sound.sf_jungle01::play).start();
-        }
-        else if(this.soundPlayed == 2 && ( TimerThread.MILLI - this.soundPlayed ) > 28000){
-            this.timeSound = TimerThread.MILLI;
-            this.soundPlayed = 1;
-            new Thread(Sound.sf_jungle02::play).start();
-        }
-        
-        if(this.player.win){
-            this.player.checkpointX = 0;
-            if(this.nbLevel < Defines.LEVEL_MAX){
-                return new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score);
-            }
-            else{
-                reinit(this.nbLevel);
-            }
+        if(this.dialog != null){
+            this.dialog.update();
         }
         else{
-            if(this.displayEnd){
-                return new EndScene(this.w, this.h, this.game);
-            }
-            else if(this.displayStart){
-                if(this.game.listener.next.typed){
-                    this.displayStart = false;
-                    this.alpha = 0;
-                }
+            if(this.game.listener.mouseExited || this.game.listener.pause.typed || this.game.paused){
+                this.updatePause(dt);
                 return this;
             }
-            else if(this.player.isDead){
-                if(this.game.listener.next.typed){
-                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("Name"), this.player.score);
-                    reinit(0);
-                    this.player.isDead = false;
-                    this.player.score = 0;
+
+            if(this.soundPlayed == 1 && ( TimerThread.MILLI - this.timeSound ) > 36000){
+                this.timeSound = TimerThread.MILLI;
+                this.soundPlayed = 2;
+                new Thread(Sound.sf_jungle01::play).start();
+            }
+            else if(this.soundPlayed == 2 && ( TimerThread.MILLI - this.soundPlayed ) > 28000){
+                this.timeSound = TimerThread.MILLI;
+                this.soundPlayed = 1;
+                new Thread(Sound.sf_jungle02::play).start();
+            }
+
+            if(this.player.win){
+                this.player.checkpointX = 0;
+                if(this.nbLevel < Defines.LEVEL_MAX){
+                    return new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score);
                 }
-                this.player.update(dt);
+                else{
+                    reinit(this.nbLevel);
+                }
             }
             else{
-                int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
-                int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
-                if(startX < 0)startX = 0;
-                if(startY < 0)startY = 0;
-                this.level.update(dt, startX, startY);
+                if(this.displayEnd){
+                    return new EndScene(this.w, this.h, this.game);
+                }
+                else if(this.displayStart){
+                    if(this.game.listener.next.typed){
+                        this.displayStart = false;
+                        this.alpha = 0;
+                    }
+                    return this;
+                }
+                else if(this.player.isDead){
+                    if(this.game.listener.next.typed){
+                        BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("Name"), this.player.score);
+                        reinit(0);
+                        this.player.isDead = false;
+                        this.player.score = 0;
+                    }
+                    this.player.update(dt);
+                }
+                else{
+                    int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
+                    int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
+                    if(startX < 0)startX = 0;
+                    if(startY < 0)startY = 0;
+                    this.level.update(dt, startX, startY);
 
-                this.player.update(dt);
-                
-                this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
-                this.cam.update(this.player);
-                
-                if(this.minutes >= this.maxTimeHardcore)
-                {
-                    this.player.isDead = true;
+                    this.player.update(dt);
+
+                    this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
+                    this.cam.update(this.player);
+
+                    if(this.minutes >= this.maxTimeHardcore)
+                    {
+                        this.player.isDead = true;
+                    }
                 }
             }
         }
@@ -482,6 +491,8 @@ public class GameScene extends Scene {
         }
         else
         {
+            Boolean debug = this.game.profiler.isVisible();
+            
             //Clear Screen
             g.setColor(new Color(153, 217, 234));
             g.fillRect(0, 0, this.w, this.h);
@@ -547,7 +558,6 @@ public class GameScene extends Scene {
             g2d.translate(-this.cam.x, -this.cam.y);
 
             //Map Render
-            
             int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
             int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
             if(startX < 0)startX = 0;
@@ -555,7 +565,7 @@ public class GameScene extends Scene {
             
             this.level.renderFirstLayer(g, startX, startY);
             
-            this.player.render(g);
+            this.player.render(g, debug);
 
             this.level.renderSecondLayer(g, startX, startY);
             
@@ -586,11 +596,18 @@ public class GameScene extends Scene {
                 g.setFont(this.fontM);
                 g.drawString(this.respawn, this.w/2-respawnW/2, this.h/2);
                 
-                this.player.render(g);
+                this.player.render(g, debug);
+            }
+            
+            if(this.game.paused){
+                this.renderPause(g);
+            }
+            
+            if(this.dialog != null){
+                this.dialog.render(g);
             }
             //END REDNERING
             ///////////////////////////////////////////
-            
             
             //MINIMAP RENDERING
             if(this.game.listener.minimap.enabled){
@@ -918,7 +935,7 @@ public class GameScene extends Scene {
         
     }
     
-    public Scene updatePause(int elapsedTime){
+    public Scene updatePause(double elapsedTime){
         if(this.game.listener.pause.typed && this.currentScene != popinsScenes.MENU && this.currentScene != popinsScenes.NONE){
             this.currentScene = popinsScenes.MENU;
         }
@@ -1071,12 +1088,8 @@ public class GameScene extends Scene {
                 JSONObject save = Save.getInstance().getSave(this.selectedSave - 1);
                 if(!save.isEmpty()){
                     CustomDialog dialog = new CustomDialog();
-                    JFrame frame = (JFrame)SwingUtilities.getWindowAncestor(this.game);
-                    dialog.setRootPane(frame.getRootPane());
-                    int response = dialog.show();
-                    if(response == 0){
-                        //TODO erase save
-                    }
+                    dialog.setMessageText("Remove this save ?");
+                    this.addDialog(dialog);
                 }
                 else{
                     //TODO create new save
@@ -1139,5 +1152,9 @@ public class GameScene extends Scene {
         }
         
         return currentScene;
+    }
+    
+    public void addDialog(CustomDialog dialog){
+        this.dialog = dialog;
     }
 }

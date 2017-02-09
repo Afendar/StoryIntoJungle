@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.profile.Settings;
-import ld34.CustomTextField;
-import ld34.Game;
-import ld34.OptionButton;
+import core.CustomTextField;
+import core.Game;
+import core.OptionButton;
 
 public class OptionsScene extends Scene {
     

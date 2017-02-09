@@ -9,11 +9,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import ld34.Camera;
+import core.Camera;
 import ld34.profile.Settings;
-import ld34.Defines;
-import ld34.InputsListeners;
-import ld34.TimerThread;
+import core.Defines;
+import core.InputsListeners;
+import core.TimerThread;
+import java.awt.Color;
 import level.Level;
 import level.tiles.TileAtlas;
 
@@ -145,10 +146,10 @@ public class Player extends Entity {
         
         int x0 = (int)(this.getBounds().x)/ Defines.TILE_SIZE;
         int y0 = (int)(this.getBounds().y) / Defines.TILE_SIZE;
-        int x1 = (int)(this.getBounds().x-1 + this.getBounds().width) / Defines.TILE_SIZE;
-        int y1 = (int)(this.getBounds().y-1 + this.getBounds().height) / Defines.TILE_SIZE;
+        int x1 = (int)(this.getBounds().x - 1 + this.getBounds().width) / Defines.TILE_SIZE;
+        int y1 = (int)(this.getBounds().y - 1 + this.getBounds().height) / Defines.TILE_SIZE;
         
-        if(listener.jump.enabled && !this.isJumping){
+        if(listener.jump.enabled && !this.isJumping && !this.isFalling){
             new Thread(Sound.jump::play).start();
             this.renderJump = true;
             this.offset = 0;
@@ -162,35 +163,27 @@ public class Player extends Entity {
         
         //On the bridge        
         if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 3 && 
+                TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 3 && 
                 !listener.slow.enabled){
             this.level.removeTile(x1, y1+1);
-            this.isJumping = true;
-            this.isFalling = true;
-            this.velX = 0;
-            this.velY = 8;
         }
-        else if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 3 && 
+        if(y1 + 1 <= this.level.nbTilesH - 1 && 
+                TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 3 && 
                 !listener.slow.enabled){
             this.level.removeTile(x0, y1+1);
-            this.isJumping = true;
-            this.isFalling = true;
-            this.velY = 8;  
-            this.velX = 0; 
         }
         
         //cage
         if(y1 + 1 <= this.level.nbTilesH - 1 &&
                 TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 10 &&
-                this.isJumping){
+                this.isJumping && this.isFalling){
             CageEntity ce = this.level.getCageEntity(x1, y1 + 1);
             if(ce != null)
                 ce.hurt();
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 10 &&
-                this.isJumping){
+                this.isJumping && this.isFalling){
             CageEntity ce = this.level.getCageEntity(x0, y1 + 1);
             if(ce != null)
                 ce.hurt();
@@ -198,13 +191,11 @@ public class Player extends Entity {
         
         //Sand
         if(y1 + 1 <= this.level.nbTilesH - 1 && 
-                TileAtlas.atlas.get(this.level.getTile(x1, y1+1)).ID == 9){
+                TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 9){
             if(this.level.getData(x1, y1 + 1) < 1){
                 this.level.setData(x1, y1+1, 1);
             }
             else if(this.level.getData(x1, y1 + 1) == 2){
-                this.isJumping = true;
-                this.isFalling = true;
                 this.velX = 0;
                 this.velY = 8;
             }
@@ -216,8 +207,6 @@ public class Player extends Entity {
             }
             else if(this.level.getData(x0, y1 + 1) == 2)
             {
-                this.isJumping = true;
-                this.isFalling = true;
                 this.velY = 8;  
                 this.velX = 0;
             }
@@ -326,7 +315,7 @@ public class Player extends Entity {
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
         }
-
+        
         //LEFT
         if((int)(this.getBounds().x + this.velX) / Defines.TILE_SIZE > 0 &&
                 (!TileAtlas.atlas.get(this.level.getTile(((int)(this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + 2)/Defines.TILE_SIZE)).canPass(this.level, ((int)(this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + 2)/Defines.TILE_SIZE) || 
@@ -341,26 +330,36 @@ public class Player extends Entity {
         }
         
         //DOWN 
-        if(((this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE) < this.level.nbTilesH && (
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE) ||
-                !TileAtlas.atlas.get(this.level.getTile((int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE)).canPass(this.level, (int)(this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (int)( this.getBounds().y + this.getBounds().height + velY + 1)/Defines.TILE_SIZE))){
-            this.isJumping = false;
-            this.isFalling = false;
-            this.renderJump = false;
-            
-            if(this.velY > 0){
-                this.renderJumpEnd = true;
-                this.offset2 = 0;
-                this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
-                this.oldposX = (int)this.posX;
-                this.oldposY = (int)this.posY;
-                this.timeJEndAnim = TimerThread.MILLI;
+        int y1VelY = (int)((this.getBounds().y + this.getBounds().height + 4)/Defines.TILE_SIZE);
+        if(y1 + 1 < this.level.nbTilesH){
+            if((
+                !TileAtlas.atlas.get(this.level.getTile(x0, y1VelY)).canPass(this.level, x0, y1VelY) ||
+                !TileAtlas.atlas.get(this.level.getTile(x1, y1VelY)).canPass(this.level, x1, y1VelY)
+                ) && this.velY >= 0){
+                this.isJumping = false;
+                this.isFalling = false;
+                this.renderJump = false;
+
+                if(this.velY > 0){
+                    this.renderJumpEnd = true;
+                    this.offset2 = 0;
+                    this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
+                    this.oldposX = (int)this.posX;
+                    this.oldposY = (int)this.posY;
+                    this.timeJEndAnim = TimerThread.MILLI;
+                }
+                this.velY = 0;
             }
-            this.velY = 0;
+            else if(!this.isFalling && !this.isJumping){
+                this.velY  = Defines.GRAVITY;
+            }
         }
-        else{
-            this.isFalling = true;
-        }
+        
+        
+        this.isFalling = this.velY > 0;
+        
+        if(this.isFalling)
+            System.out.println(this.velY);
         
         if(this.renderJump && TimerThread.MILLI - this.timeJAnim > 80){
             this.timeJAnim = TimerThread.MILLI;
@@ -425,7 +424,7 @@ public class Player extends Entity {
     }
     
     @Override
-    public void render(Graphics g) {
+    public void render(Graphics g, Boolean debug) {
         
         if(this.renderJump){
            g.drawImage(this.spritefx, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
@@ -445,6 +444,10 @@ public class Player extends Entity {
         }
         else{
             g.drawImage(this.sprite, (int)this.posX, (int)this.posY, null);
+        }
+        
+        if(debug){
+            this.renderHitbox(g);
         }
     }
     
@@ -473,6 +476,7 @@ public class Player extends Entity {
         }
     }
     
+    @Override
     public Rectangle getBounds(){
         Rectangle bounds;
         switch(this.age){
@@ -492,5 +496,16 @@ public class Player extends Entity {
     
     public boolean isJumping(){
         return this.isJumping;
+    }
+    
+    public boolean isFalling(){
+        return this.isFalling;
+    }
+    
+    @Override
+    public void renderHitbox(Graphics g){
+        Rectangle rect = this.getBounds();
+        g.setColor(Color.BLUE);
+        g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
     }
 }

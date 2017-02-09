@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import ld34.profile.Settings;
-import ld34.Game;
-import ld34.OptionButton;
+import core.Game;
+import core.OptionButton;
 
 public class CommandsScene extends Scene {
 

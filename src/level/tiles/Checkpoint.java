@@ -2,8 +2,8 @@ package level.tiles;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import ld34.Defines;
-import ld34.TimerThread;
+import core.Defines;
+import core.TimerThread;
 import level.Level;
 
 public class Checkpoint extends Tile{

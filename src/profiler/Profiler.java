@@ -8,8 +8,8 @@ import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
-import ld34.Defines;
-import ld34.Game;
+import core.Defines;
+import core.Game;
 import ld34.scene.GameScene;
 
 public class Profiler {
@@ -20,11 +20,16 @@ public class Profiler {
     private Game game;
     private Font fontD;
     
-    public Profiler(Game game)
+    private static final Profiler _instance = new Profiler();
+    
+    public static Profiler getInstance(){
+        return _instance;
+    }
+    
+    private Profiler()
     {
-        this.labels = new String[]{"fps", "memory", "x", "y", "jump"};
-        this.datas = new String[]{"0", "0", "0", "0", "true"};
-        this.game = game;
+        this.labels = new String[]{"fps", "memory", "x", "y", "jump", "fall"};
+        this.datas = new String[]{"0", "0", "0", "0", "true", "true"};
         this.visible = false;
         
         try{
@@ -37,6 +42,10 @@ public class Profiler {
         }
     }
     
+    public void addGame(Game game){
+        this.game = game;
+    }
+    
     public void update(String frames, String memory){
         
         this.datas[0] = frames;
@@ -47,10 +56,20 @@ public class Profiler {
             this.datas[2] = Float.toString(gs.player.getPosX());
             this.datas[3] = Float.toString(gs.player.getPosY());
             this.datas[4] = Boolean.toString(gs.player.isJumping());
+            this.datas[5] = Boolean.toString(gs.player.isFalling());
         }
     }
     
     public void render(Graphics g){
+        
+        this.renderGlobalDebug(g);
+
+        if(this.game.gs instanceof GameScene){
+            this.renderGameDebug(g);
+        }
+    }
+    
+    public void renderGlobalDebug(Graphics g){
         FontMetrics fm = g.getFontMetrics(this.fontD);
         String text = "FPS : ";
         text += this.datas[0];
@@ -68,15 +87,6 @@ public class Profiler {
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 60);
         
-        if(this.game.gs instanceof GameScene){
-            text = "X : " + this.datas[2];
-            rect = fm.getStringBounds(text, g);
-            g.setColor(new Color(0, 0, 0, 150));
-            g.fillRect(0, 84 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
-            g.setColor(Color.WHITE);
-            g.drawString(text, 30, 90);
-        }
-        
         text = "Java : " + System.getProperty("java.version") + "  x" + System.getProperty("sun.arch.data.model") + " bit";
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
@@ -90,6 +100,54 @@ public class Profiler {
         g.fillRect(this.game.w - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
         g.drawString(text, this.game.w - (int)rect.getWidth() - 30, 60);
+    }
+    
+    public void renderGameDebug(Graphics g){
+        
+        FontMetrics fm = g.getFontMetrics(this.fontD);
+        String text = "X : " + this.datas[2];
+        Rectangle2D rect = fm.getStringBounds(text, g);
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 84 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.setColor(Color.WHITE);
+        g.drawString(text, 30, 87);
+
+        text = "Y : " + this.datas[3];
+        rect = fm.getStringBounds(text, g);
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 111 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.setColor(Color.WHITE);
+        g.drawString(text, 30, 114);
+
+        text = "Jump : " + this.datas[4];
+        rect = fm.getStringBounds(text, g);
+        text = "Jump : ";
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 138 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.setColor(Color.WHITE);
+        g.drawString(text, 30, 141);
+        if(this.datas[4].equals("true")){
+            g.setColor(Color.GREEN);
+        }
+        else{
+            g.setColor(Color.RED);
+        }
+        g.drawString(this.datas[4], 30 + fm.stringWidth(text), 141);
+        
+        text = "Fall : " + this.datas[5];
+        rect = fm.getStringBounds(text, g);
+        text = "Fall : ";
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 165 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.setColor(Color.WHITE);
+        g.drawString(text, 30, 168);
+        if(this.datas[5].equals("true")){
+            g.setColor(Color.GREEN);
+        }
+        else{
+            g.setColor(Color.RED);
+        }
+        g.drawString(this.datas[5], 30 + fm.stringWidth(text), 168);
     }
     
     public boolean isVisible(){

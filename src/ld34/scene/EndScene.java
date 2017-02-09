@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import ld34.profile.Settings;
-import ld34.Game;
+import core.Game;
 
 public class EndScene extends Scene {
 

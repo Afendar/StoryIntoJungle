@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.profile.Settings;
-import ld34.Game;
+import core.Game;
 import ld34.profile.Save;
 import particles.Leaf;
 

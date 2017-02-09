@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import ld34.Defines;
+import core.Defines;
+import java.awt.Color;
+import java.awt.Rectangle;
 import level.Level;
 
 public class Braconeers extends Entity {
@@ -119,7 +121,23 @@ public class Braconeers extends Entity {
     }
     
     @Override
-    public void render(Graphics g){
+    public Rectangle getBounds(){
+        return new Rectangle((int)this.posX, (int)this.posY, 10, 10);
+    }
+    
+    @Override
+    public void render(Graphics g, Boolean debug){
         g.drawImage(this.sprite, (int)this.posX, (int) this.posY, null);
+        
+        if(debug){
+            this.renderHitbox(g);
+        }
+    }
+    
+    @Override
+    public void renderHitbox(Graphics g){
+        Rectangle rect = this.getBounds();
+        g.setColor(Color.GREEN);
+        g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
     }
 }

@@ -1,7 +1,7 @@
 package level.tiles;
 
 import java.awt.Graphics;
-import ld34.Defines;
+import core.Defines;
 import level.Level;
 
 public class Floor extends Tile {

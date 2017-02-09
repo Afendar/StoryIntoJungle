@@ -1,6 +1,6 @@
 package ld34.profile;
 
-import ld34.Game;
+import core.Game;
 import org.json.simple.JSONObject;
 
 public class Save extends Profile {

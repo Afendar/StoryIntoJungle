@@ -12,11 +12,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import ld34.Defines;
+import core.Defines;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
 import particles.Leaf;
 import particles.Particle;
+import profiler.Profiler;
 
 public class Level {
     
@@ -159,6 +160,7 @@ public class Level {
     
     public void renderFirstLayer(Graphics g, int startX, int startY){
         
+        Boolean debug = Profiler.getInstance().isVisible();
         int endX = (startX + this.nbTilesInScreenX + 2 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 2 : this.nbTilesW;
         int endY = (startY + this.nbTilesInScreenY + 2 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 2 : this.nbTilesH;
         
@@ -214,7 +216,7 @@ public class Level {
                         if(this.map[i-1][j] != 11){
                             CageEntity ce = this.getCageEntity(i, j);
                             if(ce != null)
-                                ce.render(g);
+                                ce.render(g, debug);
                         }
                         break;
                     default:
@@ -225,7 +227,7 @@ public class Level {
         
         for(int i=0;i<this.braconeers.size();i++){
             Braconeers b = this.braconeers.get(i);
-            b.render(g);
+            b.render(g, debug);
         }
     }
     

@@ -2,7 +2,7 @@ package level.tiles;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import ld34.Defines;
+import core.Defines;
 import level.Level;
 
 public class Bridge extends Tile {

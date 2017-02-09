@@ -7,7 +7,7 @@ package level.tiles;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import ld34.Defines;
+import core.Defines;
 import level.Level;
 import particles.Leaf;
 

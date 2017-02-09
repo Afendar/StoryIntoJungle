@@ -1,4 +1,4 @@
-package ld34;
+package core;
 
 import java.awt.Color;
 import java.awt.Graphics;

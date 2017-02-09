@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import ld34.Defines;
+import core.Defines;
 import level.Level;
 
 public abstract class Tile {

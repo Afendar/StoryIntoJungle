@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public abstract class Entity {
     
@@ -27,7 +28,8 @@ public abstract class Entity {
         return posY;
     }
     
+    public abstract Rectangle getBounds();
     public abstract void update(double dt);
-    public abstract void render(Graphics g);
-    
+    public abstract void render(Graphics g, Boolean debug);
+    public abstract void renderHitbox(Graphics g);
 }

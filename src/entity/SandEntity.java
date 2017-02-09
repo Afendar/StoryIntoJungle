@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import level.Level;
 
 public class SandEntity extends Entity {
@@ -38,7 +39,16 @@ public class SandEntity extends Entity {
     }
 
     @Override
-    public void render(Graphics g) {
+    public Rectangle getBounds(){
+        return new Rectangle((int)this.posX, (int)this.posY, 10, 10);
     }
     
+    @Override
+    public void render(Graphics g, Boolean debug) {
+    }
+    
+    @Override
+    public void renderHitbox(Graphics g){
+        
+    }
 }

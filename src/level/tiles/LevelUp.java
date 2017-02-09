@@ -2,7 +2,7 @@ package level.tiles;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import ld34.Defines;
+import core.Defines;
 import level.Level;
 
 public class LevelUp extends Tile{
