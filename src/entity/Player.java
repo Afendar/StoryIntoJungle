@@ -38,6 +38,11 @@ public class Player extends Entity {
     public Thread jumpParticles, endJumpParticles;
     private double timeRespawn, timeLastBlink;
     
+    public static final int SPECIES_PANDA = 0;
+    public static final int SPECIES_REDPANDA = 1;
+    public static final int SEX_BOY = 0;
+    public static final int SEX_GIRL = 1;
+    
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
         
@@ -66,19 +71,19 @@ public class Player extends Entity {
         
         switch(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")))
         {
-            case 0:
+            case Player.SPECIES_PANDA:
                 this.species = "panda";
                 break;
-            case 1:
+            case Player.SPECIES_REDPANDA:
                 this.species = "redpanda";
                 break;
         }
         
         switch(Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))){
-            case 0:
+            case Player.SEX_BOY:
                 this.sex = "boy";
                 break;
-            case 1:
+            case Player.SEX_GIRL:
                 this.sex = "girl";
                 break;
         }
@@ -111,6 +116,7 @@ public class Player extends Entity {
         this.spritefx = this.spritesheetfx.getSubimage(0, 0, 60, 32);
         this.spritefxend = this.spritesheetfxend.getSubimage(0, 0, 60, 32);
         this.sprite = this.spritesheet.getSubimage(this.animX, this.animY*this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
+        this.name = Settings.getInstance().getConfigValue("Name");
     }
 
     public void setIsRespawning(boolean isRespawning){
@@ -355,11 +361,7 @@ public class Player extends Entity {
             }
         }
         
-        
         this.isFalling = this.velY > 0;
-        
-        if(this.isFalling)
-            System.out.println(this.velY);
         
         if(this.renderJump && TimerThread.MILLI - this.timeJAnim > 80){
             this.timeJAnim = TimerThread.MILLI;

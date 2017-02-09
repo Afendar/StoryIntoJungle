@@ -22,6 +22,7 @@ public class CustomDialog {
     private String[] options;
     private int optionIndex;
     private Font font;
+    private Game game;
     
     public CustomDialog(){
         components = new ArrayList<>();
@@ -41,6 +42,7 @@ public class CustomDialog {
         this.setOptions(new String[] {"Oui", "Non"});
         this.setOptionSelected(0);
         this.setMessageText("");
+        this.setGame(null);
     }
     
     public void setTitle(String title){
@@ -57,6 +59,10 @@ public class CustomDialog {
     
     public void setMessageText(String messageText){
         this.messageText = messageText;
+    }
+    
+    public void setGame(Game game){
+        this.game = game;
     }
     
     public void setRootPane(JRootPane rootPane){
@@ -93,6 +99,17 @@ public class CustomDialog {
     }
     
     public void update(){
+        int mouseX = this.game.listener.mouseX;
+        int mouseY = this.game.listener.mouseY;
+        this.processHover(mouseX, mouseY);
+        this.processClick(mouseX, mouseY);
+    }
+    
+    private void processHover(int mouseX, int mouseY){
+        
+    }
+    
+    private void processClick(int mouseX, int mouseY){
         
     }
     
@@ -102,5 +119,16 @@ public class CustomDialog {
         g.setColor(Color.BLACK);
         g.setFont(this.font);
         g.drawString(this.messageText, 270, 230);
+        
+        g.setColor(Color.GREEN);
+        g.drawRect(275, 345, 120, 35);
+        g.setColor(Color.BLACK);
+        g.drawString("Yes", 280, 390);
+        
+        g.setColor(Color.RED);
+        g.drawRect(405, 345, 120, 35);
+        g.setColor(Color.BLACK);
+        g.drawString("No", 415, 390);
+        
     }
 }

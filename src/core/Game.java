@@ -168,13 +168,19 @@ public class Game extends Canvas implements Runnable {
         }
         if(this.paused && this.listener.pause.enabled && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
         {
-            if(((GameScene)this.gs).currentScene != GameScene.popinsScenes.MENU && ((GameScene)this.gs).currentScene != GameScene.popinsScenes.NONE){
-                this.listener.pause.enabled = false;
-                ((GameScene)this.gs).currentScene = GameScene.popinsScenes.MENU;
+            GameScene gameScene = (GameScene)this.gs;
+            if(gameScene.dialog != null){
+                gameScene.dialog = null;
             }
             else{
-                this.pauseTime = TimerThread.MILLI;
-                this.paused = false;
+                if(gameScene.currentScene != GameScene.popinsScenes.MENU && ((GameScene)this.gs).currentScene != GameScene.popinsScenes.NONE){
+                    this.listener.pause.enabled = false;
+                    gameScene.currentScene = GameScene.popinsScenes.MENU;
+                }
+                else{
+                    this.pauseTime = TimerThread.MILLI;
+                    this.paused = false;
+                }
             }
         }
         

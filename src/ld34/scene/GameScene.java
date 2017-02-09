@@ -1089,10 +1089,11 @@ public class GameScene extends Scene {
                 if(!save.isEmpty()){
                     CustomDialog dialog = new CustomDialog();
                     dialog.setMessageText("Remove this save ?");
+                    dialog.setGame(this.game);
                     this.addDialog(dialog);
                 }
                 else{
-                    //TODO create new save
+                    Save.getInstance().saveGame(this.selectedSave - 1, this.level, this.player);
                 }
             }
         }

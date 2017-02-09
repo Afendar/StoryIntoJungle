@@ -1,6 +1,10 @@
 package ld34.profile;
 
-import core.Game;
+import core.TimerThread;
+import entity.Player;
+import level.Level;
+import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
 
 public class Save extends Profile {
@@ -43,12 +47,34 @@ public class Save extends Profile {
         return false;
     }
     
-    public void saveGame(String slot, Game game){
-        this.jsonSaves.replace(slot, new JSONObject());
+    public void saveGame(int slotId, Level level, Player player){
+        JSONObject data = new JSONObject();
+        
+        JSONObject levelData = new JSONObject();
+        levelData.put("difficulty", Integer.toString(player.difficulty));
+        levelData.put("number", Integer.toString(level.nbLevel));
+        levelData.put("time", "00:00");
+        levelData.put("complete", "15");
+        levelData.put("freeCages", "0");
+        data.put("level", levelData);
+        
+        JSONObject playerData = new JSONObject();
+        playerData.put("spicies", Settings.getInstance().getConfigValue("Spicies"));
+        playerData.put("score", Integer.toString(player.score));
+        playerData.put("sex", Settings.getInstance().getConfigValue("Sex"));
+        playerData.put("name", player.name != null ? player.name : "");
+        JSONArray coords = new JSONArray();
+        coords.add((int)player.getPosX());
+        coords.add((int)player.getPosY());
+        playerData.put("coords", coords);
+        data.put("player", playerData);
+        
+        this.jsonSaves.replace("Slot" + slotId, data);
+        this.saveSaves();
     }
     
     public void saveSaves(){
-        this.profile.remove("Saves", this.jsonSaves);
+        this.profile.replace("Saves", this.jsonSaves);
         this.save();
     }
     
