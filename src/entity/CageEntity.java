@@ -50,9 +50,11 @@ public class CageEntity extends Entity {
             this.bottomRightSprite = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         
-        if(this.brokenStep == 4){
+        if(this.brokenStep == 4 && !this.isBreak){
             this.isBreak = true;
             this.renderBreak = true;
+            
+            this.level.freeCage();
         }
     }
     

@@ -9,11 +9,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
+import ld34.profile.Settings;
 
 public class CustomDialog {
     private List<JComponent> components;
@@ -22,10 +25,11 @@ public class CustomDialog {
     private int messageType;
     private JRootPane rootPane;
     private String[] options;
-    private int optionIndex, selectedItem;
+    private int optionIndex, selectedItem, value;
     private Font font;
     private Game game;
     private BufferedImage spritesheet, background, bgBtn;
+    public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
     
     public CustomDialog(){
         components = new ArrayList<>();
@@ -46,11 +50,17 @@ public class CustomDialog {
         this.setTitle("Custom dialog");
         this.setMessageType(JOptionPane.PLAIN_MESSAGE);
         this.setRootPane(null);
-        this.setOptions(new String[] {"Oui", "Non"});
+        
+        ResourceBundle bundle = ResourceBundle.getBundle("lang.common", this.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
+        String option1 = bundle.getString("yes");
+        String option2 = bundle.getString("no");
+        
+        this.setOptions(new String[] {option1, option2});
         this.setOptionSelected(0);
         this.setMessageText("");
         this.setGame(null);
         this.selectedItem = 0;
+        this.value = 0;
     }
     
     public void setTitle(String title){
@@ -110,7 +120,7 @@ public class CustomDialog {
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
         this.processHover(mouseX, mouseY);
-        this.processClick(mouseX, mouseY);
+        this.processClick();
     }
     
     private void processHover(int mouseX, int mouseY){
@@ -125,13 +135,15 @@ public class CustomDialog {
         }
     }
     
-    private void processClick(int mouseX, int mouseY){
+    private void processClick(){
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1)
         {
             switch(this.selectedItem){
                 case 1:
+                    this.value = 1;
                     break;
                 case 2:
+                    this.value = 2;
                     break;
             }
         }
@@ -151,7 +163,7 @@ public class CustomDialog {
         else{
             g.setColor(Color.BLACK);
         }
-        g.drawString("Yes", 315, 370);
+        g.drawString(this.options[0], 315, 370);
         
         g.drawImage(this.bgBtn, 420, 345, null);
         if(this.selectedItem == 2){
@@ -160,7 +172,10 @@ public class CustomDialog {
         else{
             g.setColor(Color.BLACK);
         }
-        g.drawString("No", 465, 370);
-        
+        g.drawString(this.options[1], 465, 370);   
+    }
+    
+    public int getValue(){
+        return this.value;
     }
 }

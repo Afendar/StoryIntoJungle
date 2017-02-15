@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
 import core.Camera;
 import core.CustomDialog;
 import core.CustomTextField;
@@ -41,7 +40,7 @@ public class GameScene extends Scene {
     public Level level;
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnSettings, btnBack, btnSave, pausemsg, btnContinue, warningTxt, title,
-            easy, medium, hard, hardcore;
+            easy, medium, hard, hardcore, popupLabel;
     public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
             backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll, guiAssets, scoreIcon, timeIcon, levelIcon, cagesIcon;
     public int nbLevel, selectedItemMenu, selectedItemSaves, selectedItemSettings;
@@ -281,6 +280,7 @@ public class GameScene extends Scene {
         this.hardcore = this.bundle.getString("hardcore");
         this.controlJump = this.bundle.getString("ctrlJump");
         this.controlWalk = this.bundle.getString("ctrlWalk");
+        this.popupLabel = this.bundle.getString("popupLabel");
         
         for(int i=0;i<this.optionButtons.size();i++){
             this.optionButtons.get(i).initLocales();
@@ -340,7 +340,20 @@ public class GameScene extends Scene {
     @Override
     public Scene update(double dt) {
         if(this.dialog != null){
-            this.dialog.update();
+            int value = this.dialog.getValue();
+            if(value == 0){
+                this.dialog.update();
+            }
+            else{
+                switch(value){
+                    case 1:
+                        if(this.selectedSave != 0){
+                            Save.getInstance().saveGame(this.selectedSave - 1, this.level, this.player);
+                        }
+                        break;
+                }
+                this.dialog = null;
+            }
         }
         else{
             if(this.game.listener.mouseExited || this.game.listener.pause.typed || this.game.paused){
@@ -508,7 +521,6 @@ public class GameScene extends Scene {
             
             g2d.translate(this.cam.x/4, 0);
             
-            
             g2d.translate(-this.cam.x, -this.cam.y);
 
             //Map Render
@@ -524,7 +536,6 @@ public class GameScene extends Scene {
             this.level.renderSecondLayer(g, startX, startY);
             
             g2d.translate(this.cam.x, this.cam.y);
-
             
             g.drawImage(this.foregroundGame, 0, 300, null);
             
@@ -1042,7 +1053,7 @@ public class GameScene extends Scene {
                 JSONObject save = Save.getInstance().getSave(this.selectedSave - 1);
                 if(!save.isEmpty()){
                     CustomDialog dialog = new CustomDialog();
-                    dialog.setMessageText("Remove this save ?");
+                    dialog.setMessageText(this.popupLabel);
                     dialog.setGame(this.game);
                     this.addDialog(dialog);
                 }

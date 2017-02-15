@@ -1,7 +1,6 @@
 package ld34.profile;
 
 import core.Defines;
-import core.TimerThread;
 import entity.Player;
 import level.Level;
 import org.json.simple.JSONArray;
@@ -56,7 +55,7 @@ public class Save extends Profile {
         levelData.put("number", Integer.toString(level.nbLevel));
         levelData.put("time", "00:00");
         levelData.put("complete", Integer.toString(level.getComplete()));
-        levelData.put("freeCages", "0");
+        levelData.put("freeCages", Integer.toString(level.getFreeCages()));
         
         JSONObject cages = new JSONObject();
         for(int i = 1; i < Defines.LEVEL_MAX + 1; i++){

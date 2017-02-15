@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import core.Defines;
+import java.awt.Rectangle;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
 import particles.Leaf;
@@ -36,6 +37,7 @@ public class Level {
     public List<Braconeers> braconeers = new ArrayList<>();
     
     private int complete;
+    private int freeCages;
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -55,6 +57,7 @@ public class Level {
         this.nbLevel = nbLevel;
         this.nbCages = 0;
         this.complete = 0;
+        this.freeCages = 0;
         
         this.loadLevel(nbLevel);
     }
@@ -237,7 +240,9 @@ public class Level {
     public CageEntity getCageEntity(int x, int y){
         for(int i=0;i< this.cageEntity.size();i++){
             CageEntity ce = this.cageEntity.get(i);
-            if(ce.getPosX() == x * Defines.TILE_SIZE && ce.getPosY() == y * Defines.TILE_SIZE){
+            Rectangle bounds = ce.getBounds();
+            if(x * Defines.TILE_SIZE >= bounds.x && x * Defines.TILE_SIZE <= bounds.x + bounds.width && 
+                    y * Defines.TILE_SIZE >= bounds.y && y * Defines.TILE_SIZE <= bounds.y + bounds.height){
                 return ce;
             }
         }
@@ -485,5 +490,14 @@ public class Level {
     
     public int getComplete(){
         return this.complete;
+    }
+    
+    public void freeCage(){
+        this.freeCages++;
+        this.nbCages --;
+    }
+    
+    public int getFreeCages(){
+        return this.freeCages;
     }
 }

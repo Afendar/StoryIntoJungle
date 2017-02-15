@@ -24,7 +24,6 @@ public class Cage extends Tile {
     
     @Override
     public boolean canPass(Level level, int x, int y){
-        
         CageEntity entity = level.getCageEntity(x, y);
         if(entity != null && entity.isBreak()){
             return true;

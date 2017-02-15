@@ -122,7 +122,7 @@ public class Braconeers extends Entity {
     
     @Override
     public Rectangle getBounds(){
-        return new Rectangle((int)this.posX, (int)this.posY, 10, 10);
+        return new Rectangle((int)this.posX + 18, (int)this.posY, 55, 128);
     }
     
     @Override

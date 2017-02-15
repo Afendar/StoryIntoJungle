@@ -26,7 +26,7 @@ public class SavesScene extends Scene {
 
     private String btnBack, emptyTxt, easy, medium, hard, hardcore, title;
     private Font font, fontL, fontS;
-    private BufferedImage gui, bgSave, levelIcon, removeIcon, cageIcon, loadIcon, dollardIcon;
+    private BufferedImage gui, bgSave, levelIcon, removeIcon, cageIcon, loadIcon, dollardIcon, littlePanda;
     private int selectedItem, selectedSave, selectRemove, selectLoad;
     private int[][] btnCoords;
     private JSONObject jsonSaves;
@@ -50,6 +50,9 @@ public class SavesScene extends Scene {
             this.levelIcon = this.gui.getSubimage(183, 135, 32, 26);
             this.loadIcon = this.gui.getSubimage(153, 163, 22, 24);
             this.dollardIcon = this.gui.getSubimage(154, 188, 20, 24);
+            
+            url = this.getClass().getResource("/little_panda.png");
+            this.littlePanda = ImageIO.read(url);
         }
         catch(FontFormatException|IOException e){
             e.getMessage();
@@ -239,7 +242,8 @@ public class SavesScene extends Scene {
                 if(spicies == 1){
                     y = 208;
                 }
-                g.drawImage(this.gui.getSubimage(x, y, 50, 48), 219, (i * 125) + 115, null);
+                //g.drawImage(this.gui.getSubimage(x, y, 50, 48), 219, (i * 125) + 115, null);
+                g.drawImage(this.littlePanda, 219, (i * 125) + 115, null);
                 
                 g.drawImage(this.dollardIcon, 450, (i * 125) + 108 ,null);
                 String score =  (String) player.get("score");
