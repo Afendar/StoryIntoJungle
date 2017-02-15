@@ -1,5 +1,6 @@
 package ld34.profile;
 
+import core.Defines;
 import core.TimerThread;
 import entity.Player;
 import level.Level;
@@ -54,15 +55,27 @@ public class Save extends Profile {
         levelData.put("difficulty", Integer.toString(player.difficulty));
         levelData.put("number", Integer.toString(level.nbLevel));
         levelData.put("time", "00:00");
-        levelData.put("complete", "15");
+        levelData.put("complete", Integer.toString(level.getComplete()));
         levelData.put("freeCages", "0");
+        
+        JSONObject cages = new JSONObject();
+        for(int i = 1; i < Defines.LEVEL_MAX + 1; i++){
+            JSONArray levelCages = new JSONArray();
+            for(int j=0;j<8;j++){
+                JSONArray coords = new JSONArray();
+                levelCages.add(coords);
+            }
+            cages.put(Integer.toString(i), levelCages);
+        }
+        levelData.put("cages", cages);
+        
         data.put("level", levelData);
         
         JSONObject playerData = new JSONObject();
         playerData.put("spicies", Settings.getInstance().getConfigValue("Spicies"));
         playerData.put("score", Integer.toString(player.score));
         playerData.put("sex", Settings.getInstance().getConfigValue("Sex"));
-        playerData.put("name", player.name != null ? player.name : "");
+        playerData.put("name", player.getName() != null ? player.getName() : "");
         JSONArray coords = new JSONArray();
         coords.add((int)player.getPosX());
         coords.add((int)player.getPosY());

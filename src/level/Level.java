@@ -35,6 +35,8 @@ public class Level {
     public List<CageEntity> cageEntity = new ArrayList<>();
     public List<Braconeers> braconeers = new ArrayList<>();
     
+    private int complete;
+    
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
     public static final int BLACK = 0; //RGB(255, 255, 255) FLOOR
@@ -52,6 +54,7 @@ public class Level {
         System.out.println("Loading level : " + nbLevel);
         this.nbLevel = nbLevel;
         this.nbCages = 0;
+        this.complete = 0;
         
         this.loadLevel(nbLevel);
     }
@@ -474,5 +477,13 @@ public class Level {
     
     public void addPlayer(Player p){
         this.player = p;
+    }
+    
+    public void setComplete(int percentage){
+        this.complete = percentage;
+    }
+    
+    public int getComplete(){
+        return this.complete;
     }
 }

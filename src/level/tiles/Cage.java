@@ -3,6 +3,7 @@ package level.tiles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import core.Defines;
+import entity.CageEntity;
 import level.Level;
 
 public class Cage extends Tile {
@@ -23,7 +24,12 @@ public class Cage extends Tile {
     
     @Override
     public boolean canPass(Level level, int x, int y){
-        return level.getData(x, y) == 2;
+        
+        CageEntity entity = level.getCageEntity(x, y);
+        if(entity != null && entity.isBreak()){
+            return true;
+        }
+        return false;
     }
     
     @Override

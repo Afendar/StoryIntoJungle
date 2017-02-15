@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -20,9 +22,10 @@ public class CustomDialog {
     private int messageType;
     private JRootPane rootPane;
     private String[] options;
-    private int optionIndex;
+    private int optionIndex, selectedItem;
     private Font font;
     private Game game;
+    private BufferedImage spritesheet, background, bgBtn;
     
     public CustomDialog(){
         components = new ArrayList<>();
@@ -31,6 +34,10 @@ public class CustomDialog {
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 16.0f);
+            url = this.getClass().getResource("/gui.png");
+            this.spritesheet = ImageIO.read(url);
+            this.background = this.spritesheet.getSubimage(214, 0, 300, 200);
+            this.bgBtn = this.spritesheet.getSubimage(0, 70, 107, 40);
         }
         catch(IOException | FontFormatException e){
             System.out.println(e.getMessage());
@@ -43,6 +50,7 @@ public class CustomDialog {
         this.setOptionSelected(0);
         this.setMessageText("");
         this.setGame(null);
+        this.selectedItem = 0;
     }
     
     public void setTitle(String title){
@@ -106,29 +114,53 @@ public class CustomDialog {
     }
     
     private void processHover(int mouseX, int mouseY){
-        
+        if(mouseX > 275 && mouseX < 275 + 107 && mouseY > 345 && mouseY < 345 + 70){
+            this.selectedItem = 1;
+        }
+        else if(mouseX > 420 && mouseX < 420 + 107 && mouseY > 345 && mouseY < 345 + 70){
+            this.selectedItem = 2;
+        }
+        else{
+            this.selectedItem = 0;
+        }
     }
     
     private void processClick(int mouseX, int mouseY){
-        
+        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1)
+        {
+            switch(this.selectedItem){
+                case 1:
+                    break;
+                case 2:
+                    break;
+            }
+        }
     }
     
     public void render(Graphics g){
-        g.setColor(new Color(223, 211, 153));
-        g.fillRect(250, 200, 300, 200);
+        g.drawImage(this.background, 250, 200, null);
+        
         g.setColor(Color.BLACK);
         g.setFont(this.font);
-        g.drawString(this.messageText, 270, 230);
+        g.drawString(this.messageText, 280, 250);
         
-        g.setColor(Color.GREEN);
-        g.drawRect(275, 345, 120, 35);
-        g.setColor(Color.BLACK);
-        g.drawString("Yes", 280, 390);
+        g.drawImage(this.bgBtn, 275, 345, null);
+        if(this.selectedItem == 1){
+            g.setColor(new Color(128, 0, 19));
+        }
+        else{
+            g.setColor(Color.BLACK);
+        }
+        g.drawString("Yes", 315, 370);
         
-        g.setColor(Color.RED);
-        g.drawRect(405, 345, 120, 35);
-        g.setColor(Color.BLACK);
-        g.drawString("No", 415, 390);
+        g.drawImage(this.bgBtn, 420, 345, null);
+        if(this.selectedItem == 2){
+            g.setColor(new Color(128, 0, 19));
+        }
+        else{
+            g.setColor(Color.BLACK);
+        }
+        g.drawString("No", 465, 370);
         
     }
 }

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import core.Camera;
 import core.CustomDialog;
@@ -82,54 +81,7 @@ public class GameScene extends Scene {
         this.player.cam = this.cam;
         this.kaki = new Color(176, 173, 137);
         
-        try{
-            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
-            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
-            this.fontSM = this.font.deriveFont(Font.PLAIN, 22.0f);
-            this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
-            this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
-            this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
-            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
-            fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-            this.fontU = this.fontS;
-            this.fontU = this.fontU.deriveFont(fontAttributes);
-            
-            url = this.getClass().getResource("/background2.png");
-            this.background2 = ImageIO.read(url);
-            
-            url = this.getClass().getResource("/background_bottom.png");
-            this.backgroundBottomAll = ImageIO.read(url);
-            this.backgroundBottom = this.backgroundBottomAll.getSubimage(0, 0, 800, 600);
-            this.backgroundBottom2 = this.backgroundBottomAll.getSubimage(800, 0, 800, 600);
-            url = this.getClass().getResource("/background_top.png");
-            this.backgroundTopAll = ImageIO.read(url);
-            this.backgroundTop = this.backgroundTopAll.getSubimage(0, 0, 800, 600);
-            this.backgroundTop2 = this.backgroundTopAll.getSubimage(800, 0, 800, 600);
-            
-            url = this.getClass().getResource("/gui.png");
-            this.guiAssets = ImageIO.read(url);
-            this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
-            this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
-            this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
-            this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
-            
-            url = this.getClass().getResource("/gui.png");
-            this.gui = ImageIO.read(url);
-            this.cageSavesIcon = this.gui.getSubimage(150, 130, 33, 32);
-            this.levelSavesIcon = this.gui.getSubimage(183, 135, 32, 26);
-            this.dollardSavesIcon = this.gui.getSubimage(154, 188, 20, 24);
-            
-        }catch(FontFormatException|IOException e){
-            e.getMessage();
-        }
-        
-        this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
-        this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
-        this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
-        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
-        this.bgSave = this.spritesheetGui.getSubimage(0, 282, 500, 118);
-        
+        this.loadAssets();
         this.initLocales();
         
         this.selectedItemMenu = this.selectedItemSaves = this.selectedItemSettings = 0;
@@ -198,55 +150,8 @@ public class GameScene extends Scene {
         this.player.score = score;
         
         this.level.addPlayer(this.player);
-        
-        try{
-            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
-            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
-            this.fontSM = this.font.deriveFont(Font.PLAIN, 22.0f);
-            this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
-            this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
-            this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
-            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
-            fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-            this.fontU = this.fontS;
-            this.fontU = this.fontU.deriveFont(fontAttributes);
-            
-            url = this.getClass().getResource("/background2.png");
-            this.background2 = ImageIO.read(url);
-            
-            url = this.getClass().getResource("/background_bottom.png");
-            this.backgroundBottomAll = ImageIO.read(url);
-            this.backgroundBottom = this.backgroundBottomAll.getSubimage(0, 0, 800, 600);
-            this.backgroundBottom2 = this.backgroundBottomAll.getSubimage(800, 0, 800, 600);
-            url = this.getClass().getResource("/background_top.png");
-            this.backgroundTopAll = ImageIO.read(url);
-            this.backgroundTop = this.backgroundTopAll.getSubimage(0, 0, 800, 600);
-            this.backgroundTop2 = this.backgroundTopAll.getSubimage(800, 0, 800, 600);
-            
-            url = this.getClass().getResource("/gui2.png");
-            this.guiAssets = ImageIO.read(url);
-            this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
-            this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
-            this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
-            this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
-            
-            url = this.getClass().getResource("/gui.png");
-            this.gui = ImageIO.read(url);
-            this.cageSavesIcon = this.gui.getSubimage(150, 130, 33, 32);
-            this.levelSavesIcon = this.gui.getSubimage(183, 135, 32, 26);
-            this.dollardSavesIcon = this.gui.getSubimage(154, 188, 20, 24);
-            
-        }catch(FontFormatException|IOException e){
-            e.getMessage();
-        }
-        
-        this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
-        this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
-        this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
-        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
-        this.bgSave = this.spritesheetGui.getSubimage(0, 282, 500, 118);
-        
+
+        this.loadAssets();
         this.initLocales();
         
         this.selectedItemMenu = this.selectedItemSaves = this.selectedItemSettings = 0;
@@ -296,6 +201,56 @@ public class GameScene extends Scene {
 
     public GameScene(int w, int h, Game game){
         this(w, h, game, 1, 0);
+    }
+    
+    public void loadAssets(){
+        try{
+            URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
+            this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
+            this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
+            this.fontSM = this.font.deriveFont(Font.PLAIN, 22.0f);
+            this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
+            this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
+            this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
+            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
+            fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            this.fontU = this.fontS;
+            this.fontU = this.fontU.deriveFont(fontAttributes);
+            
+            url = this.getClass().getResource("/background2.png");
+            this.background2 = ImageIO.read(url);
+            
+            url = this.getClass().getResource("/background_bottom.png");
+            this.backgroundBottomAll = ImageIO.read(url);
+            this.backgroundBottom = this.backgroundBottomAll.getSubimage(0, 0, 800, 600);
+            this.backgroundBottom2 = this.backgroundBottomAll.getSubimage(800, 0, 800, 600);
+            url = this.getClass().getResource("/background_top.png");
+            this.backgroundTopAll = ImageIO.read(url);
+            this.backgroundTop = this.backgroundTopAll.getSubimage(0, 0, 800, 600);
+            this.backgroundTop2 = this.backgroundTopAll.getSubimage(800, 0, 800, 600);
+            
+            url = this.getClass().getResource("/gui2.png");
+            this.guiAssets = ImageIO.read(url);
+            this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
+            this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
+            this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
+            this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
+            
+            url = this.getClass().getResource("/gui.png");
+            this.gui = ImageIO.read(url);
+            this.cageSavesIcon = this.gui.getSubimage(150, 130, 33, 32);
+            this.levelSavesIcon = this.gui.getSubimage(183, 135, 32, 26);
+            this.dollardSavesIcon = this.gui.getSubimage(154, 188, 20, 24);
+            
+        }catch(FontFormatException|IOException e){
+            e.getMessage();
+        }
+        
+        this.bgGui = this.spritesheetGui.getSubimage(0, 20, 214, 50);
+        this.bgGui2 = this.spritesheetGui.getSubimage(0, 0, 214, 50);
+        this.clockGui = this.spritesheetGui.getSubimage(0, 281, 55, 55);
+        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
+        this.bgSave = this.spritesheetGui.getSubimage(0, 282, 500, 118);
     }
     
     public void initLocales(){
@@ -389,8 +344,7 @@ public class GameScene extends Scene {
         }
         else{
             if(this.game.listener.mouseExited || this.game.listener.pause.typed || this.game.paused){
-                this.updatePause(dt);
-                return this;
+                return this.updatePause(dt);
             }
 
             if(this.soundPlayed == 1 && ( TimerThread.MILLI - this.timeSound ) > 36000){

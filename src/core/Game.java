@@ -15,6 +15,7 @@ import ld34.scene.GameScene;
 import ld34.scene.MenuScene;
 import ld34.scene.SavesScene;
 import ld34.scene.Scene;
+import ld34.scene.SplashScene;
 import profiler.Profiler;
 
 public class Game extends Canvas implements Runnable {

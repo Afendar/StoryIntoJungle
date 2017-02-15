@@ -14,8 +14,8 @@ public class CageEntity extends Entity {
 
     protected double dt;
     protected Level level;
-    private int brokenStep;
-    private boolean isBreak, renderHurt;
+    private int brokenStep, offset;
+    private boolean isBreak, renderHurt, renderBreak;
     public BufferedImage tileset, topLeftSprite, topRightSprite, bottomLeftSprite, bottomRightSprite;
     private int timerender;
     
@@ -23,8 +23,8 @@ public class CageEntity extends Entity {
         super(posX, posY);
         
         this.level = level;
-        this.brokenStep = 0;
-        this.isBreak = this.renderHurt = false;
+        this.brokenStep = this.offset = 0;
+        this.isBreak = this.renderHurt = this.renderBreak = false;
         this.timerender = 0;
         
         try{
@@ -50,13 +50,15 @@ public class CageEntity extends Entity {
             this.bottomRightSprite = this.tileset.getSubimage(3 * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         
-        if(this.brokenStep == 4)
+        if(this.brokenStep == 4){
             this.isBreak = true;
+            this.renderBreak = true;
+        }
     }
     
     @Override
     public void update(double dt) {
-        if(this.renderHurt){
+        if(this.renderHurt && !this.isBreak){
             if(this.timerender > 10){
                 this.renderHurt = false;
                 this.timerender = 0;
@@ -68,6 +70,27 @@ public class CageEntity extends Entity {
             else{
                 this.timerender += dt;
             }
+        }
+        
+        if(this.isBreak){
+            if(this.renderBreak && this.offset < 4){
+                if(this.timerender > 3){
+                    this.timerender = 0;
+                    this.offset += 2;
+                }
+                else{
+                    this.timerender += dt;
+                }
+                
+            }
+            else{
+                this.timerender = 0;
+                this.renderBreak = false;
+            }
+            this.topLeftSprite = this.tileset.getSubimage((4 + this.offset) * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            this.bottomLeftSprite = this.tileset.getSubimage((4 + this.offset) * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            this.topRightSprite = this.tileset.getSubimage((5 + this.offset) * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            this.bottomRightSprite = this.tileset.getSubimage((5 + this.offset) * Defines.TILE_SIZE, 7 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
     }
 
@@ -91,9 +114,14 @@ public class CageEntity extends Entity {
         g.drawImage(this.bottomRightSprite, (int)(posX + Defines.TILE_SIZE), (int)(posY + 25), null);
     }
     
+    @Override
     public void renderHitbox(Graphics g){
         Rectangle rect = this.getBounds();
         g.setColor(Color.MAGENTA);
         g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
+    }
+    
+    public boolean isBreak(){
+        return this.isBreak;
     }
 }

@@ -22,26 +22,29 @@ public class Player extends Entity {
     
     public Level level;
     public float velX, velY;
-    protected boolean isFalling, isRespawn;
-    protected boolean isJumping, renderJump, renderJumpEnd;
-    InputsListeners listener;
-    BufferedImage spritesheet, sprite, spritefx, spritesheetfx, spritesheetfxend, spritefxend;
+    public InputsListeners listener;
+    public BufferedImage spritesheet, sprite, spritefx, spritesheetfx, spritesheetfxend, spritefxend;
     public Camera cam;
     public boolean isDead, win;
     public int difficulty;
     public int score;
-    public String sex, age, species, name;
-    private int animX, animY, timeAnim;
-    public int PLAYER_SIZE;
+    public String sex, age, species;
     public int checkpointX, checkpointY;
     public int direction, timeJAnim, offset, oldposX, oldposY, offset2, timeJEndAnim;
     public Thread jumpParticles, endJumpParticles;
+    
+    protected boolean isFalling, isRespawn;
+    protected boolean isJumping, renderJump, renderJumpEnd;
+    
     private double timeRespawn, timeLastBlink;
+    private int animX, animY, timeAnim;
+    private String name;
     
     public static final int SPECIES_PANDA = 0;
     public static final int SPECIES_REDPANDA = 1;
     public static final int SEX_BOY = 0;
     public static final int SEX_GIRL = 1;
+    public static final int PLAYER_SIZE = 64;
     
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
@@ -62,22 +65,13 @@ public class Player extends Entity {
         this.animX = 0;
         this.animY = 3;
         this.timeAnim = 5;
-        this.PLAYER_SIZE = 64;
         this.checkpointX = this.checkpointY = 0;
         this.direction = this.timeJEndAnim = 0;
         this.timeJAnim = offset = oldposX = oldposY = offset2 = 0;
         this.timeRespawn = 0;
         this.timeLastBlink = 0;
         
-        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")))
-        {
-            case Player.SPECIES_PANDA:
-                this.species = "panda";
-                break;
-            case Player.SPECIES_REDPANDA:
-                this.species = "redpanda";
-                break;
-        }
+        this.setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")));
         
         switch(Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))){
             case Player.SEX_BOY:
@@ -115,13 +109,13 @@ public class Player extends Entity {
         }
         this.spritefx = this.spritesheetfx.getSubimage(0, 0, 60, 32);
         this.spritefxend = this.spritesheetfxend.getSubimage(0, 0, 60, 32);
-        this.sprite = this.spritesheet.getSubimage(this.animX, this.animY*this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
+        this.sprite = this.spritesheet.getSubimage(this.animX, this.animY * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
         this.name = Settings.getInstance().getConfigValue("Name");
     }
 
     public void setIsRespawning(boolean isRespawning){
         this.isRespawn = isRespawning;
-        this.sprite = this.spritesheet.getSubimage(0, 2 * this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
+        this.sprite = this.spritesheet.getSubimage(0, 2 * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
     }
     
     @Override
@@ -132,13 +126,14 @@ public class Player extends Entity {
             this.timeLastBlink += dt;
             if(this.timeRespawn > 200){
                 this.timeRespawn = 0;
+                this.timeLastBlink = 0;
                 this.isRespawn = false;
             }
             return;
         }
         
         if(this.isDead){
-            this.sprite = this.spritesheet.getSubimage(3*this.PLAYER_SIZE, 10, this.PLAYER_SIZE, this.PLAYER_SIZE);
+            this.sprite = this.spritesheet.getSubimage(3* Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
             return;
         }
         
@@ -184,15 +179,17 @@ public class Player extends Entity {
                 TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 10 &&
                 this.isJumping && this.isFalling){
             CageEntity ce = this.level.getCageEntity(x1, y1 + 1);
-            if(ce != null)
+            if(ce != null){
                 ce.hurt();
+            }
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 10 &&
                 this.isJumping && this.isFalling){
             CageEntity ce = this.level.getCageEntity(x0, y1 + 1);
-            if(ce != null)
+            if(ce != null){
                 ce.hurt();
+            }
         }
         
         //Sand
@@ -267,19 +264,19 @@ public class Player extends Entity {
                 else
                     this.velX = -(Defines.SPEED + this.difficulty);
                 if(this.timeAnim == 0){
-                    this.animY = 0 * this.PLAYER_SIZE;
-                    this.animX += this.PLAYER_SIZE;
-                    if(this.animX > 2*this.PLAYER_SIZE){
+                    this.animY = 0 * Player.PLAYER_SIZE;
+                    this.animX += Player.PLAYER_SIZE;
+                    if(this.animX > 2*Player.PLAYER_SIZE){
                         this.animX = 0;
                     }
                     this.timeAnim = 5;
                 }
                 
-                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, this.PLAYER_SIZE, this.PLAYER_SIZE);
+                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
                 
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
-            else if(listener.mouseX + this.cam.x > (int)this.getBounds().x + this.PLAYER_SIZE){
+            else if(listener.mouseX + this.cam.x > (int)this.getBounds().x + Player.PLAYER_SIZE){
                 //Left Pose
                 if(this.direction == 1){
                     this.timeAnim = 0;
@@ -291,15 +288,15 @@ public class Player extends Entity {
                     this.velX = (Defines.SPEED + this.difficulty);
                 
                 if(this.timeAnim == 0){
-                    this.animY = this.PLAYER_SIZE;
-                    this.animX += this.PLAYER_SIZE;
-                    if(this.animX > 2*this.PLAYER_SIZE){
+                    this.animY = Player.PLAYER_SIZE;
+                    this.animX += Player.PLAYER_SIZE;
+                    if(this.animX > 2 * Player.PLAYER_SIZE){
                         this.animX = 0;
                     }
                     this.timeAnim = 5;
                 }
                 
-                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, this.PLAYER_SIZE, this.PLAYER_SIZE);
+                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
                 
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
@@ -308,15 +305,15 @@ public class Player extends Entity {
                 this.velX = 0;
                 
                 if(this.timeAnim == 0){
-                    this.animY = 2*this.PLAYER_SIZE;
-                    this.animX += this.PLAYER_SIZE;
-                    if(this.animX > 2*this.PLAYER_SIZE){
+                    this.animY = 2 * Player.PLAYER_SIZE;
+                    this.animX += Player.PLAYER_SIZE;
+                    if(this.animX > 2 * Player.PLAYER_SIZE){
                         this.animX = 0;
                     }
                     this.timeAnim = 40;
                 }
                 
-                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, this.PLAYER_SIZE, this.PLAYER_SIZE);
+                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
                 
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
@@ -418,7 +415,7 @@ public class Player extends Entity {
         if(this.getBounds().y + this.getBounds().height > this.level.h){
             this.posY = this.level.h - this.getBounds().height;
             this.isDead = true;
-            this.sprite = this.spritesheet.getSubimage(3 * this.PLAYER_SIZE, 10, this.PLAYER_SIZE, this.PLAYER_SIZE);
+            this.sprite = this.spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
             new Thread(Sound.death::play).start();
             return false;
         }
@@ -484,13 +481,13 @@ public class Player extends Entity {
         switch(this.age){
             default:
             case "baby":
-                bounds = new Rectangle((int)this.posX + 5, (int)this.posY + 20, this.PLAYER_SIZE - 10, this.PLAYER_SIZE - 20);
+                bounds = new Rectangle((int)this.posX + 5, (int)this.posY + 20, Player.PLAYER_SIZE - 10, Player.PLAYER_SIZE - 20);
                 break;
             case "teen":
-                bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 16, this.PLAYER_SIZE - 6, this.PLAYER_SIZE - 16);
+                bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 16, Player.PLAYER_SIZE - 6, Player.PLAYER_SIZE - 16);
                 break;
             case "adult":
-                bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 8, this.PLAYER_SIZE - 6, this.PLAYER_SIZE - 8);
+                bounds = new Rectangle((int)this.posX + 2, (int)this.posY + 8, Player.PLAYER_SIZE - 6, Player.PLAYER_SIZE - 8);
                 break;
         }
         return bounds;
@@ -509,5 +506,24 @@ public class Player extends Entity {
         Rectangle rect = this.getBounds();
         g.setColor(Color.BLUE);
         g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
+    }
+    
+    public String getName(){
+        return this.name;
+    }
+    
+    public void setName(String name){
+        this.name = name;
+    }
+    
+    public void setSpecies(int species){
+        switch(species){
+            case Player.SPECIES_PANDA:
+                this.species = "panda";
+                break;
+            case Player.SPECIES_REDPANDA:
+                this.species = "redpanda";
+                break;
+        }
     }
 }
