@@ -36,9 +36,9 @@ public class Settings extends Profile {
         this.load();
         this.jsonSettings = (JSONObject) this.profile.get("Settings");
         if(this.jsonSettings.isEmpty()){
-            for(Map.Entry<String, String> entry : this.defaultValues.entrySet()){
+            this.defaultValues.entrySet().stream().forEach((entry) -> {
                 this.jsonSettings.put(entry.getKey(), entry.getValue());
-            }
+            });
         }
     }
     

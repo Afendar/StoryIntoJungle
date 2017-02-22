@@ -31,7 +31,7 @@ public class CageEntity extends Entity {
             URL url = this.getClass().getResource("/tileset2.png");
             this.tileset = ImageIO.read(url);
         }catch(IOException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         
         this.topLeftSprite = this.tileset.getSubimage(0 * Defines.TILE_SIZE, 6 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);

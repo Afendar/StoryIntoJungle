@@ -1,6 +1,5 @@
 package core;
 
-import core.Game;
 import ld34.profile.Settings;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

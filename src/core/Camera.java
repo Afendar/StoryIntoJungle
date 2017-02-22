@@ -18,8 +18,8 @@ public class Camera{
     }
     
     public void update(Player p){
-        this.x = (int)(p.getPosX() + ( p.PLAYER_SIZE / 2 ) ) - this.w / 2;
-        this.y = (int)(p.getPosY() + ( p.PLAYER_SIZE / 2) ) - this.h / 2;
+        this.x = (int)(p.getPosX() + ( Player.PLAYER_SIZE / 2 ) ) - this.w / 2;
+        this.y = (int)(p.getPosY() + ( Player.PLAYER_SIZE / 2) ) - this.h / 2;
         
         if(this.x < 0)
             this.x = 0;

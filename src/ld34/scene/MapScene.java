@@ -23,10 +23,6 @@ import javax.imageio.ImageIO;
 import ld34.profile.Settings;
 import core.Game;
 
-/**
- *
- * @author Mickaël
- */
 public class MapScene extends Scene {
     
     public String nextTxt ,saveTxt, btnBack;

@@ -1,7 +1,5 @@
 package core;
 
-import core.Defines;
-import core.Game;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;

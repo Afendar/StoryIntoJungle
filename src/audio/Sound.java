@@ -33,7 +33,7 @@ public class Sound {
     
     public String path;
     public int volume;
-    
+
     private Sound(String path){
         this.path = path;
         this.volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));

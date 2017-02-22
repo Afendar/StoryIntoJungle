@@ -29,7 +29,7 @@ public class OptionsScene extends Scene {
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
     public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, 
-            bgHeadsRed, soundBar, pandaRender;
+            bgHeadsRed, soundBar;
     public CustomTextField nameField;
     public int[][] btnCoords;
     public int selectedItem, currentTab, posBar;
@@ -51,10 +51,7 @@ public class OptionsScene extends Scene {
             
             url = this.getClass().getResource("/backgroundoptions.png");
             this.background2 = ImageIO.read(url);
-            
-            url = this.getClass().getResource("/panda_render.png");
-            this.pandaRender = ImageIO.read(url);
-            
+
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
@@ -84,8 +81,8 @@ public class OptionsScene extends Scene {
         this.selectedItem = 0;
         this.currentTab = 0;
         
-        int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        this.posBar = (int)(153 + (2*volume));
+        int volumeVal = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+        this.posBar = (int)(153 + (2 * volumeVal));
         
         this.btnCharacter = this.spritesheetGui.getSubimage(0, 110, 50, 50);
         this.btnConfig = this.spritesheetGui.getSubimage(50, 110, 50, 50);
@@ -397,10 +394,8 @@ public class OptionsScene extends Scene {
                 g.drawImage(this.bgHeadsRed, 310, 191, null);
                 break;
         }
-        
-        //male
+
         g.drawImage(this.sBoy, 230, 191, null);
-        //female
         g.drawImage(this.sGirl, 310, 191, null);
         
         g.setColor(Color.BLACK);
@@ -423,10 +418,7 @@ public class OptionsScene extends Scene {
         //Panda roux
         g.drawImage(this.spRoux, 310, 271, null);
         
-        
         this.nameField.render(g);
-        
-        g.drawImage(this.pandaRender, 2*(this.w/3), 180, null);
     }
     
     public void renderGameSettings(Graphics g){

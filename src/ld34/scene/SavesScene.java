@@ -26,7 +26,7 @@ public class SavesScene extends Scene {
 
     private String btnBack, emptyTxt, easy, medium, hard, hardcore, title;
     private Font font, fontL, fontS;
-    private BufferedImage gui, bgSave, levelIcon, removeIcon, cageIcon, loadIcon, dollardIcon, littlePanda;
+    private BufferedImage gui, bgSave, levelIcon, removeIcon, cageIcon, loadIcon, dollardIcon, littlesPandas;
     private int selectedItem, selectedSave, selectRemove, selectLoad;
     private int[][] btnCoords;
     private JSONObject jsonSaves;
@@ -51,8 +51,8 @@ public class SavesScene extends Scene {
             this.loadIcon = this.gui.getSubimage(153, 163, 22, 24);
             this.dollardIcon = this.gui.getSubimage(154, 188, 20, 24);
             
-            url = this.getClass().getResource("/little_panda.png");
-            this.littlePanda = ImageIO.read(url);
+            url = this.getClass().getResource("/littles_pandas.png");
+            this.littlesPandas = ImageIO.read(url);
         }
         catch(FontFormatException|IOException e){
             e.getMessage();
@@ -242,8 +242,6 @@ public class SavesScene extends Scene {
                 if(spicies == 1){
                     y = 208;
                 }
-                //g.drawImage(this.gui.getSubimage(x, y, 50, 48), 219, (i * 125) + 115, null);
-                g.drawImage(this.littlePanda, 219, (i * 125) + 115, null);
                 
                 g.drawImage(this.dollardIcon, 450, (i * 125) + 108 ,null);
                 String score =  (String) player.get("score");
@@ -253,6 +251,7 @@ public class SavesScene extends Scene {
                 g.drawImage(this.levelIcon, 295, (i * 125) + 144, null);
                 JSONObject jsonLevel = (JSONObject) save.get("level");
                 String levelNumber = (String) jsonLevel.get("number");
+                int levelNum = Integer.parseInt((String) jsonLevel.get("number"));
                 int levelNumberW = metrics.stringWidth(levelNumber);
                 g.drawString(levelNumber, 333, (i * 125) + 146 + metrics.getAscent());
                 
@@ -281,6 +280,24 @@ public class SavesScene extends Scene {
                 }
                 g.setFont(this.font);
                 metrics = g.getFontMetrics(this.font);
+                
+                int offset = 0;
+                switch(levelNum){
+                    case 1:
+                    case 2:
+                        offset = 0;
+                        break;
+                    case 3:
+                    case 4:
+                        offset = 2;
+                        break;
+                    case 5:
+                    case 6:
+                        offset = 4;
+                        break;
+                }
+                
+                g.drawImage(this.littlesPandas.getSubimage(((sex + offset ) + ( 6 * spicies)) * 64, 0, 64, 64), 211, (i * 125) + 107, null);
             }
         }
         
