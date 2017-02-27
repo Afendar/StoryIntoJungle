@@ -21,7 +21,7 @@ import particles.Leaf;
 
 public class MenuScene extends Scene {
     
-    public BufferedImage background2;
+    public BufferedImage background2, logo;
     public Font font, fontL, fontS;
     public String title, btnNewGame, btnOptions, btnBestScores, btnCredits, btnQuit, btnLoadGame;
     public int[][] btnCoords;
@@ -42,8 +42,11 @@ public class MenuScene extends Scene {
             this.font = this.font.deriveFont(22.0f);
             this.fontL = this.font.deriveFont(52.0f);
             
-            url = runtimeClass.getResource("/background3.png");
+            url = runtimeClass.getResource("/background.png");
             this.background2 = ImageIO.read(url);
+            
+            url = runtimeClass.getResource("/logo.png");
+            this.logo = ImageIO.read(url);
 
         }catch(FontFormatException|IOException e){
             e.getMessage();
@@ -124,11 +127,13 @@ public class MenuScene extends Scene {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(this.background2, 0, 0, null);
-        
+
         for(int i=0; i < this.leavesList.size(); i++){
             Leaf leaf = this.leavesList.get(i);
             leaf.render(g2d);
         }
+        
+        g.drawImage(this.logo, 168, 40, null);
         
         //draw btn
         FontMetrics metrics = g.getFontMetrics(this.font);

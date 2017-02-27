@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -14,8 +15,9 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import ld34.profile.Settings;
 import javax.sound.sampled.DataLine.Info;
+
+import ld34.profile.Settings;
 
 import static javax.sound.sampled.AudioSystem.getAudioInputStream;
 import static javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
@@ -53,7 +55,8 @@ public class Sound {
                     if(line != null){
                         line.open(outFormat);
                         line.start();
-                        stream(getAudioInputStream(outFormat, in), line);
+                        AudioInputStream inputStream = AudioSystem.getAudioInputStream(outFormat, in);
+                        stream(inputStream, line);
                         line.drain();
                         line.stop();
                     }
