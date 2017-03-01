@@ -198,20 +198,11 @@ public class Player extends Entity {
             if(this.level.getData(x1, y1 + 1) < 1){
                 this.level.setData(x1, y1+1, 1);
             }
-            else if(this.level.getData(x1, y1 + 1) == 2){
-                this.velX = 0;
-                this.velY = 8;
-            }
         }
         else if(y1 + 1 <= this.level.nbTilesH - 1 && 
                 TileAtlas.atlas.get(this.level.getTile(x0, y1+1)).ID == 9){
             if(this.level.getData(x0, y1 + 1) < 1){
                 this.level.setData(x0, y1+1, 1);
-            }
-            else if(this.level.getData(x0, y1 + 1) == 2)
-            {
-                this.velY = 8;  
-                this.velX = 0;
             }
         }
         
@@ -226,7 +217,7 @@ public class Player extends Entity {
                 || TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 5){
             this.score += TileAtlas.atlas.get(this.level.getTile(x0, y1)).bonus;
             this.level.removeTile(x0, y1);
-            new Thread(Sound.bonus::play).start();  
+            new Thread(Sound.bonus::play).start();
         }
         
         //checkpoint

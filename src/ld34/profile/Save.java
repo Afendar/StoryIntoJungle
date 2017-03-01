@@ -1,7 +1,9 @@
 package ld34.profile;
 
 import core.Defines;
+import entity.CageEntity;
 import entity.Player;
+import java.util.List;
 import level.Level;
 import org.json.simple.JSONArray;
 
@@ -58,13 +60,18 @@ public class Save extends Profile {
         levelData.put("freeCages", Integer.toString(level.getFreeCages()));
         
         JSONObject cages = new JSONObject();
-        for(int i = 1; i < Defines.LEVEL_MAX + 1; i++){
-            JSONArray levelCages = new JSONArray();
-            for(int j=0;j<8;j++){
-                JSONArray coords = new JSONArray();
-                levelCages.add(coords);
+        for(int i = 0; i < level.cagesMap.size(); i++){
+            List<CageEntity> cagesInLevel = level.cagesMap.get(i);
+            JSONArray cagesDatasInLevel = new JSONArray();
+            for(int j = 0;j < cagesInLevel.size();j++){
+                CageEntity ce = cagesInLevel.get(j);
+                JSONArray cageDatas = new JSONArray();
+                cageDatas.add(ce.getPosX());
+                cageDatas.add(ce.getPosY());
+                cageDatas.add(ce.isBreak());
+                cagesDatasInLevel.add(cageDatas);
             }
-            cages.put(Integer.toString(i), levelCages);
+            cages.put(i + 1, cagesDatasInLevel);
         }
         levelData.put("cages", cages);
         

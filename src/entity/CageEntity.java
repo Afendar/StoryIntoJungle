@@ -167,4 +167,13 @@ public class CageEntity extends Entity {
     public boolean isBreak(){
         return this.isBreak;
     }
+    
+    public void setBroken(boolean broken){
+        this.isBreak = broken;
+        if(broken){
+            this.offsetPandas = 10;
+            this.alpha = 0;
+            this.offset = 4;
+        }
+    }
 }

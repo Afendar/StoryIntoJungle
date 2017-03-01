@@ -17,6 +17,9 @@ import javax.imageio.ImageIO;
 import core.Camera;
 import ld34.profile.Settings;
 import core.Game;
+import entity.CageEntity;
+import java.util.ArrayList;
+import java.util.List;
 import ld34.profile.Save;
 import level.Level;
 import org.json.simple.JSONArray;
@@ -161,7 +164,23 @@ public class SavesScene extends Scene {
                     Camera cam = new Camera(Math.toIntExact((Long)coords.get(0)), Math.toIntExact((Long)coords.get(1)), this.w, this.h, level);
                     Player player = new Player(Math.toIntExact((Long)coords.get(0)), Math.toIntExact((Long)coords.get(1)), level, this.game.listener, cam, Integer.parseInt((String)jsonLevel.get("difficulty")));
                     player.score = Integer.parseInt((String)jsonPlayer.get("score"));
-                    currentScene = new GameScene(this.w, this.h, this.game, level, player);
+                    GameScene gs = new GameScene(this.w, this.h, this.game, level, player);
+                    
+                    JSONObject cagesMap = (JSONObject)jsonLevel.get("cages");
+                    List<List<CageEntity>> cageMap = new ArrayList<>();
+                    for(int i=1;i<cagesMap.size() + 1;i++){
+                        JSONArray cageInLevelDatas = (JSONArray)cagesMap.get(Integer.toString(i));
+                        List<CageEntity> cagesList = new ArrayList<>();
+                        for(int j=0;j<cageInLevelDatas.size();j++){
+                            JSONArray cageDatas = (JSONArray)cageInLevelDatas.get(j);
+                            CageEntity ce = new CageEntity(level, ((Double)cageDatas.get(0)).intValue(), ((Double)cageDatas.get(1)).intValue());
+                            ce.setBroken((boolean)cageDatas.get(2));
+                            cagesList.add(ce);
+                        }
+                        cageMap.add(cagesList);
+                    }
+                    gs.setLevelCagesMap(cageMap);
+                    currentScene = gs;
                 }
             }
         }

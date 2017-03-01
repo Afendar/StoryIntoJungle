@@ -16,7 +16,6 @@ import core.Defines;
 import java.awt.Rectangle;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
-import org.json.simple.JSONArray;
 import particles.Leaf;
 import particles.Particle;
 import profiler.Profiler;
@@ -32,6 +31,7 @@ public class Level {
     public Player player;
     public int nbLevel;
     public int nbCages;
+    public List<List<CageEntity>> cagesMap = new ArrayList<>(Defines.LEVEL_MAX);
     public List<Particle> particles = new ArrayList<>();
     public List<SandEntity> sandEntity = new ArrayList<>();
     public List<CageEntity> cageEntity = new ArrayList<>();
@@ -353,6 +353,9 @@ public class Level {
             boolean hasAlpha = true;
             
             if (hasAlpha) {
+                
+                ArrayList cageLevelMapping = new ArrayList<>();
+                
                 final int pixelLength = 4;
                 for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
                    int argb = 0;
@@ -395,7 +398,9 @@ public class Level {
                             break;
                         case CAGE:
                             this.nbCages++;
-                            this.cageEntity.add(new CageEntity(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE));
+                            CageEntity ce = new CageEntity(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE);
+                            this.cageEntity.add(ce);
+                            cageLevelMapping.add(ce);
                             map[col][row] = TileAtlas.cage.ID;
                             map[col+1][row] = TileAtlas.cage.ID;
                             col++;
@@ -414,6 +419,7 @@ public class Level {
                       row++;
                     }
                 }
+                this.cagesMap.add(nbLevel - 1, cageLevelMapping);
             }
             
         }catch(IOException e){
@@ -495,10 +501,20 @@ public class Level {
     
     public void freeCage(){
         this.freeCages++;
-        this.nbCages --;
+        this.nbCages--;
     }
     
     public int getFreeCages(){
         return this.freeCages;
+    }
+    
+    public void setCagesInLevel(List<CageEntity> cagesInLevel){
+        for(int i=0;i<cagesInLevel.size();i++){
+            CageEntity ce = cagesInLevel.get(i);
+            if(ce.isBreak()){
+                this.nbCages--;
+            }
+        }
+        this.cageEntity = cagesInLevel;
     }
 }

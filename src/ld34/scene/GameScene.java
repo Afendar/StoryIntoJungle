@@ -28,6 +28,8 @@ import core.Game;
 import core.Minimap;
 import core.OptionButton;
 import core.TimerThread;
+import entity.CageEntity;
+import java.util.List;
 import ld34.profile.BestScores;
 import ld34.profile.Save;
 import level.Level;
@@ -374,7 +376,9 @@ public class GameScene extends Scene {
             if(this.player.win){
                 this.player.checkpointX = 0;
                 if(this.nbLevel < Defines.LEVEL_MAX){
-                    return new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score);
+                    MapScene ms = new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score);
+                    ms.setCagesMap(this.level.cagesMap);
+                    return ms;
                 }
                 else{
                     reinit(this.nbLevel);
@@ -1122,5 +1126,13 @@ public class GameScene extends Scene {
     
     public void addDialog(CustomDialog dialog){
         this.dialog = dialog;
+    }
+    
+    public void setLevelCagesMap(List<List<CageEntity>> cagesMap){
+        for(int i=0;i<cagesMap.size();i++){
+            this.level.cagesMap.add(i, cagesMap.get(i));
+            if(i + 1 == this.nbLevel)
+                this.level.setCagesInLevel(cagesMap.get(i));
+        }
     }
 }

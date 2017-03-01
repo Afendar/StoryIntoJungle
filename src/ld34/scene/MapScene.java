@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import ld34.profile.Settings;
 import core.Game;
+import entity.CageEntity;
 
 public class MapScene extends Scene {
     
@@ -44,6 +45,7 @@ public class MapScene extends Scene {
     private Point2D pos;
     private QuadCurve2D[] curve = new QuadCurve2D[5];
     private boolean animated = false;
+    private List<List<CageEntity>> cagesMap;
     
     public MapScene(int w, int h, Game game, int currentLvl, int currentScore){
         super(w, h, game);
@@ -249,7 +251,9 @@ public class MapScene extends Scene {
                 this.pos.getX() == this.coordsPins[this.currentLvl - 1][0] && 
                 this.pos.getY() == this.coordsPins[this.currentLvl - 1][1])
         {
-            currentScene = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
+            GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
+            gs.setLevelCagesMap(this.cagesMap);
+            currentScene = gs;
         }
         
         return currentScene;
@@ -270,5 +274,9 @@ public class MapScene extends Scene {
             pi.next();
         }
         this.index = 0;
+    }
+    
+    public void setCagesMap(List<List<CageEntity>> cagesMap){
+        this.cagesMap = cagesMap;
     }
 }
