@@ -66,8 +66,8 @@ public class Save extends Profile {
             for(int j = 0;j < cagesInLevel.size();j++){
                 CageEntity ce = cagesInLevel.get(j);
                 JSONArray cageDatas = new JSONArray();
-                cageDatas.add(ce.getPosX());
-                cageDatas.add(ce.getPosY());
+                cageDatas.add(Integer.toString((int)ce.getPosX()));
+                cageDatas.add(Integer.toString((int)ce.getPosY()));
                 cageDatas.add(ce.isBreak());
                 cagesDatasInLevel.add(cageDatas);
             }
@@ -83,13 +83,14 @@ public class Save extends Profile {
         playerData.put("sex", Settings.getInstance().getConfigValue("Sex"));
         playerData.put("name", player.getName() != null ? player.getName() : "");
         JSONArray coords = new JSONArray();
-        coords.add((int)player.getPosX());
-        coords.add((int)player.getPosY());
+        coords.add(Integer.toString((int)player.getPosX()));
+        coords.add(Integer.toString((int)player.getPosY()));
         playerData.put("coords", coords);
         data.put("player", playerData);
         
         this.jsonSaves.replace("Slot" + slotId, data);
         this.saveSaves();
+        this.loadSaves();
     }
     
     public void saveSaves(){

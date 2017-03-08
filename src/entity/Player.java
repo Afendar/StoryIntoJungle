@@ -179,7 +179,7 @@ public class Player extends Entity {
                 TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 10 &&
                 this.isJumping && this.isFalling){
             CageEntity ce = this.level.getCageEntity(x1, y1 + 1);
-            if(ce != null){
+            if(ce != null && !ce.isBreak()){
                 ce.hurt();
             }
         }
@@ -187,7 +187,7 @@ public class Player extends Entity {
                 TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 10 &&
                 this.isJumping && this.isFalling){
             CageEntity ce = this.level.getCageEntity(x0, y1 + 1);
-            if(ce != null){
+            if(ce != null && !ce.isBreak()){
                 ce.hurt();
             }
         }
@@ -245,58 +245,57 @@ public class Player extends Entity {
             this.velX = 0;
         }else{
             if(listener.mouseX + this.cam.x < (int)this.getBounds().x){
-                //Right Pose
+                //Left Pose
                 if(this.direction == 0){
                     this.timeAnim = 0;
                 }
                 this.direction = 1;
+                this.animY = 0;
+                
                 if(listener.slow.enabled)
                     this.velX = (-(Defines.SPEED + this.difficulty))/2;
                 else
                     this.velX = -(Defines.SPEED + this.difficulty);
                 if(this.timeAnim == 0){
-                    this.animY = 0 * Player.PLAYER_SIZE;
                     this.animX += Player.PLAYER_SIZE;
                     if(this.animX > 2*Player.PLAYER_SIZE){
                         this.animX = 0;
                     }
                     this.timeAnim = 5;
                 }
-                
-                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-                
+
                 if(this.timeAnim > 0){this.timeAnim--;}
+
             }
-            else if(listener.mouseX + this.cam.x > (int)this.getBounds().x + Player.PLAYER_SIZE){
-                //Left Pose
+            else if(listener.mouseX + this.cam.x > (int)this.getBounds().x +  this.getBounds().width){
+                //Right Pose
                 if(this.direction == 1){
                     this.timeAnim = 0;
                 }
                 this.direction = 0;
+                this.animY = Player.PLAYER_SIZE;
+                
                 if(listener.slow.enabled)
                     this.velX = (Defines.SPEED + this.difficulty)/2;
                 else
                     this.velX = (Defines.SPEED + this.difficulty);
-                
+
                 if(this.timeAnim == 0){
-                    this.animY = Player.PLAYER_SIZE;
                     this.animX += Player.PLAYER_SIZE;
                     if(this.animX > 2 * Player.PLAYER_SIZE){
                         this.animX = 0;
                     }
                     this.timeAnim = 5;
                 }
-                
-                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-                
+
                 if(this.timeAnim > 0){this.timeAnim--;}
+
             }
-            else if(listener.mouseX + this.cam.x < (int)this.getBounds().x + this.getBounds().width && listener.mouseX + this.cam.x > (int)this.getBounds().x){
+            else if(listener.mouseX + this.cam.x < (int)this.getBounds().x + this.getBounds().width/2 + 5 && listener.mouseX + this.cam.x > (int)this.getBounds().x + this.getBounds().width/2 - 5){
                 //Stand Pose
                 this.velX = 0;
-                
+                this.animY = 2 * Player.PLAYER_SIZE;
                 if(this.timeAnim == 0){
-                    this.animY = 2 * Player.PLAYER_SIZE;
                     this.animX += Player.PLAYER_SIZE;
                     if(this.animX > 2 * Player.PLAYER_SIZE){
                         this.animX = 0;
@@ -304,10 +303,9 @@ public class Player extends Entity {
                     this.timeAnim = 40;
                 }
                 
-                this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-                
                 if(this.timeAnim > 0){this.timeAnim--;}
             }
+            this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
         }
         
         //LEFT

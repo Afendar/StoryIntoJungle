@@ -161,8 +161,8 @@ public class SavesScene extends Scene {
                     JSONObject jsonPlayer = (JSONObject)save.get("player");
                     Level level = new Level(Integer.parseInt((String)jsonLevel.get("number")));
                     JSONArray coords = (JSONArray)jsonPlayer.get("coords");
-                    Camera cam = new Camera(Math.toIntExact((Long)coords.get(0)), Math.toIntExact((Long)coords.get(1)), this.w, this.h, level);
-                    Player player = new Player(Math.toIntExact((Long)coords.get(0)), Math.toIntExact((Long)coords.get(1)), level, this.game.listener, cam, Integer.parseInt((String)jsonLevel.get("difficulty")));
+                    Camera cam = new Camera(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), this.w, this.h, level);
+                    Player player = new Player(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), level, this.game.listener, cam, Integer.parseInt((String)jsonLevel.get("difficulty")));
                     player.score = Integer.parseInt((String)jsonPlayer.get("score"));
                     GameScene gs = new GameScene(this.w, this.h, this.game, level, player);
                     
@@ -173,7 +173,7 @@ public class SavesScene extends Scene {
                         List<CageEntity> cagesList = new ArrayList<>();
                         for(int j=0;j<cageInLevelDatas.size();j++){
                             JSONArray cageDatas = (JSONArray)cageInLevelDatas.get(j);
-                            CageEntity ce = new CageEntity(level, ((Double)cageDatas.get(0)).intValue(), ((Double)cageDatas.get(1)).intValue());
+                            CageEntity ce = new CageEntity(level, Integer.parseInt((String)cageDatas.get(0)), Integer.parseInt((String)cageDatas.get(1)));
                             ce.setBroken((boolean)cageDatas.get(2));
                             cagesList.add(ce);
                         }
