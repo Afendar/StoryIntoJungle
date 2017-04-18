@@ -25,7 +25,7 @@ import core.OptionButton;
 
 public class OptionsScene extends Scene {
     
-    public Font font, fontL, fontU;
+    public Font font, fontS, fontL, fontU;
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
     public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, 
@@ -42,7 +42,8 @@ public class OptionsScene extends Scene {
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
+            this.font = this.font.deriveFont(Font.PLAIN, 24.0f);
+            this.fontS = this.font.deriveFont(Font.PLAIN, 18.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
             Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
             fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -118,7 +119,7 @@ public class OptionsScene extends Scene {
         this.controlWalk = this.bundle.getString("ctrlWalk");
         
         this.nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 230, 150, 250, 15);
-        this.nameField.setFont(this.font);
+        this.nameField.setFont(this.fontS);
     }
 
     @Override
@@ -281,16 +282,16 @@ public class OptionsScene extends Scene {
         g.setFont(this.font);
         int backWidth = metrics.stringWidth(this.btnBack);
         g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+        
         if(this.selectedItem == 1){
-            g2d.rotate(-0.1, (3*this.w/4)+25, 475);
-            g.setColor(this.darkGreen);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
-            g2d.rotate(0.1, (3*this.w/4)+25, 475);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        
+        g.setColor(Scene.DARKGREY);
+        g.drawString(this.btnBack, (3 * this.w/4)+32 - backWidth/2, 510);
         g.drawImage(this.foreground2, 0, 0, null);
     }
     
@@ -376,8 +377,8 @@ public class OptionsScene extends Scene {
     
     public void renderPlayerSettings(Graphics g){
         g.setColor(Color.BLACK);
-        g.setFont(this.font);
-        FontMetrics metrics = g.getFontMetrics(this.font);
+        g.setFont(this.fontS);
+        FontMetrics metrics = g.getFontMetrics(this.fontS);
         int nameW = metrics.stringWidth(this.name);
         g.drawString(this.name, 150, 150);
         

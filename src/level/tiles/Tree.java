@@ -50,7 +50,6 @@ public class Tree extends Tile{
     
     @Override
     public void render(Graphics g, int x, int y){
-
         this.render(g, x, y, Tree.TALL);
     }
     

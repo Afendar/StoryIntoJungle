@@ -52,6 +52,7 @@ public class Level {
     public static final int SAND = 15721648;//RGB(239, 228, 176) SAND
     public static final int CAGE = 8355711;//RGB(127, 127, 127) CAGE
     public static final int BRACONEER = 32960;//RGB(0, 128, 192) BRACONEERS
+    public static final int LIME = 11920925;//RGB() PLANTS
     
     public Level(int nbLevel){
         System.out.println("Loading level : " + nbLevel);
@@ -225,6 +226,9 @@ public class Level {
                             if(ce != null)
                                 ce.render(g, debug);
                         }
+                        break;
+                    case 14:
+                        TileAtlas.plant.render(g, i, j);
                         break;
                     default:
                         break;
@@ -408,6 +412,9 @@ public class Level {
                             break;
                         case BRACONEER:
                             this.braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE));
+                            break;
+                        case LIME:
+                            map[col][row] = TileAtlas.plant.ID;
                             break;
                         default:
                             break;

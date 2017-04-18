@@ -11,13 +11,15 @@ import core.Game;
 
 public abstract class Scene{
     
-    public BufferedImage spritesheetGui, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3,
+    public BufferedImage spritesheetGui, spritesheetGui2, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3,
             bgBtnSmallRed, foregroundGame;
     
     public int w, h;
     public Game game;
     public ResourceBundle bundle;
-    public Color darkGreen;
+    public static Color 
+            darkGreen = new Color(128, 0, 19), 
+            DARKGREY = new Color(17, 17, 17);
     public Class runtimeClass;
     
     public Scene(int w, int h, Game game){
@@ -26,11 +28,12 @@ public abstract class Scene{
         this.h = h;
         this.game = game;
         this.runtimeClass = this.getClass();
-        this.darkGreen = new Color(128, 0, 19);
         
         try{
             URL url = runtimeClass.getResource("/gui.png");
             this.spritesheetGui = ImageIO.read(url);
+            url = runtimeClass.getResource("/gui2.png");
+            this.spritesheetGui2 = ImageIO.read(url);
             url = runtimeClass.getResource("/background.png");
             this.background = ImageIO.read(url);
             url = runtimeClass.getResource("/foreground1.png");
@@ -44,8 +47,8 @@ public abstract class Scene{
             e.getMessage();
         }
         
-        this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
-        this.bgBtnSmall = this.spritesheetGui.getSubimage(0, 71, 107, 39);
+        this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
+        this.bgBtnSmall = this.spritesheetGui2.getSubimage(0, 69, 76, 63);
         this.bgBtnSmallRed = this.spritesheetGui.getSubimage(107, 71, 107, 39);
     }
     

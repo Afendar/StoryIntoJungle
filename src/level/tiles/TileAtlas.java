@@ -20,4 +20,5 @@ public class TileAtlas {
     public static Bush bush = new Bush(0, 4);
     public static Tree tallTree = new Tree(Tree.TALL, 5, 3);
     public static Tree smallTree = new Tree(Tree.SMALL, 3, 5);
+    public static Plant plant = new Plant(Plant.HELICONIA, 9, 2);
 }

@@ -21,7 +21,7 @@ import particles.Leaf;
 
 public class MenuScene extends Scene {
     
-    public BufferedImage background2, logo;
+    public BufferedImage background2, logo, settingsIcon, highScoresIcon, creditsIcon;
     public Font font, fontL, fontS;
     public String title, btnNewGame, btnOptions, btnBestScores, btnCredits, btnQuit, btnLoadGame;
     public int[][] btnCoords;
@@ -35,18 +35,21 @@ public class MenuScene extends Scene {
         super(w, h, game);
         
         try{
+            this.settingsIcon = this.spritesheetGui2.getSubimage(150, 68, 25, 24);
+            this.highScoresIcon = this.spritesheetGui2.getSubimage(175, 69, 35, 23);
+            this.creditsIcon = this.spritesheetGui2.getSubimage(154, 92, 16, 24);
+            
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.fontS = this.font.deriveFont(18.0f);
-            this.font = this.font.deriveFont(22.0f);
+            this.font = this.font.deriveFont(24.0f);
             this.fontL = this.font.deriveFont(52.0f);
             
             url = runtimeClass.getResource("/background.png");
             this.background2 = ImageIO.read(url);
-            
-            url = runtimeClass.getResource("/logo.png");
-            this.logo = ImageIO.read(url);
+           
+            this.logo = this.spritesheetGui2.getSubimage(0, 337, 590, 200);
 
         }catch(FontFormatException|IOException e){
             e.getMessage();
@@ -59,38 +62,32 @@ public class MenuScene extends Scene {
         //new game
         if(this.displayLoad){
             int [][]coords = {
-                {this.w/2 - 107, 155},
-                {this.w/2 - 107, 235},
-                {this.w/2 - 107, 315},
-                {this.w/2 - 107, 395},
-                {(this.w/2) - 130, 480},
-                {(this.w/2) + 20, 480}
+                {this.w/2 - 117 - (15*30), 211},
+                {this.w/2 - 117 - (17*30), 311},
+                {this.w/2 - 117 - (19*30), 411},
+                {16, 518},
+                {107, 518},
+                {703, 518}
             };
             this.btnCoords = coords;
             String[] labels = {
                 bundle.getString("newGame"),
                 bundle.getString("loadGame"),
-                bundle.getString("settings"),
-                bundle.getString("bestScores"),
-                bundle.getString("about"),
                 bundle.getString("quit")
             };
             this.btnLabels = labels;
         }
         else{
             int [][]coords = {
-                {this.w/2 - 107, 195},
-                {this.w/2 - 107, 275},
-                {this.w/2 - 107, 355},
+                {this.w/2 - 107 - 15*30, 195},
+                {this.w/2 - 107 - 17*30, 275},
+                {this.w/2 - 107 - 19*30, 355},
                 {(this.w/2) - 130, 450},
                 {(this.w/2) + 20, 450}
             };
             this.btnCoords = coords;
             String[] labels = {
                 bundle.getString("newGame"),
-                bundle.getString("settings"),
-                bundle.getString("bestScores"),
-                bundle.getString("about"),
                 bundle.getString("quit")
             };
             this.btnLabels = labels;
@@ -108,6 +105,12 @@ public class MenuScene extends Scene {
         
         processHover();
 
+        for(int i=0;i<btnCoords.length-3;i++){
+            if(this.btnCoords[i][0] < this.w/2 - 117){
+                this.btnCoords[i][0] += 30;
+            }
+        }
+        
         for(int i=0; i< this.leavesList.size(); i++){
             Leaf leaf = this.leavesList.get(i);
             if(!leaf.isGenStartX())
@@ -133,65 +136,40 @@ public class MenuScene extends Scene {
             leaf.render(g2d);
         }
         
-        g.drawImage(this.logo, 168, 40, null);
+        g.drawImage(this.logo, 99, 20, null);
+        
+        g.drawImage(this.foreground, 0, 0, null);
         
         //draw btn
         FontMetrics metrics = g.getFontMetrics(this.font);
         for(int i=0; i< this.btnCoords.length;i++){
-            if(i < this.btnCoords.length - 2){
+            if(i < this.btnCoords.length - 3){
                 g.setFont(this.font);
+                if(this.selectedItem == i + 1){
+                    this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
+                }
+                else{
+                    this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
+                }
                 g.drawImage(this.bgBtn, this.btnCoords[i][0], this.btnCoords[i][1], null);
                 int labelWidth = metrics.stringWidth(this.btnLabels[i]);
-                
-                if(this.selectedItem == i + 1){
-                    if(this.selectedItem % 2 == 0){
-                        g2d.rotate(0.07, this.w /2, this.btnCoords[i][1] + metrics.getAscent() + 18 + (metrics.getAscent()/2));
-                    }
-                    else{
-                        g2d.rotate(-0.1, this.w / 2, this.btnCoords[i][1] + metrics.getAscent() + 18 + (metrics.getAscent()/2));
-                    }
-                    g.setColor(this.darkGreen);
-                    g.drawString(this.btnLabels[i], this.w/2 - labelWidth/2, this.btnCoords[i][1] + metrics.getAscent() + 18);
-                    if(this.selectedItem % 2 == 0){
-                        g2d.rotate(-0.07, this.w / 2, this.btnCoords[i][1] + metrics.getAscent() + 18 + (metrics.getAscent()/2));
-                    }
-                    else{
-                        g2d.rotate(0.1, this.w / 2, this.btnCoords[i][1] + metrics.getAscent() + 18 + (metrics.getAscent()/2));
-                    }
-                }
-                else{
-                    g.setColor(Color.BLACK);
-                    g.drawString(this.btnLabels[i], this.w/2 - labelWidth/2, this.btnCoords[i][1] + metrics.getAscent() + 18);
-                }
+                g.setColor(Scene.DARKGREY);
+                g.drawString(this.btnLabels[i], this.btnCoords[i][0] + 117 - labelWidth/2, this.btnCoords[i][1] + metrics.getAscent() + 28);
             }
             else{
-                metrics = g.getFontMetrics(this.fontS);
-                g.setFont(this.fontS);
-                g.drawImage(this.bgBtnSmall, this.btnCoords[i][0], this.btnCoords[i][1], null);
-                int labelWidth = metrics.stringWidth(this.btnLabels[i]);
                 if(this.selectedItem == i + 1){
-                    if(this.selectedItem % 2 == 0){
-                        g2d.rotate(0.11, this.btnCoords[i][0] + 53.5, this.btnCoords[i][1] + metrics.getAscent() + 5 + (metrics.getAscent() / 2));
-                    }
-                    else{
-                        g2d.rotate(-0.13, this.btnCoords[i][0] + 53.5, this.btnCoords[i][1] + metrics.getAscent() + 5 + (metrics.getAscent() / 2));
-                    }
-                    g.setColor(this.darkGreen);
-                    g.drawString(this.btnLabels[i], this.btnCoords[i][0] + (107/2 - labelWidth/2), this.btnCoords[i][1] + metrics.getAscent() + 5);
-                    if(this.selectedItem % 2 == 0){
-                        g2d.rotate(-0.11, this.btnCoords[i][0] + 53.5, this.btnCoords[i][1] + metrics.getAscent() + 5 + (metrics.getAscent() / 2));
-                    }
-                    else{
-                        g2d.rotate(0.13, this.btnCoords[i][0] + 53.5, this.btnCoords[i][1] + metrics.getAscent() + 5 + (metrics.getAscent() / 2));
-                    }
+                    this.bgBtnSmall = this.spritesheetGui2.getSubimage(0, 69, 76, 63);
                 }
                 else{
-                    g.setColor(Color.BLACK);
-                    g.drawString(this.btnLabels[i], this.btnCoords[i][0] + (107/2 - labelWidth/2), this.btnCoords[i][1] + metrics.getAscent() + 5);
+                    this.bgBtnSmall = this.spritesheetGui2.getSubimage(76, 69, 76, 63);
                 }
+                g.drawImage(this.bgBtnSmall, this.btnCoords[i][0], this.btnCoords[i][1], null);
             }
         }
-        g.drawImage(this.foreground, 0, 0, null);
+        
+        g.drawImage(this.settingsIcon, 41, 535, null);
+        g.drawImage(this.highScoresIcon, 127, 537, null);
+        g.drawImage(this.creditsIcon, 733, 535, null);
     }
     
     public void processHover(){
@@ -202,15 +180,15 @@ public class MenuScene extends Scene {
         int oldSelected = this.selectedItem;
         this.selectedItem = 0;
         for(int i=0;i<this.btnCoords.length;i++){
-            if(i < this.btnCoords.length - 2){
-                if(mouseX > this.btnCoords[i][0] && mouseX < this.btnCoords[i][0] + 214 &&
-                        mouseY > this.btnCoords[i][1] && mouseY < this.btnCoords[i][1] + 70){
+            if(i < this.btnCoords.length - 3){
+                if(mouseX > this.btnCoords[i][0] && mouseX < this.btnCoords[i][0] + 234 &&
+                        mouseY > this.btnCoords[i][1] && mouseY < this.btnCoords[i][1] + 99){
                     this.selectedItem = i + 1;
                 }
             }
             else{
-                if(mouseX > this.btnCoords[i][0] && mouseX < this.btnCoords[i][0] + 107 &&
-                mouseY > this.btnCoords[i][1] && mouseY < this.btnCoords[i][1] + 40){
+                if(mouseX > this.btnCoords[i][0] && mouseX < this.btnCoords[i][0] + 76 &&
+                mouseY > this.btnCoords[i][1] && mouseY < this.btnCoords[i][1] + 63){
                     this.selectedItem = i + 1;
                 }
             }
@@ -238,19 +216,19 @@ public class MenuScene extends Scene {
                         break;
                     case 3:
                         new Thread(Sound.select::play).start();
-                        currentScene = new OptionsScene(this.w, this.h, this.game);
+                        System.exit(0);
                         break;
                     case 4:
                         new Thread(Sound.select::play).start();
-                        currentScene = new BestScoresScene(this.w, this.h, this.game);
+                        currentScene = new OptionsScene(this.w, this.h, this.game);
                         break;
                     case 5:
                         new Thread(Sound.select::play).start();
-                        currentScene = new CreditsScene(this.w, this.h, this.game);
+                        currentScene = new BestScoresScene(this.w, this.h, this.game);
                         break;
                     case 6:
                         new Thread(Sound.select::play).start();
-                        System.exit(0);
+                        currentScene = new CreditsScene(this.w, this.h, this.game);
                         break;
                     default:
                         currentScene = this;

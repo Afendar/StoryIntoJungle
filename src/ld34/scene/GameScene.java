@@ -66,6 +66,12 @@ public class GameScene extends Scene {
     public JSONObject jsonSaves;
     public Color kaki;
     public CustomDialog dialog;
+    public int[][] btnPosMenu = {
+        {this.w/2 - 107 - (15*30), 140},
+        {this.w/2 - 107 - (17*30), 240},
+        {this.w/2 - 107 - (19*30), 340},
+        {this.w/2 - 107 - (21*30), 440}
+    };
     
     public GameScene(int w, int h, Game game, Level level, Player player){
         super(w, h, game);
@@ -235,7 +241,12 @@ public class GameScene extends Scene {
             this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
             this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
             this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
-            this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
+            if(this.player.species.equals("panda")){
+                this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
+            }
+            else{
+                this.cagesIcon = this.guiAssets.getSubimage(300, 0, 75, 75);
+            }
             
             url = this.getClass().getResource("/gui.png");
             this.gui = ImageIO.read(url);
@@ -655,63 +666,54 @@ public class GameScene extends Scene {
         g.setColor(Color.BLACK);
         g.drawString(this.title, this.w/2 - msgWidth/2, 100);
         
-        g.setFont(this.fontSM);
+        g.setFont(this.fontM);
         metrics = g.getFontMetrics(this.fontSM);
 
         int continueW = metrics.stringWidth(this.btnContinue);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 170, null);
-        if(this.selectedItemMenu == 1)
-        {
-            g.setColor(this.darkGreen);
-            g2d.rotate(0.1, this.w/2, 235);
-            g.drawString(this.btnContinue, this.w/2 - continueW/2, 188 + metrics.getAscent());
-            g2d.rotate(-0.1, this.w/2, 235);
+        
+        if(this.selectedItemMenu == 1){
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
-        else
-        {
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnContinue, this.w/2 - continueW/2, 188 + metrics.getAscent());
+        else{
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        g.drawImage(this.bgBtn, this.btnPosMenu[0][0], this.btnPosMenu[0][1], null);
+        g.setColor(Scene.DARKGREY);
+        g.drawString(this.btnContinue, this.btnPosMenu[0][0] + 107 - continueW/2, this.btnPosMenu[0][1] + 30 + metrics.getAscent());
+        
         
         int saveW = metrics.stringWidth(this.btnSave);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 260, null);
+        
         if(this.selectedItemMenu == 2){
-            g.setColor(this.darkGreen);
-            g2d.rotate(-0.1, this.w/2, 325);
-            g.drawString(this.btnSave, this.w/2 - saveW/2, 278 + metrics.getAscent());
-            g2d.rotate(0.1, this.w/2, 325);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnSave, this.w/2 - saveW/2, 278 + metrics.getAscent());
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        g.drawImage(this.bgBtn, this.btnPosMenu[1][0], this.btnPosMenu[1][1], null);
+        g.drawString(this.btnSave, this.btnPosMenu[1][0] + 107 - saveW/2, this.btnPosMenu[1][1] + 30 + metrics.getAscent());
         
         int settingsW = metrics.stringWidth(this.btnSettings);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 350, null);
+        
         if(this.selectedItemMenu == 3){
-            g.setColor(this.darkGreen);
-            g2d.rotate(0.1, this.w/2, 415);
-            g.drawString(this.btnSettings, this.w/2 - settingsW/2, 368 + metrics.getAscent());
-            g2d.rotate(-0.1, this.w/2, 415);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnSettings, this.w/2 - settingsW/2, 368 + metrics.getAscent());
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        g.drawImage(this.bgBtn, this.btnPosMenu[2][0], this.btnPosMenu[2][1], null);
+        g.drawString(this.btnSettings, this.btnPosMenu[2][0] + 107 - settingsW/2, this.btnPosMenu[2][1]+ 30 + metrics.getAscent());
         
         int backW = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.w/2 - 107, 440, null);
+        
         if(this.selectedItemMenu == 4){
-            g.setColor(this.darkGreen);
-            g2d.rotate(-0.1, this.w/2, 505);
-            g.drawString(this.btnBack, this.w/2 - backW/2, 458 + metrics.getAscent());
-            g2d.rotate(0.1, this.w/2, 505);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, this.w/2 - backW/2, 458 + metrics.getAscent());
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
-        
+        g.drawImage(this.bgBtn, this.btnPosMenu[3][0], this.btnPosMenu[3][1], null);
+        g.drawString(this.btnBack, this.btnPosMenu[3][0] + 107 - backW/2, this.btnPosMenu[3][1] + 30 + metrics.getAscent());
     }
     
     public void renderSettings(Graphics g){
@@ -901,7 +903,6 @@ public class GameScene extends Scene {
             g.setColor(Color.BLACK);
             g.drawString(this.btnBack, 2 * this.w/3 + 107 - (btnBackW / 2), (int)(this.h - 117 + metrics.getAscent()*1.5));
         }
-        
     }
     
     public Scene updatePause(double elapsedTime){
@@ -911,6 +912,11 @@ public class GameScene extends Scene {
         
         switch(this.currentScene){
             case MENU:
+                for(int i=0;i<this.btnPosMenu.length;i++){
+                    if(this.btnPosMenu[i][0] < this.w/2 - 107){
+                        this.btnPosMenu[i][0] += 30;
+                    }
+                }
                 break;
             case SAVES:
                 break;
@@ -1023,6 +1029,13 @@ public class GameScene extends Scene {
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItemMenu){
                 case 1:
+                    int[][] posBtns = {
+                        {this.w/2 - 107 - (15*30), 140},
+                        {this.w/2 - 107 - (17*30), 240},
+                        {this.w/2 - 107 - (19*30), 340},
+                        {this.w/2 - 107 - (21*30), 440}
+                    };
+                    this.btnPosMenu = posBtns;
                     this.game.paused = false;
                     break;
                 case 2:

@@ -180,6 +180,13 @@ public class Game extends Canvas implements Runnable {
                 }
                 else{
                     this.pauseTime = TimerThread.MILLI;
+                    int[][] posBtns = {
+                        {this.w/2 - 107 - (15*30), 140},
+                        {this.w/2 - 107 - (17*30), 240},
+                        {this.w/2 - 107 - (19*30), 340},
+                        {this.w/2 - 107 - (21*30), 440}
+                    };
+                    gameScene.btnPosMenu = posBtns;
                     this.paused = false;
                 }
             }
