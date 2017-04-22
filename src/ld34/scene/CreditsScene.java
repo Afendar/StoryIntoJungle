@@ -89,7 +89,6 @@ public class CreditsScene extends Scene {
         g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
         if(this.selectedItem == 1){
             g2d.rotate(-0.1, (3*this.w/4)+25, 475);
-            g.setColor(this.darkGreen);
             g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
             g2d.rotate(0.1, (3*this.w/4)+25, 475);
         }

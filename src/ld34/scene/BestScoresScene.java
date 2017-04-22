@@ -18,7 +18,7 @@ import org.json.simple.JSONArray;
 
 public class BestScoresScene extends Scene {
     
-    public Font font, fontS, fontL;
+    public Font font, fontS, fontL, fontXS;
     public String title, btnBack;
     public int[][] btnCoords;
     public int selectedItem;
@@ -31,8 +31,9 @@ public class BestScoresScene extends Scene {
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.fontS = this.font.deriveFont(18.0f);
-            this.font = this.font.deriveFont(22.0f);
+            this.fontXS = this.font.deriveFont(18.0f);
+            this.fontS = this.font.deriveFont(22.0f);
+            this.font = this.font.deriveFont(24.0f);
             this.fontL = this.font.deriveFont(52.0f);
 
         }catch(FontFormatException|IOException e){
@@ -128,17 +129,16 @@ public class BestScoresScene extends Scene {
         metrics = g.getFontMetrics(this.font);
         g.setFont(this.font);
         int backWidth = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+        
         if(this.selectedItem == 1){
-            g2d.rotate(-0.1, (3*this.w/4)+25, 475);
-            g.setColor(this.darkGreen);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
-            g2d.rotate(0.1, (3*this.w/4)+25, 475);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        g.setColor(Scene.DARKGREY);
+        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+        g.drawString(this.btnBack, (3*this.w/4) + 35 - backWidth/2, 510);
         
         g.drawImage(this.foreground2, 0, 0, null);
     }

@@ -28,7 +28,7 @@ import org.json.simple.JSONObject;
 public class SavesScene extends Scene {
 
     private String btnBack, emptyTxt, easy, medium, hard, hardcore, title;
-    private Font font, fontL, fontS;
+    private Font font, fontL, fontS, fontXS;
     private BufferedImage gui, bgSave, levelIcon, removeIcon, cageIcon, loadIcon, dollardIcon, littlesPandas;
     private int selectedItem, selectedSave, selectRemove, selectLoad;
     private int[][] btnCoords;
@@ -41,8 +41,9 @@ public class SavesScene extends Scene {
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
-            this.fontS = this.font.deriveFont(Font.PLAIN, 16.0f);
+            this.font = this.font.deriveFont(Font.PLAIN, 24.0f);
+            this.fontS = this.font.deriveFont(Font.PLAIN, 18.0f);
+            this.fontXS = this.font.deriveFont(Font.PLAIN, 16.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
             
             url = this.getClass().getResource("/gui.png");
@@ -201,8 +202,8 @@ public class SavesScene extends Scene {
         int titlewidth = metrics.stringWidth(this.title);
         g.drawString(this.title, this.w/2 - titlewidth/2, 60);
         
-        metrics = g.getFontMetrics(this.font);
-        g.setFont(this.font);
+        metrics = g.getFontMetrics(this.fontXS);
+        g.setFont(this.fontXS);
         
         for(int i=0;i<this.jsonSaves.size();i++){
             if(this.selectedSave == i + 1){
@@ -322,17 +323,15 @@ public class SavesScene extends Scene {
         
         //back Btn
         int backWidth = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
         if(this.selectedItem == 1){
-            g2d.rotate(-0.1, (3*this.w/4)+25, 475);
-            g.setColor(this.darkGreen);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
-            g2d.rotate(0.1, (3*this.w/4)+25, 475);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+        g.setColor(Scene.DARKGREY);
+        g.drawString(this.btnBack, (3*this.w/4) + 35 - backWidth/2, 510);
         
         g.drawImage(this.foreground2, 0, 0, null);
     }

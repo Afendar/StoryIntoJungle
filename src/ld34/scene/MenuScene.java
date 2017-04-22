@@ -1,7 +1,6 @@
 package ld34.scene;
 
 import audio.Sound;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
