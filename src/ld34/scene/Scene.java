@@ -19,7 +19,8 @@ public abstract class Scene{
     public ResourceBundle bundle;
     public static Color 
             darkGreen = new Color(128, 0, 19), 
-            DARKGREY = new Color(17, 17, 17);
+            DARKGREY = new Color(17, 17, 17),
+            BLACKSHADOW = new Color(0, 0, 0, 76);
     public Class runtimeClass;
     
     public Scene(int w, int h, Game game){

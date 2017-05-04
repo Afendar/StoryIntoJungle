@@ -48,7 +48,7 @@ public class MenuScene extends Scene {
             url = runtimeClass.getResource("/background.png");
             this.background2 = ImageIO.read(url);
            
-            this.logo = this.spritesheetGui2.getSubimage(0, 337, 590, 200);
+            this.logo = this.spritesheetGui2.getSubimage(310, 347, 590, 200);
 
         }catch(FontFormatException|IOException e){
             e.getMessage();
@@ -150,7 +150,12 @@ public class MenuScene extends Scene {
                 else{
                     this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
                 }
-                g.drawImage(this.bgBtn, this.btnCoords[i][0], this.btnCoords[i][1], null);
+                if(i % 2 == 0){
+                    g.drawImage(this.bgBtn, this.btnCoords[i][0], this.btnCoords[i][1], null);
+                }
+                else{
+                    g.drawImage(this.horizontalflip(this.bgBtn), this.btnCoords[i][0], this.btnCoords[i][1], null);
+                }
                 int labelWidth = metrics.stringWidth(this.btnLabels[i]);
                 g.setColor(Scene.DARKGREY);
                 g.drawString(this.btnLabels[i], this.btnCoords[i][0] + 117 - labelWidth/2, this.btnCoords[i][1] + metrics.getAscent() + 28);
@@ -223,7 +228,7 @@ public class MenuScene extends Scene {
                         break;
                     case 5:
                         new Thread(Sound.select::play).start();
-                        currentScene = new BestScoresScene(this.w, this.h, this.game);
+                        currentScene = new HighScoresScene(this.w, this.h, this.game);
                         break;
                     case 6:
                         new Thread(Sound.select::play).start();
@@ -245,7 +250,7 @@ public class MenuScene extends Scene {
                         break;
                     case 3:
                         new Thread(Sound.select::play).start();
-                        currentScene = new BestScoresScene(this.w, this.h, this.game);
+                        currentScene = new HighScoresScene(this.w, this.h, this.game);
                         break;
                     case 4:
                         new Thread(Sound.select::play).start();
@@ -262,5 +267,15 @@ public class MenuScene extends Scene {
         }
         
         return currentScene;
+    }
+    
+    private BufferedImage horizontalflip(BufferedImage img) {  
+        int w = img.getWidth();  
+        int h = img.getHeight();  
+        BufferedImage dimg = new BufferedImage(w, h, img.getType());
+        Graphics2D g = dimg.createGraphics();  
+        g.drawImage(img, 0, 0, w, h, w, 0, 0, h, null);  
+        g.dispose();
+        return dimg;  
     }
 }

@@ -16,7 +16,7 @@ import core.Game;
 
 public class CreditsScene extends Scene {
     
-    public Font font, fontL;
+    public Font font, fontM, fontL;
     public String title, btnBack, text1, text2, text3;
     public int[][] btnCoords;
     public int selectedItem;
@@ -27,13 +27,12 @@ public class CreditsScene extends Scene {
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
+            this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
+            this.fontM = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
-        
-        this.bgBtn = this.spritesheetGui.getSubimage(0, 0, 214, 70);
         
         int [][]coords = {
             {(3*this.w/4) - 80, 455}
@@ -67,35 +66,37 @@ public class CreditsScene extends Scene {
         
         g.drawImage(this.background, 0, 0, null);
         
+        g.setColor(Scene.BLACKSHADOW);
+        g.fillRect(0, 35, this.w, 60);
+        
         FontMetrics metrics = g.getFontMetrics(this.fontL);
         g.setFont(this.fontL);
         g.setColor(Color.BLACK);
         int titlewidth = metrics.stringWidth(this.title);
-        g.drawString(this.title, this.w/2 - titlewidth/2, 130);
+        g.drawString(this.title, this.w/2 - titlewidth/2, 75);
         
-        g.setFont(this.font);
-        metrics = g.getFontMetrics(this.font);
+        g.setFont(this.fontM);
+        metrics = g.getFontMetrics(this.fontM);
         
         int text1Width = metrics.stringWidth(this.text1);
-        g.drawString(this.text1, this.w/2 - text1Width/2, 240);
+        g.drawString(this.text1, this.w/2 - text1Width/2, 200);
         
         int text2Width = metrics.stringWidth(this.text2);
-        g.drawString(this.text2, this.w/2 - text2Width/2, 320);
+        g.drawString(this.text2, this.w/2 - text2Width/2, 250);
         
         int text3Width = metrics.stringWidth(this.text3);
-        g.drawString(this.text3, this.w/2 - text3Width/2, 400);
+        g.drawString(this.text3, this.w/2 - text3Width/2, 300);
         
         int backWidth = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
         if(this.selectedItem == 1){
-            g2d.rotate(-0.1, (3*this.w/4)+25, 475);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
-            g2d.rotate(0.1, (3*this.w/4)+25, 475);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, (3*this.w/4) + 25 - backWidth/2, 495);
+            this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+        g.setColor(Scene.DARKGREY);
+        g.drawString(this.btnBack, (3 * this.w/4)+32 - backWidth/2, 510);
         
         g.drawImage(this.foreground2, 0, 0, null);
     }

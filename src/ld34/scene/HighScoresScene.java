@@ -16,15 +16,15 @@ import core.Game;
 import ld34.profile.BestScores;
 import org.json.simple.JSONArray;
 
-public class BestScoresScene extends Scene {
+public class HighScoresScene extends Scene {
     
-    public Font font, fontS, fontL, fontXS;
+    public Font font, fontS, fontM, fontXS;
     public String title, btnBack;
     public int[][] btnCoords;
     public int selectedItem;
     private final JSONArray bestScores;
     
-    public BestScoresScene(int w, int h, Game game){
+    public HighScoresScene(int w, int h, Game game){
         super(w, h, game);
         
         try{
@@ -34,7 +34,7 @@ public class BestScoresScene extends Scene {
             this.fontXS = this.font.deriveFont(18.0f);
             this.fontS = this.font.deriveFont(22.0f);
             this.font = this.font.deriveFont(24.0f);
-            this.fontL = this.font.deriveFont(52.0f);
+            this.fontM = this.font.deriveFont(36.0f);
 
         }catch(FontFormatException|IOException e){
             e.getMessage();
@@ -106,11 +106,14 @@ public class BestScoresScene extends Scene {
         
         g.drawImage(this.background, 0, 0, null);
         
-        FontMetrics metrics = g.getFontMetrics(this.fontL);
-        g.setFont(this.fontL);
+        g.setColor(Scene.BLACKSHADOW);
+        g.fillRect(0, 35, this.w, 60);
+        
+        FontMetrics metrics = g.getFontMetrics(this.fontM);
+        g.setFont(this.fontM);
         g.setColor(Color.BLACK);
         int titlewidth = metrics.stringWidth(this.title);
-        g.drawString(this.title, this.w/2 - titlewidth/2, 60);
+        g.drawString(this.title, this.w/2 - titlewidth/2, 75);
         
         g.setFont(this.font);
         g.setColor(Color.BLACK);

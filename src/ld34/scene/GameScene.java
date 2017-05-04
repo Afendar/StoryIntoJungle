@@ -238,14 +238,14 @@ public class GameScene extends Scene {
             
             url = this.getClass().getResource("/gui2.png");
             this.guiAssets = ImageIO.read(url);
-            this.timeIcon = this.guiAssets.getSubimage(0, 0, 75, 75);
-            this.scoreIcon = this.guiAssets.getSubimage(75, 0, 75, 75);
-            this.levelIcon = this.guiAssets.getSubimage(150, 0, 75, 75);
+            this.timeIcon = this.guiAssets.getSubimage(6, 8, 61, 60);
+            this.scoreIcon = this.guiAssets.getSubimage(82, 8, 61, 59);
+            this.levelIcon = this.guiAssets.getSubimage(156, 7, 61, 61);
             if(this.player.species.equals("panda")){
-                this.cagesIcon = this.guiAssets.getSubimage(225, 0, 75, 75);
+                this.cagesIcon = this.guiAssets.getSubimage(232, 7, 61, 61);
             }
             else{
-                this.cagesIcon = this.guiAssets.getSubimage(300, 0, 75, 75);
+                this.cagesIcon = this.guiAssets.getSubimage(307, 7, 61, 61);
             }
             
             url = this.getClass().getResource("/gui.png");
@@ -603,9 +603,9 @@ public class GameScene extends Scene {
         g.fillRoundRect(55, 27, 60, 30, 5, 5);
         g.fillRoundRect(170, 27, 60, 30, 5, 5);
         
-        g.drawImage(this.scoreIcon, 6, 62, null);
-        g.drawImage(this.levelIcon, 6, 3, null);
-        g.drawImage(this.cagesIcon, 120, 3, null);
+        g.drawImage(this.scoreIcon, 6, 70, null);
+        g.drawImage(this.levelIcon, 6, 10, null);
+        g.drawImage(this.cagesIcon, 120, 10, null);
         
         g.setColor(Color.WHITE);
         g.setFont(this.fontS);

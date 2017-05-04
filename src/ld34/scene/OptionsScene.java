@@ -28,8 +28,8 @@ public class OptionsScene extends Scene {
     public Font font, fontS, fontL, fontU;
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
-    public BufferedImage background2, btnCharacter, btnConfig, btnControls, sGirl, sBoy, sPanda, spRoux, bgHeads, 
-            bgHeadsRed, soundBar;
+    public BufferedImage iconPlayer, iconSettings, iconControls, backgroundMenu, separatorMenu, btnSmallSelected, backgroundPlayer,
+            iconBoy, iconGirl, iconGP, iconRP, previewsPandas, soundBar, bottomControls;
     public CustomTextField nameField;
     public int[][] btnCoords;
     public int selectedItem, currentTab, posBar;
@@ -42,7 +42,7 @@ public class OptionsScene extends Scene {
         try{
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.font = this.font.deriveFont(Font.PLAIN, 24.0f);
+            this.font = this.font.deriveFont(Font.PLAIN, 20.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 18.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
             Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
@@ -50,9 +50,8 @@ public class OptionsScene extends Scene {
             this.fontU = this.font;
             this.fontU = this.fontU.deriveFont(fontAttributes);
             
-            url = this.getClass().getResource("/backgroundoptions.png");
-            this.background2 = ImageIO.read(url);
-
+            url = this.runtimeClass.getResource("/previews_pandas.png");
+            this.previewsPandas = ImageIO.read(url);
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
@@ -85,16 +84,19 @@ public class OptionsScene extends Scene {
         int volumeVal = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
         this.posBar = (int)(153 + (2 * volumeVal));
         
-        this.btnCharacter = this.spritesheetGui.getSubimage(0, 110, 50, 50);
-        this.btnConfig = this.spritesheetGui.getSubimage(50, 110, 50, 50);
-        this.btnControls = this.spritesheetGui.getSubimage(100, 110, 50, 50);
-        this.sGirl = this.spritesheetGui.getSubimage(0, 160, 50, 48);
-        this.sBoy = this.spritesheetGui.getSubimage(50, 160, 50, 48);
-        this.sPanda = this.spritesheetGui.getSubimage(50, 160, 50, 48);
-        this.spRoux = this.spritesheetGui.getSubimage(50, 208, 50, 48);
-        this.bgHeads = this.spritesheetGui.getSubimage(100, 160, 50, 48);
-        this.bgHeadsRed = this.spritesheetGui.getSubimage(100, 208, 50, 48);
-        this.soundBar = this.spritesheetGui.getSubimage(0, 256, 210, 25);
+        this.iconPlayer = this.spritesheetGui2.getSubimage(679, 187, 50, 50);
+        this.iconSettings = this.spritesheetGui2.getSubimage(729, 187, 50, 50); 
+        this.iconControls = this.spritesheetGui2.getSubimage(779, 187, 50, 50);
+        this.backgroundMenu = this.spritesheetGui2.getSubimage(968, 0, 114, 600);
+        this.separatorMenu = this.spritesheetGui2.getSubimage(900, 0, 68, 600);
+        this.btnSmallSelected = this.spritesheetGui2.getSubimage(612, 0, 124, 103);
+        this.backgroundPlayer = this.spritesheetGui2.getSubimage(235, 127, 217, 216);
+        this.iconBoy = this.spritesheetGui2.getSubimage(820, 1, 35, 36);
+        this.iconGirl = this.spritesheetGui2.getSubimage(858, 1, 27, 40);
+        this.iconGP = this.spritesheetGui2.getSubimage(674, 103, 47, 38);
+        this.iconRP = this.spritesheetGui2.getSubimage(676, 147, 49, 38);
+        this.soundBar = this.spritesheetGui2.getSubimage(0, 468, 299, 62);
+        this.bottomControls = this.spritesheetGui2.getSubimage(680, 255, 212, 88);
         
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         
@@ -118,8 +120,8 @@ public class OptionsScene extends Scene {
         this.controlJump = this.bundle.getString("ctrlJump");
         this.controlWalk = this.bundle.getString("ctrlWalk");
         
-        this.nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 230, 150, 250, 15);
-        this.nameField.setFont(this.fontS);
+        this.nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 203, 183, 287, 46);
+        this.nameField.setFont(this.font);
     }
 
     @Override
@@ -130,60 +132,62 @@ public class OptionsScene extends Scene {
             this.processKey(this.game.listener.e);
         }
         
-        if(this.game.listener.mousePressed){
+        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             int mouseX = this.game.listener.mouseX;
             int mouseY = this.game.listener.mouseY;
             switch(this.currentTab){
                 case 0:
-                    if(mouseX > 230 && mouseX < 280 && mouseY > 190 && mouseY < 240){
+                    if(mouseX > 199 && mouseX < 319 && mouseY > 266 && mouseY < 365){
                         //male btn
-                        this.sPanda = this.spritesheetGui.getSubimage(50, 160, 50, 48);
-                        this.spRoux = this.spritesheetGui.getSubimage(50, 208, 50, 48);
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Sex", "0");
                     }
-                    else if(mouseX > 310 && mouseX < 360 && mouseY > 190 && mouseY < 240){
+                    else if(mouseX > 369 && mouseX < 489 && mouseY > 266 && mouseY < 365){
                         //female btn
-                        this.sPanda = this.spritesheetGui.getSubimage(0, 160, 50, 48);
-                        this.spRoux = this.spritesheetGui.getSubimage(0, 208, 50, 48);
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Sex", "1");
                     }
-                    else if(mouseX > 230 && mouseX < 280 && mouseY > 270 && mouseY < 320){
+                    else if(mouseX > 199 && mouseX < 319 && mouseY > 386 && mouseY < 485){
                         //grandpanda btn
-                        this.sBoy = this.spritesheetGui.getSubimage(50, 160, 50, 48);
-                        this.sGirl = this.spritesheetGui.getSubimage(0, 160, 50, 48);
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Spicies", "0");
                     }
-                    else if(mouseX > 310 && mouseX < 360 && mouseY > 270 && mouseY < 320){
+                    else if(mouseX > 369 && mouseX < 489 && mouseY > 386 && mouseY < 485){
                         //panda roux btn
-                        this.sBoy = this.spritesheetGui.getSubimage(50, 208, 50, 48);
-                        this.sGirl = this.spritesheetGui.getSubimage(0, 208, 50, 48);
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Spicies", "1");
                     }
                     break;
                 case 1:
                     if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "0");
                     }
                     else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/4) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "2");
                     }
                     else if(mouseX > 3*this.w/5 && mouseX < (3*this.w/5) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "4");
                     }
                     else if(mouseX > 4*this.w/5 && mouseX < (4*this.w/5) + 107 &&
                             mouseY > 200 && mouseY < 200 + 40){
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "5");
                     }
                     else if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
                             mouseY > 290 && mouseY < 290 + 40){
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Lang", "0");
                         this.reloadLangs();
                     }
                     else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/5) + 107 &&
                             mouseY > 290 && mouseY < 290 + 40){
+                        new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Lang", "1");
                         this.reloadLangs();
                     }
@@ -236,26 +240,37 @@ public class OptionsScene extends Scene {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(this.background, 0, 0, null);
-        g.drawImage(this.background2, 0, 0, null);
         
+        g.drawImage(this.backgroundMenu, 0, 0, null);
+
         //draw menu options
-        g.setColor(new Color(146, 171, 63));
+        g.setColor(new Color(124, 180, 94));
         switch(this.currentTab){
             case 0:
-                g.fillRect(0, 165, 92, 80);
+                g.fillRect(0, 205, 113, 80);
                 break;
             case 1:
-                g.fillRect(0, 245, 92, 80);
+                g.fillRect(0, 286, 113, 80);
                 break;
             case 2:
-                g.fillRect(0, 325, 92, 80);
+                g.fillRect(0, 367, 113, 80);
                 break;
         }
-        g.drawImage(this.btnCharacter, 21, 180, null);
-        g.drawImage(this.btnConfig, 21, 260, null);
-        g.drawImage(this.btnControls, 21, 340, null);
         
-        //End menu options
+        g.drawImage(this.iconPlayer, 25, 220, null);
+        g.drawImage(this.iconSettings, 25, 300, null);
+        g.drawImage(this.iconControls, 25, 380, null);
+        
+        g.drawImage(this.separatorMenu, 89, 0, null);
+        
+        g.setColor(Scene.BLACKSHADOW);
+        g.fillRect(0, 35, this.w, 60);
+        
+        FontMetrics metrics = g.getFontMetrics(this.fontL);
+        g.setFont(this.fontL);
+        g.setColor(Color.BLACK);
+        int titlewidth = metrics.stringWidth(this.title);
+        g.drawString(this.title, this.w/2 - titlewidth/2, 75);
         
         switch(this.currentTab){
             case 0:
@@ -270,28 +285,26 @@ public class OptionsScene extends Scene {
             default:
                 break;
         }
-        
-        FontMetrics metrics = g.getFontMetrics(this.fontL);
-        g.setFont(this.fontL);
-        g.setColor(Color.BLACK);
-        int titlewidth = metrics.stringWidth(this.title);
-        g.drawString(this.title, this.w/2 - titlewidth/2, 60);
 
         //end btn
         metrics = g.getFontMetrics(this.font);
         g.setFont(this.font);
         int backWidth = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
-        
         if(this.selectedItem == 1){
             this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
         }
         else{
             this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
         }
+
+        if(this.selectedItem == 1){
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 595, 471, null);
+        }
+        else{
+            g.drawImage(this.spritesheetGui2.getSubimage(370, 1, 120, 99), 595, 471, null);
+        }
+        g.drawImage(this.spritesheetGui2.getSubimage(243, 94, 42, 34), 633, 502, null);
         
-        g.setColor(Scene.DARKGREY);
-        g.drawString(this.btnBack, (3 * this.w/4)+32 - backWidth/2, 510);
         g.drawImage(this.foreground2, 0, 0, null);
     }
     
@@ -299,25 +312,25 @@ public class OptionsScene extends Scene {
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
         
-        if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 214 &&
-                mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 70){
+        if(mouseX > 595 && mouseX < 715 &&
+                mouseY > 471 && mouseY < 570){
             //if btn Back
             if(this.selectedItem != 1)
                 new Thread(Sound.hover::play).start();
             this.selectedItem = 1;
         }
-        else if(mouseX > 21 && mouseX < 71 &&
-                mouseY > 180 && mouseY < 230){
+        else if(mouseX > 0 && mouseX < 113 &&
+                mouseY > 205 && mouseY < 285){
             if(this.selectedItem != 2)
             this.selectedItem = 2;
         }
-        else if(mouseX > 21 && mouseX < 71 &&
-                mouseY > 260 && mouseY < 310){
+        else if(mouseX > 0 && mouseX < 113 &&
+                mouseY > 286 && mouseY < 366){
             if(this.selectedItem != 3)
             this.selectedItem = 3;
         }
-        else if(mouseX > 21 && mouseX < 71 &&
-                mouseY > 340 && mouseY < 390){
+        else if(mouseX > 0 && mouseX < 113 &&
+                mouseY > 367 && mouseY < 447){
             //if btn controls
             if(this.selectedItem != 4)
             this.selectedItem = 4;
@@ -332,14 +345,11 @@ public class OptionsScene extends Scene {
         Scene currentScene = this;
         
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
-            
             switch(this.currentTab){
                 case 0:
-                    new Thread(Sound.select::play).start();
                     this.nameField.processClick(this.game.listener.mouseX, this.game.listener.mouseY);
                     break;
                 case 1:
-                    new Thread(Sound.select::play).start();
                     break;
                 case 2:
                     this.processButtonsClick();
@@ -349,22 +359,26 @@ public class OptionsScene extends Scene {
             
             switch(this.selectedItem){
                 case 1:
+                    new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
                     currentScene = new MenuScene(this.w, this.h, this.game);
                     break;
                 case 2:
                     //player infos tab
                     this.currentTab = 0;
+                    new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 3:
                     //settings tab
                     this.currentTab = 1;
+                    new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 4:
                     //controls tab
                     this.currentTab = 2;
+                    new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 default:
@@ -376,155 +390,145 @@ public class OptionsScene extends Scene {
     }
     
     public void renderPlayerSettings(Graphics g){
-        g.setColor(Color.BLACK);
-        g.setFont(this.fontS);
-        FontMetrics metrics = g.getFontMetrics(this.fontS);
-        int nameW = metrics.stringWidth(this.name);
-        g.drawString(this.name, 150, 150);
-        
-        int sexeW = metrics.stringWidth(this.sexe);
-        g.drawString(this.sexe, 150, 220);
-        
-        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))){
-            case 0:
-                g.drawImage(this.bgHeadsRed, 230, 191, null);
-                g.drawImage(this.bgHeads, 310, 191, null);
-                break;
-            case 1:
-                g.drawImage(this.bgHeads, 230, 191, null);
-                g.drawImage(this.bgHeadsRed, 310, 191, null);
-                break;
-        }
-
-        g.drawImage(this.sBoy, 230, 191, null);
-        g.drawImage(this.sGirl, 310, 191, null);
-        
-        g.setColor(Color.BLACK);
-        int typeW = metrics.stringWidth(this.type);
-        g.drawString(this.type, 150, 300);
-
-        switch(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"))){
-            case 0:
-                g.drawImage(this.bgHeadsRed, 230, 271, null);
-                g.drawImage(this.bgHeads, 310, 271, null);
-                break;
-            case 1:
-                g.drawImage(this.bgHeads, 230, 271, null);
-                g.drawImage(this.bgHeadsRed, 310, 271, null);
-                break;
-        }
-        
-        //Grand panda
-        g.drawImage(this.sPanda, 230, 271, null);
-        //Panda roux
-        g.drawImage(this.spRoux, 310, 271, null);
         
         this.nameField.render(g);
+        
+        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("Sex"));
+        if(sex == 0){
+            g.drawImage(this.btnSmallSelected, 199, 266, null);
+        }
+        else{
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 199, 266, null);
+        }
+        if(sex == 1){
+            g.drawImage(this.btnSmallSelected, 368, 265, null);
+        }
+        else{
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 368, 265, null);
+        }
+        g.drawImage(this.iconBoy, 239, 297, null);
+        g.drawImage(this.iconGirl, 413, 293, null);
+
+        int species = Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"));
+        if(species == 0){
+            g.drawImage(this.btnSmallSelected, 199, 386, null);
+        }
+        else{
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 199, 386, null);
+        }
+        if(species == 1){
+            g.drawImage(this.btnSmallSelected, 369, 386, null);
+        }
+        else{
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 369, 386, null);
+        }
+        g.drawImage(this.iconGP, 233, 416, null);
+        g.drawImage(this.iconRP, 402, 416, null);
+
+        g.drawImage(this.backgroundPlayer, 570, 190, null);
+        Graphics2D g2d = (Graphics2D) g;
+        g.setColor(new Color(0,0,0,25));
+        g2d.fillOval(607, 327, 150, 40);
+        
+        if(sex == 0 && species == 0){
+            g.drawImage(this.previewsPandas.getSubimage(0, 0, 128, 128), 616, 234, null);
+        }
+        else if(sex == 1 && species == 0){
+            g.drawImage(this.previewsPandas.getSubimage(128, 0, 128, 128), 616, 234, null);
+        }
+        else if(sex == 0 && species == 1){
+            g.drawImage(this.previewsPandas.getSubimage(256, 0, 128, 128), 616, 234, null);
+        }
+        else if(sex == 1 && species == 1){
+            g.drawImage(this.previewsPandas.getSubimage(384, 0, 128, 128), 616, 234, null);
+        }
     }
     
     public void renderGameSettings(Graphics g){
         //difficulty
         g.setColor(Color.BLACK);
-        g.setFont(this.font);
+        g.setFont(this.fontS);
         FontMetrics metrics = g.getFontMetrics(this.font);
-        int difficultyWidth = metrics.stringWidth(this.difficulty);
-        g.drawString(this.difficulty, 150, 180);
-        int easyWidth = metrics.stringWidth(this.easy);
+        int difficultyWidth = metrics.stringWidth("Difficulté");
+        g.drawString("Difficulté", 170, 128 + metrics.getAscent());
         
+        //easy
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 0){
-            g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, this.w/5, 200, null);
+            g.drawImage(this.btnSmallSelected, 189, 166, null);
         }else{
-            g.setFont(this.font);
-            g.drawImage(this.bgBtnSmall, this.w/5, 200, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 189, 166, null);
         }
+        g.drawImage(this.spritesheetGui2.getSubimage(285, 69, 17, 16), 239, 205, null);
         
-        g.drawString(this.easy, this.w/5 - easyWidth/2 + 50, 225);
-        
-        int mediumWidth = metrics.stringWidth(this.medium);
+        //medium
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 2){
-            g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, 2*(this.w/5), 200, null);
+            g.drawImage(this.btnSmallSelected, 339, 166, null);
         }else{
-            g.setFont(this.font);
-            g.drawImage(this.bgBtnSmall, 2*(this.w/5), 200, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 339, 166, null);
         }
-        g.drawString(this.medium, 2*(this.w/5) - mediumWidth/2 + 50, 225);
-        
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 4){
-            g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, 3*(this.w/5), 200, null);
-        }else{
-            g.setFont(this.font);
-            g.drawImage(this.bgBtnSmall, 3*(this.w/5), 200, null);
-        }
+        g.drawImage(this.spritesheetGui2.getSubimage(325, 69, 35, 16), 380, 206, null);
 
-        int hardWidth = metrics.stringWidth(this.hard);
-        g.drawString(this.hard, 3*(this.w/5) - hardWidth/2 + 50, 225);
-        
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5){
-            g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, 4*this.w/5, 200, null);
+        //hard
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 4){
+            g.drawImage(this.btnSmallSelected, 479, 166, null);
         }else{
-            g.setFont(this.font);
-            g.drawImage(this.bgBtnSmall, 4*this.w/5, 200, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 479, 166, null);
         }
+        g.drawImage(this.spritesheetGui2.getSubimage(285, 89, 33, 32), 521, 197, null);
         
-        int hardcoreW = metrics.stringWidth(this.hardcore);
-        g.drawString(this.hardcore, 4*this.w/5 - hardcoreW/2 + 50, 225);
+        //hardcore
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5){
+            g.drawImage(this.btnSmallSelected, 629, 166, null);
+        }else{
+            g.drawImage(this.spritesheetGui2.getSubimage(491, 1, 120, 99), 629, 166, null);
+        }
+        g.drawImage(this.spritesheetGui2.getSubimage(326, 90, 33, 32), 672, 197, null);
         
         //languages
-        g.setFont(this.font);
+        g.setFont(this.fontS);
         g.setColor(Color.BLACK);
         int languageW = metrics.stringWidth(this.language);
-        g.drawString(this.language, 150, 270);
-        
-        int englishW = metrics.stringWidth(this.english);
+        g.drawString(this.language, 170, 278 + metrics.getAscent());
+        //english
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 0){
-            g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, this.w/5, 290, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(0, 332, 238, 104), 221, 310, null);
         }else{
-            g.setFont(this.font);
-            g.drawImage(this.bgBtnSmall, this.w/5, 290, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(0, 132, 234, 100), 221, 310, null);
         }
-        g.drawString(this.english, this.w/4 - englishW/2 + 10, 315);
+        g.drawImage(this.spritesheetGui2.getSubimage(238, 344, 42, 28), 256, 345, null);
+        g.setFont(this.font);
+        g.drawString(this.english, 317, 346 + metrics.getAscent()/2 + 8);
         
-        int frenchW = metrics.stringWidth(this.french);
+        //french
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 1){
-            g.setFont(this.fontU);
-            g.drawImage(this.bgBtnSmallRed, 2*this.w/5, 290, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(0, 332, 238, 104), 481, 305, null);
         }else{
-            g.setFont(this.font);
-            g.drawImage(this.bgBtnSmall, 2*this.w/5, 290, null);
+            g.drawImage(this.spritesheetGui2.getSubimage(0, 132, 234, 100), 481, 305, null);
         }
-        g.drawString(this.french, 2*this.w/5 - frenchW/2 + 52, 315);
+        g.drawImage(this.spritesheetGui2.getSubimage(238, 372, 42, 28), 517, 342, null);
+        g.setFont(this.font);
+        g.drawString(this.french, 580, 342 + metrics.getAscent()/2 + 8);
+
         
         //Volume
         
-        g.setFont(this.font);
-        g.drawString(this.volume, 150, 380);
+        g.setFont(this.fontS);
+        g.drawString(this.volume, 170, 424 + metrics.getAscent());
         
         int red = 255;
         int green = 0;
         for(int i=0;i<255;i++){
             g.setColor(new Color(red, green, 0));
-            g.fillRect((int)(153 + (i * 0.8)), 403, 1, 19);
+            g.fillRect((int)(185 + (i * 0.8)), 472, 1, 19);
             red--;
             green++;
         }
-        g.drawImage(this.soundBar, 150, 400, null);
+        g.drawImage(this.spritesheetGui2.getSubimage(0, 438, 299, 62), 175, 444, null);
         g.setColor(Color.BLACK);
         g.fillRect(posBar, 405, 4, 15);
     }
     
     public void renderControlsSettings(Graphics g){
-        
-        FontMetrics metrics = g.getFontMetrics(this.fontL);
-        g.setFont(this.fontL);
-        g.setColor(Color.BLACK);
-        int titlewidth = metrics.stringWidth(this.title);
-        g.drawString(this.title, this.w/2 - titlewidth/2, 60);
-        
         g.setFont(this.font);
         g.drawString(this.controlJump, 150, 200);
         g.drawString(this.controlWalk, 150, 250);

@@ -1,11 +1,16 @@
 package core;
 
+import audio.Sound;
 import ld34.profile.Settings;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 public final class CustomTextField extends JComponent {
@@ -14,6 +19,7 @@ public final class CustomTextField extends JComponent {
     private int x, y, w, h;
     private final long threshold = 150;
     private long lastPress;
+    private BufferedImage background;
     
     public CustomTextField(String name, String value, int x, int y, int w, int h){
         super();
@@ -27,6 +33,14 @@ public final class CustomTextField extends JComponent {
         this.lastPress = System.currentTimeMillis();
         
         this.setFont(new Font("Arial", Font.PLAIN, 12));
+        try{
+            URL url = this.getClass().getResource("/gui2.png");
+            this.background = ImageIO.read(url);
+            this.background = this.background.getSubimage(1, 501, 287, 46);
+        }
+        catch(IOException e){
+            e.getMessage();
+        }
     }
     
     public CustomTextField(String name, String value, int w, int h){
@@ -80,28 +94,41 @@ public final class CustomTextField extends JComponent {
     private void editing(){
         this.requestFocus(true);
         this.isEditing = true;
-        if(this.value.equals(""))
-            this.value = "Enter name";
+        if(this.value.equals("Enter name"))
+            this.value = "";
     }
     
     public void render(Graphics g){
-        g.setColor(new Color(200,200,200));
-        g.fillRect(this.x - 15, this.y - this.h - 7, this.w + 30, this.h + 14);
-        g.setColor(Color.BLACK);
+        g.drawImage(this.background, this.x, this.y, null);
+        if(this.value.equals("Enter name")){
+            g.setColor(Color.DARK_GRAY);
+        }
+        else{
+            g.setColor(Color.BLACK);
+        }
         g.setFont(this.getFont());
-        g.drawString(this.value, x, y);
+        FontMetrics metrics = this.getFontMetrics(this.getFont());
+        g.drawString(this.value, x + 20, y + 20 + metrics.getAscent()/2);
+        if(this.isEditing){
+            int stringWidth = metrics.stringWidth(this.value);
+            g.drawLine(this.x + 23 + stringWidth, this.y + 13, this.x + 23 + stringWidth, this.y + this.h - 13);
+        }
     }
     
     public void processClick(int x, int y){
-        if(x > this.x && x < this.x + this.w && y < this.y && y > this.y - this.h){
+        if(x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h){
             editing();
+            new Thread(Sound.select::play).start();
         }
         else{
-            this.isEditing = false;
-            if(this.value.equals("Enter name")){
-                this.value = "";
+            if(this.isEditing){
+                    new Thread(Sound.select::play).start();
             }
-            Settings.getInstance().setConfigValue("Name", this.value);
+            this.isEditing = false;
+            if(this.value.equals("")){
+                this.value = "Enter name";
+            }
+            Settings.getInstance().setConfigValue("Enter name", this.value);
         }
     }
     
