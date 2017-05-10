@@ -29,9 +29,8 @@ public final class OptionButton extends JComponent{
         this.y = y;
         this.setFont(new Font("Arial", Font.PLAIN, 12));
         
-        FontMetrics metrics = this.getFontMetrics(this.getFont());
-        this.h = metrics.getHeight();
-        this.w = metrics.stringWidth(this.text);
+        this.w = 212;
+        this.h = 88;
         
         this.initLocales();
     }
@@ -47,15 +46,11 @@ public final class OptionButton extends JComponent{
     
     public void setText(String text){
         this.text = text;
-        FontMetrics metrics = this.getFontMetrics(this.getFont());
-        this.w = metrics.stringWidth(this.text);
     }
     
     @Override
     public void setFont(Font font){
         super.setFont(font);
-        FontMetrics metrics = this.getFontMetrics(this.getFont());
-        this.w = metrics.stringWidth(this.text);
     }
     
     public boolean isEditing(){
@@ -80,15 +75,35 @@ public final class OptionButton extends JComponent{
     }
     
     public void render(Graphics g){
-        g.setColor(new Color(200,200,200));
-        g.fillRect(this.x - 15, this.y - this.h - 7, this.w + 30, this.h + 14);
+        //g.setColor(new Color(200,200,200,230));
+        //g.fillRect(this.x, this.y, this.w, this.h);
         g.setColor(Color.BLACK);
         g.setFont(this.getFont());
-        g.drawString(text, x, y);
+        FontMetrics metrics = g.getFontMetrics(this.getFont());
+        int stringWidth = metrics.stringWidth(this.text);
+        
+        if(metrics.stringWidth(this.text) >= this.w - 40){
+            String[] textTab = new String[2];
+            for(int i=this.text.length() - 1;i > 0;i--){
+                if(this.text.charAt(i) == ' '){
+                    textTab[0] = this.text.substring(0, i);
+                    textTab[1] = this.text.substring(i);
+                    break;
+                }
+            }
+            
+            for(int i=0;i<textTab.length;i++){
+                stringWidth = metrics.stringWidth(textTab[i]);
+                g.drawString(textTab[i], this.x + this.w/2 - stringWidth/2, this.y + metrics.getAscent()/2 + ((i+1) * this.h/4) - 2);
+            }
+        }
+        else{
+            g.drawString(this.text, x + this.w/2 - stringWidth/2, y + metrics.getAscent()/2 + this.h/2 - 12);
+        }
     }
     
     public void processClick(int x, int y){
-        if(x > this.x - 15 && x < this.x + this.w + 15 && y < this.y + 7 && y > this.y - this.h - 7){
+        if(x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h){
             new Thread(Sound.select::play).start();
             editing();
         }

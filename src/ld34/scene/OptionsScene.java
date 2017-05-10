@@ -22,6 +22,7 @@ import ld34.profile.Settings;
 import core.CustomTextField;
 import core.Game;
 import core.OptionButton;
+import javax.swing.JPanel;
 
 public class OptionsScene extends Scene {
     
@@ -29,11 +30,13 @@ public class OptionsScene extends Scene {
     public String title, btnBack, difficulty, easy, medium, hard, hardcore, language, french, english, commands,
             name, sexe, type, volume, controlJump, controlWalk;
     public BufferedImage iconPlayer, iconSettings, iconControls, backgroundMenu, separatorMenu, btnSmallSelected, backgroundPlayer,
-            iconBoy, iconGirl, iconGP, iconRP, previewsPandas, soundBar, bottomControls;
+            iconBoy, iconGirl, iconGP, iconRP, previewsPandas, oldPreview, currentPreview, soundBar, bottomControls, jumpingPlayer, walkingPlayer;
     public CustomTextField nameField;
     public int[][] btnCoords;
-    public int selectedItem, currentTab, posBar;
+    public int selectedItem, currentTab, posBar, timerSlider, x2;
     public ArrayList<OptionButton> optionButtons = new ArrayList<>();
+    public JPanel sliderContainer;
+    public boolean startSlide;
    
     public OptionsScene(int w, int h, Game game){
         
@@ -63,16 +66,16 @@ public class OptionsScene extends Scene {
         OptionButton btn1 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
                 "Jump", 
-                250, 
-                200
+                219, 
+                342
         );
         btn1.setFont(this.font);
         this.optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
                 "Walk", 
-                250, 
-                250
+                476, 
+                342
         );
         btn2.setFont(this.font);
         this.optionButtons.add(btn2);
@@ -80,9 +83,13 @@ public class OptionsScene extends Scene {
         this.btnCoords = coords;
         this.selectedItem = 0;
         this.currentTab = 0;
+        this.timerSlider = 0;
+        this.x2 = 616;
+        
+        this.startSlide = false;
         
         int volumeVal = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        this.posBar = (int)(153 + (2 * volumeVal));
+        this.posBar = (int)(200 + (2.4 * volumeVal));
         
         this.iconPlayer = this.spritesheetGui2.getSubimage(679, 187, 50, 50);
         this.iconSettings = this.spritesheetGui2.getSubimage(729, 187, 50, 50); 
@@ -97,6 +104,13 @@ public class OptionsScene extends Scene {
         this.iconRP = this.spritesheetGui2.getSubimage(676, 147, 49, 38);
         this.soundBar = this.spritesheetGui2.getSubimage(0, 468, 299, 62);
         this.bottomControls = this.spritesheetGui2.getSubimage(680, 255, 212, 88);
+        this.jumpingPlayer = this.spritesheetGui2.getSubimage(739, 65, 112, 84);
+        this.walkingPlayer = this.spritesheetGui2.getSubimage(737, 1, 79, 64);
+        
+        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("Sex"));
+        int spicies = Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"));
+        
+        this.currentPreview = this.previewsPandas.getSubimage(128 * (sex + spicies), 0, 128, 128);
         
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         
@@ -122,6 +136,8 @@ public class OptionsScene extends Scene {
         
         this.nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 203, 183, 287, 46);
         this.nameField.setFont(this.font);
+        
+        this.sliderContainer = new JPanel();
     }
 
     @Override
@@ -140,60 +156,80 @@ public class OptionsScene extends Scene {
                     if(mouseX > 199 && mouseX < 319 && mouseY > 266 && mouseY < 365){
                         //male btn
                         new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Sex", "0");
+                        if(Settings.getInstance().getConfigValue("Sex").equals("1")){
+                            Settings.getInstance().setConfigValue("Sex", "0");
+                            this.startSlide = true;
+                            this.oldPreview = this.currentPreview;
+                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2), 0, 128, 128);
+                        }
                     }
                     else if(mouseX > 369 && mouseX < 489 && mouseY > 266 && mouseY < 365){
                         //female btn
                         new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Sex", "1");
+                        if(Settings.getInstance().getConfigValue("Sex").equals("0")){
+                            Settings.getInstance().setConfigValue("Sex", "1");
+                            this.startSlide = true;
+                            this.oldPreview = this.currentPreview;
+                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2 + 1), 0, 128, 128);
+                        }
                     }
                     else if(mouseX > 199 && mouseX < 319 && mouseY > 386 && mouseY < 485){
-                        //grandpanda btn
+                        //grand panda btn
                         new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Spicies", "0");
+                        if(Settings.getInstance().getConfigValue("Spicies").equals("1")){
+                            Settings.getInstance().setConfigValue("Spicies", "0");
+                            this.startSlide = true;
+                            this.oldPreview = this.currentPreview;
+                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))), 0, 128, 128);
+                        }
                     }
                     else if(mouseX > 369 && mouseX < 489 && mouseY > 386 && mouseY < 485){
                         //panda roux btn
                         new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Spicies", "1");
+                        if(Settings.getInstance().getConfigValue("Spicies").equals("0")){
+                            Settings.getInstance().setConfigValue("Spicies", "1");
+                            this.startSlide = true;
+                            this.oldPreview = this.currentPreview;
+                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex")) + 2), 0, 128, 128);
+                        }
                     }
                     break;
                 case 1:
-                    if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
-                            mouseY > 200 && mouseY < 200 + 40){
+                    if(mouseX > 189 && mouseX < 189 + 120 &&
+                            mouseY > 166 && mouseY < 166 + 99){
                         new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "0");
                     }
-                    else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/4) + 107 &&
-                            mouseY > 200 && mouseY < 200 + 40){
+                    else if(mouseX > 339 && mouseX < 339 + 120 &&
+                            mouseY > 166 && mouseY < 166 + 99){
                         new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "2");
                     }
-                    else if(mouseX > 3*this.w/5 && mouseX < (3*this.w/5) + 107 &&
-                            mouseY > 200 && mouseY < 200 + 40){
+                    else if(mouseX > 479 && mouseX < 479 + 120 &&
+                            mouseY > 166 && mouseY < 166 + 99){
                         new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "4");
                     }
-                    else if(mouseX > 4*this.w/5 && mouseX < (4*this.w/5) + 107 &&
-                            mouseY > 200 && mouseY < 200 + 40){
+                    else if(mouseX > 629 && mouseX < 629 + 120 &&
+                            mouseY > 166 && mouseY < 166 + 99){
                         new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Difficulty", "5");
                     }
-                    else if(mouseX > this.w/5 && mouseX < (this.w/5) + 107 &&
-                            mouseY > 290 && mouseY < 290 + 40){
+                    else if(mouseX > 221 && mouseX < 221 + 234 &&
+                            mouseY > 310 && mouseY < 310 + 100){
                         new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Lang", "0");
                         this.reloadLangs();
                     }
-                    else if(mouseX > 2*this.w/5 && mouseX < (2*this.w/5) + 107 &&
-                            mouseY > 290 && mouseY < 290 + 40){
+                    else if(mouseX > 481 && mouseX < 481 + 234 &&
+                            mouseY > 305 && mouseY < 305 + 100){
                         new Thread(Sound.select::play).start();
                         Settings.getInstance().setConfigValue("Lang", "1");
                         this.reloadLangs();
                     }
-                    else if(mouseX >= 153 && mouseX <= 353 && mouseY > 400 && mouseY < 425){
+                    else if(mouseX >= 200 && mouseX <= 440 && mouseY > 475 && mouseY < 489){
                         this.posBar = mouseX;
-                        int newVolume = (int)((153 - posBar)/ -2);
+                        int newVolume = (int)((200 - posBar)/ - 2.4);
                         //posBar = (int)(153 + (2 * volume));
                         //volume = (int)((153 - posBar)/(-2));
                         Settings.getInstance().setConfigValue("Sound", Integer.toString(newVolume));
@@ -203,6 +239,19 @@ public class OptionsScene extends Scene {
                     break;
             }
         }
+        
+        if(this.startSlide){
+            this.timerSlider += dt;
+            if(this.timerSlider >= 2){
+                this.timerSlider = 0;
+                this.x2 -= 18;
+                if(this.x2 <= 570 - 46 - 128){
+                    this.startSlide = false;
+                    this.x2 = 616;
+                }
+            }
+        }
+        
         return processClick();
     }
 
@@ -430,17 +479,20 @@ public class OptionsScene extends Scene {
         g.setColor(new Color(0,0,0,25));
         g2d.fillOval(607, 327, 150, 40);
         
-        if(sex == 0 && species == 0){
-            g.drawImage(this.previewsPandas.getSubimage(0, 0, 128, 128), 616, 234, null);
+        if(this.startSlide && this.x2 <= 570 + 46 && this.x2 > 570 + 46 - 128){
+            int w = 128 - ( 570 - this.x2 + 46);
+            int w2 = w + 20;
+            if(w > 0){
+                BufferedImage previewOldPlayer = this.oldPreview.getSubimage(570 - this.x2 + 46, 0, w, 128);
+                g.drawImage(previewOldPlayer, 616, 234, null);
+            }
+            if(128 - w2 > 0 && 128 - w2 < 128 ){
+                BufferedImage previewCurrentPlayer = this.currentPreview.getSubimage(0, 0, 128 - w2, 128);
+                g.drawImage(previewCurrentPlayer, this.x2 + 128 + 20, 234, null);
+            }
         }
-        else if(sex == 1 && species == 0){
-            g.drawImage(this.previewsPandas.getSubimage(128, 0, 128, 128), 616, 234, null);
-        }
-        else if(sex == 0 && species == 1){
-            g.drawImage(this.previewsPandas.getSubimage(256, 0, 128, 128), 616, 234, null);
-        }
-        else if(sex == 1 && species == 1){
-            g.drawImage(this.previewsPandas.getSubimage(384, 0, 128, 128), 616, 234, null);
+        else{
+            g.drawImage(this.currentPreview, 616, 234, null); 
         }
     }
     
@@ -449,8 +501,7 @@ public class OptionsScene extends Scene {
         g.setColor(Color.BLACK);
         g.setFont(this.fontS);
         FontMetrics metrics = g.getFontMetrics(this.font);
-        int difficultyWidth = metrics.stringWidth("Difficulté");
-        g.drawString("Difficulté", 170, 128 + metrics.getAscent());
+        g.drawString(this.difficulty, 170, 128 + metrics.getAscent());
         
         //easy
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 0){
@@ -487,7 +538,6 @@ public class OptionsScene extends Scene {
         //languages
         g.setFont(this.fontS);
         g.setColor(Color.BLACK);
-        int languageW = metrics.stringWidth(this.language);
         g.drawString(this.language, 170, 278 + metrics.getAscent());
         //english
         if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 0){
@@ -519,19 +569,29 @@ public class OptionsScene extends Scene {
         int green = 0;
         for(int i=0;i<255;i++){
             g.setColor(new Color(red, green, 0));
-            g.fillRect((int)(185 + (i * 0.8)), 472, 1, 19);
+            g.fillRect((int)(200 + i), 472, 1, 19);
             red--;
             green++;
         }
         g.drawImage(this.spritesheetGui2.getSubimage(0, 438, 299, 62), 175, 444, null);
         g.setColor(Color.BLACK);
-        g.fillRect(posBar, 405, 4, 15);
+        g.fillRect(posBar, 475, 9, 14);
     }
     
     public void renderControlsSettings(Graphics g){
+        g.drawImage(this.bottomControls, 218, 345, null);
+        g.drawImage(this.bottomControls, 475, 345, null);
+        
+        g.drawImage(this.backgroundPlayer, 213, 147, null);
+        g.drawImage(this.backgroundPlayer, 470, 147, null);
+        
+        g.drawImage(this.jumpingPlayer, 275, 227, null);
+        g.drawImage(this.walkingPlayer, 542, 240, null);
+        
         g.setFont(this.font);
-        g.drawString(this.controlJump, 150, 200);
-        g.drawString(this.controlWalk, 150, 250);
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        g.drawString(this.controlJump, 290, 180 + metrics.getAscent());
+        g.drawString(this.controlWalk, 543, 180 + metrics.getAscent());
         
         for(int i=0;i<this.optionButtons.size();i++){
             this.optionButtons.get(i).render(g);
