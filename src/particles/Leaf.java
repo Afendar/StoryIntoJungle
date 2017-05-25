@@ -8,7 +8,14 @@ import java.net.URL;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
+/**
+ * Leaf class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Leaf extends Particle {
+    
     private int x, y, size, startX, startY;
     private int winW, winH;
     private double dx, dy, perturb, influence, speed, dt, theta, angle;
@@ -16,6 +23,14 @@ public class Leaf extends Particle {
     private Random rnd = new Random();
     private BufferedImage spriteSheet, leafSprites[], sprite;
     
+    /**
+     * 
+     * @param size
+     * @param startX
+     * @param startY
+     * @param winW
+     * @param winH 
+     */
     public Leaf(int size, int startX, int startY , int winW, int winH){
         try{
             URL url = this.getClass().getResource("/leafs.png");
@@ -39,10 +54,21 @@ public class Leaf extends Particle {
         this.genRandStartX();
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isGenStartX(){
         return this.genStartX;
     }
     
+    /**
+     * 
+     * @param startX
+     * @param startY
+     * @param winW
+     * @param winH 
+     */
     public void setZone(int startX, int startY, int winW, int winH){
         this.startX = startX;
         this.startY = startY;
@@ -50,6 +76,9 @@ public class Leaf extends Particle {
         this.winH = winH;
     }
     
+    /**
+     * 
+     */
     public final void genRandStartX(){
         this.x = this.rnd.nextInt((this.startX + this.winW) - this.startX) + this.startX;
         this.y = this.startY - this.sprite.getHeight();

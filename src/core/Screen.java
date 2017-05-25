@@ -7,8 +7,17 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+/**
+ * Screen class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Screen extends JFrame {
     
+    /**
+     * 
+     */
     public Screen(){
         Game g = new Game(800, 600);
         
@@ -17,6 +26,10 @@ public class Screen extends JFrame {
         g.start();
     }
     
+    /**
+     * 
+     * @param g 
+     */
     private void init(Game g){
         this.setTitle("Story Into Jungle - v" + Defines.VERSION);
         this.add(g);
@@ -33,5 +46,4 @@ public class Screen extends JFrame {
         ImageIcon icon = new ImageIcon(iconUrl);
         this.setIconImage(icon.getImage());
     }
-    
 }

@@ -5,10 +5,21 @@ import java.awt.image.BufferedImage;
 import core.Defines;
 import level.Level;
 
+/**
+ * Bamboo class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Bamboo extends Tile {
     
     public BufferedImage topSprite, bottomSprite;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Bamboo(int imgX, int imgY){
         super(imgX, imgY, 2);
         

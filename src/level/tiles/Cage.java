@@ -6,11 +6,22 @@ import core.Defines;
 import entity.CageEntity;
 import level.Level;
 
+/**
+ * Cage class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Cage extends Tile {
     
     public BufferedImage topLeftSprite, topRightSprite, bottomLeftSprite, bottomRightSprite;
     public double dt;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Cage(int imgX, int imgY){
         super(imgX, imgY, 10);
         

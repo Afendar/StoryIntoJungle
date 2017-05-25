@@ -4,11 +4,23 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import level.Level;
 
+/**
+ * SandEntity class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class SandEntity extends Entity {
     
     public double dt;
     public Level level;
     
+    /**
+     * 
+     * @param level
+     * @param posX
+     * @param posY 
+     */
     public SandEntity(Level level, int posX, int posY){
         super(posX, posY);
         this.level = level;

@@ -4,12 +4,24 @@ import core.Defines;
 import java.awt.Graphics;
 import level.Level;
 
+/**
+ * Plant class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Plant extends Tile {
     
     public static final int HELICONIA = 0;
     
     public int size;
     
+    /**
+     * 
+     * @param size
+     * @param imgX
+     * @param imgY 
+     */
     public Plant(int size, int imgX, int imgY){
         super(imgX, imgY, 14);
         this.tile = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, imgY * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);

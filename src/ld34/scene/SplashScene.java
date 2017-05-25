@@ -13,6 +13,12 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import core.Game;
 
+/**
+ * SplashScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class SplashScene extends Scene {
 
     public String txt1, txt2;
@@ -21,6 +27,12 @@ public class SplashScene extends Scene {
     public int alpha;
     public boolean increase, first;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public SplashScene(int w, int h, Game game){
         super(w, h, game);
         
@@ -101,7 +113,4 @@ public class SplashScene extends Scene {
         g.setColor(new Color(0, 0, 0, this.alpha));
         g.fillRect(0, 0, this.w, this.h);
     }
-    
-    
-    
 }

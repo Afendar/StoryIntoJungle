@@ -25,6 +25,12 @@ import level.Level;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * SavesScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class SavesScene extends Scene {
 
     private String emptyTxt, title;
@@ -34,6 +40,12 @@ public class SavesScene extends Scene {
     private int[][] btnCoords;
     private JSONObject jsonSaves;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public SavesScene(int w, int h, Game game){
         super(w, h, game);
         
@@ -64,7 +76,7 @@ public class SavesScene extends Scene {
         
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         
-        this.bundle = ResourceBundle.getBundle("lang.saves", this.game.langs[localeIndex]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[localeIndex]);
         
         this.title = this.bundle.getString("loadGame");
         this.emptyTxt = this.bundle.getString("empty");
@@ -91,6 +103,9 @@ public class SavesScene extends Scene {
         return this.processClick();
     }
 
+    /**
+     * 
+     */
     public void processHover(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -109,6 +124,10 @@ public class SavesScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -318,5 +337,4 @@ public class SavesScene extends Scene {
 
         g.drawImage(this.foreground2, 0, 0, null);
     }
-    
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package level.tiles;
 
 import java.awt.Graphics;
@@ -11,13 +6,26 @@ import core.Defines;
 import level.Level;
 import particles.Leaf;
 
+/**
+ * Tree class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Tree extends Tile{
     
     public static final int TALL = 1;
     public static final int SMALL = 2;
+    
     public int size;
     public ArrayList<Leaf> leaves = new ArrayList<Leaf>(3);
     
+    /**
+     * 
+     * @param size
+     * @param imgX
+     * @param imgY 
+     */
     public Tree(int size, int imgX, int imgY){
         super(imgX, imgY, (size == Tree.TALL) ? 12 : 13);
         this.size = size;
@@ -53,6 +61,13 @@ public class Tree extends Tile{
         this.render(g, x, y, Tree.TALL);
     }
     
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param size 
+     */
     public void render(Graphics g, int x, int y, int size){
         switch(size){
             case Tree.SMALL:

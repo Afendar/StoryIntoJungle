@@ -12,6 +12,12 @@ import core.Defines;
 import core.Game;
 import ld34.scene.GameScene;
 
+/**
+ * Profiler class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Profiler {
 
     private String[] labels;
@@ -22,10 +28,17 @@ public class Profiler {
     
     private static final Profiler _instance = new Profiler();
     
+    /**
+     * 
+     * @return 
+     */
     public static Profiler getInstance(){
         return _instance;
     }
     
+    /**
+     * 
+     */
     private Profiler()
     {
         this.labels = new String[]{"fps", "memory", "x", "y", "jump", "fall"};
@@ -42,10 +55,19 @@ public class Profiler {
         }
     }
     
+    /**
+     * 
+     * @param game 
+     */
     public void addGame(Game game){
         this.game = game;
     }
     
+    /**
+     * 
+     * @param frames
+     * @param memory 
+     */
     public void update(String frames, String memory){
         
         this.datas[0] = frames;
@@ -60,6 +82,10 @@ public class Profiler {
         }
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void render(Graphics g){
         
         this.renderGlobalDebug(g);
@@ -69,6 +95,10 @@ public class Profiler {
         }
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderGlobalDebug(Graphics g){
         FontMetrics fm = g.getFontMetrics(this.fontD);
         String text = "FPS : ";
@@ -102,6 +132,10 @@ public class Profiler {
         g.drawString(text, this.game.w - (int)rect.getWidth() - 30, 60);
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderGameDebug(Graphics g){
         
         FontMetrics fm = g.getFontMetrics(this.fontD);
@@ -150,10 +184,17 @@ public class Profiler {
         g.drawString(this.datas[5], 30 + fm.stringWidth(text), 168);
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isVisible(){
         return this.visible;
     }
     
+    /**
+     * 
+     */
     public void toggleVisible(){
         this.visible = !this.visible;
     }

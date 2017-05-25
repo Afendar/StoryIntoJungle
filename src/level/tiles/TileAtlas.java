@@ -2,6 +2,12 @@ package level.tiles;
 
 import java.util.ArrayList;
 
+/**
+ * TileAtlas class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class TileAtlas {
     
     public static ArrayList<Tile> atlas = new ArrayList<>();

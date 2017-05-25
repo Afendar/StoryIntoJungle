@@ -2,6 +2,12 @@ package level.tiles;
 
 import level.Level;
 
+/**
+ * Sand class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Sand extends Tile {
     
     public boolean startBreak;
@@ -9,6 +15,11 @@ public class Sand extends Tile {
     
     private final boolean isBroken;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Sand(int imgX, int imgY){
         super(imgX, imgY, 9);
         this.startBreak = false;
@@ -21,6 +32,10 @@ public class Sand extends Tile {
         return level.getData(x, y) == 2;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isBroken(){
         return this.isBroken;
     }

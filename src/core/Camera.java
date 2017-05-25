@@ -3,12 +3,26 @@ package core;
 import entity.Player;
 import level.Level;
 
+/**
+ * Camera class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Camera{
     
     public int x, y;
     public int w, h;
     public Level level;
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param level 
+     */
     public Camera(int x, int y, int w, int h, Level level){
         this.x = x;
         this.y =y;
@@ -17,6 +31,10 @@ public class Camera{
         this.level = level;
     }
     
+    /**
+     * 
+     * @param p 
+     */
     public void update(Player p){
         this.x = (int)(p.getPosX() + ( Player.PLAYER_SIZE / 2 ) ) - this.w / 2;
         this.y = (int)(p.getPosY() + ( Player.PLAYER_SIZE / 2) ) - this.h / 2;

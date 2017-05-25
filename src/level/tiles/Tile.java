@@ -8,6 +8,12 @@ import javax.imageio.ImageIO;
 import core.Defines;
 import level.Level;
 
+/**
+ * Tile class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public abstract class Tile {
     
     public int imgX, imgY;
@@ -15,6 +21,12 @@ public abstract class Tile {
     public BufferedImage tileset, tile;
     public int bonus = 0;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY
+     * @param ID 
+     */
     public Tile(int imgX, int imgY, int ID){
         this.imgX = imgX;
         this.imgY = imgY;
@@ -32,13 +44,40 @@ public abstract class Tile {
         TileAtlas.atlas.add(this);
     }
     
+    /**
+     * 
+     * @param level
+     * @param x
+     * @param y
+     * @return 
+     */
     public abstract boolean canPass(Level level, int x, int y);
+    
+    /**
+     * 
+     * @param level
+     * @param x
+     * @param y
+     * @param dt 
+     */
     public abstract void update(Level level, int x, int y, double dt);
     
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y 
+     */
     public void render(Graphics g, int x, int y){
         g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
     }
     
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y 
+     */
     public void renderTop(Graphics g, int x, int y){
         
     }

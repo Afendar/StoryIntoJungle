@@ -1,29 +1,43 @@
 package ld34.profile;
 
-import core.Defines;
 import entity.CageEntity;
 import entity.Player;
 import java.util.List;
 import level.Level;
 import org.json.simple.JSONArray;
-
 import org.json.simple.JSONObject;
 
+/**
+ * Save class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Save extends Profile {
     
     private JSONObject jsonSaves;
     
     private static final Save INSTANCE = new Save();
     
+    /**
+     * 
+     */
     private Save(){
         super();
         this.loadSaves();
     }
     
+    /**
+     * 
+     * @return 
+     */
     public static Save getInstance(){
         return INSTANCE;
     }
     
+    /**
+     * 
+     */
     private void loadSaves(){
         this.load();
         this.jsonSaves = (JSONObject) this.profile.get("Saves");
@@ -34,11 +48,19 @@ public class Save extends Profile {
         }
     }
     
+    /**
+     * 
+     * @param slotNumber 
+     */
     public void removeSave(int slotNumber){
         this.jsonSaves.replace("Slot" + slotNumber, new JSONObject());
         this.save();
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean hasSave(){
         for(int i = 0;i<this.jsonSaves.size();i++){
             JSONObject save = (JSONObject)this.jsonSaves.get("Slot" + i);
@@ -49,6 +71,12 @@ public class Save extends Profile {
         return false;
     }
     
+    /**
+     * 
+     * @param slotId
+     * @param level
+     * @param player 
+     */
     public void saveGame(int slotId, Level level, Player player){
         JSONObject data = new JSONObject();
         
@@ -93,15 +121,27 @@ public class Save extends Profile {
         this.loadSaves();
     }
     
+    /**
+     * 
+     */
     public void saveSaves(){
         this.profile.replace("Saves", this.jsonSaves);
         this.save();
     }
     
+    /**
+     * 
+     * @param slotNumber
+     * @return 
+     */
     public JSONObject getSave(int slotNumber){
         return (JSONObject) this.jsonSaves.get("Slot" + slotNumber);
     }
     
+    /**
+     * 
+     * @return 
+     */
     public JSONObject getSaves(){
         return this.jsonSaves;
     }

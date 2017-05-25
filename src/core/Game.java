@@ -10,14 +10,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import ld34.profile.Save;
 import ld34.scene.GameScene;
 import ld34.scene.MenuScene;
-import ld34.scene.SavesScene;
 import ld34.scene.Scene;
 import ld34.scene.SplashScene;
 import profiler.Profiler;
 
+/**
+ * Game class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Game extends Canvas implements Runnable {
 
     public boolean running, paused;
@@ -34,6 +38,11 @@ public class Game extends Canvas implements Runnable {
     public Profiler profiler;
     public int frame, memoryUsed;
     
+    /**
+     * 
+     * @param w
+     * @param h 
+     */
     public Game(int w, int h){
         
         this.running = false;
@@ -68,6 +77,9 @@ public class Game extends Canvas implements Runnable {
         }
     }
     
+    /**
+     * 
+     */
     public void start(){
         
         if(this.running)
@@ -79,6 +91,9 @@ public class Game extends Canvas implements Runnable {
         
     }
     
+    /**
+     * 
+     */
     public void stop(){
         this.running = false;
     }
@@ -133,6 +148,10 @@ public class Game extends Canvas implements Runnable {
         }
     }
     
+    /**
+     * 
+     * @param dt 
+     */
     public void update(double dt){
 
         if(this.hasFocus()){
@@ -146,6 +165,9 @@ public class Game extends Canvas implements Runnable {
         }
     }
     
+    /**
+     * 
+     */
     public void render(){
         
         BufferStrategy bs = this.getBufferStrategy();

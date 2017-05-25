@@ -4,8 +4,19 @@ import java.awt.Graphics;
 import core.Defines;
 import level.Level;
 
+/**
+ * Floor class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Floor extends Tile {
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Floor(int imgX, int imgY){
         super(imgX, imgY, 1);
     }
@@ -25,6 +36,14 @@ public class Floor extends Tile {
         
     }
     
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param left
+     * @param right 
+     */
     public void render(Graphics g, int x, int y, boolean left, boolean right){
         if(left && right){
             this.tile = this.tileset.getSubimage((this.imgX * Defines.TILE_SIZE) + (Defines.TILE_SIZE/2), this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);

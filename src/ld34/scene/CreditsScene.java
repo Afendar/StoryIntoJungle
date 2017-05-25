@@ -14,6 +14,12 @@ import java.util.ResourceBundle;
 import ld34.profile.Settings;
 import core.Game;
 
+/**
+ * CreditsScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class CreditsScene extends Scene {
     
     public Font font, fontM, fontL;
@@ -21,6 +27,12 @@ public class CreditsScene extends Scene {
     public int[][] btnCoords;
     public int selectedItem;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public CreditsScene(int w, int h, Game game){
         super(w, h, game);
         
@@ -41,13 +53,13 @@ public class CreditsScene extends Scene {
         this.selectedItem = 0;
         
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
-        this.bundle = ResourceBundle.getBundle("lang.credits", this.game.langs[localeIndex]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[localeIndex]);
         
-        this.title = this.bundle.getString("title");
+        this.title = this.bundle.getString("credits_title");
         this.btnBack = this.bundle.getString("backToMain");
-        this.text1 = this.bundle.getString("text1");
-        this.text2 = this.bundle.getString("text2");
-        this.text3 = this.bundle.getString("text3");
+        this.text1 = this.bundle.getString("credits_text1");
+        this.text2 = this.bundle.getString("credits_text2");
+        this.text3 = this.bundle.getString("credits_text3");
     }
 
     @Override
@@ -101,6 +113,9 @@ public class CreditsScene extends Scene {
         g.drawImage(this.foreground2, 0, 0, null);
     }
     
+    /**
+     * 
+     */
     public void processHover(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -117,6 +132,10 @@ public class CreditsScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         
         Scene currentScene = this;

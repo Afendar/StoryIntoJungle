@@ -20,6 +20,12 @@ import particles.Leaf;
 import particles.Particle;
 import profiler.Profiler;
 
+/**
+ * Level class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Level {
     
     public int w, h;
@@ -31,7 +37,7 @@ public class Level {
     public Player player;
     public int nbLevel;
     public int nbCages;
-    public List<List<CageEntity>> cagesMap = new ArrayList<>(Defines.LEVEL_MAX);
+    public List<List<CageEntity>> cagesMap = new ArrayList<>();
     public List<Particle> particles = new ArrayList<>();
     public List<SandEntity> sandEntity = new ArrayList<>();
     public List<CageEntity> cageEntity = new ArrayList<>();
@@ -54,6 +60,10 @@ public class Level {
     public static final int BRACONEER = 32960;//RGB(0, 128, 192) BRACONEERS
     public static final int LIME = 11920925;//RGB() PLANTS
     
+    /**
+     * 
+     * @param nbLevel 
+     */
     public Level(int nbLevel){
         System.out.println("Loading level : " + nbLevel);
         this.nbLevel = nbLevel;
@@ -61,9 +71,19 @@ public class Level {
         this.complete = 0;
         this.freeCages = 0;
         
+        for(int i=0;i<Defines.LEVEL_MAX;i++){
+            this.cagesMap.add(new ArrayList<>());
+        }
+        
         this.loadLevel(nbLevel);
     }
     
+    /**
+     * 
+     * @param dt
+     * @param startX
+     * @param startY 
+     */
     public void update(double dt, int startX, int startY){
         int endX = (startX + this.nbTilesInScreenX + 2 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 2 : this.nbTilesW;
         int endY = (startY + this.nbTilesInScreenY + 2 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 2 : this.nbTilesH;
@@ -150,22 +170,44 @@ public class Level {
         }
     }
     
+    /**
+     * 
+     * @param screenWidth 
+     */
     public void setNbTilesInScreenX(int screenWidth){
         this.nbTilesInScreenX = (int)(screenWidth / Defines.TILE_SIZE);
     }
     
+    /**
+     * 
+     * @param screenHeight 
+     */
     public void setNbTilesInScreenY(int screenHeight){
         this.nbTilesInScreenY = (int)(screenHeight / Defines.TILE_SIZE);
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getNbTilesInScreenX(){
         return this.nbTilesInScreenX;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getNbTilesInScreenY(){
         return this.nbTilesInScreenY;
     }
     
+    /**
+     * 
+     * @param g
+     * @param startX
+     * @param startY 
+     */
     public void renderFirstLayer(Graphics g, int startX, int startY){
         
         Boolean debug = Profiler.getInstance().isVisible();
@@ -242,6 +284,12 @@ public class Level {
         }
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return 
+     */
     public CageEntity getCageEntity(int x, int y){
         for(int i=0;i< this.cageEntity.size();i++){
             CageEntity ce = this.cageEntity.get(i);
@@ -254,6 +302,12 @@ public class Level {
         return null;
     }
     
+    /**
+     * 
+     * @param g
+     * @param startX
+     * @param startY 
+     */
     public void renderSecondLayer(Graphics g, int startX, int startY){
         
         startX = startX - 3;
@@ -295,14 +349,29 @@ public class Level {
         }
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return 
+     */
     public int getTile(int x, int y){
         return this.map[x][y];
     }
     
+    /**
+     * 
+     * @param x
+     * @param y 
+     */
     public void removeTile(int x, int y){
         this.map[x][y] = 0;
     }
     
+    /**
+     * 
+     * @param data 
+     */
     public void setData(int[][] data){
         for(int i=0;i< data.length;i++){
             for(int j=0;j<data[i].length;j++){
@@ -317,20 +386,40 @@ public class Level {
         this.data = data;
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param val 
+     */
     public void setData(int x, int y, int val){
         this.data[x][y] = val;
     }
     
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return 
+     */
     public int getData(int x, int y){
         return this.data[x][y];
     }
     
+    /**
+     * 
+     * @param nbLevel 
+     */
     public void loadLevel(int nbLevel){
         
         this.loadFirstLayer(nbLevel);
         this.loadTopLayer(nbLevel);
     }
     
+    /**
+     * 
+     * @param nbLevel 
+     */
     public void loadFirstLayer(int nbLevel){
         try{
             URL url = this.getClass().getResource("/lvl" + ((Defines.DEV)? "-dev" : "") + nbLevel + ".png");
@@ -434,6 +523,10 @@ public class Level {
         }
     }
     
+    /**
+     * 
+     * @param nbLevel 
+     */
     public void loadTopLayer(int nbLevel){
         try{
             URL url = this.getClass().getResource("/lvl"+ ((Defines.DEV)? "-dev" : "") + nbLevel +"-top.png");
@@ -485,7 +578,11 @@ public class Level {
             e.getMessage();
         }
     }
-            
+    
+    /**
+     * 
+     * @param p 
+     */
     public void addParticle(Particle p){
         if(!(p instanceof Particle)){
             return;
@@ -494,27 +591,50 @@ public class Level {
         this.particles.add(p);
     }
     
+    /**
+     * 
+     * @param p 
+     */
     public void addPlayer(Player p){
         this.player = p;
     }
     
+    /**
+     * 
+     * @param percentage 
+     */
     public void setComplete(int percentage){
         this.complete = percentage;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getComplete(){
         return this.complete;
     }
     
+    /**
+     * 
+     */
     public void freeCage(){
         this.freeCages++;
         this.nbCages--;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getFreeCages(){
         return this.freeCages;
     }
     
+    /**
+     * 
+     * @param cagesInLevel 
+     */
     public void setCagesInLevel(List<CageEntity> cagesInLevel){
         for(int i=0;i<cagesInLevel.size();i++){
             CageEntity ce = cagesInLevel.get(i);

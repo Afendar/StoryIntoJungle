@@ -2,30 +2,55 @@ package ld34.profile;
 
 import org.json.simple.JSONArray;
 
+/**
+ * BestScores class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class BestScores extends Profile {
     
     private JSONArray bestScores;
     
     private static final BestScores INSTANCE = new BestScores();
     
+    /**
+     * 
+     */
     private BestScores(){
         super();
         this.loadBestScores();
     }
     
+    /**
+     * 
+     * @return 
+     */
     public static BestScores getInstance(){
         return INSTANCE;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public JSONArray getBestScores(){
         return this.bestScores;
     }
     
+    /**
+     * 
+     */
     private void loadBestScores(){
         this.load();
         this.bestScores = (JSONArray)this.profile.get("BestScores");
     }
     
+    /**
+     * 
+     * @param name
+     * @param score 
+     */
     public void insertScore(String name, int score){
         JSONArray jsonScores = this.bestScores;
         int insertion = -1;
@@ -48,6 +73,9 @@ public class BestScores extends Profile {
         }
     }
     
+    /**
+     * 
+     */
     public void saveBestScores(){
         this.profile.replace("BestScores", this.bestScores);
     }

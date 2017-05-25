@@ -13,7 +13,14 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
+/**
+ * CustomTextField class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public final class CustomTextField extends JComponent {
+    
     private boolean isEditing;
     private String value, name;
     private int x, y, w, h;
@@ -21,6 +28,15 @@ public final class CustomTextField extends JComponent {
     private long lastPress;
     private BufferedImage background;
     
+    /**
+     * 
+     * @param name
+     * @param value
+     * @param x
+     * @param y
+     * @param w
+     * @param h 
+     */
     public CustomTextField(String name, String value, int x, int y, int w, int h){
         super();
         this.x = x;
@@ -43,6 +59,13 @@ public final class CustomTextField extends JComponent {
         }
     }
     
+    /**
+     * 
+     * @param name
+     * @param value
+     * @param w
+     * @param h 
+     */
     public CustomTextField(String name, String value, int w, int h){
         this(name, value, 0, 0, w, h);
     }
@@ -52,10 +75,18 @@ public final class CustomTextField extends JComponent {
         super.setFont(font);
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isEditing(){
         return this.isEditing;
     }
     
+    /**
+     * 
+     * @param e 
+     */
     private void configure(KeyEvent e){
         if(e.getKeyCode() > 47 && e.getKeyCode() < 91){
             long now = System.currentTimeMillis();
@@ -87,10 +118,17 @@ public final class CustomTextField extends JComponent {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public String getValue(){
         return this.value;
     }
     
+    /**
+     * 
+     */
     private void editing(){
         this.requestFocus(true);
         this.isEditing = true;
@@ -98,6 +136,10 @@ public final class CustomTextField extends JComponent {
             this.value = "";
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void render(Graphics g){
         g.drawImage(this.background, this.x, this.y, null);
         if(this.value.equals("Enter name")){
@@ -115,6 +157,11 @@ public final class CustomTextField extends JComponent {
         }
     }
     
+    /**
+     * 
+     * @param x
+     * @param y 
+     */
     public void processClick(int x, int y){
         if(x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h){
             editing();
@@ -132,6 +179,10 @@ public final class CustomTextField extends JComponent {
         }
     }
     
+    /**
+     * 
+     * @param e 
+     */
     public void processKey(KeyEvent e){
         if(this.isEditing){
             if(this.value.equals("Enter name"))this.value = "";

@@ -24,6 +24,12 @@ import core.Game;
 import core.OptionButton;
 import javax.swing.JPanel;
 
+/**
+ * OptionsScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class OptionsScene extends Scene {
     
     public Font font, fontS, fontL, fontU;
@@ -38,6 +44,12 @@ public class OptionsScene extends Scene {
     public JPanel sliderContainer;
     public boolean startSlide;
    
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public OptionsScene(int w, int h, Game game){
         
         super(w, h, game);
@@ -114,9 +126,9 @@ public class OptionsScene extends Scene {
         
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         
-        this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[localeIndex]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[localeIndex]);
         
-        this.title = this.bundle.getString("title");
+        this.title = this.bundle.getString("settings_title");
         this.btnBack = this.bundle.getString("backToMain");
         this.difficulty = this.bundle.getString("difficulty");
         this.easy = this.bundle.getString("easy");
@@ -148,90 +160,93 @@ public class OptionsScene extends Scene {
             this.processKey(this.game.listener.e);
         }
         
-        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
+        if(this.game.listener.mousePressed){
             int mouseX = this.game.listener.mouseX;
             int mouseY = this.game.listener.mouseY;
             switch(this.currentTab){
                 case 0:
-                    if(mouseX > 199 && mouseX < 319 && mouseY > 266 && mouseY < 365){
-                        //male btn
-                        new Thread(Sound.select::play).start();
-                        if(Settings.getInstance().getConfigValue("Sex").equals("1")){
-                            Settings.getInstance().setConfigValue("Sex", "0");
-                            this.startSlide = true;
-                            this.oldPreview = this.currentPreview;
-                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2), 0, 128, 128);
+                    if(this.game.listener.mouseClickCount == 1){
+                        if(mouseX > 199 && mouseX < 319 && mouseY > 266 && mouseY < 365){
+                            //male btn
+                            new Thread(Sound.select::play).start();
+                            if(Settings.getInstance().getConfigValue("Sex").equals("1")){
+                                Settings.getInstance().setConfigValue("Sex", "0");
+                                this.startSlide = true;
+                                this.oldPreview = this.currentPreview;
+                                this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2), 0, 128, 128);
+                            }
                         }
-                    }
-                    else if(mouseX > 369 && mouseX < 489 && mouseY > 266 && mouseY < 365){
-                        //female btn
-                        new Thread(Sound.select::play).start();
-                        if(Settings.getInstance().getConfigValue("Sex").equals("0")){
-                            Settings.getInstance().setConfigValue("Sex", "1");
-                            this.startSlide = true;
-                            this.oldPreview = this.currentPreview;
-                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2 + 1), 0, 128, 128);
+                        else if(mouseX > 369 && mouseX < 489 && mouseY > 266 && mouseY < 365){
+                            //female btn
+                            new Thread(Sound.select::play).start();
+                            if(Settings.getInstance().getConfigValue("Sex").equals("0")){
+                                Settings.getInstance().setConfigValue("Sex", "1");
+                                this.startSlide = true;
+                                this.oldPreview = this.currentPreview;
+                                this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2 + 1), 0, 128, 128);
+                            }
                         }
-                    }
-                    else if(mouseX > 199 && mouseX < 319 && mouseY > 386 && mouseY < 485){
-                        //grand panda btn
-                        new Thread(Sound.select::play).start();
-                        if(Settings.getInstance().getConfigValue("Spicies").equals("1")){
-                            Settings.getInstance().setConfigValue("Spicies", "0");
-                            this.startSlide = true;
-                            this.oldPreview = this.currentPreview;
-                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))), 0, 128, 128);
+                        else if(mouseX > 199 && mouseX < 319 && mouseY > 386 && mouseY < 485){
+                            //grand panda btn
+                            new Thread(Sound.select::play).start();
+                            if(Settings.getInstance().getConfigValue("Spicies").equals("1")){
+                                Settings.getInstance().setConfigValue("Spicies", "0");
+                                this.startSlide = true;
+                                this.oldPreview = this.currentPreview;
+                                this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))), 0, 128, 128);
+                            }
                         }
-                    }
-                    else if(mouseX > 369 && mouseX < 489 && mouseY > 386 && mouseY < 485){
-                        //panda roux btn
-                        new Thread(Sound.select::play).start();
-                        if(Settings.getInstance().getConfigValue("Spicies").equals("0")){
-                            Settings.getInstance().setConfigValue("Spicies", "1");
-                            this.startSlide = true;
-                            this.oldPreview = this.currentPreview;
-                            this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex")) + 2), 0, 128, 128);
+                        else if(mouseX > 369 && mouseX < 489 && mouseY > 386 && mouseY < 485){
+                            //panda roux btn
+                            new Thread(Sound.select::play).start();
+                            if(Settings.getInstance().getConfigValue("Spicies").equals("0")){
+                                Settings.getInstance().setConfigValue("Spicies", "1");
+                                this.startSlide = true;
+                                this.oldPreview = this.currentPreview;
+                                this.currentPreview = this.previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex")) + 2), 0, 128, 128);
+                            }
                         }
                     }
                     break;
                 case 1:
-                    if(mouseX > 189 && mouseX < 189 + 120 &&
-                            mouseY > 166 && mouseY < 166 + 99){
-                        new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Difficulty", "0");
+                    if(this.game.listener.mouseClickCount == 1){
+                        if(mouseX > 189 && mouseX < 189 + 120 &&
+                                mouseY > 166 && mouseY < 166 + 99){
+                            new Thread(Sound.select::play).start();
+                            Settings.getInstance().setConfigValue("Difficulty", "0");
+                        }
+                        else if(mouseX > 339 && mouseX < 339 + 120 &&
+                                mouseY > 166 && mouseY < 166 + 99){
+                            new Thread(Sound.select::play).start();
+                            Settings.getInstance().setConfigValue("Difficulty", "2");
+                        }
+                        else if(mouseX > 479 && mouseX < 479 + 120 &&
+                                mouseY > 166 && mouseY < 166 + 99){
+                            new Thread(Sound.select::play).start();
+                            Settings.getInstance().setConfigValue("Difficulty", "4");
+                        }
+                        else if(mouseX > 629 && mouseX < 629 + 120 &&
+                                mouseY > 166 && mouseY < 166 + 99){
+                            new Thread(Sound.select::play).start();
+                            Settings.getInstance().setConfigValue("Difficulty", "5");
+                        }
+                        else if(mouseX > 221 && mouseX < 221 + 234 &&
+                                mouseY > 310 && mouseY < 310 + 100){
+                            new Thread(Sound.select::play).start();
+                            Settings.getInstance().setConfigValue("Lang", "0");
+                            this.reloadLangs();
+                        }
+                        else if(mouseX > 481 && mouseX < 481 + 234 &&
+                                mouseY > 305 && mouseY < 305 + 100){
+                            new Thread(Sound.select::play).start();
+                            Settings.getInstance().setConfigValue("Lang", "1");
+                            this.reloadLangs();
+                        }
                     }
-                    else if(mouseX > 339 && mouseX < 339 + 120 &&
-                            mouseY > 166 && mouseY < 166 + 99){
-                        new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Difficulty", "2");
-                    }
-                    else if(mouseX > 479 && mouseX < 479 + 120 &&
-                            mouseY > 166 && mouseY < 166 + 99){
-                        new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Difficulty", "4");
-                    }
-                    else if(mouseX > 629 && mouseX < 629 + 120 &&
-                            mouseY > 166 && mouseY < 166 + 99){
-                        new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Difficulty", "5");
-                    }
-                    else if(mouseX > 221 && mouseX < 221 + 234 &&
-                            mouseY > 310 && mouseY < 310 + 100){
-                        new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Lang", "0");
-                        this.reloadLangs();
-                    }
-                    else if(mouseX > 481 && mouseX < 481 + 234 &&
-                            mouseY > 305 && mouseY < 305 + 100){
-                        new Thread(Sound.select::play).start();
-                        Settings.getInstance().setConfigValue("Lang", "1");
-                        this.reloadLangs();
-                    }
-                    else if(mouseX >= 200 && mouseX <= 440 && mouseY > 475 && mouseY < 489){
+                    
+                    if(mouseX >= 200 && mouseX <= 440 && mouseY > 475 && mouseY < 489){
                         this.posBar = mouseX;
                         int newVolume = (int)((200 - posBar)/ - 2.4);
-                        //posBar = (int)(153 + (2 * volume));
-                        //volume = (int)((153 - posBar)/(-2));
                         Settings.getInstance().setConfigValue("Sound", Integer.toString(newVolume));
                     }
                     break;
@@ -255,6 +270,9 @@ public class OptionsScene extends Scene {
         return processClick();
     }
 
+    /**
+     * 
+     */
     public void reloadLangs(){
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
         this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[localeIndex]);
@@ -357,6 +375,9 @@ public class OptionsScene extends Scene {
         g.drawImage(this.foreground2, 0, 0, null);
     }
     
+    /**
+     * 
+     */
     public void processHover(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -389,6 +410,10 @@ public class OptionsScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         
         Scene currentScene = this;
@@ -438,6 +463,10 @@ public class OptionsScene extends Scene {
         return currentScene;
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderPlayerSettings(Graphics g){
         
         this.nameField.render(g);
@@ -496,6 +525,10 @@ public class OptionsScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderGameSettings(Graphics g){
         //difficulty
         g.setColor(Color.BLACK);
@@ -578,6 +611,10 @@ public class OptionsScene extends Scene {
         g.fillRect(posBar, 475, 9, 14);
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderControlsSettings(Graphics g){
         g.drawImage(this.bottomControls, 218, 345, null);
         g.drawImage(this.bottomControls, 475, 345, null);
@@ -598,6 +635,10 @@ public class OptionsScene extends Scene {
         }
     }
 
+    /**
+     * 
+     * @param e 
+     */
     public void processKey(KeyEvent e){
         
         switch(this.currentTab){
@@ -616,6 +657,9 @@ public class OptionsScene extends Scene {
         }
     }
     
+    /**
+     * 
+     */
     public void processButtonsClick(){
         for(int i=0;i<this.optionButtons.size();i++){
             if(this.optionButtons.get(i).isEditing())

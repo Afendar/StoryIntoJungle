@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import org.json.simple.JSONObject;
 
+/**
+ * Settings class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Settings extends Profile {
     
     private JSONObject jsonSettings;
@@ -12,6 +18,9 @@ public class Settings extends Profile {
     
     private static final Settings INSTANCE = new Settings();
     
+    /**
+     * 
+     */
     private Settings(){
         super();
         
@@ -28,10 +37,17 @@ public class Settings extends Profile {
         this.loadConfigs();
     }
     
+    /**
+     * 
+     * @return 
+     */
     public static Settings getInstance(){
         return INSTANCE;
     }
     
+    /**
+     * 
+     */
     private void loadConfigs(){
         this.load();
         this.jsonSettings = (JSONObject) this.profile.get("Settings");
@@ -42,14 +58,27 @@ public class Settings extends Profile {
         }
     }
     
+    /**
+     * 
+     * @param key
+     * @param value 
+     */
     public void setConfigValue(String key, String value){
         this.jsonSettings.replace(key, value);
     }
     
+    /**
+     * 
+     * @param key
+     * @return 
+     */
     public String getConfigValue(String key){
         return this.jsonSettings.get(key).toString();
     }
     
+    /**
+     * 
+     */
     public void saveConfig(){
         this.profile.replace("Settings", this.jsonSettings);
         this.save();

@@ -3,8 +3,19 @@ package level.tiles;
 import java.awt.Graphics;
 import level.Level;
 
+/**
+ * Empty class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Empty extends Tile {
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Empty(int imgX, int imgY){
         super(imgX, imgY, 0);
     }

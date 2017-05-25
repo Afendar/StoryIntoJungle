@@ -18,17 +18,30 @@ import core.Game;
 import ld34.profile.Save;
 import particles.Leaf;
 
+/**
+ * MenuScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class MenuScene extends Scene {
     
     public BufferedImage background2, logo, settingsIcon, highScoresIcon, creditsIcon;
     public Font font, fontL, fontS;
     public String title, btnNewGame, btnOptions, btnBestScores, btnCredits, btnQuit, btnLoadGame;
     public int[][] btnCoords;
-    private String[] btnLabels;
     public int selectedItem;
+    
+    private String[] btnLabels;
     private ArrayList<Leaf> leavesList = new ArrayList<>(5);
     private boolean displayLoad;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public MenuScene(int w, int h, Game game){
         
         super(w, h, game);
@@ -54,7 +67,7 @@ public class MenuScene extends Scene {
             e.getMessage();
         }
 
-        this.bundle = ResourceBundle.getBundle("lang.menu", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
         
         this.displayLoad = Save.getInstance().hasSave();
         
@@ -176,6 +189,9 @@ public class MenuScene extends Scene {
         g.drawImage(this.creditsIcon, 733, 535, null);
     }
     
+    /**
+     * 
+     */
     public void processHover(){
         
         int mouseX = this.game.listener.mouseX;
@@ -203,6 +219,10 @@ public class MenuScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         
         Scene currentScene = this;
@@ -269,6 +289,11 @@ public class MenuScene extends Scene {
         return currentScene;
     }
     
+    /**
+     * 
+     * @param img
+     * @return 
+     */
     private BufferedImage horizontalflip(BufferedImage img) {  
         int w = img.getWidth();  
         int h = img.getHeight();  

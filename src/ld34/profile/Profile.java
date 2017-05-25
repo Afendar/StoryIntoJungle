@@ -11,12 +11,21 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+/**
+ * Profile class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public abstract class Profile {
     
     protected JSONObject profile;
     protected JSONParser parser;
     protected String FILENAME = "data.json";
     
+    /**
+     * 
+     */
     public Profile(){
         this.profile = new JSONObject();
         this.profile.put("Settings", new JSONObject());
@@ -26,6 +35,9 @@ public abstract class Profile {
         this.parser = new JSONParser();
     }
     
+    /**
+     * 
+     */
     protected void save(){
         try{
             PrintWriter pw = new PrintWriter(
@@ -42,6 +54,9 @@ public abstract class Profile {
         }
     }
     
+    /**
+     * 
+     */
     protected void load(){
         File f = new File(this.FILENAME);
         if(f.exists() && !f.isDirectory()){

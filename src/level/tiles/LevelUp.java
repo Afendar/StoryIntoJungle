@@ -5,10 +5,21 @@ import java.awt.image.BufferedImage;
 import core.Defines;
 import level.Level;
 
+/**
+ * LevelUp class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class LevelUp extends Tile{
 
     public BufferedImage topSprite, bottomSprite;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public LevelUp(int imgX, int imgY){
         super(imgX, imgY, 7);
         

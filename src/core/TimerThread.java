@@ -1,5 +1,11 @@
 package core;
 
+/**
+ * TimerThread class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class TimerThread extends Thread {
     
     public static int MILLI = 0;

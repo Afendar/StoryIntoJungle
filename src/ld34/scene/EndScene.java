@@ -13,6 +13,12 @@ import java.util.ResourceBundle;
 import ld34.profile.Settings;
 import core.Game;
 
+/**
+ * EndScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class EndScene extends Scene {
 
     public Font font, fontS;
@@ -21,6 +27,12 @@ public class EndScene extends Scene {
     public int selectedItem;
     public int alpha;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public EndScene(int w, int h, Game game){
         super(w, h, game);
         
@@ -34,7 +46,6 @@ public class EndScene extends Scene {
             e.getMessage();
         }
 
-        //new game
         int [][]coords = {
             {(3*this.w/4) - 80, 455}
         };
@@ -42,12 +53,12 @@ public class EndScene extends Scene {
         this.selectedItem = 0;
         
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
-        this.bundle = ResourceBundle.getBundle("lang.end", this.game.langs[localeIndex]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[localeIndex]);
         
-        this.text1 = this.bundle.getString("text1");
-        this.text2 = this.bundle.getString("text2");
-        this.text3 = this.bundle.getString("text3");
-        this.text4 = this.bundle.getString("text4");
+        this.text1 = this.bundle.getString("end_text1");
+        this.text2 = this.bundle.getString("end_text2");
+        this.text3 = this.bundle.getString("end_text3");
+        this.text4 = this.bundle.getString("end_text4");
         this.btnBack = this.bundle.getString("backToMain");
         
         this.alpha = 255;
@@ -109,6 +120,9 @@ public class EndScene extends Scene {
         g.fillRect(0, 0, this.w, this.h);
     }
     
+    /**
+     * 
+     */
     public void processHover(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -123,6 +137,10 @@ public class EndScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         
         Scene currentScene = this;

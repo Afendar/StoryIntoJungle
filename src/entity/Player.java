@@ -18,6 +18,12 @@ import java.awt.Color;
 import level.Level;
 import level.tiles.TileAtlas;
 
+/**
+ * Player class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Player extends Entity {
     
     public Level level;
@@ -33,6 +39,12 @@ public class Player extends Entity {
     public int direction, timeJAnim, offset, oldposX, oldposY, offset2, timeJEndAnim;
     public Thread jumpParticles, endJumpParticles;
     
+    public static final int SPECIES_PANDA = 0;
+    public static final int SPECIES_REDPANDA = 1;
+    public static final int SEX_BOY = 0;
+    public static final int SEX_GIRL = 1;
+    public static final int PLAYER_SIZE = 64;
+    
     protected boolean isFalling, isRespawn;
     protected boolean isJumping, renderJump, renderJumpEnd;
     
@@ -40,12 +52,15 @@ public class Player extends Entity {
     private int animX, animY, timeAnim;
     private String name;
     
-    public static final int SPECIES_PANDA = 0;
-    public static final int SPECIES_REDPANDA = 1;
-    public static final int SEX_BOY = 0;
-    public static final int SEX_GIRL = 1;
-    public static final int PLAYER_SIZE = 64;
-    
+    /**
+     * 
+     * @param posX
+     * @param posY
+     * @param level
+     * @param listener
+     * @param cam
+     * @param difficulty 
+     */
     public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty){
         super(posX, posY);
         
@@ -113,6 +128,10 @@ public class Player extends Entity {
         this.name = Settings.getInstance().getConfigValue("Name");
     }
 
+    /**
+     * 
+     * @param isRespawning 
+     */
     public void setIsRespawning(boolean isRespawning){
         this.isRespawn = isRespawning;
         this.sprite = this.spritesheet.getSubimage(0, 2 * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
@@ -384,6 +403,12 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return 
+     */
     public boolean move(float x, float y){
         
         this.posX += x;
@@ -439,6 +464,10 @@ public class Player extends Entity {
         }
     }
     
+    /**
+     * 
+     * @param lvl 
+     */
     public void reloadSpritesheet(int lvl){
         
         switch(lvl){
@@ -482,10 +511,18 @@ public class Player extends Entity {
         return bounds;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isJumping(){
         return this.isJumping;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isFalling(){
         return this.isFalling;
     }
@@ -497,14 +534,26 @@ public class Player extends Entity {
         g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
     }
     
+    /**
+     * 
+     * @return 
+     */
     public String getName(){
         return this.name;
     }
     
+    /**
+     * 
+     * @param name 
+     */
     public void setName(String name){
         this.name = name;
     }
     
+    /**
+     * 
+     * @param species 
+     */
     public void setSpecies(int species){
         switch(species){
             case Player.SPECIES_PANDA:

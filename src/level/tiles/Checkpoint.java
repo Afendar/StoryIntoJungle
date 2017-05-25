@@ -6,12 +6,23 @@ import core.Defines;
 import core.TimerThread;
 import level.Level;
 
+/**
+ * Checkpoint class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Checkpoint extends Tile{
     
     public BufferedImage tile2, tile3;
     public int pos, timeAnim, counter;
     public boolean animated;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Checkpoint(int imgX, int imgY){
         super(imgX, imgY, 8);
         this.pos = 0;

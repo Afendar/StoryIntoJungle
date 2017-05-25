@@ -8,17 +8,33 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
+/**
+ * InputsListeners class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class InputsListeners implements KeyListener, MouseMotionListener, MouseListener {
 
+    /**
+     * Internal Action class
+     */
     public class Action{
         
         public boolean enabled, typed;
         public int pressCpt, absorbCpt;
         
+         /**
+          * 
+          */
         public Action(){
             actions.add(this);
         }
         
+        /**
+         * 
+         * @param enabled 
+         */
         public void switched(boolean enabled){
             if(enabled != this.enabled)
                 this.enabled = enabled;
@@ -27,6 +43,9 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
             }
         }
         
+        /**
+         * 
+         */
         public void update(){
             if(this.absorbCpt < this.pressCpt){
                 this.absorbCpt++;
@@ -40,7 +59,6 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     
     public boolean[] keys;
     public ArrayList<Action> actions = new ArrayList<>();
-    
     public Action jump = new Action();
     public Action slow = new Action();
     public Action next = new Action();
@@ -51,6 +69,10 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     public boolean mouseExited, mousePressed;
     public KeyEvent e = null;
     
+    /**
+     * 
+     * @param game 
+     */
     public InputsListeners(Game game){
         
         game.addKeyListener(this);
@@ -65,6 +87,9 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
         this.keys = new boolean[KeyEvent.KEY_LAST];
     }
     
+    /**
+     * 
+     */
     public void update(){
         this.mouseClickCount = 0;
         for(int i=0; i<this.actions.size();i++){
@@ -72,6 +97,11 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
         }
     }
     
+    /**
+     * 
+     * @param e
+     * @param enabled 
+     */
     public void processKey(KeyEvent e, boolean enabled){
         if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))) 
             jump.switched(enabled);

@@ -11,6 +11,12 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import level.Level;
 
+/**
+ * Braconeers class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Braconeers extends Entity {
     
     protected BufferedImage spritesheet, sprite;
@@ -21,10 +27,15 @@ public class Braconeers extends Entity {
     protected int velX;
     protected Random rnd;
     protected int offset;
-    
     protected static int LEFT = 0;
     protected static int RIGHT = 1;
     
+    /**
+     * 
+     * @param level
+     * @param posX
+     * @param posY 
+     */
     public Braconeers(Level level, int posX, int posY)
     {
         super(posX , posY - Defines.TILE_SIZE);
@@ -92,6 +103,9 @@ public class Braconeers extends Entity {
         }
     }
     
+    /**
+     * 
+     */
     protected void move(){
         this.posX += this.velX;
         

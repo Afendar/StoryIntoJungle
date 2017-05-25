@@ -16,14 +16,27 @@ import core.Game;
 import ld34.profile.BestScores;
 import org.json.simple.JSONArray;
 
+/**
+ * HighScoresScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class HighScoresScene extends Scene {
     
     public Font font, fontS, fontM, fontXS;
     public String title, btnBack;
     public int[][] btnCoords;
     public int selectedItem;
+    
     private final JSONArray bestScores;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public HighScoresScene(int w, int h, Game game){
         super(w, h, game);
         
@@ -40,9 +53,9 @@ public class HighScoresScene extends Scene {
             e.getMessage();
         }
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
-        this.bundle = ResourceBundle.getBundle("lang.bestscores", this.game.langs[localeIndex]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[localeIndex]);
         
-        this.title = this.bundle.getString("title");
+        this.title = this.bundle.getString("highscores_title");
         this.btnBack = this.bundle.getString("backToMain");
         
         int [][]coords = {
@@ -63,6 +76,9 @@ public class HighScoresScene extends Scene {
         return this.processClick();
     }
 
+    /**
+     * 
+     */
     public void processHover(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -79,6 +95,10 @@ public class HighScoresScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         
         Scene currentScene = this;

@@ -12,16 +12,31 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import level.Level;
 
+/**
+ * CageEntity class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class CageEntity extends Entity {
 
+    
+    public BufferedImage tileset, topLeftSprite, topRightSprite, bottomLeftSprite, bottomRightSprite, pandas;
+    
     protected double dt;
     protected Level level;
+    
     private float alpha;
     private int brokenStep, offset, offsetPandas;
     private boolean isBreak, renderHurt, renderBreak;
-    public BufferedImage tileset, topLeftSprite, topRightSprite, bottomLeftSprite, bottomRightSprite, pandas;
     private int timerender;
     
+    /**
+     * 
+     * @param level
+     * @param posX
+     * @param posY 
+     */
     public CageEntity(Level level, int posX, int posY){
         super(posX, posY);
         
@@ -45,6 +60,9 @@ public class CageEntity extends Entity {
         this.pandas = this.tileset.getSubimage(4 *Defines.TILE_SIZE, 285, 2 * Defines.TILE_SIZE, 80);
     }
     
+    /**
+     * 
+     */
     public void hurt(){
         if(this.brokenStep < 4 && !this.renderHurt){
             this.brokenStep++;
@@ -152,6 +170,10 @@ public class CageEntity extends Entity {
         }
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderTop(Graphics g){
         g.drawImage(this.bottomLeftSprite, (int)posX, (int)(posY + 25), null);
         g.drawImage(this.bottomRightSprite, (int)(posX + Defines.TILE_SIZE), (int)(posY + 25), null);
@@ -164,10 +186,18 @@ public class CageEntity extends Entity {
         g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
     }
     
+    /**
+     * 
+     * @return 
+     */
     public boolean isBreak(){
         return this.isBreak;
     }
     
+    /**
+     * 
+     * @param broken 
+     */
     public void setBroken(boolean broken){
         this.isBreak = broken;
         if(broken){

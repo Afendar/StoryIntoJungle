@@ -1,5 +1,6 @@
 package ld34.scene;
 
+import audio.Sound;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -18,19 +19,24 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-import ld34.profile.Settings;
 import core.Game;
 import entity.CageEntity;
+import java.util.Collections;
 
+/**
+ * MapScene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class MapScene extends Scene {
     
-    public String nextTxt ,saveTxt, btnBack;
-    public BufferedImage mapBg, panda;
+    public BufferedImage mapBg, panda, homeIcon, previousIcon, nextIcon, saveIcon, bgBtnMediumNoSelect, bgBtnMediumSelect;
     public Font font;
     public int[][] btnCoords;
     public int selectedItem, currentLvl, currentScore;
+    
     private int[][] coordsPins = {
         {86, 348},
         {182, 407},
@@ -47,6 +53,14 @@ public class MapScene extends Scene {
     private boolean animated = false;
     private List<List<CageEntity>> cagesMap;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game
+     * @param currentLvl
+     * @param currentScore 
+     */
     public MapScene(int w, int h, Game game, int currentLvl, int currentScore){
         super(w, h, game);
         
@@ -56,17 +70,28 @@ public class MapScene extends Scene {
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             url = runtimeClass.getResource("/bgmap.png");
             this.mapBg = ImageIO.read(url);
-            url = runtimeClass.getResource("/little_panda.png");
+            url = runtimeClass.getResource("/littles_pandas.png");
             this.panda = ImageIO.read(url);
+            this.panda = this.panda.getSubimage(0, 0, 64, 64);
+            
+            this.homeIcon = this.spritesheetGui2.getSubimage(243, 94, 42, 34);
+            this.previousIcon = this.spritesheetGui2.getSubimage(760, 151, 34, 34);
+            this.nextIcon = this.spritesheetGui2.getSubimage(726, 151, 34, 36);
+            this.saveIcon = this.spritesheetGui2.getSubimage(176, 93, 34, 35);
+            
+            this.bgBtnMediumNoSelect = this.spritesheetGui2.getSubimage(370, 1, 120, 99);
+            this.bgBtnMediumSelect = this.spritesheetGui2.getSubimage(491, 1, 120, 99);
             
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
         
         int [][]coords = {
-            {25, 505},
-            {(this.w/3) + 25, 505},
-            {(2*this.w/3) + 25, 505}
+            {this.w/6 - 60, 480},
+            {2* this.w/6 - 60, 480},
+            {3* this.w/6 - 60, 480},
+            {4* this.w/6 - 60, 480},
+            {5* this.w/6 - 60, 480}
         };
         
         this.btnCoords = coords;
@@ -74,12 +99,6 @@ public class MapScene extends Scene {
         this.currentLvl = currentLvl;
         this.currentScore = currentScore;
         
-        int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
-        this.bundle = ResourceBundle.getBundle("lang.levelmap", this.game.langs[localeIndex]);
-        
-        this.btnBack = this.bundle.getString("backToMain");
-        this.nextTxt = this.bundle.getString("next");
-        this.saveTxt = this.bundle.getString("save");
         this.rect = new Rectangle(0, 0, 32, 32);
         this.index = 0;
         
@@ -134,53 +153,59 @@ public class MapScene extends Scene {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(this.mapBg, 0, 0, null);
+        
         g.setFont(this.font);
+        
         FontMetrics metrics = g.getFontMetrics(this.font);
-        //draw back btn
-        int backWidth = metrics.stringWidth(this.btnBack);
-        g.drawImage(this.bgBtn, this.btnCoords[0][0], this.btnCoords[0][1], null);
+        
         if(this.selectedItem == 1)
         {
-            g2d.rotate(-0.1, 25 + 107, 535);
-            g.setColor(this.darkGreen);
-            g.drawString(this.btnBack, (25 + 107) - backWidth/2, 545);
-            g2d.rotate(0.1, 25 + 107, 535);
+            g.drawImage(this.bgBtnMediumSelect, this.btnCoords[0][0], this.btnCoords[0][1], null);
         }
         else
         {
-            g.setColor(Color.BLACK);
-            g.drawString(this.btnBack, (25 + 107) - backWidth/2, 545);
+            g.drawImage(this.bgBtnMediumNoSelect, this.btnCoords[0][0], this.btnCoords[0][1], null);
         }
         
-        int saveWidth = metrics.stringWidth(this.saveTxt);
-        g.drawImage(this.bgBtn, this.btnCoords[1][0], this.btnCoords[1][1], null);
         if(this.selectedItem == 2)
         {
-            g2d.rotate(-0.1, (this.w/3) + 25 + 107, 535);
-            g.setColor(this.darkGreen);
-            g.drawString(this.saveTxt, ((this.w/3) + 25 + 107) - saveWidth/2, 545);
-            g2d.rotate(0.1, (this.w/3) + 25 + 107, 535);
+            g.drawImage(this.bgBtnMediumSelect, this.btnCoords[1][0], this.btnCoords[1][1], null);
         }
         else
         {
-            g.setColor(Color.BLACK);
-            g.drawString(this.saveTxt, ((this.w/3) + 25 + 107) - saveWidth/2, 545);
+            g.drawImage(this.bgBtnMediumNoSelect, this.btnCoords[1][0], this.btnCoords[1][1], null);
         }
         
-        int nextWidth = metrics.stringWidth(this.nextTxt);
-        g.drawImage(this.bgBtn, this.btnCoords[2][0], this.btnCoords[2][1], null);
         if(this.selectedItem == 3)
         {
-            g2d.rotate(-0.1, (2*this.w/3) + 25 + 107, 535);
-            g.setColor(this.darkGreen);
-            g.drawString(this.nextTxt, ((2*this.w/3) + 25 + 107) - nextWidth/2, 545);
-            g2d.rotate(0.1, (2*this.w/3) + 25 + 107, 535);
+            g.drawImage(this.bgBtnMediumSelect, this.btnCoords[2][0], this.btnCoords[2][1], null);
         }
         else
         {
-            g.setColor(Color.BLACK);
-            g.drawString(this.nextTxt, ((2*this.w/3) + 25 + 107) - nextWidth/2, 545);
+            g.drawImage(this.bgBtnMediumNoSelect, this.btnCoords[2][0], this.btnCoords[2][1], null);
         }
+        
+        if(this.selectedItem == 4){
+            g.drawImage(this.bgBtnMediumSelect, this.btnCoords[3][0], this.btnCoords[3][1], null);
+        }
+        else{
+            g.drawImage(this.bgBtnMediumNoSelect, this.btnCoords[3][0], this.btnCoords[3][1], null);
+        }
+        
+        if(this.selectedItem == 5){
+            g.drawImage(this.bgBtnMediumSelect, this.btnCoords[4][0], this.btnCoords[4][1], null);
+        }
+        else{
+            g.drawImage(this.bgBtnMediumNoSelect, this.btnCoords[4][0], this.btnCoords[4][1], null);
+        }
+        
+        g.drawImage(this.homeIcon, this.btnCoords[0][0] + 35, this.btnCoords[0][1] + 32, null);
+        g.drawImage(this.saveIcon, this.btnCoords[1][0] + 42, this.btnCoords[1][1] + 32, null);
+        g.drawImage(this.previousIcon, this.btnCoords[2][0] + 40, this.btnCoords[2][1] + 30, null);
+        g.drawImage(this.nextIcon, this.btnCoords[3][0] + 40, this.btnCoords[3][1] + 30, null);
+        
+        g.setColor(new Color(44, 23, 4));
+        g.drawString("GO", this.btnCoords[4][0] + 40, this.btnCoords[4][1] + 55);
         
         //draw curves lvl 1 to 2
         g.setColor(Color.RED);
@@ -206,27 +231,47 @@ public class MapScene extends Scene {
         g2d.drawImage(this.panda, null, (int)this.pos.getX() - 24, (int)this.pos.getY() - 24);
     }
     
+    /**
+     * 
+     */
     public void processHover(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
         
-        if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 214 &&
-                mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 70){
+        int oldSelected = this.selectedItem;
+        if(mouseX > this.btnCoords[0][0] && mouseX < this.btnCoords[0][0] + 120 &&
+                mouseY > this.btnCoords[0][1] && mouseY < this.btnCoords[0][1] + 99){
             this.selectedItem = 1;
         }
-        else if(mouseX > this.btnCoords[1][0] && mouseX < this.btnCoords[1][0] + 214 &&
-                mouseY > this.btnCoords[1][1] && mouseY < this.btnCoords[1][1] + 70){
+        else if(mouseX > this.btnCoords[1][0] && mouseX < this.btnCoords[1][0] + 120 &&
+                mouseY > this.btnCoords[1][1] && mouseY < this.btnCoords[1][1] + 99){
             this.selectedItem = 2;
         }
-        else if(mouseX > this.btnCoords[2][0] && mouseX < this.btnCoords[2][0] + 214 &&
-                mouseY > this.btnCoords[2][1] && mouseY < this.btnCoords[2][1] + 70){
+        else if(mouseX > this.btnCoords[2][0] && mouseX < this.btnCoords[2][0] + 120 &&
+                mouseY > this.btnCoords[2][1] && mouseY < this.btnCoords[2][1] + 99){
             this.selectedItem = 3;
+        }
+        else if(mouseX > this.btnCoords[3][0] && mouseX < this.btnCoords[3][0] + 120 &&
+                mouseY > this.btnCoords[3][1] && mouseY < this.btnCoords[3][1] + 99){
+            this.selectedItem = 4;
+        }
+        else if(mouseX > this.btnCoords[4][0] && mouseX < this.btnCoords[4][0] + 120 &&
+                mouseY > this.btnCoords[4][1] && mouseY < this.btnCoords[4][1] + 99){
+            this.selectedItem = 5;
         }
         else{
             this.selectedItem = 0;
         }
+        
+        if(this.selectedItem != 0 && this.selectedItem != oldSelected){
+            new Thread(Sound.hover::play).start();
+        }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public Scene processClick(){
         Scene currentScene = this;
         
@@ -240,27 +285,40 @@ public class MapScene extends Scene {
                     //save
                     break;
                 case 3:
-                    this.animated = true;
-                    this.currentLvl++;
-                    this.followNext();
+                    if(this.currentLvl > 1){
+                        this.animated = true;
+                        this.currentLvl--;
+                        this.followPrevious();
+                    }
+                    break;
+                case 4:
+                    if(this.currentLvl < 6){
+                        this.animated = true;
+                        this.currentLvl++;
+                        this.followNext();
+                    }
+                    break;
+                case 5:
+                    if(this.animated && 
+                        this.pos.getX() == this.coordsPins[this.currentLvl - 1][0] && 
+                        this.pos.getY() == this.coordsPins[this.currentLvl - 1][1])
+                    {
+                        GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
+                        gs.setLevelCagesMap(this.cagesMap);
+                        currentScene = gs;
+                    }
                     break;
             }
-        }
-        
-        if(this.animated && 
-                this.pos.getX() == this.coordsPins[this.currentLvl - 1][0] && 
-                this.pos.getY() == this.coordsPins[this.currentLvl - 1][1])
-        {
-            GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
-            gs.setLevelCagesMap(this.cagesMap);
-            currentScene = gs;
         }
         
         return currentScene;
     }
     
+    /**
+     * 
+     */
     public void followNext(){
-        PathIterator pi = curve[this.currentLvl-2].getPathIterator(null, 0.01);
+        PathIterator pi = curve[this.currentLvl - 2].getPathIterator(null, 0.01);
         this.points = new ArrayList<>(25);
         while(!pi.isDone())
         {
@@ -276,6 +334,33 @@ public class MapScene extends Scene {
         this.index = 0;
     }
     
+    /**
+     * 
+     */
+    public void followPrevious(){
+        PathIterator pi = curve[this.currentLvl - 1].getPathIterator(null, 0.01);
+        this.points = new ArrayList<>(25);
+        while(!pi.isDone())
+        {
+            double[] coordinates = new double[6];
+            switch(pi.currentSegment(coordinates)){
+                case PathIterator.SEG_MOVETO:
+                case PathIterator.SEG_LINETO:
+                    this.points.add(new Point2D.Double(coordinates[0], coordinates[1]));
+                    break;
+            }
+            pi.next();
+        }
+        
+        Collections.reverse(this.points);
+        
+        this.index = 0;
+    }
+    
+    /**
+     * 
+     * @param cagesMap 
+     */
     public void setCagesMap(List<List<CageEntity>> cagesMap){
         this.cagesMap = cagesMap;
     }

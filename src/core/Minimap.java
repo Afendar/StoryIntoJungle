@@ -4,11 +4,25 @@ import java.awt.Color;
 import java.awt.Graphics;
 import level.Level;
 
+/**
+ * Minimap class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Minimap {
     
     public int w, h, playerX, playerY;
     public Level lvl;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param playerX
+     * @param playerY
+     * @param lvl 
+     */
     public Minimap(int w, int h, int playerX, int playerY, Level lvl){
         this.w = w;
         this.h = h;
@@ -17,11 +31,20 @@ public class Minimap {
         this.lvl = lvl;
     }
     
+    /**
+     * 
+     * @param playerX
+     * @param playerY 
+     */
     public void update(int playerX, int playerY){
         this.playerX = ((playerX) / 32) + 50;
         this.playerY = ((playerY * 2) / 32) + 282;
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void render(Graphics g){
         g.setColor(new Color(0, 0, 0, 170));
         g.fillRect(0, 0, this.w, this.h);

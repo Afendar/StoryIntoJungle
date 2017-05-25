@@ -9,6 +9,12 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import core.Game;
 
+/**
+ * Scene class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public abstract class Scene{
     
     public BufferedImage spritesheetGui, spritesheetGui2, bgBtn, bgBtnSmall, background, foreground, foreground2, foreground3,
@@ -23,6 +29,12 @@ public abstract class Scene{
             BLACKSHADOW = new Color(0, 0, 0, 76);
     public Class runtimeClass;
     
+    /**
+     * 
+     * @param w
+     * @param h
+     * @param game 
+     */
     public Scene(int w, int h, Game game){
         
         this.w = w;
@@ -53,7 +65,16 @@ public abstract class Scene{
         this.bgBtnSmallRed = this.spritesheetGui.getSubimage(107, 71, 107, 39);
     }
     
+    /**
+     * 
+     * @param dt
+     * @return 
+     */
     public abstract Scene update(double dt);
     
+    /**
+     * 
+     * @param g 
+     */
     public abstract void render(Graphics g);
 }

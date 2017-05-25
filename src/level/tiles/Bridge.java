@@ -5,11 +5,22 @@ import java.awt.Graphics2D;
 import core.Defines;
 import level.Level;
 
+/**
+ * Bridge class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class Bridge extends Tile {
     
     int timeanim = 15;
     float rotation;
     
+    /**
+     * 
+     * @param imgX
+     * @param imgY 
+     */
     public Bridge(int imgX, int imgY){
         super(imgX, imgY, 3);
     }
@@ -23,6 +34,13 @@ public class Bridge extends Tile {
     public void update(Level level, int x, int y, double dt) {
     }
     
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param onBridge 
+     */
     public void render(Graphics g, int x, int y, boolean onBridge){
         Graphics2D g2d = (Graphics2D) g;
         if(onBridge){

@@ -12,15 +12,20 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import ld34.profile.Settings;
 
+/**
+ * CustomDialog class
+ * 
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class CustomDialog {
-    private List<JComponent> components;
     
+    private List<JComponent> components;
     private String title, messageText;
     private int messageType;
     private JRootPane rootPane;
@@ -29,8 +34,12 @@ public class CustomDialog {
     private Font font;
     private Game game;
     private BufferedImage spritesheet, background, bgBtn;
+    
     public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
     
+    /**
+     * 
+     */
     public CustomDialog(){
         components = new ArrayList<>();
         
@@ -51,7 +60,7 @@ public class CustomDialog {
         this.setMessageType(JOptionPane.PLAIN_MESSAGE);
         this.setRootPane(null);
         
-        ResourceBundle bundle = ResourceBundle.getBundle("lang.common", this.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
+        ResourceBundle bundle = ResourceBundle.getBundle("lang.lang", this.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
         String option1 = bundle.getString("yes");
         String option2 = bundle.getString("no");
         
@@ -63,38 +72,74 @@ public class CustomDialog {
         this.value = 0;
     }
     
+    /**
+     * 
+     * @param title 
+     */
     public void setTitle(String title){
         this.title = title;
     }
     
+    /**
+     * 
+     * @param messageType 
+     */
     public void setMessageType(int messageType){
         this.messageType = messageType;
     }
     
+    /**
+     * 
+     * @param component 
+     */
     public void addComponent(JComponent component){
         this.components.add(component);
     }
     
+    /**
+     * 
+     * @param messageText 
+     */
     public void setMessageText(String messageText){
         this.messageText = messageText;
     }
     
+    /**
+     * 
+     * @param game 
+     */
     public void setGame(Game game){
         this.game = game;
     }
     
+    /**
+     * 
+     * @param rootPane 
+     */
     public void setRootPane(JRootPane rootPane){
         this.rootPane = rootPane;
     }
     
+    /**
+     * 
+     * @param options 
+     */
     public void setOptions(String[] options){
         this.options = options;
     }
     
+    /**
+     * 
+     * @param optionIndex 
+     */
     public void setOptionSelected(int optionIndex){
         this.optionIndex = optionIndex;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int show(){
         int optionType = JOptionPane.OK_CANCEL_OPTION;
         Object optionSelection = null;
@@ -116,6 +161,9 @@ public class CustomDialog {
         return selection;
     }
     
+    /**
+     * 
+     */
     public void update(){
         int mouseX = this.game.listener.mouseX;
         int mouseY = this.game.listener.mouseY;
@@ -123,6 +171,11 @@ public class CustomDialog {
         this.processClick();
     }
     
+    /**
+     * 
+     * @param mouseX
+     * @param mouseY 
+     */
     private void processHover(int mouseX, int mouseY){
         if(mouseX > 275 && mouseX < 275 + 107 && mouseY > 345 && mouseY < 345 + 70){
             this.selectedItem = 1;
@@ -135,6 +188,9 @@ public class CustomDialog {
         }
     }
     
+    /**
+     * 
+     */
     private void processClick(){
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1)
         {
@@ -149,6 +205,10 @@ public class CustomDialog {
         }
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void render(Graphics g){
         g.drawImage(this.background, 250, 200, null);
         
@@ -175,6 +235,10 @@ public class CustomDialog {
         g.drawString(this.options[1], 465, 370);   
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getValue(){
         return this.value;
     }
