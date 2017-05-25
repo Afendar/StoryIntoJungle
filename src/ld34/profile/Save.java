@@ -103,6 +103,12 @@ public class Save extends Profile {
         }
         levelData.put("cages", cages);
         
+        JSONArray unlockedLevels = new JSONArray();
+        for(int i=0 ; i < level.unlockedLevels.length; i++){
+            unlockedLevels.add(Boolean.toString(level.unlockedLevels[i]));
+        }
+        levelData.put("unlockedLevels", unlockedLevels);
+        
         data.put("level", levelData);
         
         JSONObject playerData = new JSONObject();

@@ -37,6 +37,15 @@ public class MapScene extends Scene {
     public int[][] btnCoords;
     public int selectedItem, currentLvl, currentScore;
     
+    private int[][] coordsPinsIcons = {
+        {76, 337},
+        {172, 397},
+        {309, 407},
+        {413, 285},
+        {370, 161},
+        {562, 315}
+    };
+    
     private int[][] coordsPins = {
         {86, 348},
         {182, 407},
@@ -52,6 +61,7 @@ public class MapScene extends Scene {
     private QuadCurve2D[] curve = new QuadCurve2D[5];
     private boolean animated = false;
     private List<List<CageEntity>> cagesMap;
+    private boolean[] unlockedLevels;
     
     /**
      * 
@@ -60,8 +70,9 @@ public class MapScene extends Scene {
      * @param game
      * @param currentLvl
      * @param currentScore 
+     * @param unlockedLevels 
      */
-    public MapScene(int w, int h, Game game, int currentLvl, int currentScore){
+    public MapScene(int w, int h, Game game, int currentLvl, int currentScore, boolean[] unlockedLevels){
         super(w, h, game);
         
         try{
@@ -98,6 +109,7 @@ public class MapScene extends Scene {
         this.selectedItem = 0;
         this.currentLvl = currentLvl;
         this.currentScore = currentScore;
+        this.unlockedLevels = unlockedLevels;
         
         this.rect = new Rectangle(0, 0, 32, 32);
         this.index = 0;
@@ -140,6 +152,9 @@ public class MapScene extends Scene {
         {
             if(this.index < this.points.size() - 1)
                 this.index++;
+            else{
+                this.animated = false;
+            }
         
             this.pos = this.points.get(index);
         }
@@ -224,7 +239,14 @@ public class MapScene extends Scene {
         //draw curve lvl 5 to 6
         g2d.draw(this.curve[4]);
         
-        
+        for(int i=0 ; i<this.coordsPinsIcons.length;i++){
+            if(this.unlockedLevels[i]){
+                g.drawImage(this.spritesheetGui2.getSubimage(840, 42, 20, 20), this.coordsPinsIcons[i][0], this.coordsPinsIcons[i][1], null);
+            }
+            else{
+                g.drawImage(this.spritesheetGui2.getSubimage(862, 42, 20, 20), this.coordsPinsIcons[i][0], this.coordsPinsIcons[i][1], null);
+            }
+        }
         
         AffineTransform at = new AffineTransform();
         at.rotate(0, 16, 16);
@@ -285,25 +307,23 @@ public class MapScene extends Scene {
                     //save
                     break;
                 case 3:
-                    if(this.currentLvl > 1){
+                    if(this.currentLvl > 1 && this.unlockedLevels[this.currentLvl - 2]){
                         this.animated = true;
                         this.currentLvl--;
                         this.followPrevious();
                     }
                     break;
                 case 4:
-                    if(this.currentLvl < 6){
+                    if(this.currentLvl < 6 && this.unlockedLevels[this.currentLvl]){
                         this.animated = true;
                         this.currentLvl++;
                         this.followNext();
                     }
                     break;
                 case 5:
-                    if(this.animated && 
-                        this.pos.getX() == this.coordsPins[this.currentLvl - 1][0] && 
-                        this.pos.getY() == this.coordsPins[this.currentLvl - 1][1])
-                    {
+                    if(!this.animated){
                         GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
+                        gs.level.setUnlockedLevels(unlockedLevels);
                         gs.setLevelCagesMap(this.cagesMap);
                         currentScene = gs;
                     }

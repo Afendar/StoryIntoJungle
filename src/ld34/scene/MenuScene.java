@@ -91,11 +91,11 @@ public class MenuScene extends Scene {
         }
         else{
             int [][]coords = {
-                {this.w/2 - 107 - 15*30, 195},
-                {this.w/2 - 107 - 17*30, 275},
+                {this.w/2 - 107 - 15*30, 235},
                 {this.w/2 - 107 - 19*30, 355},
-                {(this.w/2) - 130, 450},
-                {(this.w/2) + 20, 450}
+                {16, 518},
+                {107, 518},
+                {703, 518}
             };
             this.btnCoords = coords;
             String[] labels = {
@@ -154,35 +154,35 @@ public class MenuScene extends Scene {
         
         //draw btn
         FontMetrics metrics = g.getFontMetrics(this.font);
-        for(int i=0; i< this.btnCoords.length;i++){
-            if(i < this.btnCoords.length - 3){
-                g.setFont(this.font);
-                if(this.selectedItem == i + 1){
-                    this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
+            for(int i=0; i< this.btnCoords.length;i++){
+                if(i < this.btnCoords.length - 3){
+                    g.setFont(this.font);
+                    if(this.selectedItem == i + 1){
+                        this.bgBtn = this.spritesheetGui2.getSubimage(0, 133, 234, 99);
+                    }
+                    else{
+                        this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
+                    }
+                    if(i % 2 == 0){
+                        g.drawImage(this.bgBtn, this.btnCoords[i][0], this.btnCoords[i][1], null);
+                    }
+                    else{
+                        g.drawImage(this.horizontalflip(this.bgBtn), this.btnCoords[i][0], this.btnCoords[i][1], null);
+                    }
+                    int labelWidth = metrics.stringWidth(this.btnLabels[i]);
+                    g.setColor(Scene.DARKGREY);
+                    g.drawString(this.btnLabels[i], this.btnCoords[i][0] + 117 - labelWidth/2, this.btnCoords[i][1] + metrics.getAscent() + 28);
                 }
                 else{
-                    this.bgBtn = this.spritesheetGui2.getSubimage(0, 232, 234, 99);
+                    if(this.selectedItem == i + 1){
+                        this.bgBtnSmall = this.spritesheetGui2.getSubimage(0, 69, 76, 63);
+                    }
+                    else{
+                        this.bgBtnSmall = this.spritesheetGui2.getSubimage(76, 69, 76, 63);
+                    }
+                    g.drawImage(this.bgBtnSmall, this.btnCoords[i][0], this.btnCoords[i][1], null);
                 }
-                if(i % 2 == 0){
-                    g.drawImage(this.bgBtn, this.btnCoords[i][0], this.btnCoords[i][1], null);
-                }
-                else{
-                    g.drawImage(this.horizontalflip(this.bgBtn), this.btnCoords[i][0], this.btnCoords[i][1], null);
-                }
-                int labelWidth = metrics.stringWidth(this.btnLabels[i]);
-                g.setColor(Scene.DARKGREY);
-                g.drawString(this.btnLabels[i], this.btnCoords[i][0] + 117 - labelWidth/2, this.btnCoords[i][1] + metrics.getAscent() + 28);
             }
-            else{
-                if(this.selectedItem == i + 1){
-                    this.bgBtnSmall = this.spritesheetGui2.getSubimage(0, 69, 76, 63);
-                }
-                else{
-                    this.bgBtnSmall = this.spritesheetGui2.getSubimage(76, 69, 76, 63);
-                }
-                g.drawImage(this.bgBtnSmall, this.btnCoords[i][0], this.btnCoords[i][1], null);
-            }
-        }
         
         g.drawImage(this.settingsIcon, 41, 535, null);
         g.drawImage(this.highScoresIcon, 127, 537, null);
@@ -266,19 +266,19 @@ public class MenuScene extends Scene {
                         break;
                     case 2:
                         new Thread(Sound.select::play).start();
-                        currentScene = new OptionsScene(this.w, this.h, this.game);
+                        System.exit(0);
                         break;
                     case 3:
                         new Thread(Sound.select::play).start();
-                        currentScene = new HighScoresScene(this.w, this.h, this.game);
+                        currentScene = new OptionsScene(this.w, this.h, this.game);
                         break;
                     case 4:
                         new Thread(Sound.select::play).start();
-                        currentScene = new CreditsScene(this.w, this.h, this.game);
+                        currentScene = new HighScoresScene(this.w, this.h, this.game);
                         break;
                     case 5:
                         new Thread(Sound.select::play).start();
-                        System.exit(0);
+                        currentScene = new CreditsScene(this.w, this.h, this.game);
                         break;
                     default:
                         currentScene = this;

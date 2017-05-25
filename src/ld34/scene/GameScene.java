@@ -174,6 +174,9 @@ public class GameScene extends Scene {
         }
         
         this.level = new Level(this.nbLevel);
+        for(int i=0;i<this.nbLevel;i++){
+            this.level.setUnlocked(i);
+        }
         this.level.setNbTilesInScreenX(game.w);
         this.level.setNbTilesInScreenY(game.h);
         
@@ -411,6 +414,7 @@ public class GameScene extends Scene {
                     case 1:
                         if(this.selectedSave != 0){
                             Save.getInstance().saveGame(this.selectedSave - 1, this.level, this.player);
+                            this.jsonSaves = Save.getInstance().getSaves();
                         }
                         break;
                 }
@@ -436,7 +440,8 @@ public class GameScene extends Scene {
             if(this.player.win){
                 this.player.checkpointX = 0;
                 if(this.nbLevel < Defines.LEVEL_MAX){
-                    MapScene ms = new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score);
+                    this.level.setUnlocked(this.nbLevel);
+                    MapScene ms = new MapScene(this.w, this.h, this.game, this.nbLevel, this.player.score, this.level.unlockedLevels);
                     ms.setCagesMap(this.level.cagesMap);
                     return ms;
                 }
@@ -992,8 +997,19 @@ public class GameScene extends Scene {
         else{
             this.bgBtn = this.guiAssets.getSubimage(370, 1, 120, 99);
         }
-        g.drawImage(this.bgBtn, this.w/2 - 60 + this.pauseSettingsPanelX, this.h - 110, null);
-        g.drawImage(this.guiAssets.getSubimage(239, 402, 39, 36), this.w/2 - 20 + this.pauseSettingsPanelX, this.h - 79, null);
+
+        g.drawImage(this.bgBtn, this.w/3 - 60 + this.pauseSettingsPanelX, this.h - 110, null);
+        g.drawImage(this.guiAssets.getSubimage(176, 93, 34, 35), this.w/3 - 20 + this.pauseSettingsPanelX, this.h - 79, null);
+        
+        if(this.selectedItemSaves == 2){
+            this.bgBtn = this.guiAssets.getSubimage(491, 1, 120, 99);
+        }
+        else{
+            this.bgBtn = this.guiAssets.getSubimage(370, 1, 120, 99);
+        }
+        
+        g.drawImage(this.bgBtn, 2*this.w/3 - 60 + this.pauseSettingsPanelX, this.h - 110, null);
+        g.drawImage(this.guiAssets.getSubimage(239, 402, 39, 36), 2*this.w/3 - 20 + this.pauseSettingsPanelX, this.h - 79, null);
     }
     
     /**
@@ -1127,8 +1143,11 @@ public class GameScene extends Scene {
      * @param mouseY 
      */
     public void hoverSaves(int mouseX, int mouseY){
-        if(mouseX > this.w/2 - 60 && mouseX < this.w/2 + 60 && mouseY > this.h - 110 && mouseY < this.h - 11){
+        if(mouseX > this.w/3 - 60 && mouseX < this.w/3 + 60 && mouseY > this.h - 110 && mouseY < this.h - 11){
             this.selectedItemSaves = 1;
+        }
+        else if(mouseX > 2*this.w/3 - 60 && mouseX < 2*this.w/3 + 60 && mouseY > this.h - 110 && mouseY < this.h - 11){
+            this.selectedItemSaves = 2;
         }
         else{
             this.selectedItemSaves = 0;
@@ -1207,23 +1226,41 @@ public class GameScene extends Scene {
         if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
             switch(this.selectedItemSaves){
                 case 1:
+                    //save
+                    if(this.selectedSave != 0){
+                        JSONObject save = Save.getInstance().getSave(this.selectedSave - 1);
+                        if(!save.isEmpty()){
+                            CustomDialog dialog = new CustomDialog();
+                            dialog.setMessageText(this.popupLabel);
+                            dialog.setGame(this.game);
+                            this.addDialog(dialog);
+                        }
+                        else{
+                            Save.getInstance().saveGame(this.selectedSave - 1, this.level, this.player);
+                        }
+                    }
+                    break;
+                case 2:
                     this.currentScene = popinsScenes.MENU;
                     break;
                 default:
                     break;
             }
             
-            if(this.selectedSave != 0){
-                JSONObject save = Save.getInstance().getSave(this.selectedSave - 1);
-                if(!save.isEmpty()){
-                    CustomDialog dialog = new CustomDialog();
-                    dialog.setMessageText(this.popupLabel);
-                    dialog.setGame(this.game);
-                    this.addDialog(dialog);
-                }
-                else{
-                    Save.getInstance().saveGame(this.selectedSave - 1, this.level, this.player);
-                }
+            int mouseX = this.game.listener.mouseX;
+            int mouseY = this.game.listener.mouseY;
+            
+            if(mouseX > 70 && mouseX < 70 + 217 && mouseY > 155 && mouseY < 155 + 216){
+                this.selectedSave = 1;
+            }
+            else if(mouseX > 230 + 70 && mouseX < 230 + 70 + 217 && mouseY > 155 && mouseY < 155 + 216){
+                this.selectedSave = 2;
+            }
+            else if(mouseX > 460 + 70 && mouseX < 460 + 70 + 217 && mouseY > 155 && mouseY < 155 + 216){
+                this.selectedSave = 3;
+            }
+            else if(this.selectedItemSaves == 0){
+                this.selectedSave = 0;
             }
         }
         
@@ -1310,7 +1347,7 @@ public class GameScene extends Scene {
             if(i + 1 == this.nbLevel)
                 this.level.setCagesInLevel(cagesMap.get(i));
             else
-                this.level.cagesMap.add(i, cagesMap.get(i));
+                this.level.cagesMap.set(i, cagesMap.get(i));
         }
     }
     

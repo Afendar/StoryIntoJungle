@@ -42,6 +42,7 @@ public class Level {
     public List<SandEntity> sandEntity = new ArrayList<>();
     public List<CageEntity> cageEntity = new ArrayList<>();
     public List<Braconeers> braconeers = new ArrayList<>();
+    public boolean[] unlockedLevels;
     
     private int complete;
     private int freeCages;
@@ -71,8 +72,11 @@ public class Level {
         this.complete = 0;
         this.freeCages = 0;
         
+        this.unlockedLevels = new boolean[Defines.LEVEL_MAX];
+        
         for(int i=0;i<Defines.LEVEL_MAX;i++){
             this.cagesMap.add(new ArrayList<>());
+            this.unlockedLevels[i] = false;
         }
         
         this.loadLevel(nbLevel);
@@ -515,7 +519,7 @@ public class Level {
                       row++;
                     }
                 }
-                this.cagesMap.add(nbLevel - 1, cageLevelMapping);
+                this.cagesMap.set(nbLevel - 1, cageLevelMapping);
             }
             
         }catch(IOException e){
@@ -643,5 +647,37 @@ public class Level {
             }
         }
         this.cageEntity = cagesInLevel;
+    }
+    
+    /**
+     * 
+     * @param index 
+     */
+    public void setUnlocked(int index){
+        if(index > Defines.LEVEL_MAX - 1 || index < 0){
+            return;
+        }
+        
+        this.unlockedLevels[index] = true;
+    }
+
+    /**
+     * 
+     * @param index 
+     */
+    public void setLocked(int index){
+        if(index > Defines.LEVEL_MAX - 1 || index < 0){
+            return;
+        }
+        
+        this.unlockedLevels[index] = false;
+    }
+    
+    /**
+     * 
+     * @param unlockedLevels 
+     */
+    public void setUnlockedLevels(boolean[] unlockedLevels){
+        this.unlockedLevels = unlockedLevels;
     }
 }

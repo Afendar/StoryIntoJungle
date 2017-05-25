@@ -142,7 +142,16 @@ public class SavesScene extends Scene {
                         if(save != null && !save.isEmpty()){
                             JSONObject jsonLevel = (JSONObject)save.get("level");
                             JSONObject jsonPlayer = (JSONObject)save.get("player");
-                            Level level = new Level(Integer.parseInt((String)jsonLevel.get("number")));
+                            int nbLevel = Integer.parseInt((String)jsonLevel.get("number"));
+                            Level level = new Level(nbLevel);
+                            JSONArray jsonUnlockedLevels = (JSONArray)jsonLevel.get("unlockedLevels");
+                            boolean[] unlockedLevels = new boolean[jsonUnlockedLevels.size()];
+                            for(int i = 0; i< jsonUnlockedLevels.size();i++){
+                                unlockedLevels[i] = ((String)jsonUnlockedLevels.get(i)).equals("true") ? true : false;
+                            }
+                            
+                            level.setUnlockedLevels(unlockedLevels);
+                            
                             JSONArray coords = (JSONArray)jsonPlayer.get("coords");
                             Camera cam = new Camera(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), this.w, this.h, level);
                             Player player = new Player(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), level, this.game.listener, cam, Integer.parseInt((String)jsonLevel.get("difficulty")));
