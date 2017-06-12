@@ -34,6 +34,8 @@ public class Level {
     public int[][] map;
     public int[][] topMap;
     public int[][] data;
+    public int[][] eventsPos;
+    public boolean[] viewedEvent;
     public Player player;
     public int nbLevel;
     public int nbCages;
@@ -46,6 +48,7 @@ public class Level {
     
     private int complete;
     private int freeCages;
+    private int startPosY;
     
     public static final int WHITE = 16777215; //RGB(0, 0, 0) EMPTY
     public static final int GREEN = 32768; //RGB(0, 128, 0) BAMBOO
@@ -59,7 +62,7 @@ public class Level {
     public static final int SAND = 15721648;//RGB(239, 228, 176) SAND
     public static final int CAGE = 8355711;//RGB(127, 127, 127) CAGE
     public static final int BRACONEER = 32960;//RGB(0, 128, 192) BRACONEERS
-    public static final int LIME = 11920925;//RGB() PLANTS
+    public static final int LIME = 11920925;//RGB(181, 230, 29) PLANTS
     
     /**
      * 
@@ -79,7 +82,27 @@ public class Level {
             this.unlockedLevels[i] = false;
         }
         
-        this.loadLevel(nbLevel);
+        if(nbLevel == 1){
+            // Add events x pos
+            int[][] eventsPos = {
+                {192, 896},
+                {896, 896},
+                {2112, 768},
+                {3136, 704},
+                {4160, 896},
+                {5120, 640},
+                {6272, 640},
+                {6976, 768},
+                {8064, 640}
+            };
+            this.viewedEvent = new boolean[eventsPos.length];
+            for(int i=0;i<this.viewedEvent.length;i++){
+                this.viewedEvent[i] = false;
+            }
+            this.eventsPos = eventsPos;
+        }
+        
+        this.startPosY = this.loadLevel(nbLevel);
     }
     
     /**
@@ -340,6 +363,7 @@ public class Level {
                         for(int k=0;k<this.particles.size();k++){
                             Particle p = this.particles.get(k);
                             p.render(g);
+                            
                         }
                         TileAtlas.tallTree.render(g, i, j, Tree.TALL);
                         break;
@@ -414,17 +438,18 @@ public class Level {
      * 
      * @param nbLevel 
      */
-    public void loadLevel(int nbLevel){
-        
-        this.loadFirstLayer(nbLevel);
+    public int loadLevel(int nbLevel){
+        int startPos = this.loadFirstLayer(nbLevel);
         this.loadTopLayer(nbLevel);
+        return startPos;
     }
     
     /**
      * 
      * @param nbLevel 
      */
-    public void loadFirstLayer(int nbLevel){
+    public int loadFirstLayer(int nbLevel){
+        int startPos = 20;
         try{
             URL url = this.getClass().getResource("/lvl" + ((Defines.DEV)? "-dev" : "") + nbLevel + ".png");
             BufferedImage lvlImg = ImageIO.read(url);
@@ -470,6 +495,9 @@ public class Level {
                             break;
                         case BLACK:
                             map[col][row] = TileAtlas.floor.ID;
+                            if(col == 0){
+                                startPos = ( row - 1 ) * Defines.TILE_SIZE;
+                            }
                             break;
                         case BROWN:
                             map[col][row] = TileAtlas.bridge.ID;
@@ -525,6 +553,7 @@ public class Level {
         }catch(IOException e){
             e.getMessage();
         }
+        return startPos;
     }
     
     /**
@@ -601,6 +630,7 @@ public class Level {
      */
     public void addPlayer(Player p){
         this.player = p;
+        this.player.setPosY(this.startPosY);
     }
     
     /**

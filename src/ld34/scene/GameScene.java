@@ -30,6 +30,7 @@ import core.OptionButton;
 import core.TimerThread;
 import entity.CageEntity;
 import java.util.List;
+import java.util.StringTokenizer;
 import ld34.profile.BestScores;
 import ld34.profile.Save;
 import level.Level;
@@ -49,18 +50,18 @@ public class GameScene extends Scene {
     public Camera cam;
     public String deathMsg, startTxt1, startTxt2, startTxt3, startTxt4, respawn, btnSettings, btnBack, btnSave, pausemsg, btnContinue, warningTxt, title,
             easy, medium, hard, hardcore, popupLabel;
-    public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop,
+    public BufferedImage background2, bgGui, gui, bgGui2, clockGui, backgroundBottom, backgroundTop, monkeySpriteSheet,
             backgroundBottomAll, backgroundBottom2, backgroundTop2, backgroundTopAll, guiAssets, scoreIcon, timeIcon, levelIcon, cagesIcon, cageIcon, dollardIcon, littlesPandas;
     public int nbLevel, selectedItemMenu, selectedItemSaves, selectedItemSettings;
-    public boolean displayEnd, displayStart, renderSaves = false;
+    public boolean displayEnd, displayStart, renderSaves, displayEvent, displayDialog = false;
     public int alpha, alphaMax;
-    public int time = 0, glueX = 0, glueX2 = 0, glueTopX = 0, glueTopX2 = 0;
-    public int timeF = 0, timeEventFree = 0;
+    public int time, glueX, glueX2, glueTopX, glueTopX2, eventNumber = 0;
+    public int timeF = 0, timeEventFree, timeMonkey, timeDialog = 0;
     public int minutes = 0, eventY = 0;
     public int secondes = 0, pauseSettingsPanelX = 800, pauseMenuX = 0;
-    public int maxTimeHardcore = 1, soundPlayed, timeSound;
+    public int maxTimeHardcore = 1, soundPlayed, timeSound, cageToFree;
     public double timerMenu = 0;
-    public boolean timer = false;
+    public boolean timer = false, renderFreeCageAnim = false;
     public Minimap minimap;
     public popinsScenes currentScene;
     public enum popinsScenes { NONE, MENU, SETTINGS, SAVES };
@@ -97,7 +98,8 @@ public class GameScene extends Scene {
         this.level.setNbTilesInScreenX(game.w);
         this.level.setNbTilesInScreenY(game.h);
         this.level.addPlayer(player);
-        this.nbLevel = level.nbLevel;
+        this.nbLevel = this.level.nbCages;
+        this.cageToFree = level.getFreeCages();
         this.cam = new Camera((int)player.getPosX(), (int)player.getPosY(), w, h, this.level);
         this.player = player;
         this.player.cam = this.cam;
@@ -179,6 +181,8 @@ public class GameScene extends Scene {
         }
         this.level.setNbTilesInScreenX(game.w);
         this.level.setNbTilesInScreenY(game.h);
+        
+        this.cageToFree = this.level.nbCages;
         
         this.cam = new Camera(0, 0, w, h, this.level);
         this.player = new Player(32, 445, this.level, this.game.listener, this.cam, Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")));
@@ -296,6 +300,9 @@ public class GameScene extends Scene {
             url = this.getClass().getResource("/littles_pandas.png");
             this.littlesPandas = ImageIO.read(url);
             
+            url = this.getClass().getResource("/monkey.png");
+            this.monkeySpriteSheet = ImageIO.read(url);
+            
         }catch(FontFormatException|IOException e){
             e.getMessage();
         }
@@ -404,6 +411,10 @@ public class GameScene extends Scene {
     
     @Override
     public Scene update(double dt) {
+        
+        int mouseX = this.game.listener.mouseX;
+        int mouseY = this.game.listener.mouseY;
+        
         if(this.dialog != null){
             int value = this.dialog.getValue();
             if(value == 0){
@@ -422,7 +433,7 @@ public class GameScene extends Scene {
             }
         }
         else{
-            if(this.game.listener.mouseExited || this.game.listener.pause.typed || this.game.paused){
+            if((this.game.listener.mouseExited || this.game.listener.pause.typed || this.game.paused) && !this.renderFreeCageAnim && !this.displayEvent){
                 return this.updatePause(dt);
             }
 
@@ -437,6 +448,54 @@ public class GameScene extends Scene {
                 new Thread(Sound.sf_jungle02::play).start();
             }
 
+            if(this.cageToFree != this.level.nbCages && this.timeEventFree < 200){
+                this.game.paused = true;
+                this.renderFreeCageAnim = true;
+                this.timeEventFree += dt;
+                if(this.timeEventFree < 55){
+                    this.eventY = this.easeOut(this.timeEventFree, -250, 290, 50);
+                }
+                else if(this.timeEventFree > 100){
+                    this.eventY = this.cubicEaseIn(this.timeEventFree - 100, 70, -250, 50);
+                }
+                return this;
+            }
+            else{
+                this.renderFreeCageAnim = false;
+                this.game.paused = false;
+                this.timeEventFree = 0;
+                this.eventY = 0;
+                this.cageToFree = this.level.nbCages;
+            }
+            
+            if(this.level.nbLevel == 1){
+                for(int i=0;i< this.level.eventsPos.length;i++){
+                    if(this.player.getPosX() >= this.level.eventsPos[i][0] + 64 && this.player.getPosX() <= this.level.eventsPos[i][0] + 128 && !this.level.viewedEvent[i]){
+                        if(!this.displayEvent){
+                            this.eventNumber = i;
+                            this.level.viewedEvent[i] = true;
+                            this.displayEvent = true;
+                            this.game.paused = true;
+                        }
+                    }
+                }
+                if(this.displayEvent){
+                    this.timeMonkey += dt;
+                    if(this.timeMonkey > 15){
+                        this.timeMonkey = 15;
+                        this.displayDialog = true;
+                        if(mouseX > 720 && mouseX < 780 && mouseY > 540 && mouseY < 580){
+                            if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
+                                this.timeMonkey = 0;
+                                this.displayDialog = false;
+                                this.displayEvent = false;
+                                this.game.paused = false;
+                            }
+                        }
+                    }
+                }
+            }
+            
             if(this.player.win){
                 this.player.checkpointX = 0;
                 if(this.nbLevel < Defines.LEVEL_MAX){
@@ -476,7 +535,8 @@ public class GameScene extends Scene {
                     if(startY < 0)startY = 0;
                     this.level.update(dt, startX, startY);
 
-                    this.player.update(dt);
+                    if(!this.displayEvent)
+                        this.player.update(dt);
 
                     this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
                     this.cam.update(this.player);
@@ -603,11 +663,15 @@ public class GameScene extends Scene {
             this.player.render(g, debug);
 
             this.level.renderSecondLayer(g, startX, startY);
+
+            if(this.displayEvent){
+                g.drawImage(this.monkeySpriteSheet.getSubimage(105 * (int)(this.timeMonkey / 4), 0, 105, 107), this.level.eventsPos[this.eventNumber][0] + 139, this.level.eventsPos[this.eventNumber][1] - 81, null);
+            }
             
             g2d.translate(this.cam.x, this.cam.y);
             
             g.drawImage(this.foregroundGame, 0, 300, null);
-            
+
             //Render GUI
             this.renderGUI(g);
             
@@ -633,8 +697,38 @@ public class GameScene extends Scene {
                 this.player.render(g, debug);
             }
             
-            if(this.game.paused){
-                this.renderPause(g);
+            if(this.game.paused && !this.displayEvent){
+                if(this.renderFreeCageAnim){
+                    this.renderFreeCageAnim(g);
+                }
+                else{
+                    this.renderPause(g);
+                }
+            }
+            
+            if(this.displayDialog && this.displayDialog){
+                g.setColor(Color.GRAY);
+                g.fillRect(10, this.h - 150, 780, 140);
+                g.setColor(Color.DARK_GRAY);
+                g.fillRect(this.w - 80, this.h - 60, 60, 40);
+                g.setColor(Color.BLACK);
+                g.setFont(this.fontS);
+                String text = this.bundle.getString("tutoriel"+this.eventNumber);
+                if(this.eventNumber == 0){
+                    text = text.replaceAll("\\[.*?\\]", this.player.getName());
+                }
+                FontMetrics metrics = g.getFontMetrics(this.fontM);
+                int stringWidth = metrics.stringWidth(text);
+                if(stringWidth > this.w - 40){
+                    String label = this.substringLabels(text, 110);
+                    int y = this.h - 120 - g.getFontMetrics().getHeight() - 5;
+                    for(String line : label.split("\n")){
+                        g.drawString(line, 20, y += g.getFontMetrics().getHeight() + 5);
+                    }
+                }
+                else{
+                    g.drawString(text, 20, this.h - 120);
+                }
             }
             
             if(this.dialog != null){
@@ -647,6 +741,13 @@ public class GameScene extends Scene {
             if(this.game.listener.minimap.enabled){
                 minimap.render(g);
             }
+        }
+    }
+    
+    public void renderFreeCageAnim(Graphics g){
+        g.drawImage(this.spritesheetGui2.getSubimage(0, 547, 281, 132), this.w/2 - 140, this.eventY, null);
+        for(int i=0; i<this.level.getFreeCages();i++){
+            g.drawImage(this.spritesheetGui2.getSubimage(282, 548, 37, 36),this.w/2 - 140 +((i) * 40 + 39), this.eventY + 78, null);
         }
     }
     
@@ -694,6 +795,7 @@ public class GameScene extends Scene {
     
     /**
      * 
+     * @param g 
      */
     public void renderPause(Graphics g){
         
@@ -728,9 +830,6 @@ public class GameScene extends Scene {
                 }
                 break;
         }
-        
-        //g.setColor(Color.RED);
-        //g.fillRect(200, this.eventY, 400, 250);
     }
 
     /**
@@ -1040,10 +1139,6 @@ public class GameScene extends Scene {
                 if(this.pauseMenuX == 0 && this.renderSaves){
                     this.renderSaves = false;
                 }
-                
-                this.timeEventFree += elapsedTime;
-                if(this.eventY < 150)
-                    this.eventY = this.easeOut(this.timeEventFree, -250, 400, 50);
                 
                 break;
             case SAVES:
@@ -1368,5 +1463,34 @@ public class GameScene extends Scene {
             return (int)(c * (7.5625f * (t -= (2.25f / 2.75f)) * t + .9375f) + b);
         else
             return (int)(c * (7.5625f * (t -= (2.625f / 2.75f)) * t + .984375f) + b);
+    }
+    
+    /**
+     * 
+     * @param t
+     * @param b
+     * @param c
+     * @param d
+     * @return 
+     */
+    public int cubicEaseIn (float t,float b , float c, float d) {
+        return (int)(c * (t /= d) * t * t + b);
+    }
+    
+    private String substringLabels(String text, int w){
+        StringTokenizer tok = new StringTokenizer(text, " ");
+        StringBuilder output = new StringBuilder(text.length());
+        int lineLen = 0;
+        while (tok.hasMoreTokens()) {
+            String word = tok.nextToken() + " ";
+
+            if (lineLen + word.length() > w) {
+                output.append("\n");
+                lineLen = 0;
+            }
+            output.append(word);
+            lineLen += word.length();
+        }
+        return output.toString();
     }
 }
