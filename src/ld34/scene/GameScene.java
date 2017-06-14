@@ -44,7 +44,7 @@ import org.json.simple.JSONObject;
  */
 public class GameScene extends Scene {
 
-    public Font font, fontS, fontM, fontB, fontSM, fontU;
+    public Font font, fontS, fontM, fontB, fontSM, fontU, fontDialog;
     public Player player;
     public Level level;
     public Camera cam;
@@ -259,6 +259,7 @@ public class GameScene extends Scene {
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
             this.fontSM = this.font.deriveFont(Font.PLAIN, 22.0f);
+            this.fontDialog = this.font.deriveFont(Font.PLAIN, 19.0f);
             this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
             this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
@@ -484,7 +485,7 @@ public class GameScene extends Scene {
                     if(this.timeMonkey > 15){
                         this.timeMonkey = 15;
                         this.displayDialog = true;
-                        if(mouseX > 720 && mouseX < 780 && mouseY > 540 && mouseY < 580){
+                        if(mouseX > this.w - 60 && mouseX < this.w - 26 && mouseY > this.h - 56 && mouseY < this.h - 20){
                             if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1){
                                 this.timeMonkey = 0;
                                 this.displayDialog = false;
@@ -707,27 +708,42 @@ public class GameScene extends Scene {
             }
             
             if(this.displayDialog && this.displayDialog){
-                g.setColor(Color.GRAY);
-                g.fillRect(10, this.h - 150, 780, 140);
-                g.setColor(Color.DARK_GRAY);
-                g.fillRect(this.w - 80, this.h - 60, 60, 40);
+                int mouseX = this.game.listener.mouseX;
+                int mouseY = this.game.listener.mouseY;
+                g2d.rotate(-1.5708, 34, 400);
+                g.drawImage(this.spritesheetGui2.getSubimage(968, 0, 152, 800), -167, 366, null);
+                g.drawImage(this.spritesheetGui2.getSubimage(900, 0, 68, 800), -40, 366, null);
+                g2d.rotate(1.5708, 34, 400);
+                if(mouseX >= this.w - 60 && mouseX <= this.w - 26 && mouseY >= this.h - 56 && mouseY <= this.h -20)
+                    g.drawImage(this.spritesheetGui2.getSubimage(726, 151, 34, 36), this.w - 60, this.h - 56, null);
+                else
+                    g.drawImage(this.spritesheetGui2.getSubimage(794, 151, 34, 36), this.w - 60, this.h - 56, null);
                 g.setColor(Color.BLACK);
-                g.setFont(this.fontS);
+                g.setFont(this.fontDialog);
                 String text = this.bundle.getString("tutoriel"+this.eventNumber);
-                if(this.eventNumber == 0){
-                    text = text.replaceAll("\\[.*?\\]", this.player.getName());
+                switch(this.eventNumber){
+                    case 0:
+                        text = text.replaceAll("\\[.*?\\]", this.player.getName());
+                        break;
+                    case 1:
+                    case 7:
+                        text = text.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))));
+                        break;
+                    case 2:
+                        text = text.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))));
+                        break;
                 }
                 FontMetrics metrics = g.getFontMetrics(this.fontM);
                 int stringWidth = metrics.stringWidth(text);
                 if(stringWidth > this.w - 40){
-                    String label = this.substringLabels(text, 110);
-                    int y = this.h - 120 - g.getFontMetrics().getHeight() - 5;
+                    String label = this.substringLabels(text, 104);
+                    int y = this.h - 100 - g.getFontMetrics().getHeight() - 5;
                     for(String line : label.split("\n")){
-                        g.drawString(line, 20, y += g.getFontMetrics().getHeight() + 5);
+                        g.drawString(line, 10, y += g.getFontMetrics().getHeight() + 5);
                     }
                 }
                 else{
-                    g.drawString(text, 20, this.h - 120);
+                    g.drawString(text, 10, this.h - 100);
                 }
             }
             

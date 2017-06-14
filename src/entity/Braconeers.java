@@ -21,7 +21,7 @@ public class Braconeers extends Entity {
     
     protected BufferedImage spritesheet, sprite;
     protected Level level;
-    protected boolean isMoving;
+    protected boolean isMoving, isShooting, isStuck, isDeadAnim, isDead;
     protected double timeWalk, elapsedTime, timeAnim;
     protected int direction;
     protected int velX;
@@ -62,14 +62,24 @@ public class Braconeers extends Entity {
     @Override
     public void update(double dt)
     {
-        if(!this.isMoving && this.timeWalk == 0){
+        this.elapsedTime += dt;
+        
+        int playerX = (int)this.level.player.getPosX();
+        int playerY = (int)this.level.player.getPosY();
+        if(playerX >= this.posX - 200 && playerX <= this.posX + 200 && playerY >= this.posY && playerY <= this.posY + 128){
+            System.out.println("player detected !");
+            this.isShooting = true;
+        }
+        else{
+            this.isShooting = false;
+        }
+        
+        if(!this.isMoving && this.timeWalk == 0 && !this.isShooting){
             this.isMoving = rnd.nextBoolean();
             this.timeWalk = rnd.nextInt(150 - 100) + 100;
         }
         
-        this.elapsedTime += dt;
-        
-        if(this.isMoving){
+        if(this.isMoving && !this.isShooting){
             if(this.elapsedTime < timeWalk){
                 if(this.direction == LEFT)
                     this.velX = -(Defines.SPEED/2);
@@ -142,6 +152,21 @@ public class Braconeers extends Entity {
     @Override
     public void render(Graphics g, Boolean debug){
         g.drawImage(this.sprite, (int)this.posX, (int) this.posY, null);
+        
+        Rectangle rect = this.getBounds();
+        if(this.isShooting){
+            
+            g.setColor(Color.RED);
+            g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
+        }
+        if(this.isStuck){
+            g.setColor(Color.MAGENTA);
+            g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
+        }
+        if(this.isDeadAnim){
+            g.setColor(Color.BLACK);
+            g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
+        }
         
         if(debug){
             this.renderHitbox(g);
