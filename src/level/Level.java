@@ -194,6 +194,10 @@ public class Level {
         for(int i=0;i<this.braconeers.size();i++){
             Braconeers b = this.braconeers.get(i);
             b.update(dt);
+            
+            if(b.isDead()){
+                this.braconeers.remove(i);
+            }
         }
     }
     
@@ -684,11 +688,11 @@ public class Level {
      * @param index 
      */
     public void setUnlocked(int index){
-        if(index > Defines.LEVEL_MAX - 1 || index < 0){
+        if(index > Defines.LEVEL_MAX - 1 || index < 1){
             return;
         }
         
-        this.unlockedLevels[index] = true;
+        this.unlockedLevels[index-1] = true;
     }
 
     /**
@@ -709,5 +713,27 @@ public class Level {
      */
     public void setUnlockedLevels(boolean[] unlockedLevels){
         this.unlockedLevels = unlockedLevels;
+    }
+    
+    /**
+     * 
+     * @param x0
+     * @param y0
+     * @param w
+     * @param h
+     * @param isStuck
+     * @return 
+     */
+    public List<Braconeers> getBraconeersEntities(int x0, int y0, int w, int h, boolean isStuck){
+        List<Braconeers> result = new ArrayList<>();
+        
+        for(int i = 0; i < this.braconeers.size(); i++){
+            Braconeers b = this.braconeers.get(i);
+            if(b.getBounds().intersects(x0, y0, w, h)){
+                result.add(b);
+            }
+        }
+        
+        return result;
     }
 }

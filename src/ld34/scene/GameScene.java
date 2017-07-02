@@ -176,7 +176,7 @@ public class GameScene extends Scene {
         }
         
         this.level = new Level(this.nbLevel);
-        for(int i=0;i<this.nbLevel;i++){
+        for(int i=1;i<this.nbLevel;i++){
             this.level.setUnlocked(i);
         }
         this.level.setNbTilesInScreenX(game.w);
@@ -379,6 +379,9 @@ public class GameScene extends Scene {
                 this.level.setNbTilesInScreenX(game.w);
                 this.level.setNbTilesInScreenY(game.h);
                 this.level.setData(data);
+                for(int i=0;i<this.nbLevel;i++){
+                    this.level.setUnlocked(i);
+                }
                 this.player.setIsRespawning(true);
             }
             this.player.level = this.level;
@@ -469,7 +472,7 @@ public class GameScene extends Scene {
                 this.cageToFree = this.level.nbCages;
             }
             
-            if(this.level.nbLevel == 1){
+            if(this.level.nbLevel == 1 && !Defines.DEV){
                 for(int i=0;i< this.level.eventsPos.length;i++){
                     if(this.player.getPosX() >= this.level.eventsPos[i][0] + 64 && this.player.getPosX() <= this.level.eventsPos[i][0] + 128 && !this.level.viewedEvent[i]){
                         if(!this.displayEvent){
@@ -595,24 +598,24 @@ public class GameScene extends Scene {
             g.fillRect(0, 0, this.w, this.h);
 
             //Background render
-            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueX + 1.5 * this.backgroundBottom.getWidth())
+            if(this.player.getPosX() + this.player.getBounds().width/2 >= this.glueX + 1.5 * this.backgroundBottom.getWidth())
             {
                 this.glueX += 2 * this.backgroundBottom.getWidth();
             }
-            else if(this.player.getPosX() < this.glueX - (this.background.getWidth()/2))
+            else if(this.player.getPosX() + this.player.getBounds().width/2 < this.glueX - this.backgroundBottom.getWidth()/2)
             {
                 if(this.glueX > 0)
                 {
                     this.glueX -= 2 * this.backgroundBottom.getWidth();
                 }
             }
-            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueX2 + 1.5 * this.backgroundBottom2.getWidth())
+            if(this.player.getPosX() + (this.player.getBounds().width/2) >= this.glueX2 + 1.5 * this.backgroundBottom2.getWidth())
             {
                 this.glueX2 += 2 * this.backgroundBottom2.getWidth();
             }
-            else if(this.player.getPosX() < this.glueX2 - (this.background2.getWidth()/2))
+            else if(this.player.getPosX() + this.player.getBounds().width/2 < this.glueX2 - this.backgroundBottom2.getWidth()/2)
             {
-                if(this.glueX2 > this.background.getWidth())
+                if(this.glueX2 >= this.backgroundBottom2.getWidth())
                 {
                     this.glueX2 -= 2 * this.backgroundBottom2.getWidth();
                 }
@@ -621,24 +624,24 @@ public class GameScene extends Scene {
             g.drawImage(this.backgroundBottom, (int)(this.glueX - this.cam.x), this.h - this.backgroundBottom.getHeight(), null);
             g.drawImage(this.backgroundBottom2, (int)(this.glueX2 - this.cam.x), this.h - this.backgroundBottom2.getHeight(), null);
             
-            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueTopX + 1.5 * this.backgroundTop.getWidth() - (this.cam.x/4))
+            if(this.player.getPosX() + this.player.getBounds().width/2 + (this.cam.x/4) >= this.glueTopX + 1.5 * this.backgroundTop.getWidth())
             {
                 this.glueTopX += 2 * this.backgroundTop.getWidth();
             }
-            else if(this.player.getPosX() < this.glueTopX - (this.background.getWidth()/2) - (this.cam.x/4))
+            else if(this.player.getPosX() + this.player.getBounds().width/2  + (this.cam.x/4) < this.glueTopX - (this.background.getWidth()/2))
             {
                 if(this.glueTopX > 0)
                 {
                     this.glueTopX -= 2 * this.backgroundTop.getWidth();
                 }
             }
-            if(this.player.getPosX() + (this.player.getBounds().width/2) > this.glueTopX2 + 1.5 * this.backgroundTop2.getWidth() - (this.cam.x/4))
+            if(this.player.getPosX() + this.player.getBounds().width/2 + (this.cam.x/4) >= this.glueTopX2 + 1.5 * this.backgroundTop2.getWidth())
             {
                 this.glueTopX2 += 2 * this.backgroundTop2.getWidth();
             }
-            else if(this.player.getPosX() < this.glueTopX2 - (this.backgroundTop2.getWidth()/2) - (this.cam.x/4))
+            else if(this.player.getPosX() + this.player.getBounds().width/2 + (this.cam.x/4) < this.glueTopX2 - this.backgroundTop2.getWidth()/2)
             {
-                if(this.glueTopX2 > this.background.getWidth())
+                if(this.glueTopX2 >= this.backgroundTop2.getWidth())
                 {
                     this.glueTopX2 -= 2 * this.backgroundTop2.getWidth();
                 }
@@ -656,6 +659,8 @@ public class GameScene extends Scene {
             //Map Render
             int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
             int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
+            if(startX > this.level.nbTilesW - this.level.getNbTilesInScreenX())startX = this.level.nbTilesW - this.level.getNbTilesInScreenX();
+            if(startY > this.level.nbTilesH - this.level.getNbTilesInScreenY())startY = this.level.nbTilesH - this.level.getNbTilesInScreenY();
             if(startX < 0)startX = 0;
             if(startY < 0)startY = 0;
             
@@ -760,6 +765,10 @@ public class GameScene extends Scene {
         }
     }
     
+    /**
+     * 
+     * @param g 
+     */
     public void renderFreeCageAnim(Graphics g){
         g.drawImage(this.spritesheetGui2.getSubimage(0, 547, 281, 132), this.w/2 - 140, this.eventY, null);
         for(int i=0; i<this.level.getFreeCages();i++){
@@ -1493,6 +1502,12 @@ public class GameScene extends Scene {
         return (int)(c * (t /= d) * t * t + b);
     }
     
+    /**
+     * 
+     * @param text
+     * @param w
+     * @return 
+     */
     private String substringLabels(String text, int w){
         StringTokenizer tok = new StringTokenizer(text, " ");
         StringBuilder output = new StringBuilder(text.length());

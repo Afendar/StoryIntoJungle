@@ -15,6 +15,7 @@ import core.Defines;
 import core.InputsListeners;
 import core.TimerThread;
 import java.awt.Color;
+import java.util.List;
 import level.Level;
 import level.tiles.TileAtlas;
 
@@ -100,14 +101,15 @@ public class Player extends Entity {
         switch(this.level.nbLevel){
             case 1:
             case 2:
+            case 3:
                 this.age = "baby";
                 break;
-            case 3:
             case 4:
+            case 5:
                 this.age = "teen";
                 break;
-            case 5:
             case 6:
+            case 7:
                 this.age = "adult";
                 break;
         }
@@ -170,15 +172,24 @@ public class Player extends Entity {
         int y1 = (int)(this.getBounds().y - 1 + this.getBounds().height) / Defines.TILE_SIZE;
         
         if(listener.jump.enabled && !this.isJumping && !this.isFalling){
-            new Thread(Sound.jump::play).start();
-            this.renderJump = true;
-            this.offset = 0;
-            this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
-            this.oldposX = (int)this.posX;
-            this.oldposY = (int)this.posY;
-            this.timeJAnim = TimerThread.MILLI;
-            this.isJumping = true;
-            this.velY = - 6;
+            List<Braconeers> bl = this.level.getBraconeersEntities(this.getBounds().x, this.getBounds().y, this.getBounds().width, this.getBounds().height, false);
+            if(bl.size() > 0){
+                for(int i = 0; i < bl.size(); i++){
+                    Braconeers b = bl.get(i);
+                    b.doStuck();
+                }
+            }
+            else{
+                new Thread(Sound.jump::play).start();
+                this.renderJump = true;
+                this.offset = 0;
+                this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
+                this.oldposX = (int)this.posX;
+                this.oldposY = (int)this.posY;
+                this.timeJAnim = TimerThread.MILLI;
+                this.isJumping = true;
+                this.velY = - 6;
+            }
         }
         
         //On the bridge        
@@ -563,5 +574,12 @@ public class Player extends Entity {
                 this.species = "redpanda";
                 break;
         }
+    }
+    
+    /**
+     * 
+     */
+    public void die(){
+        this.isDead = true;
     }
 }

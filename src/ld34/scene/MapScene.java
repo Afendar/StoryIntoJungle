@@ -107,7 +107,11 @@ public class MapScene extends Scene {
         
         this.btnCoords = coords;
         this.selectedItem = 0;
+        System.out.println("current level : " + currentLvl);
+        if(currentLvl > 1)
+            currentLvl--;
         this.currentLvl = currentLvl;
+        System.out.println("new current level : " + this.currentLvl);
         this.currentScore = currentScore;
         this.unlockedLevels = unlockedLevels;
         
@@ -322,7 +326,7 @@ public class MapScene extends Scene {
                     break;
                 case 5:
                     if(!this.animated){
-                        GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl, this.currentScore);
+                        GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl + 1, this.currentScore);
                         gs.level.setUnlockedLevels(unlockedLevels);
                         gs.setLevelCagesMap(this.cagesMap);
                         currentScene = gs;

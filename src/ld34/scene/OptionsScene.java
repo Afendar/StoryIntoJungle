@@ -275,9 +275,9 @@ public class OptionsScene extends Scene {
      */
     public void reloadLangs(){
         int localeIndex = Integer.parseInt(Settings.getInstance().getConfigValue("Lang"));
-        this.bundle = ResourceBundle.getBundle("lang.options", this.game.langs[localeIndex]);
+        this.bundle = ResourceBundle.getBundle("lang.lang", this.game.langs[localeIndex]);
         
-        this.title = this.bundle.getString("title");
+        this.title = this.bundle.getString("settings_title");
         this.btnBack = this.bundle.getString("backToMain");
         this.difficulty = this.bundle.getString("difficulty");
         this.easy = this.bundle.getString("easy");
