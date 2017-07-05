@@ -1,5 +1,6 @@
 package entity;
 
+import audio.Sound;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,9 +10,12 @@ import javax.imageio.ImageIO;
 import core.Defines;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.util.ArrayList;
 import java.util.List;
 import level.Level;
+import level.tiles.TileAtlas;
 import particles.Bullet;
 
 /**
@@ -22,7 +26,7 @@ import particles.Bullet;
  */
 public class Braconeers extends Entity {
     
-    protected BufferedImage spritesheet, sprite;
+    protected BufferedImage spritesheet, sprite, explosion;
     protected Level level;
     protected boolean isMoving, isShooting, isStuck, isDeadAnim, isDead;
     protected double timeWalk, elapsedTime, timeAnim, timeAnimStuck, timeAnimDeath, timeAnimShot;
@@ -71,14 +75,13 @@ public class Braconeers extends Entity {
         int playerX = (int)this.level.player.getPosX();
         int playerY = (int)this.level.player.getPosY();
         if(playerX >= this.posX - 200 && playerX <= this.posX + 200 && playerY >= this.posY && playerY <= this.posY + 128){
-            //System.out.println("player detected !");
             this.isShooting = true;
         }
         else{
             this.isShooting = false;
         }
         
-        if(!this.isMoving && this.timeWalk == 0 && !this.isShooting){
+        if(!this.isMoving && this.timeWalk == 0 && !this.isShooting && !this.isStuck && !this.isDeadAnim){
             this.isMoving = rnd.nextBoolean();
             this.timeWalk = rnd.nextInt(150 - 100) + 100;
         }
@@ -89,19 +92,33 @@ public class Braconeers extends Entity {
             }
             else{
                 this.isDeadAnim = true;
+                this.isStuck = false;
+                this.isShooting = false;
+                new Thread(Sound.explosion::play).start();
             }
         }
         
         if(this.isDeadAnim){
-            if(this.timeAnimDeath < 120){
+            if(this.timeAnimDeath < 150){
                 this.timeAnimDeath += dt;
+                if(this.timeAnimDeath > 50){
+                    if((this.timeAnimDeath - 50) / 10 < 10){
+                        int index = (int)(this.timeAnimDeath - 50) / 10;
+                        this.sprite = this.spritesheet.getSubimage(index * 84, 256, 84, 128);
+                    }
+                }
+                else{
+                    int index = (int)this.timeAnimDeath / 10;
+                    this.explosion = this.spritesheet.getSubimage((index + 2) * 84, 128, 84, 128);
+                    this.sprite = this.spritesheet.getSubimage(0, 256, 84, 128);
+                }
             }
             else{
                 this.isDead = true;
             }
         }
         
-        if(this.isMoving && !this.isShooting && !this.isStuck && !this.isDead){
+        if(this.isMoving && !this.isShooting && !this.isStuck && !this.isDead && !this.isDeadAnim){
             if(this.elapsedTime < timeWalk){
                 if(this.direction == LEFT)
                     this.velX = -(Defines.SPEED/2);
@@ -117,18 +134,30 @@ public class Braconeers extends Entity {
                 if(this.timeAnim >= 10){
                     this.timeAnim = 0;
                     this.offset++;
-                    if(this.offset > 2)
+                    if(this.offset > 6)
                         this.offset = 0;
                     this.sprite = this.spritesheet.getSubimage(this.offset * 84, 0, 84, 128);
+                    if(this.direction == RIGHT){
+                        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+                        tx.translate(-this.sprite.getWidth(null), 0);
+                        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                        this.sprite = op.filter(this.sprite, null);
+                    }
                 }
             }
         }
-        else{
-            this.offset = 0;
-            this.sprite = this.spritesheet.getSubimage(this.offset * 84, 0, 84, 128);
+        else if(!this.isStuck && !this.isDeadAnim && !this.isShooting){
+            this.sprite = this.spritesheet.getSubimage(0, 128, 84, 128);
+            if(this.direction == RIGHT){
+                AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+                tx.translate(-this.sprite.getWidth(null), 0);
+                AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                this.sprite = op.filter(this.sprite, null);
+            }
         }
         
-        if(this.isShooting && !this.isStuck){
+        if((this.isShooting || this.isStuck) && !this.isDeadAnim){
+            this.sprite = this.spritesheet.getSubimage(84, 128, 84, 128);
             if(this.timeAnimShot < 200){
                 this.timeAnimShot += dt;
             }
@@ -166,19 +195,19 @@ public class Braconeers extends Entity {
      * 
      */
     protected void move(){
-        this.posX += this.velX;
+        this.posX += this.velX;       
         
         if(this.direction == RIGHT){
             int x = (int)(this.posX + 59) / Defines.TILE_SIZE;
             int y = (int)(this.posY + ((Defines.TILE_SIZE - 1) * 2)) / Defines.TILE_SIZE;
-            if(this.level.getTile(x, y + 1) == 0){
+            if(this.level.getTile(x, y + 1) == 0 || !TileAtlas.atlas.get(this.level.getTile((int)(this.posX + this.getBounds().width) / Defines.TILE_SIZE, (int)(this.posY + Defines.TILE_SIZE)/Defines.TILE_SIZE)).canPass(level, (int)(this.velX + this.getBounds().width)/Defines.TILE_SIZE, (int)(this.posY + Defines.TILE_SIZE)/Defines.TILE_SIZE)){
                 this.direction = LEFT;
             }
         }
         else if(this.direction == LEFT){
             int x = (int)(this.posX + 25) / Defines.TILE_SIZE;
             int y = (int)(this.posY + ((Defines.TILE_SIZE - 1) * 2)) / Defines.TILE_SIZE;
-            if(this.level.getTile(x, y + 1) == 0){
+            if(this.level.getTile(x, y + 1) == 0 || !TileAtlas.atlas.get(this.level.getTile((int)this.posX/Defines.TILE_SIZE, (int)(this.posY + Defines.TILE_SIZE)/Defines.TILE_SIZE)).canPass(level, (int)this.posX/Defines.TILE_SIZE, (int)(this.posY + Defines.TILE_SIZE)/Defines.TILE_SIZE)){
                 this.direction = RIGHT;
             }
         }
@@ -197,7 +226,6 @@ public class Braconeers extends Entity {
      * 
      */
     public void doStuck(){
-        System.out.println("do stuck braconeer");
         this.isStuck = true;
     }
     
@@ -212,7 +240,11 @@ public class Braconeers extends Entity {
             this.bullets.get(i).render(g);
         }
         
-        g.drawImage(this.sprite, (int)this.posX, (int) this.posY, null);
+        g.drawImage(this.sprite, (int)this.posX, (int)((this.timeAnimDeath - 60) / 10 > 8 ? this.posY + 8 : this.posY), null);
+        
+        if(this.isDeadAnim && this.timeAnimDeath < 50){
+            g.drawImage(this.explosion, (int)this.posX - 15, (int)this.posY, null);
+        }
         
         Rectangle rect = this.getBounds();
         if(this.isShooting){

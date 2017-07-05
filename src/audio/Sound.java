@@ -35,6 +35,7 @@ public class Sound {
     public static Sound sf_jungle02 = new Sound("/jungle02.wav");
     public static Sound hover = new Sound("/hover3.wav");
     public static Sound select = new Sound("/select3.wav");
+    public static Sound explosion = new Sound("/explosion.wav");
     public String path;
     public int volume;
 
