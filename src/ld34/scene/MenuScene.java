@@ -1,6 +1,7 @@
 package ld34.scene;
 
 import audio.Sound;
+import core.Defines;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
@@ -232,7 +233,7 @@ public class MenuScene extends Scene {
                 switch(this.selectedItem){
                     case 1:
                         new Thread(Sound.select::play).start();
-                        currentScene = new GameScene(this.w, this.h, this.game);
+                        currentScene = new GameScene(this.w, this.h, this.game, Defines.START_LEVEL, 0);
                         break;
                     case 2:
                         new Thread(Sound.select::play).start();

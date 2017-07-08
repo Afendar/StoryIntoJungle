@@ -246,20 +246,6 @@ public class Braconeers extends Entity {
             g.drawImage(this.explosion, (int)this.posX - 15, (int)this.posY, null);
         }
         
-        Rectangle rect = this.getBounds();
-        if(this.isShooting){
-            g.setColor(Color.RED);
-            g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
-        }
-        if(this.isStuck){
-            g.setColor(Color.MAGENTA);
-            g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
-        }
-        if(this.isDeadAnim){
-            g.setColor(Color.BLACK);
-            g.drawRect((int)rect.x, (int)rect.y, (int)rect.getWidth(), (int)rect.getHeight());
-        }
-        
         if(debug){
             this.renderHitbox(g);
         }

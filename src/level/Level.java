@@ -87,7 +87,7 @@ public class Level {
             int[][] eventsPos = {
                 {192, 896},
                 {896, 896},
-                {2112, 768},
+                {1984, 768},
                 {3136, 704},
                 {4160, 896},
                 {5120, 640},
@@ -101,6 +101,8 @@ public class Level {
             }
             this.eventsPos = eventsPos;
         }
+        
+        this.cageEntity = new ArrayList<>();
         
         this.startPosY = this.loadLevel(nbLevel);
     }

@@ -1,5 +1,6 @@
 package particles;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -16,9 +17,10 @@ import javax.imageio.ImageIO;
  */
 public class Leaf extends Particle {
     
-    private int x, y, size, startX, startY;
+    private int x, y, startX, startY;
     private int winW, winH;
-    private double dx, dy, perturb, influence, speed, dt, theta, angle;
+    private double dx, dy, perturb, influence, speed, dt, angle;
+    private float alpha;
     private boolean genStartX, dead;
     private Random rnd = new Random();
     private BufferedImage spriteSheet, leafSprites[], sprite;
@@ -48,6 +50,7 @@ public class Leaf extends Particle {
         this.winW = winW;
         this.winH = winH;
         this.dt = 0;
+        this.alpha = 1;
         this.genStartX = false;
         this.startX = startX;
         this.startY = startY;
@@ -84,9 +87,9 @@ public class Leaf extends Particle {
         this.y = this.startY - this.sprite.getHeight();
         this.speed = Math.random() * 4 + 1;
         this.genStartX = true;
+        this.alpha = 1;
         this.perturb = 0;
         this.influence = Math.random() * 0.06 + 0.05;
-        this.theta = rnd.nextInt(91-0)+0;
     }
     
     @Override
@@ -102,8 +105,14 @@ public class Leaf extends Particle {
             if (this.y <= this.startY + this.winH - this.sprite.getHeight()) {
                 this.y += this.dy;
             } else {
-                this.genStartX = false;
-                this.dead = true;
+                if(this.alpha > 0){
+                    this.alpha -= 0.125;
+                }
+                if(this.alpha <= 0){
+                    this.alpha = 0;
+                    this.genStartX = false;
+                    this.dead = true;
+                }
             }
             this.perturb += this.influence;
         }
@@ -116,10 +125,11 @@ public class Leaf extends Particle {
     
     @Override
     public void render(Graphics g){
-        Graphics2D g2d = (Graphics2D) g.create();
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, this.alpha));
         g2d.rotate(this.angle, this.x, this.y);
-        g2d.drawImage(this.sprite , (int)this.x - (this.sprite.getWidth() / 2), (int)this.y - (this.sprite.getHeight() / 2), null);
+        g.drawImage(this.sprite, (int)this.x - (this.sprite.getWidth() / 2), (int)this.y - (this.sprite.getHeight() / 2), null);
         g2d.rotate(-this.angle, this.x, this.y);
-        g2d.dispose();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 }

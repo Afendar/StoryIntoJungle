@@ -12,7 +12,8 @@ public class Defines {
     public static final float   MIN_SPEED   = 1;
     public static final int     TILE_SIZE   = 64;
     public static final int     SPEED       = 5;
-    public static final int     LEVEL_MAX   = 7;
+    public static final int     LEVEL_MAX   = 4;
+    public static final int     START_LEVEL = 1;
     public static final String  VERSION     = "2.1";
-    public static final boolean DEV         = true;
+    public static final boolean DEV         = false;
 }

@@ -1,6 +1,7 @@
 package ld34.scene;
 
 import audio.Sound;
+import core.Defines;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -107,11 +108,9 @@ public class MapScene extends Scene {
         
         this.btnCoords = coords;
         this.selectedItem = 0;
-        System.out.println("current level : " + currentLvl);
         if(currentLvl > 1)
             currentLvl--;
         this.currentLvl = currentLvl;
-        System.out.println("new current level : " + this.currentLvl);
         this.currentScore = currentScore;
         this.unlockedLevels = unlockedLevels;
         
@@ -243,7 +242,7 @@ public class MapScene extends Scene {
         //draw curve lvl 5 to 6
         g2d.draw(this.curve[4]);
         
-        for(int i=0 ; i<this.coordsPinsIcons.length;i++){
+        for(int i=0 ; i < Defines.LEVEL_MAX;i++){
             if(this.unlockedLevels[i]){
                 g.drawImage(this.spritesheetGui2.getSubimage(840, 42, 20, 20), this.coordsPinsIcons[i][0], this.coordsPinsIcons[i][1], null);
             }
@@ -328,6 +327,7 @@ public class MapScene extends Scene {
                     if(!this.animated){
                         GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl + 1, this.currentScore);
                         gs.level.setUnlockedLevels(unlockedLevels);
+                        this.cagesMap.set(this.currentLvl, gs.level.cageEntity);
                         gs.setLevelCagesMap(this.cagesMap);
                         currentScene = gs;
                     }

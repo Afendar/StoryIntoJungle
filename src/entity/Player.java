@@ -172,7 +172,7 @@ public class Player extends Entity {
         int y1 = (int)(this.getBounds().y - 1 + this.getBounds().height) / Defines.TILE_SIZE;
         
         if(listener.jump.enabled && !this.isJumping && !this.isFalling){
-            List<Braconeers> bl = this.level.getBraconeersEntities(this.getBounds().x, this.getBounds().y, this.getBounds().width, this.getBounds().height, false);
+            List<Braconeers> bl = this.level.getBraconeersEntities(this.getBounds().x + (this.direction == 0? Defines.TILE_SIZE : -Defines.TILE_SIZE), this.getBounds().y, this.getBounds().width, this.getBounds().height, false);
             if(bl.size() > 0){
                 for(int i = 0; i < bl.size(); i++){
                     Braconeers b = bl.get(i);

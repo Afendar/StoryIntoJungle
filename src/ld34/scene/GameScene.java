@@ -379,6 +379,7 @@ public class GameScene extends Scene {
                 this.level.setNbTilesInScreenX(game.w);
                 this.level.setNbTilesInScreenY(game.h);
                 this.level.setData(data);
+                this.cageToFree = this.level.nbCages;
                 for(int i=0;i<this.nbLevel;i++){
                     this.level.setUnlocked(i);
                 }
@@ -406,6 +407,7 @@ public class GameScene extends Scene {
                 }
             }
             this.player.win = false;
+            this.renderFreeCageAnim = false;
         }
         else{
             this.displayEnd = true;
@@ -773,6 +775,9 @@ public class GameScene extends Scene {
         g.drawImage(this.spritesheetGui2.getSubimage(0, 547, 281, 132), this.w/2 - 140, this.eventY, null);
         for(int i=0; i<this.level.getFreeCages();i++){
             g.drawImage(this.spritesheetGui2.getSubimage(282, 548, 37, 36),this.w/2 - 140 +((i) * 40 + 39), this.eventY + 78, null);
+        }
+        for(int i=0;i<this.level.nbCages;i++){
+            g.drawImage(this.spritesheetGui2.getSubimage(282, 586, 37, 36), this.w/2 - 140 + ((i + this.level.getFreeCages()) * 40 + 39), this.eventY + 78, null);
         }
     }
     
