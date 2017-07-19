@@ -14,6 +14,6 @@ public class Defines {
     public static final int     SPEED       = 5;
     public static final int     LEVEL_MAX   = 4;
     public static final int     START_LEVEL = 1;
-    public static final String  VERSION     = "2.1";
+    public static final String  VERSION     = "2.1 - beta";
     public static final boolean DEV         = false;
 }
