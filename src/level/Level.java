@@ -193,9 +193,20 @@ public class Level {
             ce.update(dt);
         }
         
+        int playerX = (int)this.player.getPosX();
+        int playerY = (int)this.player.getPosY();
+        
         for(int i=0;i<this.braconeers.size();i++){
             Braconeers b = this.braconeers.get(i);
-            b.update(dt);
+            
+            if(playerX >= b.getPosX() - Defines.SCREEN_WIDTH/2 && playerX <= b.getPosX() + b.getBounds().width + Defines.SCREEN_WIDTH/2 &&
+                    playerY >= b.getPosY() - Defines.SCREEN_HEIGHT/2 && playerY <= b.getPosY() + Defines.SCREEN_HEIGHT/2)
+            {
+                if((this.nbLevel == 1 && this.viewedEvent[7]) || this.nbLevel > 1 )
+                {
+                    b.update(dt);
+                }
+            }   
             
             if(b.isDead()){
                 this.braconeers.remove(i);

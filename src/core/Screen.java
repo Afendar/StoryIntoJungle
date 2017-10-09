@@ -19,7 +19,7 @@ public class Screen extends JFrame {
      * 
      */
     public Screen(){
-        Game g = new Game(800, 600);
+        Game g = new Game(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT);
         
         this.init(g);
         
@@ -33,7 +33,7 @@ public class Screen extends JFrame {
     private void init(Game g){
         this.setTitle("Story Into Jungle - v" + Defines.VERSION);
         this.add(g);
-        this.getContentPane().setPreferredSize(new Dimension(800, 600));
+        this.getContentPane().setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLayout(null);

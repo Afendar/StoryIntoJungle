@@ -242,7 +242,7 @@ public class MapScene extends Scene {
         //draw curve lvl 5 to 6
         g2d.draw(this.curve[4]);
         
-        for(int i=0 ; i < Defines.LEVEL_MAX;i++){
+        for(int i=0 ; i < Defines.LEVEL_MAX - 1;i++){
             if(this.unlockedLevels[i]){
                 g.drawImage(this.spritesheetGui2.getSubimage(840, 42, 20, 20), this.coordsPinsIcons[i][0], this.coordsPinsIcons[i][1], null);
             }
@@ -326,9 +326,11 @@ public class MapScene extends Scene {
                 case 5:
                     if(!this.animated){
                         GameScene gs = new GameScene(this.w, this.h, this.game, this.currentLvl + 1, this.currentScore);
-                        gs.level.setUnlockedLevels(unlockedLevels);
-                        this.cagesMap.set(this.currentLvl, gs.level.cageEntity);
+                        gs.level.setUnlockedLevels(this.unlockedLevels);
+                        if(this.cagesMap.get(this.currentLvl).isEmpty())
+                            this.cagesMap.set(this.currentLvl, gs.level.cageEntity);
                         gs.setLevelCagesMap(this.cagesMap);
+                        gs.cageToFree = gs.level.nbCages;
                         currentScene = gs;
                     }
                     break;

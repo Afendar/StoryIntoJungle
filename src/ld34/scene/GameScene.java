@@ -374,15 +374,6 @@ public class GameScene extends Scene {
             }
             else
             {
-                int[][] data = this.level.data;
-                this.level = new Level(this.nbLevel);
-                this.level.setNbTilesInScreenX(game.w);
-                this.level.setNbTilesInScreenY(game.h);
-                this.level.setData(data);
-                this.cageToFree = this.level.nbCages;
-                for(int i=0;i<this.nbLevel;i++){
-                    this.level.setUnlocked(i);
-                }
                 this.player.setIsRespawning(true);
             }
             this.player.level = this.level;
@@ -535,17 +526,17 @@ public class GameScene extends Scene {
                     this.player.update(dt);
                 }
                 else{
-                    int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
-                    int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
-                    if(startX < 0)startX = 0;
-                    if(startY < 0)startY = 0;
-                    this.level.update(dt, startX, startY);
-
-                    if(!this.displayEvent)
+                    if(!this.displayEvent){
+                        int startX = (int)(this.player.getPosX() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenX() / 2);
+                        int startY = (int)(this.player.getPosY() / Defines.TILE_SIZE) - (this.level.getNbTilesInScreenY() / 2);
+                        if(startX < 0)startX = 0;
+                        if(startY < 0)startY = 0;
+                        this.level.update(dt, startX, startY);
                         this.player.update(dt);
 
-                    this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
-                    this.cam.update(this.player);
+                        this.minimap.update((int)this.player.getPosX(), (int)this.player.getPosY());
+                        this.cam.update(this.player);
+                    }
 
                     if(this.minutes >= this.maxTimeHardcore)
                     {
