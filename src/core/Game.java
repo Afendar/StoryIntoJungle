@@ -5,13 +5,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import ld34.scene.GameScene;
-import ld34.scene.MenuScene;
 import ld34.scene.Scene;
 import ld34.scene.SplashScene;
 import profiler.Profiler;
@@ -37,6 +37,8 @@ public class Game extends Canvas implements Runnable {
     public Runtime instance;
     public Profiler profiler;
     public int frame, memoryUsed;
+    
+    private StateManager m_stateManager;
     
     /**
      * 
@@ -75,6 +77,10 @@ public class Game extends Canvas implements Runnable {
         catch(FontFormatException|IOException e){
             e.getMessage();
         }
+        
+        m_stateManager = new StateManager();
+        m_stateManager.switchTo(StateType.INTRO);
+        m_stateManager.switchTo(StateType.PAUSED);
     }
     
     /**
@@ -163,6 +169,8 @@ public class Game extends Canvas implements Runnable {
         {
             this.profiler.toggleVisible();
         }
+        
+        m_stateManager.update(dt);
     }
     
     /**
@@ -218,6 +226,9 @@ public class Game extends Canvas implements Runnable {
         {
             this.profiler.render(g);
         }
+        
+        Graphics2D g2d = (Graphics2D)g;
+        m_stateManager.render(g2d);
         
         g.dispose();
         bs.show();

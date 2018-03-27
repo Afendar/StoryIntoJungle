@@ -4,7 +4,7 @@ import core.Screen;
 import core.TimerThread;
 
 /**
- * LD34 class
+ * LD34 class for entry point of program
  * 
  * @version %I%, %G%
  * @author Afendar
@@ -12,7 +12,7 @@ import core.TimerThread;
 public class LD34 {
     
     /**
-     * 
+     * main function of program.
      * @param args 
      */
     public static void main(String[] args) {
