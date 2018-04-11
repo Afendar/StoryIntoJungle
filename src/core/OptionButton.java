@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JComponent;
 
@@ -17,13 +16,12 @@ import javax.swing.JComponent;
  * @version %I%, %G%
  * @author Afendar
  */
-public final class OptionButton extends JComponent{
-    
+public final class OptionButton extends JComponent
+{
     private boolean isEditing;
     private String value;
     private int x, y, w, h;
-    private String text, name, pressKey;
-    public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
+    private String text, name;
     public ResourceBundle bundle;
     
     /**
@@ -44,8 +42,6 @@ public final class OptionButton extends JComponent{
         
         this.w = 212;
         this.h = 88;
-        
-        this.initLocales();
     }
     
     /**
@@ -55,14 +51,6 @@ public final class OptionButton extends JComponent{
      */
     public OptionButton(String value, String name){
         this(value, name, 0, 0);
-    }
-    
-    /**
-     * Loading locales
-     */
-    public void initLocales(){
-        this.bundle = ResourceBundle.getBundle("lang.lang", this.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
-        this.pressKey = this.bundle.getString("pressKey");
     }
     
     /**
@@ -135,9 +123,9 @@ public final class OptionButton extends JComponent{
      * 
      */
     private void editing(){
-        this.requestFocus(true);
-        this.isEditing = true;
-        this.setText(this.pressKey);
+        requestFocus(true);
+        isEditing = true;
+        setText(I18nManager.getInstance().trans("pressKey"));
     }
     
     /**

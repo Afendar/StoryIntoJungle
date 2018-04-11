@@ -417,13 +417,18 @@ public class Level {
      * 
      * @param data 
      */
-    public void setData(int[][] data){
-        for(int i=0;i< data.length;i++){
-            for(int j=0;j<data[i].length;j++){
-                if(this.map[i][j] == 10 && data[i][j] == 2){
+    public void setData(int[][] data)
+    {
+        for(int i=0;i< data.length;i++)
+        {
+            for(int j=0;j<data[i].length;j++)
+            {
+                if(this.map[i][j] == 10 && data[i][j] == 2)
+                {
                     this.nbCages--;
                 }
-                if(this.map[i][j] == 9 && data[i][j] == 2){
+                if(this.map[i][j] == 9 && data[i][j] == 2)
+                {
                     data[i][j] = 0;
                 }
             }
@@ -437,7 +442,8 @@ public class Level {
      * @param y
      * @param val 
      */
-    public void setData(int x, int y, int val){
+    public void setData(int x, int y, int val)
+    {
         this.data[x][y] = val;
     }
     
@@ -447,7 +453,8 @@ public class Level {
      * @param y
      * @return 
      */
-    public int getData(int x, int y){
+    public int getData(int x, int y)
+    {
         return this.data[x][y];
     }
     
@@ -455,7 +462,8 @@ public class Level {
      * 
      * @param nbLevel 
      */
-    public int loadLevel(int nbLevel){
+    public int loadLevel(int nbLevel)
+    {
         int startPos = this.loadFirstLayer(nbLevel);
         this.loadTopLayer(nbLevel);
         return startPos;
@@ -465,9 +473,11 @@ public class Level {
      * 
      * @param nbLevel 
      */
-    public int loadFirstLayer(int nbLevel){
+    public int loadFirstLayer(int nbLevel)
+    {
         int startPos = 20;
-        try{
+        try
+        {
             URL url = this.getClass().getResource("/lvl" + ((Defines.DEV)? "-dev" : "") + nbLevel + ".png");
             BufferedImage lvlImg = ImageIO.read(url);
             

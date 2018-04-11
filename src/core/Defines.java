@@ -1,5 +1,7 @@
 package core;
 
+import java.util.Locale;
+
 /**
  * Defines class
  * 
@@ -18,4 +20,5 @@ public class Defines {
     public static final int     SCREEN_HEIGHT = 600;
     public static final String  VERSION       = "2.1 - beta";
     public static final boolean DEV           = false;
+    public static final Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
 }

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.URL;
 import core.Defines;
 import core.Game;
-import ld34.scene.GameScene;
 
 /**
  * Profiler class
@@ -73,13 +72,13 @@ public class Profiler {
         this.datas[0] = frames;
         this.datas[1] = memory;
         
-        if(this.game.gs instanceof GameScene){
+        /*if(this.game.gs instanceof GameScene){
             GameScene gs = (GameScene)this.game.gs;
             this.datas[2] = Float.toString(gs.player.getPosX());
             this.datas[3] = Float.toString(gs.player.getPosY());
             this.datas[4] = Boolean.toString(gs.player.isJumping());
             this.datas[5] = Boolean.toString(gs.player.isFalling());
-        }
+        }*/
     }
     
     /**
@@ -90,9 +89,9 @@ public class Profiler {
         
         this.renderGlobalDebug(g);
 
-        if(this.game.gs instanceof GameScene){
+        /*if(this.game.gs instanceof GameScene){
             this.renderGameDebug(g);
-        }
+        }*/
     }
     
     /**
@@ -120,16 +119,16 @@ public class Profiler {
         text = "Java : " + System.getProperty("java.version") + "  x" + System.getProperty("sun.arch.data.model") + " bit";
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
-        g.fillRect(this.game.w - (int)rect.getWidth() - 40, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.fillRect(Defines.SCREEN_WIDTH - (int)rect.getWidth() - 40, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
-        g.drawString(text, this.game.w - (int)rect.getWidth() - 30, 30);
+        g.drawString(text, Defines.SCREEN_WIDTH - (int)rect.getWidth() - 30, 30);
                 
         text = "Story Into Jungle : v" + Defines.VERSION;
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
-        g.fillRect(this.game.w - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.fillRect(Defines.SCREEN_WIDTH - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
-        g.drawString(text, this.game.w - (int)rect.getWidth() - 30, 60);
+        g.drawString(text, Defines.SCREEN_WIDTH - (int)rect.getWidth() - 30, 60);
     }
     
     /**

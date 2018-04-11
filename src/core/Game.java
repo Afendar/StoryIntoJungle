@@ -9,11 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
-import ld34.scene.GameScene;
-import ld34.scene.Scene;
-import ld34.scene.SplashScene;
 import profiler.Profiler;
 
 /**
@@ -22,22 +18,19 @@ import profiler.Profiler;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Game extends Canvas implements Runnable {
-
+public class Game extends Canvas implements Runnable
+{
     public boolean running, paused;
     public Thread tgame;
-    public Scene gs;
-    public InputsListeners listener;
-    public Locale langs[] = {new Locale("en","EN"), new Locale("fr", "FR")};
     public Font font, fontD;
-    public int w;
-    public int h, nbEntities;
+    public int nbEntities;
     public ResourceBundle bundle;
     public int elapsedTime, lastTime, pauseTime;
     public Runtime instance;
     public Profiler profiler;
     public int frame, memoryUsed;
     
+    private Context m_context;
     private StateManager m_stateManager;
     
     /**
@@ -45,27 +38,22 @@ public class Game extends Canvas implements Runnable {
      * @param w
      * @param h 
      */
-    public Game(int w, int h){
-        
+    public Game()
+    {
         this.running = false;
         this.paused = false;
         this.instance = Runtime.getRuntime();
-        this.w = w;
-        this.h = h;
-        this.setMinimumSize(new Dimension(w, h));
-        this.setMaximumSize(new Dimension(w, h));
-        this.setPreferredSize(new Dimension(w, h));
-        this.setSize(new Dimension(w, h));
+        this.setMinimumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
+        this.setMaximumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
+        this.setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
+        this.setSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
         this.frame = this.memoryUsed = this.nbEntities = 0;
-        
-        this.listener = new InputsListeners(this);
         
         this.profiler = Profiler.getInstance();
         this.profiler.addGame(this);
         
-        this.gs = new SplashScene(w, h, this);
-        
-        try{
+        try
+        {
             URL url = this.getClass().getResource("/fonts/kaushanscriptregular.ttf");
             this.font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
@@ -74,13 +62,17 @@ public class Game extends Canvas implements Runnable {
             this.fontD = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.fontD = this.fontD.deriveFont(Font.PLAIN, 18.0f);
         }
-        catch(FontFormatException|IOException e){
+        catch(FontFormatException|IOException e)
+        {
             e.getMessage();
         }
         
-        m_stateManager = new StateManager();
+        m_context = new Context();
+        m_context.m_inputsListener = new InputsListeners(this);
+        m_context.m_I18nManager = I18nManager.getInstance();
+
+        m_stateManager = new StateManager(m_context);
         m_stateManager.switchTo(StateType.INTRO);
-        m_stateManager.switchTo(StateType.PAUSED);
     }
     
     /**
@@ -160,17 +152,18 @@ public class Game extends Canvas implements Runnable {
      */
     public void update(double dt){
 
-        if(this.hasFocus()){
+        /*if(this.hasFocus()){
             this.gs = this.gs.update(dt);
-        }
-        this.listener.update();
+        }*/
         
-        if(this.listener.profiler.typed )
+        m_stateManager.update(dt);
+        
+        m_context.m_inputsListener.update();
+        
+        if(m_context.m_inputsListener.profiler.typed )
         {
             this.profiler.toggleVisible();
         }
-        
-        m_stateManager.update(dt);
     }
     
     /**
@@ -188,9 +181,9 @@ public class Game extends Canvas implements Runnable {
         
         Graphics g = bs.getDrawGraphics();
         
-        this.gs.render(g);
+        //this.gs.render(g);
         
-        if(!this.paused && (!this.hasFocus() || this.listener.mouseExited || this.listener.pause.enabled) && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
+        /*if(!this.paused && (!this.hasFocus() || this.listener.mouseExited || this.listener.pause.enabled) && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
         {
             GameScene scene = (GameScene)this.gs;
             this.pauseTime = TimerThread.MILLI;
@@ -220,7 +213,7 @@ public class Game extends Canvas implements Runnable {
                     this.paused = false;
                 }
             }
-        }
+        }*/
         
         if(this.profiler.isVisible())
         {

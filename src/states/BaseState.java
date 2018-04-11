@@ -10,9 +10,9 @@ import java.awt.Graphics2D;
  */
 public abstract class BaseState
 {
-    private StateManager m_stateManager;
-    private boolean m_transparent;
-    private boolean m_transcendent;
+    protected StateManager m_stateManager;
+    protected boolean m_transparent;
+    protected boolean m_transcendent;
     
     public BaseState(StateManager stateManager)
     {

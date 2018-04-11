@@ -13,15 +13,16 @@ import javax.swing.JFrame;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Screen extends JFrame {
-    
+public class Screen extends JFrame 
+{
     /**
      * 
      */
-    public Screen(){
-        Game g = new Game(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT);
+    public Screen()
+    {
+        Game g = new Game();
         
-        this.init(g);
+        init(g);
         
         g.start();
     }
@@ -30,20 +31,21 @@ public class Screen extends JFrame {
      * 
      * @param g 
      */
-    private void init(Game g){
-        this.setTitle("Story Into Jungle - v" + Defines.VERSION);
-        this.add(g);
-        this.getContentPane().setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(false);
-        this.setLayout(null);
-        this.pack();
-        this.setVisible(true);
-        this.setLocationRelativeTo(null);
-        this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
+    private void init(Game g)
+    {
+        setTitle("Story Into Jungle - v" + Defines.VERSION);
+        add(g);
+        getContentPane().setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setLayout(null);
+        pack();
+        setVisible(true);
+        setLocationRelativeTo(null);
+        setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
                 new ImageIcon(getClass().getResource("/cursor.png")).getImage(), new Point(0,0), "cursorSIJ"));
         URL iconUrl = getClass().getResource("/storyintojungle.png");
         ImageIcon icon = new ImageIcon(iconUrl);
-        this.setIconImage(icon.getImage());
+        setIconImage(icon.getImage());
     }
 }

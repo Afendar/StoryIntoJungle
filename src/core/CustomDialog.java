@@ -165,8 +165,10 @@ public class CustomDialog {
      * 
      */
     public void update(){
-        int mouseX = this.game.listener.mouseX;
-        int mouseY = this.game.listener.mouseY;
+//        int mouseX = this.game.m_context.m_inputsListener.mouseX;
+//        int mouseY = this.game.m_context.m_inputsListener.mouseY;
+        int mouseX = 0;
+        int mouseY = 0;
         this.processHover(mouseX, mouseY);
         this.processClick();
     }
@@ -192,7 +194,7 @@ public class CustomDialog {
      * 
      */
     private void processClick(){
-        if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1)
+        /*if(this.game.listener.mousePressed && this.game.listener.mouseClickCount == 1)
         {
             switch(this.selectedItem){
                 case 1:
@@ -202,7 +204,7 @@ public class CustomDialog {
                     this.value = 2;
                     break;
             }
-        }
+        }*/
     }
     
     /**
