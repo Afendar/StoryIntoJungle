@@ -82,6 +82,12 @@ public class CreditsState extends BaseState
     }
 
     @Override
+    public void reloadLocales()
+    {
+        System.out.println("Reload locales");
+    }
+    
+    @Override
     public void update(double dt)
     {
         processHover();

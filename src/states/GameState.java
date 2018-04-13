@@ -121,7 +121,6 @@ public class GameState extends BaseState
         
         m_timeSound = TimerThread.MILLI;
         m_soundPlayed = 1;
-        new Thread(Sound.sf_jungle01::play).start();
         
         int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
         m_posBar = (int)(255 + ( 2.4 * volume));
@@ -164,7 +163,7 @@ public class GameState extends BaseState
     @Override
     public void activate()
     {
-        
+        new Thread(Sound.sf_jungle01::play).start();
     }
 
     @Override
@@ -173,6 +172,12 @@ public class GameState extends BaseState
         
     }
 
+    @Override
+    public void reloadLocales()
+    {
+        System.out.println("Reload locales");
+    }
+    
     @Override
     public void update(double dt)
     {
@@ -203,12 +208,14 @@ public class GameState extends BaseState
         }
         else
         {
-            if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000){
+            if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
+            {
                 m_timeSound = TimerThread.MILLI;
                 m_soundPlayed = 2;
                 new Thread(Sound.sf_jungle01::play).start();
             }
-            else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000){
+            else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
+            {
                 m_timeSound = TimerThread.MILLI;
                 m_soundPlayed = 1;
                 new Thread(Sound.sf_jungle02::play).start();

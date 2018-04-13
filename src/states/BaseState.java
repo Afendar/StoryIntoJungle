@@ -27,6 +27,8 @@ public abstract class BaseState
     public abstract void activate();
     public abstract void desactivate();
     
+    public abstract void reloadLocales();
+    
     public abstract void update(double dt);
     public abstract void render(Graphics2D g);
     

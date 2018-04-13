@@ -1,73 +1,61 @@
 package states;
 
-import audio.Sound;
 import core.Defines;
 import core.I18nManager;
+import core.ResourceManager;
 import core.StateManager;
 import core.StateType;
-import java.awt.Color;
+import core.gui.Button;
+import core.gui.GuiComponent;
+import core.gui.IconButton;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import ld34.profile.Save;
 import particles.Leaf;
 
 public class MainMenuState extends BaseState
 {
-    public BufferedImage m_spritesheetGui2, m_bgBtn, m_bgBtnSmall, m_foreground, m_background2, m_logo, m_settingsIcon, m_highScoresIcon, m_creditsIcon;
-    public Font m_font, m_fontL, m_fontS;
-    public int[][] m_btnCoords;
-    public int m_selectedItem;
-    private ArrayList<Leaf> m_leavesList = new ArrayList<>(5);
-    private boolean m_displayLoad;
+    public BufferedImage m_logo;
+    private final ArrayList<Leaf> m_leavesList = new ArrayList<>(5);
+    private final ArrayList<GuiComponent> m_guiElements = new ArrayList<>();
     
+    /**
+     * 
+     * @param stateManager 
+     */
     public MainMenuState(StateManager stateManager)
     {
         super(stateManager);
+    }
+    
+    @Override
+    public void onCreate()
+    {
+        System.out.println("Create main menu");
         
-        try
-        {
-            URL url = getClass().getResource("/gui2.png");
-            m_spritesheetGui2 = ImageIO.read(url);
-            m_bgBtn = m_spritesheetGui2.getSubimage(0, 133, 234, 99);
-            m_bgBtnSmall = m_spritesheetGui2.getSubimage(0, 69, 76, 63);
-            m_settingsIcon = m_spritesheetGui2.getSubimage(150, 68, 25, 24);
-            m_highScoresIcon = m_spritesheetGui2.getSubimage(175, 69, 35, 23);
-            m_creditsIcon = m_spritesheetGui2.getSubimage(154, 92, 16, 24);
-            
-            url = getClass().getResource("/foreground1.png");
-            m_foreground = ImageIO.read(url);
-            
-            url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
-            
-            m_font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            m_fontS = m_font.deriveFont(18.0f);
-            m_font = m_font.deriveFont(24.0f);
-            m_fontL = m_font.deriveFont(52.0f);
-            
-            url = getClass().getResource("/background.png");
-            m_background2 = ImageIO.read(url);
-           
-            m_logo = m_spritesheetGui2.getSubimage(310, 347, 590, 200);
-
-        }
-        catch(FontFormatException|IOException e)
-        {
-            e.getMessage();
-        }
-        m_displayLoad = Save.getInstance().hasSave();
+        ResourceManager ressourceManager = m_stateManager.getContext().m_resourceManager;
+        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         
-        //new game
-        if(m_displayLoad)
+        BufferedImage spritesheet = ressourceManager.getSpritesheets("spritesheetGui2");
+        m_logo = spritesheet.getSubimage(310, 347, 590, 200);
+        
+        BufferedImage[] icons = {
+            spritesheet.getSubimage(150, 68, 25, 24),
+            spritesheet.getSubimage(175, 69, 35, 23),
+            spritesheet.getSubimage(154, 92, 16, 24)
+        };
+        
+        
+        
+        Integer[][] coords;
+        String[] labels;
+        String[] methodsToInvoke;
+        if(Save.getInstance().hasSave())
         {
-            int [][]coords = {
+            coords = new Integer[][]{
                 {Defines.SCREEN_WIDTH/2 - 117 - (15*30), 211},
                 {Defines.SCREEN_WIDTH/2 - 117 - (17*30), 311},
                 {Defines.SCREEN_WIDTH/2 - 117 - (19*30), 411},
@@ -75,64 +63,167 @@ public class MainMenuState extends BaseState
                 {107, 518},
                 {703, 518}
             };
-            m_btnCoords = coords;
+            
+            labels = new String[]{
+                i18nManager.trans("newGame"),
+                i18nManager.trans("loadGame"),
+                i18nManager.trans("quit")
+            };
+            
+            methodsToInvoke = new String[]{
+                "play",
+                "load",
+                "quit",
+                "settings",
+                "highScores",
+                "credits"
+            };
         }
         else
         {
-            int [][]coords = {
+            coords = new Integer[][]{
                 {Defines.SCREEN_WIDTH/2 - 107 - 15*30, 235},
                 {Defines.SCREEN_WIDTH/2 - 107 - 19*30, 355},
                 {16, 518},
                 {107, 518},
                 {703, 518}
             };
-            m_btnCoords = coords;
+            
+            labels = new String[]{
+                i18nManager.trans("newGame"),
+                i18nManager.trans("quit")
+            };
+            
+            methodsToInvoke = new String[]{
+                "play",
+                "quit",
+                "settings",
+                "highScores",
+                "credits"
+            };
         }
         
-        m_selectedItem = 0;
+        Font font = ressourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
+
+        for(int i = 0 ; i < coords.length ; i++)
+        {
+            Button b;
+            if(i < 3)
+            {
+                b = new Button(labels[i]);
+                b.setFont(font);
+                b.setPadding(4, 0);
+                b.setTextCenter(true);            
+                b.addApearance(
+                        GuiComponent.Status.NEUTRAL, 
+                        i % 2 == 0 ? spritesheet.getSubimage(0, 133, 234, 99) : horizontalflip(spritesheet.getSubimage(0, 132, 234, 99)));
+                b.addApearance(
+                        GuiComponent.Status.FOCUSED, 
+                        i % 2 == 0 ? spritesheet.getSubimage(0, 232, 234, 99) : horizontalflip(spritesheet.getSubimage(0, 232, 234, 99)));
+            }
+            else
+            {
+                b = new IconButton(icons[i - 3]);
+                b.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(0, 69, 76, 63));
+                b.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(76, 69, 76, 63));
+            }
+            
+            b.setPosition(coords[i][0], coords[i][1]);
+            b.addCallback(GuiComponent.Status.CLICKED, methodsToInvoke[i], this);
+            
+            m_guiElements.add(b);
+        }
         
         for(int i = 0;i<5;i++){
             m_leavesList.add(new Leaf(5, 0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
         }
     }
-    
-    @Override
-    public void onCreate()
-    {
-        System.out.println("onCreate main menu");
-    }
 
     @Override
     public void onDestroy() 
     {
-        System.out.println("onDestroy main menu");
     }
 
     @Override
     public void activate()
     {
-        System.out.println("activate main menu");
     }
 
     @Override
     public void desactivate() 
     {
-        System.out.println("desactivate main menu");
     }
 
     @Override
+    public void reloadLocales()
+    {
+        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        String[] labels;
+        if(Save.getInstance().hasSave())
+        {
+            labels = new String[]{
+                i18nManager.trans("newGame"),
+                i18nManager.trans("loadGame"),
+                i18nManager.trans("quit")
+            };
+        }
+        else
+        {
+            labels = new String[]{
+                i18nManager.trans("newGame"),
+                i18nManager.trans("quit")
+            };
+        }
+
+        for(int i = 0 ; i < labels.length ; i++)
+        {
+            m_guiElements.get(i).setLabel(labels[i]);
+        }
+    }
+    
+    @Override
     public void update(double dt)
     {
-        processHover();
-
-        for(int i=0;i<m_btnCoords.length-3;i++)
+        int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
+        int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
+        int index = 0;
+        
+        for(GuiComponent element : m_guiElements)
         {
-            if(m_btnCoords[i][0] < Defines.SCREEN_WIDTH/2 - 117){
-                m_btnCoords[i][0] += 30;
+            int[] pos = element.getPosition();
+            if(index < 3 && pos[0] < (Defines.SCREEN_WIDTH - element.getWidth()) / 2)
+            {
+                element.setPosition(pos[0] + 30, pos[1]);
+            }
+            index++;
+            
+            element.update(dt);
+            
+            if(element.isInside(mouseX, mouseY))
+            {
+                if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
+                {
+                    element.onClick();
+                }
+                
+                if(element.getStatus() != GuiComponent.Status.NEUTRAL)
+                {
+                    continue;
+                }
+
+                element.onHover();
+            }
+            else if(element.getStatus() == GuiComponent.Status.FOCUSED)
+            {
+                element.onLeave();
+            }
+            else if(element.getStatus() == GuiComponent.Status.CLICKED)
+            {
+                element.onRelease();
             }
         }
         
-        for (Leaf leaf : m_leavesList)
+        for(Leaf leaf : m_leavesList)
         {
             if(!leaf.isGenStartX())
             {
@@ -140,8 +231,6 @@ public class MainMenuState extends BaseState
             }
             leaf.update(dt);
         }
-        
-        processClick();
     }
 
     @Override
@@ -149,173 +238,19 @@ public class MainMenuState extends BaseState
     {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        g.drawImage(m_background2, 0, 0, null);
+        g.drawImage(m_stateManager.getContext().m_resourceManager.getSpritesheets("background"), 0, 0, null);
 
-        for(int i=0; i < m_leavesList.size(); i++){
-            Leaf leaf = m_leavesList.get(i);
+        for (Leaf leaf : m_leavesList)
+        {
             leaf.render(g);
         }
         
         g.drawImage(m_logo, 99, 20, null);
+        g.drawImage(m_stateManager.getContext().m_resourceManager.getSpritesheets("foreground"), 0, 0, null);
         
-        g.drawImage(m_foreground, 0, 0, null);
-        
-        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
-        
-        String[] labels = new String[2];
-        if(m_displayLoad)
+        for(GuiComponent element : m_guiElements)
         {
-            labels = new String[3];
-            labels[0] = i18nManager.trans("newGame");
-            labels[1] = i18nManager.trans("loadGame");
-            labels[2] = i18nManager.trans("quit");
-        }
-        else
-        {
-            labels[0] = i18nManager.trans("newGame");
-            labels[1] = i18nManager.trans("quit");
-        }
-        
-        //draw btn
-        FontMetrics metrics = g.getFontMetrics(m_font);
-        for(int i=0; i< m_btnCoords.length;i++)
-        {
-            if(i < m_btnCoords.length - 3)
-            {
-                g.setFont(m_font);
-                if(m_selectedItem == i + 1)
-                {
-                    m_bgBtn = m_spritesheetGui2.getSubimage(0, 133, 234, 99);
-                }
-                else
-                {
-                    m_bgBtn = m_spritesheetGui2.getSubimage(0, 232, 234, 99);
-                }
-                if(i % 2 == 0)
-                {
-                    g.drawImage(m_bgBtn, m_btnCoords[i][0], m_btnCoords[i][1], null);
-                }
-                else
-                {
-                    g.drawImage(horizontalflip(m_bgBtn), m_btnCoords[i][0], m_btnCoords[i][1], null);
-                }
-                int labelWidth = metrics.stringWidth(labels[i]);
-                g.setColor(new Color(17, 17, 17));
-                g.drawString(labels[i], m_btnCoords[i][0] + 117 - labelWidth/2, m_btnCoords[i][1] + metrics.getAscent() + 28);
-            }
-            else
-            {
-                if(m_selectedItem == i + 1)
-                {
-                    m_bgBtnSmall = m_spritesheetGui2.getSubimage(0, 69, 76, 63);
-                }
-                else
-                {
-                    m_bgBtnSmall = m_spritesheetGui2.getSubimage(76, 69, 76, 63);
-                }
-                g.drawImage(m_bgBtnSmall, m_btnCoords[i][0], m_btnCoords[i][1], null);
-            }
-        }
-        
-        g.drawImage(m_settingsIcon, 41, 535, null);
-        g.drawImage(m_highScoresIcon, 127, 537, null);
-        g.drawImage(m_creditsIcon, 733, 535, null);
-    }
-    
-    /**
-     * 
-     */
-    public void processHover()
-    {    
-        int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
-        int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
-        
-        int oldSelected = m_selectedItem;
-        m_selectedItem = 0;
-        for(int i=0;i<m_btnCoords.length;i++)
-        {
-            if(i < m_btnCoords.length - 3){
-                if(mouseX > m_btnCoords[i][0] && mouseX < m_btnCoords[i][0] + 234 &&
-                        mouseY > m_btnCoords[i][1] && mouseY < m_btnCoords[i][1] + 99){
-                    m_selectedItem = i + 1;
-                }
-            }
-            else{
-                if(mouseX > m_btnCoords[i][0] && mouseX < m_btnCoords[i][0] + 76 &&
-                mouseY > m_btnCoords[i][1] && mouseY < m_btnCoords[i][1] + 63){
-                    m_selectedItem = i + 1;
-                }
-            }
-        }
-        
-        if(m_selectedItem != 0 && m_selectedItem != oldSelected){
-            new Thread(Sound.hover::play).start();
-        }
-    }
-    
-    /**
-     * 
-     */
-    public void processClick()
-    {
-        if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
-        {
-            if(m_displayLoad)
-            {
-                switch(m_selectedItem)
-                {
-                    case 1:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.GAME);
-                        break;
-                    case 2:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.SAVES);
-                        break;
-                    case 3:
-                        new Thread(Sound.select::play).start();
-                        System.exit(0);
-                        break;
-                    case 4:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.SETTINGS);
-                        break;
-                    case 5:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.HIGHT_SCORES);
-                        break;
-                    case 6:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.CREDITS);
-                        break;
-                }
-            }
-            else
-            {
-                switch(m_selectedItem)
-                {
-                    case 1:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.GAME);
-                        break;
-                    case 2:
-                        new Thread(Sound.select::play).start();
-                        System.exit(0);
-                        break;
-                    case 3:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.SETTINGS);
-                        break;
-                    case 4:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.HIGHT_SCORES);
-                        break;
-                    case 5:
-                        new Thread(Sound.select::play).start();
-                        m_stateManager.switchTo(StateType.CREDITS);
-                        break;
-                }
-            }
+            element.render(g);
         }
     }
     
@@ -333,5 +268,35 @@ public class MainMenuState extends BaseState
         g.drawImage(img, 0, 0, w, h, w, 0, 0, h, null);  
         g.dispose();
         return dimg;  
+    }
+
+    public void play()
+    {
+        m_stateManager.switchTo(StateType.GAME);
+    }
+
+    public void load()
+    {
+        m_stateManager.switchTo(StateType.SAVES);
+    }
+
+    public void quit()
+    {
+        System.exit(0);
+    }
+
+    public void settings()
+    {
+        m_stateManager.switchTo(StateType.SETTINGS);
+    }
+
+    public void highScores()
+    {
+        m_stateManager.switchTo(StateType.HIGHT_SCORES);
+    }
+
+    public void credits()
+    {
+        m_stateManager.switchTo(StateType.CREDITS);
     }
 }

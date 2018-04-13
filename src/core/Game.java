@@ -30,8 +30,8 @@ public class Game extends Canvas implements Runnable
     public Profiler profiler;
     public int frame, memoryUsed;
     
-    private Context m_context;
-    private StateManager m_stateManager;
+    private final Context m_context;
+    private final StateManager m_stateManager;
     
     /**
      * 
@@ -70,6 +70,7 @@ public class Game extends Canvas implements Runnable
         m_context = new Context();
         m_context.m_inputsListener = new InputsListeners(this);
         m_context.m_I18nManager = I18nManager.getInstance();
+        m_context.m_resourceManager = ResourceManager.getInstance();
 
         m_stateManager = new StateManager(m_context);
         m_stateManager.switchTo(StateType.INTRO);

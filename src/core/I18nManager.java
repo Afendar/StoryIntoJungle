@@ -50,8 +50,7 @@ public class I18nManager
     
     public void setLanguage(Language language)
     {
-        m_lang = language;
-        
+        m_lang = language;   
         loadTranslations();
     }
     

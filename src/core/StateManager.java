@@ -1,8 +1,9 @@
 package core;
 
+import core.I18nManager.Language;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import states.BaseState;
@@ -25,15 +26,18 @@ import states.SettingsState;
  */
 public class StateManager
 {
-    private Map<StateType, BaseState> m_statesFactory;
-    private Context m_context;
-    private ArrayList<BaseState> m_states;
+    private final Map<StateType, BaseState> m_statesFactory;
+    private final Context m_context;
+    private final Map<StateType, BaseState> m_states;
+    private Language m_currentLocal;
     
     public StateManager(Context context)
     {
         m_statesFactory = new HashMap<>();
-        m_states = new ArrayList<>();
+        m_states = new LinkedHashMap<>();
         m_context = context;
+        
+        m_currentLocal = m_context.m_I18nManager.getLanguage();
         
         registerState(StateType.INTRO);
         registerState(StateType.MAIN_MENU);
@@ -54,24 +58,34 @@ public class StateManager
             return;
         }
         
-        if(m_states.get(m_states.size() - 1).isTranscendent() && m_states.size() > 1)
+        if(m_context.m_I18nManager.getLanguage() != m_currentLocal)
+        {
+            m_currentLocal = m_context.m_I18nManager.getLanguage();
+            m_states.entrySet().stream().forEach((entry) -> {
+                entry.getValue().reloadLocales();
+            });
+        }
+        
+        BaseState[] states = m_states.values().toArray(new BaseState[0]);
+        
+        if(states[states.length - 1].isTranscendent() && states.length > 1)
         {
             int i;
-            for(i = m_states.size() - 1 ; i >= 0 ; --i)
+            for(i = states.length - 1 ; i >= 0 ; --i)
             {
-                if(!m_states.get(i).isTranscendent())
+                if(!states[i].isTranscendent())
                 {
                     break;
                 }
             }
-            for( ; i < m_states.size() ; i++)
+            for( ; i < states.length ; i++)
             {
-                m_states.get(i).update(dt);
+                states[i].update(dt);
             }
         }
         else
         {
-            m_states.get(m_states.size() - 1).update(dt);
+            states[m_states.size() - 1].update(dt);
         }
     }
     
@@ -82,24 +96,26 @@ public class StateManager
             return;
         }
         
-        if(m_states.get(m_states.size() - 1).isTransparent() && m_states.size() > 1)
+        BaseState[] states = m_states.values().toArray(new BaseState[0]);
+        
+        if(states[states.length - 1].isTransparent() && states.length > 1)
         {
             int i;
-            for(i = m_states.size() - 1 ; i >= 0 ; --i)
+            for(i = states.length - 1 ; i >= 0 ; --i)
             {
-                if(!m_states.get(i).isTransparent())
+                if(!states[i].isTransparent())
                 {
                     break;
                 }
             }
-            for( ; i < m_states.size() ; i++)
+            for( ; i < states.length ; i++)
             {
-                m_states.get(i).render(g);
+                states[i].render(g);
             }
         }
         else
         {
-            m_states.get(m_states.size() - 1).render(g);
+            ((BaseState)m_states.values().toArray()[m_states.size() - 1]).render(g);
         }
     }
     
@@ -107,10 +123,23 @@ public class StateManager
     {
         if(!m_states.isEmpty())
         {
-            m_states.get(m_states.size() - 1).desactivate();
+            ((BaseState)m_states.values().toArray()[m_states.size() - 1]).desactivate();
         }
+        
+        if(m_states.containsKey(type))
+        {
+            BaseState states = (BaseState)m_states.values().toArray()[m_states.size() - 1];
+            states.desactivate();
+            
+            BaseState tmpState = m_states.get(type);
+            m_states.remove(type);
+            m_states.put(type, tmpState);
+            tmpState.activate();
+            return;
+        }
+        
         createState(type);
-        m_states.get(m_states.size() - 1).activate();
+        ((BaseState)m_states.values().toArray()[m_states.size() - 1]).activate();
     }
     
     public BaseState getState(StateType type)
@@ -122,35 +151,34 @@ public class StateManager
         
         BaseState search = m_statesFactory.get(type);
         
-        for (BaseState state : m_states) {
-            if(state == search)
-            {
-                return state;
-            }
+        if(m_states.containsKey(type))
+        {
+            return m_states.get(type);
         }
         return null;
     }
     
     public void remove(StateType type)
     {
-        
+        removeState(type);
     }
     
     private void createState(StateType type)
-    {
+    {       
         BaseState s = m_statesFactory.get(type);
         if(s == null)
         {
             return;
         }
         
-        m_states.add(s);
+        m_states.putIfAbsent(type, s);
         s.onCreate();
     }
     
     private void removeState(StateType type)
     {
-        
+        m_states.get(type).onDestroy();
+        m_states.remove(type);
     }
     
     private void registerState(StateType type)

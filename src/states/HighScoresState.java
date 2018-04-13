@@ -97,6 +97,12 @@ public class HighScoresState extends BaseState
     }
 
     @Override
+    public void reloadLocales()
+    {
+        System.out.println("Reload locales");
+    }
+    
+    @Override
     public void render(Graphics2D g)
     {
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
