@@ -65,6 +65,7 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     public Action profiler = new Action();
     public Action pause = new Action();
     public Action minimap = new Action();
+    public Action fullscreen = new Action();
     public int mouseX, mouseY, mouseClickCount;
     public boolean mouseExited, mousePressed;
     public KeyEvent e = null;
@@ -115,6 +116,8 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
             pause.switched(enabled);
         if(e.getKeyCode() == KeyEvent.VK_M)
             minimap.switched(enabled);
+        if(e.getKeyCode() == KeyEvent.VK_F)
+            fullscreen.switched(enabled);
     }
     
     @Override

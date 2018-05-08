@@ -11,5 +11,6 @@ public enum StateType
     SETTINGS,
     SAVES,
     INTRO,
-    PAUSED
+    PAUSED,
+    TEST
 }

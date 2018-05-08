@@ -1,7 +1,6 @@
 package core.gui;
 
 import audio.Sound;
-import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
@@ -67,6 +66,11 @@ public class Button extends GuiComponent
     public void setTextCenter(boolean center)
     {
         m_textCenter = center;
+    }
+    
+    public void setGroup(ButtonGroup bg)
+    {
+        
     }
     
     @Override

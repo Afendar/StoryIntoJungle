@@ -110,6 +110,11 @@ public class MainMenuState extends BaseState
             Button b;
             if(i < 3)
             {
+                if(i >= 2 && !Save.getInstance().hasSave())
+                {
+                    continue;
+                }
+                
                 b = new Button(labels[i]);
                 b.setFont(font);
                 b.setPadding(4, 0);

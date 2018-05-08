@@ -5,13 +5,13 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-public class CheckBox extends Button
+public class RadioButton extends Button
 {
-    private static final String componentID = "CheckBox";
+    private static final String componentID = "RadioButton";
     
     private boolean m_checked;
     
-    public CheckBox(String label)
+    public RadioButton(String label)
     {
         super(label);
         setChecked(false);
@@ -29,16 +29,15 @@ public class CheckBox extends Button
     }
     
     @Override
-    public void update(double dt)
-    {   
-    }
-    
-    @Override
     public void onClick()
     {
         new Thread(Sound.select::play).start();
+        if(isChecked())
+        {
+            return;
+        }
         setStatus(Status.CLICKED);
-        setChecked(!isChecked());
+        setChecked(true);
     }
     
     @Override
@@ -67,6 +66,11 @@ public class CheckBox extends Button
             return;
         }
         setStatus(Status.NEUTRAL);
+    }
+    
+    @Override
+    public void update(double dt)
+    {
     }
 
     @Override

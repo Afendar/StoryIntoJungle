@@ -1,15 +1,15 @@
 package core;
 
-import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferStrategy;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javax.swing.JPanel;
 import profiler.Profiler;
 
 /**
@@ -18,9 +18,10 @@ import profiler.Profiler;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Game extends Canvas implements Runnable
+public class Game extends JPanel implements Runnable
 {
     public boolean running, paused;
+    
     public Thread tgame;
     public Font font, fontD;
     public int nbEntities;
@@ -39,14 +40,14 @@ public class Game extends Canvas implements Runnable
      * @param h 
      */
     public Game()
-    {
+    {   
         this.running = false;
         this.paused = false;
         this.instance = Runtime.getRuntime();
-        this.setMinimumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
-        this.setMaximumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
-        this.setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
-        this.setSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_WIDTH));
+        this.setMinimumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        this.setMaximumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        this.setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        this.setSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
         this.frame = this.memoryUsed = this.nbEntities = 0;
         
         this.profiler = Profiler.getInstance();
@@ -73,13 +74,17 @@ public class Game extends Canvas implements Runnable
         m_context.m_resourceManager = ResourceManager.getInstance();
 
         m_stateManager = new StateManager(m_context);
-        m_stateManager.switchTo(StateType.INTRO);
+        m_stateManager.switchTo(StateType.SETTINGS);
+        
+        m_context.m_screen = new Screen(this);
+        
+        start();
     }
     
     /**
      * 
      */
-    public void start(){
+    private void start(){
         
         if(this.running)
             return;
@@ -128,7 +133,7 @@ public class Game extends Canvas implements Runnable
                 needUpdate = true;
             }
             
-            this.render();
+            repaint();
             
             if(needUpdate)
             {
@@ -152,14 +157,15 @@ public class Game extends Canvas implements Runnable
      * @param dt 
      */
     public void update(double dt){
-
-        /*if(this.hasFocus()){
-            this.gs = this.gs.update(dt);
-        }*/
         
         m_stateManager.update(dt);
         
         m_context.m_inputsListener.update();
+        
+        if(m_context.m_inputsListener.fullscreen.typed)
+        {
+            m_context.m_screen.setFullscreen(!m_context.m_screen.isFullscreen());
+        }
         
         if(m_context.m_inputsListener.profiler.typed )
         {
@@ -167,12 +173,11 @@ public class Game extends Canvas implements Runnable
         }
     }
     
-    /**
-     * 
-     */
-    public void render(){
+    @Override
+    public void paint(Graphics g){
         
-        BufferStrategy bs = this.getBufferStrategy();
+        //requestFocus();
+        /*BufferStrategy bs = this.getBufferStrategy();
         
         if(bs == null){
             this.createBufferStrategy(2);
@@ -180,7 +185,7 @@ public class Game extends Canvas implements Runnable
             return;
         }
         
-        Graphics g = bs.getDrawGraphics();
+        Graphics g = bs.getDrawGraphics();*/
         
         //this.gs.render(g);
         
@@ -223,8 +228,8 @@ public class Game extends Canvas implements Runnable
         
         Graphics2D g2d = (Graphics2D)g;
         m_stateManager.render(g2d);
-        
+        /*
         g.dispose();
-        bs.show();
+        bs.show();*/
     }
 }

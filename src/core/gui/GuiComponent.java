@@ -1,6 +1,5 @@
 package core.gui;
 
-import core.InputsListeners;
 import core.Position;
 import java.awt.Color;
 import java.awt.Font;
@@ -30,11 +29,20 @@ public abstract class GuiComponent
     {
         private final String m_methodName;
         private final BaseState m_state;
+        private final Class[] m_parametersClasses;
+        private final Object[] m_parameters;
         
-        public Callback(String methodName, BaseState state)
+        public Callback(String methodName, BaseState state, Object... params)
         {
             m_methodName = methodName;
             m_state = state;
+            m_parametersClasses = new Class[params.length];
+            m_parameters = new Object[params.length];
+            for(int i = 0 ; i < m_parametersClasses.length ; i++)
+            {
+                m_parametersClasses[i] = params[i].getClass();
+                m_parameters[i] = params[i];
+            }
         }
     }
     
@@ -50,9 +58,9 @@ public abstract class GuiComponent
         calculateBounds();
     }
     
-    public void addCallback(Status status, String methodName, BaseState state)
+    public void addCallback(Status status, String methodName, BaseState state, Object... params)
     {
-        m_callbacks.put(status, new Callback(methodName, state));
+        m_callbacks.put(status, new Callback(methodName, state, params));
     }
     
     public void addApearance(Status status, BufferedImage background)
@@ -108,8 +116,8 @@ public abstract class GuiComponent
             Callback c = m_callbacks.get(status);
             try
             {
-                Method m = c.m_state.getClass().getMethod(c.m_methodName);
-                m.invoke(c.m_state);
+                Method m = c.m_state.getClass().getMethod(c.m_methodName, c.m_parametersClasses);
+                m.invoke(c.m_state, (Object[]) c.m_parameters);
             } 
             catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
             {
