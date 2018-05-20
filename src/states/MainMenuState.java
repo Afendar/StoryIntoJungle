@@ -1,8 +1,8 @@
 package states;
 
-import core.Defines;
 import core.I18nManager;
 import core.ResourceManager;
+import core.Screen;
 import core.StateManager;
 import core.StateType;
 import core.gui.Button;
@@ -11,6 +11,7 @@ import core.gui.IconButton;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import ld34.profile.Save;
@@ -18,7 +19,7 @@ import particles.Leaf;
 
 public class MainMenuState extends BaseState
 {
-    public BufferedImage m_logo;
+    public BufferedImage m_logo, m_foreground, m_background;
     private final ArrayList<Leaf> m_leavesList = new ArrayList<>(5);
     private final ArrayList<GuiComponent> m_guiElements = new ArrayList<>();
     
@@ -34,13 +35,30 @@ public class MainMenuState extends BaseState
     @Override
     public void onCreate()
     {
-        System.out.println("Create main menu");
-        
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         ResourceManager ressourceManager = m_stateManager.getContext().m_resourceManager;
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         
         BufferedImage spritesheet = ressourceManager.getSpritesheets("spritesheetGui2");
         m_logo = spritesheet.getSubimage(310, 347, 590, 200);
+        
+        m_foreground = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("foreground"), 
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+        
+        m_background = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("background"),
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
         
         BufferedImage[] icons = {
             spritesheet.getSubimage(150, 68, 25, 24),
@@ -48,20 +66,18 @@ public class MainMenuState extends BaseState
             spritesheet.getSubimage(154, 92, 16, 24)
         };
         
-        
-        
         Integer[][] coords;
         String[] labels;
         String[] methodsToInvoke;
         if(Save.getInstance().hasSave())
         {
             coords = new Integer[][]{
-                {Defines.SCREEN_WIDTH/2 - 117 - (15*30), 211},
-                {Defines.SCREEN_WIDTH/2 - 117 - (17*30), 311},
-                {Defines.SCREEN_WIDTH/2 - 117 - (19*30), 411},
-                {16, 518},
-                {107, 518},
-                {703, 518}
+                {screenWidth/2 - 117 - (15*30), (screenHeight / 3)},
+                {screenWidth/2 - 117 - (17*30), 2 * (screenHeight / 3)},
+                {screenWidth/2 - 117 - (19*30), 3* (screenHeight / 3)},
+                {16, screenHeight - 82},
+                {107, screenHeight - 82},
+                {703, screenHeight - 82}
             };
             
             labels = new String[]{
@@ -82,11 +98,11 @@ public class MainMenuState extends BaseState
         else
         {
             coords = new Integer[][]{
-                {Defines.SCREEN_WIDTH/2 - 107 - 15*30, 235},
-                {Defines.SCREEN_WIDTH/2 - 107 - 19*30, 355},
-                {16, 518},
-                {107, 518},
-                {703, 518}
+                {screenWidth/2 - 117 - 15*30, 2 * (screenHeight / 5)},
+                {screenWidth/2 - 117 - 19*30, 3 * (screenHeight / 5)},
+                {16, screenHeight - 82},
+                {107, screenHeight - 82},
+                {screenWidth - 92, screenHeight - 82}
             };
             
             labels = new String[]{
@@ -108,13 +124,8 @@ public class MainMenuState extends BaseState
         for(int i = 0 ; i < coords.length ; i++)
         {
             Button b;
-            if(i < 3)
-            {
-                if(i >= 2 && !Save.getInstance().hasSave())
-                {
-                    continue;
-                }
-                
+            if(i < coords.length - 3)
+            {                
                 b = new Button(labels[i]);
                 b.setFont(font);
                 b.setPadding(4, 0);
@@ -128,7 +139,7 @@ public class MainMenuState extends BaseState
             }
             else
             {
-                b = new IconButton(icons[i - 3]);
+                b = new IconButton(icons[i - (coords.length - 3)]);
                 b.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(0, 69, 76, 63));
                 b.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(76, 69, 76, 63));
             }
@@ -139,8 +150,8 @@ public class MainMenuState extends BaseState
             m_guiElements.add(b);
         }
         
-        for(int i = 0;i<5;i++){
-            m_leavesList.add(new Leaf(5, 0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        for(int i = 0 ; i < 5 ; i++){
+            m_leavesList.add(new Leaf(5, 0, 0, screenWidth, screenHeight));
         }
     }
 
@@ -152,6 +163,59 @@ public class MainMenuState extends BaseState
     @Override
     public void activate()
     {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
+        
+        m_foreground = getScaledInstance(
+                m_foreground, 
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+        
+        m_background = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("background"),
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+        
+        Integer[][] coords;
+        if(Save.getInstance().hasSave())
+        {
+            coords = new Integer[][]{
+                {screenWidth/2 - 117 - (15*30), (screenHeight / 3)},
+                {screenWidth/2 - 117 - (17*30), 2 * (screenHeight / 3)},
+                {screenWidth/2 - 117 - (19*30), 3* (screenHeight / 3)},
+                {16, screenHeight - 82},
+                {107, screenHeight - 82},
+                {703, screenHeight - 82}
+            };
+        }
+        else
+        {
+            coords = new Integer[][]{
+                {screenWidth/2 - 117 - 15*30, 2 * (screenHeight / 5)},
+                {screenWidth/2 - 117 - 19*30, 3 * (screenHeight / 5)},
+                {16, screenHeight - 82},
+                {107, screenHeight - 82},
+                {screenWidth - 92, screenHeight - 82}
+            };
+        }
+        
+        for(int i = 0 ; i < coords.length ; i++)
+        {
+            GuiComponent b = m_guiElements.get(i);
+            b.setPosition(coords[i][0], coords[i][1]);
+        }
+        
+        m_leavesList.clear();
+        for(int i = 0 ; i < 5 ; i++){
+            m_leavesList.add(new Leaf(5, 0, 0, screenWidth, screenWidth));
+        }
     }
 
     @Override
@@ -193,10 +257,13 @@ public class MainMenuState extends BaseState
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         int index = 0;
         
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        
         for(GuiComponent element : m_guiElements)
         {
             int[] pos = element.getPosition();
-            if(index < 3 && pos[0] < (Defines.SCREEN_WIDTH - element.getWidth()) / 2)
+            if(index < m_guiElements.size() - 3 && pos[0] < (screenWidth - element.getWidth()) / 2)
             {
                 element.setPosition(pos[0] + 30, pos[1]);
             }
@@ -242,20 +309,24 @@ public class MainMenuState extends BaseState
     public void render(Graphics2D g)
     {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Screen screen = m_stateManager.getContext().m_screen;
         
-        g.drawImage(m_stateManager.getContext().m_resourceManager.getSpritesheets("background"), 0, 0, null);
-
-        for (Leaf leaf : m_leavesList)
-        {
-            leaf.render(g);
-        }
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
-        g.drawImage(m_logo, 99, 20, null);
-        g.drawImage(m_stateManager.getContext().m_resourceManager.getSpritesheets("foreground"), 0, 0, null);
+        g.drawImage(m_background, 0, 0, null);
+        
+        g.drawImage(m_logo, (screenWidth - m_logo.getWidth()) / 2, 20, null);
+        g.drawImage(m_foreground, 0, 0, null);
         
         for(GuiComponent element : m_guiElements)
         {
             element.render(g);
+        }
+        
+        for (Leaf leaf : m_leavesList)
+        {
+            leaf.render(g);
         }
     }
     
@@ -304,4 +375,54 @@ public class MainMenuState extends BaseState
     {
         m_stateManager.switchTo(StateType.CREDITS);
     }
+    
+    public BufferedImage getScaledInstance(BufferedImage img,
+                                       int targetWidth,
+                                       int targetHeight,
+                                       Object hint,
+                                       boolean higherQuality)
+{
+    int type = (img.getTransparency() == Transparency.OPAQUE) ?
+        BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+    BufferedImage ret = (BufferedImage)img;
+    int w, h;
+    if (higherQuality) {
+        // Use multi-step technique: start with original size, then
+        // scale down in multiple passes with drawImage()
+        // until the target size is reached
+        w = img.getWidth();
+        h = img.getHeight();
+    } else {
+        // Use one-step technique: scale directly from original
+        // size to target size with a single drawImage() call
+        w = targetWidth;
+        h = targetHeight;
+    }
+
+    do {
+        if (higherQuality && w > targetWidth) {
+            w /= 2;
+            if (w < targetWidth) {
+                w = targetWidth;
+            }
+        }
+
+        if (higherQuality && h > targetHeight) {
+            h /= 2;
+            if (h < targetHeight) {
+                h = targetHeight;
+            }
+        }
+
+        BufferedImage tmp = new BufferedImage(w, h, type);
+        Graphics2D g2 = tmp.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
+        g2.drawImage(ret, 0, 0, w, h, null);
+        g2.dispose();
+
+        ret = tmp;
+    } while (w != targetWidth || h != targetHeight);
+
+    return ret;
+}
 }

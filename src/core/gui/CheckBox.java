@@ -9,7 +9,7 @@ public class CheckBox extends Button
 {
     private static final String componentID = "CheckBox";
     
-    private boolean m_checked;
+    protected boolean m_checked;
     
     public CheckBox(String label)
     {
@@ -17,13 +17,13 @@ public class CheckBox extends Button
         setChecked(false);
     }
     
-    public final void setChecked(boolean checked)
+    public void setChecked(boolean checked)
     {
         setStatus(checked ? Status.CHECKED : Status.NEUTRAL);
         m_checked = checked;
     }
     
-    public final boolean isChecked()
+    public boolean isChecked()
     {
         return m_checked;
     }

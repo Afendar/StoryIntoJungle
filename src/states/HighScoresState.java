@@ -1,8 +1,8 @@
 package states;
 
 import audio.Sound;
-import core.Defines;
 import core.I18nManager;
+import core.Screen;
 import core.StateManager;
 import core.StateType;
 import java.awt.Color;
@@ -25,11 +25,18 @@ public class HighScoresState extends BaseState
     public int[][] m_btnCoords;
     public int m_selectedItem;
     
-    private final JSONArray m_bestScores;
+    private JSONArray m_bestScores;
     
     public HighScoresState(StateManager stateManager)
     {
         super(stateManager);
+    }
+    
+    @Override
+    public void onCreate()
+    {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
         
         try
         {
@@ -56,19 +63,13 @@ public class HighScoresState extends BaseState
         }
 
         int [][]coords = {
-            {(3*Defines.SCREEN_WIDTH/4) - 80, 455}
+            {(3 * screenWidth/4) - 80, 455}
         };
         
         m_btnCoords = coords;
         m_selectedItem = 0;
         
         m_bestScores = BestScores.getInstance().getBestScores();
-    }
-    
-    @Override
-    public void onCreate()
-    {
-        
     }
 
     @Override
@@ -106,20 +107,23 @@ public class HighScoresState extends BaseState
     public void render(Graphics2D g)
     {
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        g.drawImage(m_background, 0, 0, null);
+        g.drawImage(m_background, 0, 0, screenWidth, screenHeight, null);
         
         g.setColor(new Color(0, 0, 0, 76));
-        g.fillRect(0, 35, Defines.SCREEN_WIDTH, 60);
+        g.fillRect(0, 35, screenWidth, 60);
         
         FontMetrics metrics = g.getFontMetrics(m_fontM);
         g.setFont(m_fontM);
         g.setColor(Color.BLACK);
         String title = i18nManager.trans("highscores_title");
         int titlewidth = metrics.stringWidth(title);
-        g.drawString(title, Defines.SCREEN_WIDTH/2 - titlewidth/2, 75);
+        g.drawString(title, screenWidth/2 - titlewidth/2, 75);
         
         g.setFont(m_font);
         g.setColor(Color.BLACK);
@@ -149,9 +153,9 @@ public class HighScoresState extends BaseState
         }
         g.setColor(new Color(17, 17, 17));
         g.drawImage(m_bgBtn, m_btnCoords[0][0], m_btnCoords[0][1], null);
-        g.drawString(backLabel, (3*Defines.SCREEN_WIDTH/4) + 35 - backWidth/2, 510);
+        g.drawString(backLabel, (3 * screenWidth / 4) + 35 - backWidth / 2, 510);
         
-        g.drawImage(m_foreground2, 0, 0, null);
+        g.drawImage(m_foreground2, 0, 0, screenWidth, screenHeight, null);
     }
     
     /**

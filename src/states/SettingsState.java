@@ -2,7 +2,6 @@ package states;
 
 import audio.Sound;
 import core.CustomTextField;
-import core.Defines;
 import core.I18nManager;
 import core.OptionButton;
 import core.Screen;
@@ -11,6 +10,7 @@ import core.StateType;
 import core.gui.Button;
 import core.gui.ButtonGroup;
 import core.gui.CheckBox;
+import core.gui.RadioIconButton;
 import core.gui.GuiComponent;
 import core.gui.IconButton;
 import core.gui.RadioButton;
@@ -21,13 +21,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
-import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import ld34.profile.Settings;
@@ -45,13 +44,26 @@ public class SettingsState extends BaseState
     public JPanel m_sliderContainer;
     public boolean m_startSlide;
     
-    public ArrayList<GuiComponent> m_guiElements;
+    private ArrayList<GuiComponent> m_screenGuiElements;
+    private ArrayList<GuiComponent> m_playerGuiElements;
+    private ArrayList<GuiComponent> m_gameGuiElements;
+    private ArrayList<GuiComponent> m_languageGuiElements;
     
     public SettingsState(StateManager stateManager)
     {
         super(stateManager);
+    }
+
+    @Override
+    public void onCreate()
+    {
+        m_screenGuiElements = new ArrayList<>();
+        m_playerGuiElements = new ArrayList<>();
+        m_gameGuiElements = new ArrayList<>();
+        m_languageGuiElements = new ArrayList<>();
         
-        m_guiElements = new ArrayList<>();
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
         
         try{
             URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -59,7 +71,6 @@ public class SettingsState extends BaseState
             m_font = m_font.deriveFont(Font.PLAIN, 20.0f);
             m_fontS = m_font.deriveFont(Font.PLAIN, 18.0f);
             m_fontL = m_font.deriveFont(Font.PLAIN, 36.0f);
-            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
             
             url = getClass().getResource("/previews_pandas.png");
             m_previewsPandas = ImageIO.read(url);
@@ -86,25 +97,8 @@ public class SettingsState extends BaseState
         }
         
         int [][]coords = {
-            {(3*Defines.SCREEN_WIDTH/4) - 80, 455}
+            {(3 * screenWidth / 4) - 80, 455}
         };
-        
-        OptionButton btn1 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
-                "Jump", 
-                219, 
-                342
-        );
-        btn1.setFont(m_font);
-        m_optionButtons.add(btn1);
-        OptionButton btn2 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
-                "Walk", 
-                476, 
-                342
-        );
-        btn2.setFont(m_font);
-        m_optionButtons.add(btn2);
         
         m_btnCoords = coords;
         m_selectedItem = 0;
@@ -133,19 +127,13 @@ public class SettingsState extends BaseState
         m_jumpingPlayer = m_spritesheetGui2.getSubimage(739, 65, 112, 84);
         m_walkingPlayer = m_spritesheetGui2.getSubimage(737, 1, 79, 64);
         
-        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("Sex"));
-        int spicies = Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"));
-        
-        m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + spicies), 0, 128, 128);
-        
-        m_nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 203, 183, 287, 46);
-        m_nameField.setFont(m_font);
-        
-        m_sliderContainer = new JPanel();
+        createScreenInterface();
+        createPlayerInterface();
+        createGameInterface();
+        createLanguageInterface();
     }
 
-    @Override
-    public void onCreate()
+    private void createScreenInterface()
     {
         CheckBox cb = new CheckBox("Fullscreen");
         cb.setPosition(189, 390);
@@ -153,7 +141,7 @@ public class SettingsState extends BaseState
         cb.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
         cb.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
         cb.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(320, 620, 41, 33));
-        m_guiElements.add(cb);
+        m_screenGuiElements.add(cb);
         
         RadioButton rb1 = new RadioButton("800 x 600");
         rb1.setPosition(190, 230);
@@ -181,7 +169,7 @@ public class SettingsState extends BaseState
         bg.add(rb1);
         bg.add(rb2);
         bg.add(rb3);
-        m_guiElements.add(bg);
+        m_screenGuiElements.add(bg);
         
         IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34));
         ib.setPosition(595, 471);
@@ -190,9 +178,147 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         
-        m_guiElements.add(ib);
+        m_screenGuiElements.add(ib);
     }
-
+    
+    private void createPlayerInterface()
+    {
+        ButtonGroup bg = new ButtonGroup();
+        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(820, 1, 35, 36));
+        ib.setPosition(199, 266);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 0);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(858, 1, 27, 40));
+        ib.setPosition(368, 265);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 1);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        m_playerGuiElements.add(bg);
+        
+        bg = new ButtonGroup();
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(674, 103, 47, 38));
+        ib.setPosition(199, 386);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 0);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(676, 147, 49, 38));
+        ib.setPosition(369, 386);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 1);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        m_playerGuiElements.add(bg);
+        
+        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("Sex"));
+        int spicies = Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"));
+        
+        m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + spicies), 0, 128, 128);
+        
+        m_nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 203, 183, 287, 46);
+        m_nameField.setFont(m_font);
+        
+        m_sliderContainer = new JPanel();
+    }
+    
+    private void createGameInterface()
+    {
+        ButtonGroup bg = new ButtonGroup();
+        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 69, 17, 16));
+        ib.setPosition(189, 186);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 0);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(325, 69, 35, 16));
+        ib.setPosition(339, 186);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 1);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 89, 33, 32));
+        ib.setPosition(479, 186);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 2);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(326, 90, 33, 32));
+        ib.setPosition(629, 186);
+        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 3);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(ib);
+        m_gameGuiElements.add(bg);
+    }
+    
+    private void createLanguageInterface()
+    {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        
+        ButtonGroup bg = new ButtonGroup();
+        RadioIconButton rib1 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 344, 42, 28));
+        rib1.setPosition((screenWidth - 115) / 2 - 15, 150);
+        rib1.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 0);
+        rib1.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib1.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib1.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib1.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(rib1);
+        
+        RadioIconButton rib2 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 372, 42, 28));
+        rib2.setPosition((screenWidth - 115) / 2 + 125, 150);
+        rib2.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 1);
+        rib2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib2.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib2.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib2.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        bg.add(rib2);
+        
+        m_languageGuiElements.add(bg);
+        
+        OptionButton btn1 = new OptionButton(
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
+                "Jump", 
+                219, 
+                462
+        );
+        btn1.setFont(m_font);
+        m_optionButtons.add(btn1);
+        OptionButton btn2 = new OptionButton(
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
+                "Walk", 
+                476, 
+                462
+        );
+        btn2.setFont(m_font);
+        m_optionButtons.add(btn2);
+    }
+    
     @Override
     public void onDestroy() 
     {
@@ -221,7 +347,38 @@ public class SettingsState extends BaseState
         
         processHover();
         
-        for(GuiComponent element : m_guiElements)
+        if(m_stateManager.getContext().m_inputsListener.e != null)
+        {
+            processKey(m_stateManager.getContext().m_inputsListener.e);
+        }
+        
+        switch(m_currentTab)
+        {
+            case 0:
+                updateScreenInterface(dt, mouseX, mouseY);
+                break;
+            case 1:
+                updatePlayerInterface(dt, mouseX, mouseY);
+                break;
+            case 2:
+                updateGameInterface(dt, mouseX, mouseY);
+                break;
+            case 3:
+                updateLanguageInterface(dt, mouseX, mouseY);
+        }
+        
+        processClick();
+    }
+
+    /**
+     * 
+     * @param dt
+     * @param mouseX
+     * @param mouseY 
+     */
+    private void updateScreenInterface(double dt, int mouseX, int mouseY)
+    {
+        for(GuiComponent element : m_screenGuiElements)
         {
             element.update(dt);
             
@@ -248,141 +405,126 @@ public class SettingsState extends BaseState
                 element.onRelease();
             }
         }
-        
-        if(m_stateManager.getContext().m_inputsListener.e != null)
-        {
-            processKey(m_stateManager.getContext().m_inputsListener.e);
-        }
-        
-        if(m_stateManager.getContext().m_inputsListener.mousePressed)
-        {
-            switch(m_currentTab)
-            {
-                case 0:
-                    if(m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
-                    {
-                        if(mouseX > 199 && mouseX < 319 && mouseY > 266 && mouseY < 365)
-                        {
-                            //male btn
-                            new Thread(Sound.select::play).start();
-                            if(Settings.getInstance().getConfigValue("Sex").equals("1"))
-                            {
-                                Settings.getInstance().setConfigValue("Sex", "0");
-                                m_startSlide = true;
-                                m_oldPreview = m_currentPreview;
-                                m_currentPreview = m_previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2), 0, 128, 128);
-                            }
-                        }
-                        else if(mouseX > 369 && mouseX < 489 && mouseY > 266 && mouseY < 365)
-                        {
-                            //female btn
-                            new Thread(Sound.select::play).start();
-                            if(Settings.getInstance().getConfigValue("Sex").equals("0"))
-                            {
-                                Settings.getInstance().setConfigValue("Sex", "1");
-                                m_startSlide = true;
-                                m_oldPreview = m_currentPreview;
-                                m_currentPreview = m_previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")) * 2 + 1), 0, 128, 128);
-                            }
-                        }
-                        else if(mouseX > 199 && mouseX < 319 && mouseY > 386 && mouseY < 485)
-                        {
-                            //grand panda btn
-                            new Thread(Sound.select::play).start();
-                            if(Settings.getInstance().getConfigValue("Spicies").equals("1"))
-                            {
-                                Settings.getInstance().setConfigValue("Spicies", "0");
-                                m_startSlide = true;
-                                m_oldPreview = m_currentPreview;
-                                m_currentPreview = m_previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex"))), 0, 128, 128);
-                            }
-                        }
-                        else if(mouseX > 369 && mouseX < 489 && mouseY > 386 && mouseY < 485)
-                        {
-                            //panda roux btn
-                            new Thread(Sound.select::play).start();
-                            if(Settings.getInstance().getConfigValue("Spicies").equals("0"))
-                            {
-                                Settings.getInstance().setConfigValue("Spicies", "1");
-                                m_startSlide = true;
-                                m_oldPreview = m_currentPreview;
-                                m_currentPreview = m_previewsPandas.getSubimage(128 * (Integer.parseInt(Settings.getInstance().getConfigValue("Sex")) + 2), 0, 128, 128);
-                            }
-                        }
-                    }
-                    break;
-                case 1:
-                    if(m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
-                    {
-                        if(mouseX > 189 && mouseX < 189 + 120 && mouseY > 166 && mouseY < 166 + 99)
-                        {
-                            new Thread(Sound.select::play).start();
-                            Settings.getInstance().setConfigValue("Difficulty", "0");
-                        }
-                        else if(mouseX > 339 && mouseX < 339 + 120 && mouseY > 166 && mouseY < 166 + 99)
-                        {
-                            new Thread(Sound.select::play).start();
-                            Settings.getInstance().setConfigValue("Difficulty", "2");
-                        }
-                        else if(mouseX > 479 && mouseX < 479 + 120 && mouseY > 166 && mouseY < 166 + 99)
-                        {
-                            new Thread(Sound.select::play).start();
-                            Settings.getInstance().setConfigValue("Difficulty", "4");
-                        }
-                        else if(mouseX > 629 && mouseX < 629 + 120 && mouseY > 166 && mouseY < 166 + 99)
-                        {
-                            new Thread(Sound.select::play).start();
-                            Settings.getInstance().setConfigValue("Difficulty", "5");
-                        }
-                        else if(mouseX > 221 && mouseX < 221 + 234 && mouseY > 310 && mouseY < 310 + 100)
-                        {
-                            new Thread(Sound.select::play).start();
-                            Settings.getInstance().setConfigValue("Lang", "0");
-                            m_stateManager.getContext().m_I18nManager.setLanguage(I18nManager.Language.ENGLISH);
-                        }
-                        else if(mouseX > 481 && mouseX < 481 + 234 && mouseY > 305 && mouseY < 305 + 100)
-                        {
-                            new Thread(Sound.select::play).start();
-                            Settings.getInstance().setConfigValue("Lang", "1");
-                            m_stateManager.getContext().m_I18nManager.setLanguage(I18nManager.Language.FRENCH);
-                        }
-                    }
-                    
-                    if(mouseX >= 200 && mouseX <= 440 && mouseY > 475 && mouseY < 489)
-                    {
-                        m_posBar = mouseX;
-                        int newVolume = (int)((470 - m_posBar)/ - 2.4);
-                        Settings.getInstance().setConfigValue("Sound", Integer.toString(newVolume));
-                    }
-                    break;
-                case 2:
-                    break;
-            }
-        }
-        
-        if(m_startSlide)
-        {
-            m_timerSlider += dt;
-            if(m_timerSlider >= 2)
-            {
-                m_timerSlider = 0;
-                m_x2 -= 18;
-                if(m_x2 <= 570 - 46 - 128)
-                {
-                    m_startSlide = false;
-                    m_x2 = 616;
-                }
-            }
-        }
-        processClick();
     }
+    
+    /**
+     * 
+     * @param dt
+     * @param mouseX
+     * @param mouseY 
+     */
+    private void updatePlayerInterface(double dt, int mouseX, int mouseY)
+    {
+        for(GuiComponent element : m_playerGuiElements)
+        {
+            element.update(dt);
+            
+            if(element.isInside(mouseX, mouseY))
+            {
+                if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
+                {
+                    element.onClick();
+                }
+                
+                if(element.getStatus() != GuiComponent.Status.NEUTRAL)
+                {
+                    continue;
+                }
 
+                element.onHover();
+            }
+            else if(element.getStatus() == GuiComponent.Status.FOCUSED)
+            {
+                element.onLeave();
+            }
+            else if(element.getStatus() == GuiComponent.Status.CLICKED)
+            {
+                element.onRelease();
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param dt
+     * @param mouseX
+     * @param mouseY 
+     */
+    private void updateGameInterface(double dt, int mouseX, int mouseY)
+    {
+        for(GuiComponent element : m_gameGuiElements)
+        {
+            element.update(dt);
+            
+            if(element.isInside(mouseX, mouseY))
+            {
+                if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
+                {
+                    element.onClick();
+                }
+                
+                if(element.getStatus() != GuiComponent.Status.NEUTRAL)
+                {
+                    continue;
+                }
+
+                element.onHover();
+            }
+            else if(element.getStatus() == GuiComponent.Status.FOCUSED)
+            {
+                element.onLeave();
+            }
+            else if(element.getStatus() == GuiComponent.Status.CLICKED)
+            {
+                element.onRelease();
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param dt
+     * @param mouseX
+     * @param mouseY 
+     */
+    private void updateLanguageInterface(double dt, int mouseX, int mouseY)
+    {
+        for(GuiComponent element : m_languageGuiElements)
+        {
+            element.update(dt);
+            
+            if(element.isInside(mouseX, mouseY))
+            {
+                if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
+                {
+                    element.onClick();
+                }
+                
+                if(element.getStatus() != GuiComponent.Status.NEUTRAL)
+                {
+                    continue;
+                }
+
+                element.onHover();
+            }
+            else if(element.getStatus() == GuiComponent.Status.FOCUSED)
+            {
+                element.onLeave();
+            }
+            else if(element.getStatus() == GuiComponent.Status.CLICKED)
+            {
+                element.onRelease();
+            }
+        }
+    }
+    
     @Override
     public void render(Graphics2D g) 
     {   
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         Screen screen = m_stateManager.getContext().m_screen;
-        double scale = screen != null ? screen.getScale(): 1.0;
+        double scale = screen != null ? screen.getScale() : 1.0;
+        int screenWidth = screen.getContentPane().getWidth();
         
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
@@ -390,7 +532,6 @@ public class SettingsState extends BaseState
         
         g.drawImage(m_backgroundMenu, 0, 0, null);
 
-        //draw menu options
         g.setColor(new Color(124, 180, 94));
         
         switch(m_currentTab)
@@ -424,7 +565,7 @@ public class SettingsState extends BaseState
         g.setColor(Color.BLACK);
         String title = i18nManager.trans("settings_title");
         int titlewidth = metrics.stringWidth(title);
-        g.drawString(title, Defines.SCREEN_WIDTH/2 - titlewidth/2, 75);
+        g.drawString(title, screenWidth/2 - titlewidth/2, 75);
         
         switch(m_currentTab)
         {
@@ -447,6 +588,9 @@ public class SettingsState extends BaseState
         g.drawImage(m_foreground2, 0, 0, (int)(800 * scale), (int)(600 * scale), null);
     }
     
+    /**
+     * 
+     */
     public void processHover()
     {
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
@@ -464,7 +608,6 @@ public class SettingsState extends BaseState
         }
         else if(mouseX > 0 && mouseX < 113 && mouseY > 313 && mouseY < 393)
         {
-            //if btn controls
             if(m_selectedItem != 4)
                 m_selectedItem = 4;
         }
@@ -499,19 +642,16 @@ public class SettingsState extends BaseState
             switch(m_selectedItem)
             {
                 case 2:
-                    //player infos tab
                     m_currentTab = 0;
                     new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 3:
-                    //settings tab
                     m_currentTab = 1;
                     new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 4:
-                    //controls tab
                     m_currentTab = 2;
                     new Thread(Sound.select::play).start();
                     Settings.getInstance().saveConfig();
@@ -533,19 +673,16 @@ public class SettingsState extends BaseState
     {   
         g.setColor(Color.BLACK);
         g.setFont(m_fontS);
-        FontMetrics metrics = g.getFontMetrics(m_fontS);
         String resolution = "Resolutions:";
         g.drawString(resolution, 170, 188);
         
-        for(GuiComponent gc : m_guiElements)
+        for(GuiComponent gc : m_screenGuiElements)
         {
             gc.render(g);
         }
+
+        FontMetrics metrics = g.getFontMetrics(m_fontS);
         
-        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
-        metrics = g.getFontMetrics(m_fontS);
-        
-        //Volume
         g.setFont(m_fontS);
         String volume = "Sounds:";
         g.drawString(volume, 470, 165 + metrics.getAscent());
@@ -579,45 +716,11 @@ public class SettingsState extends BaseState
     {
         m_nameField.render(g);
         
-        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("Sex"));
-        if(sex == 0)
+        for(GuiComponent gp : m_playerGuiElements)
         {
-            g.drawImage(m_btnSmallSelected, 199, 266, null);
+            gp.render(g);
         }
-        else{
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 199, 266, null);
-        }
-        if(sex == 1)
-        {
-            g.drawImage(m_btnSmallSelected, 368, 265, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 368, 265, null);
-        }
-        g.drawImage(m_iconBoy, 239, 297, null);
-        g.drawImage(m_iconGirl, 413, 293, null);
-
-        int species = Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"));
-        if(species == 0)
-        {
-            g.drawImage(m_btnSmallSelected, 199, 386, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 199, 386, null);
-        }
-        if(species == 1)
-        {
-            g.drawImage(m_btnSmallSelected, 369, 386, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 369, 386, null);
-        }
-        g.drawImage(m_iconGP, 233, 416, null);
-        g.drawImage(m_iconRP, 402, 416, null);
-
+        
         g.drawImage(m_backgroundPlayer, 570, 190, null);
         Graphics2D g2d = (Graphics2D) g;
         g.setColor(new Color(0,0,0,25));
@@ -650,25 +753,15 @@ public class SettingsState extends BaseState
 
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         
-        g.drawImage(m_bottomControls, 218, 345, null);
-        g.drawImage(m_bottomControls, 475, 345, null);
+        g.setColor(Color.BLACK);
+        g.setFont(m_fontS);
+        FontMetrics metrics = g.getFontMetrics(m_fontS);
+        String difficulty = i18nManager.trans("difficulty");
+        g.drawString(difficulty, 170, 128 + metrics.getAscent());
         
-        g.drawImage(m_backgroundPlayer, 213, 147, null);
-        g.drawImage(m_backgroundPlayer, 470, 147, null);
-        
-        g.drawImage(m_jumpingPlayer, 275, 227, null);
-        g.drawImage(m_walkingPlayer, 542, 240, null);
-        
-        g.setFont(m_font);
-        FontMetrics metrics = g.getFontMetrics(m_font);
-        String ctrlJump = i18nManager.trans("ctrlJump");
-        g.drawString(ctrlJump, 290, 180 + metrics.getAscent());
-        String ctrlWalk = i18nManager.trans("ctrlWalk");
-        g.drawString(ctrlWalk, 543, 180 + metrics.getAscent());
-        
-        for(int i=0;i<m_optionButtons.size();i++)
+        for(GuiComponent gp : m_gameGuiElements)
         {
-            m_optionButtons.get(i).render(g);
+            gp.render(g);
         }
     }
     
@@ -680,88 +773,37 @@ public class SettingsState extends BaseState
     {
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         
-        //difficulty
-        g.setColor(Color.BLACK);
         g.setFont(m_fontS);
-        FontMetrics metrics = g.getFontMetrics(m_font);
-        String difficulty = i18nManager.trans("difficulty");
-        g.drawString(difficulty, 170, 128 + metrics.getAscent());
-        
-        //easy
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 0)
-        {
-            g.drawImage(m_btnSmallSelected, 189, 166, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 189, 166, null);
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(285, 69, 17, 16), 239, 205, null);
-        
-        //medium
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 2)
-        {
-            g.drawImage(m_btnSmallSelected, 339, 166, null);
-        }else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 339, 166, null);
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(325, 69, 35, 16), 380, 206, null);
-
-        //hard
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 4)
-        {
-            g.drawImage(m_btnSmallSelected, 479, 166, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 479, 166, null);
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(285, 89, 33, 32), 521, 197, null);
-        
-        //hardcore
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5)
-        {
-            g.drawImage(m_btnSmallSelected, 629, 166, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(491, 1, 120, 99), 629, 166, null);
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(326, 90, 33, 32), 672, 197, null);
-        
-        //languages
-        g.setFont(m_fontS);
+        FontMetrics metrics = g.getFontMetrics(m_fontS);
         g.setColor(Color.BLACK);
         String language = i18nManager.trans("language");
-        g.drawString(language, 170, 278 + metrics.getAscent());
-        //english
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 0)
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(0, 332, 238, 104), 221, 310, null);
-        }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(0, 132, 234, 100), 221, 310, null);
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(238, 344, 42, 28), 256, 345, null);
-        g.setFont(m_font);
-        String english = i18nManager.trans("english");
-        g.drawString(english, 317, 346 + metrics.getAscent()/2 + 8);
+        g.drawString(language, 170, 118 + metrics.getAscent());
         
-        //french
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Lang")) == 1)
+        for(GuiComponent gp : m_languageGuiElements)
         {
-            g.drawImage(m_spritesheetGui2.getSubimage(0, 332, 238, 104), 481, 305, null);
+            gp.render(g);
         }
-        else
-        {
-            g.drawImage(m_spritesheetGui2.getSubimage(0, 132, 234, 100), 481, 305, null);
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(238, 372, 42, 28), 517, 342, null);
+        
+        g.drawImage(m_bottomControls, 218, 465, null);
+        g.drawImage(m_bottomControls, 475, 465, null);
+        
+        g.drawImage(m_backgroundPlayer, 213, 267, null);
+        g.drawImage(m_backgroundPlayer, 470, 267, null);
+        
+        g.drawImage(m_jumpingPlayer, 275, 347, null);
+        g.drawImage(m_walkingPlayer, 542, 360, null);
+        
         g.setFont(m_font);
-        String french = i18nManager.trans("french");
-        g.drawString(french, 580, 342 + metrics.getAscent()/2 + 8);
+        metrics = g.getFontMetrics(m_font);
+        String ctrlJump = i18nManager.trans("ctrlJump");
+        g.drawString(ctrlJump, 290, 300 + metrics.getAscent());
+        String ctrlWalk = i18nManager.trans("ctrlWalk");
+        g.drawString(ctrlWalk, 543, 300 + metrics.getAscent());
+        
+        for(int i=0;i<m_optionButtons.size();i++)
+        {
+            m_optionButtons.get(i).render(g);
+        }
     }
     
     /**
@@ -804,18 +846,26 @@ public class SettingsState extends BaseState
         }
     }
     
+    /**
+     * 
+     */
     public void toggleFullscreen()
     {
         Screen screen = m_stateManager.getContext().m_screen;
         screen.setFullscreen(!screen.isFullscreen());
     }
     
+    /**
+     * 
+     * @param width
+     * @param height 
+     */
     public void changeResolution(Integer width, Integer height)
     {
         Screen screen = m_stateManager.getContext().m_screen;
         screen.setResolution(width, height);
         
-        for(GuiComponent gc : m_guiElements)
+        for(GuiComponent gc : m_screenGuiElements)
         {
             if(gc instanceof ButtonGroup)
             {
@@ -823,24 +873,81 @@ public class SettingsState extends BaseState
                 for(Button b : buttons)
                 {
                     int[] pos = b.getPosition();
-                    pos[0] *= screen.getRatio();
-                    pos[1] *= screen.getRatio();
+                    pos[0] = (int)(SettingsState.round(pos[0] * screen.getRatio(), 0));
+                    pos[1] = (int)(SettingsState.round(pos[1] * screen.getRatio(), 0));
                     b.setPosition(pos[0], pos[1]);
                 }
             }
             else
             {
                 int[] pos = gc.getPosition();
-                pos[0] *= screen.getRatio();
-                pos[1] *= screen.getRatio();
+                pos[0] = (int)(Math.round((pos[0] * screen.getRatio()) * 10.0) / 10.0);
+                pos[1] = (int)(Math.round((pos[1] * screen.getRatio()) * 10.0) / 10.0);
                 gc.setPosition(pos[0], pos[1]);
             }
         }
+        
+        //screen.setLocationRelativeTo(null);
     }
     
+    /**
+     * 
+     */
     public void backToMain()
     {
-        Settings.getInstance().saveConfig();
         m_stateManager.switchTo(StateType.MAIN_MENU);
+    }
+    
+    /**
+     * 
+     * @param value
+     * @param places
+     * @return 
+     */
+    public static double round(double value, int places)
+    {
+        if (places < 0)
+        {
+            throw new IllegalArgumentException();
+        }
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+    
+    /**
+     * 
+     * @param sex 
+     */
+    public void selectSex(Integer sex)
+    {
+        
+    }
+    
+    /**
+     * 
+     * @param species 
+     */
+    public void selectSpecies(Integer species)
+    {
+        
+    }
+    
+    /**
+     * 
+     * @param difficulty 
+     */
+    public void selectDifficulty(Integer difficulty)
+    {
+        
+    }
+    
+    /**
+     * 
+     * @param language 
+     */
+    public void selectLanguage(Integer language)
+    {
+        System.out.println("Select laguage:" + language);
     }
 }

@@ -2,12 +2,11 @@ package states;
 
 import audio.Sound;
 import core.Camera;
-import core.CustomDialog;
-import core.CustomTextField;
 import core.Defines;
 import core.I18nManager;
 import core.Minimap;
-import core.OptionButton;
+import core.ResourceManager;
+import core.Screen;
 import core.StateManager;
 import core.StateType;
 import core.TimerThread;
@@ -15,35 +14,26 @@ import entity.CageEntity;
 import entity.Player;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
-import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import ld34.profile.BestScores;
-import ld34.profile.Save;
 import ld34.profile.Settings;
 import level.Level;
-import org.json.simple.JSONObject;
 
 public class GameState extends BaseState
 {
-    public Font m_font, m_fontS, m_fontM, m_fontB, m_fontSM, m_fontU, m_fontDialog;
     public Player m_player;
     public Level m_level;
     public Camera m_cam;
+    
     public BufferedImage m_background2, m_bgGui, m_gui, m_bgGui2, m_clockGui, m_backgroundBottom, m_backgroundTop, m_monkeySpriteSheet,
             m_backgroundBottomAll, m_backgroundBottom2, m_backgroundTop2, m_backgroundTopAll, m_guiAssets, m_scoreIcon, m_timeIcon, m_levelIcon, m_cagesIcon, 
             m_cageIcon, m_dollardIcon, m_littlesPandas, m_spritesheetGui, m_background, m_foregroundGame, m_spritesheetGui2;
@@ -58,31 +48,22 @@ public class GameState extends BaseState
     public double m_timerMenu = 0;
     public boolean m_timer = false, m_renderFreeCageAnim = false;
     public Minimap m_minimap;
-    public popinsScenes m_currentScene;
-    public enum popinsScenes { NONE, MENU, SETTINGS, SAVES };
-    
-    public ArrayList<OptionButton> m_optionButtons = new ArrayList<>();
-    public CustomTextField m_nameField;
-    public int m_posBar, m_selectedSave;
-    public BufferedImage m_soundBar, m_bgSave, m_cageSavesIcon, m_levelSavesIcon, m_dollardSavesIcon;
-    public JSONObject m_jsonSaves;
-    public Color m_kaki;
-    public CustomDialog m_dialog;
-    public int[][] m_btnPosMenu = {
-        {Defines.SCREEN_WIDTH/2 - 107 - (15*30), 140},
-        {Defines.SCREEN_WIDTH/2 - 107 - (17*30), 240},
-        {Defines.SCREEN_WIDTH/2 - 107 - (19*30), 340},
-        {Defines.SCREEN_WIDTH/2 - 107 - (21*30), 440}
-    };
     
     public GameState(StateManager stateManager)
     {
         super(stateManager);
+    }
+    
+    @Override
+    public void onCreate() 
+    {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
+        
         m_nbLevel = 1;
         m_displayEnd = false;
         m_displayStart = true;
-        m_kaki = new Color(176, 173, 137);
-        m_dialog = null;
         
         if(m_nbLevel > 1){
             m_displayStart = false;
@@ -92,20 +73,18 @@ public class GameState extends BaseState
         for(int i=1;i<m_nbLevel;i++){
             m_level.setUnlocked(i);
         }
-        m_level.setNbTilesInScreenX(Defines.SCREEN_WIDTH);
-        m_level.setNbTilesInScreenY(Defines.SCREEN_HEIGHT);
+        m_level.setNbTilesInScreenX(screenWidth);
+        m_level.setNbTilesInScreenY(screenHeight);
         
         m_cageToFree = m_level.nbCages;
         
-        m_cam = new Camera(0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, m_level);
+        m_cam = new Camera(0, 0, screenWidth, screenHeight, m_level);
         m_player = new Player(32, 445, m_level, m_stateManager.getContext().m_inputsListener, m_cam, Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")));
         m_player.score = 0;
         
         m_level.addPlayer(m_player);
 
         loadAssets();
-        
-        m_selectedItemMenu = m_selectedItemSaves = m_selectedItemSettings = 0;
         
         m_alpha = 255;
         m_alphaMax = 128;
@@ -117,41 +96,10 @@ public class GameState extends BaseState
         m_glueX2 = m_backgroundBottom.getWidth();
         m_glueTopX2 = m_backgroundTop2.getWidth();
         
-        m_minimap = new Minimap(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
+        m_minimap = new Minimap(screenWidth, screenHeight, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
         
         m_timeSound = TimerThread.MILLI;
         m_soundPlayed = 1;
-        
-        int volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        m_posBar = (int)(255 + ( 2.4 * volume));
-        
-        m_jsonSaves = Save.getInstance().getSaves();
-        
-        OptionButton btn1 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
-                "Jump", 
-                230, 
-                380
-        );
-        btn1.setFont(m_fontS);
-        btn1.setSize(234, 100);
-        m_optionButtons.add(btn1);
-        OptionButton btn2 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
-                "Walk", 
-                500, 
-                380
-        );
-        btn2.setFont(m_fontS);
-        btn2.setSize(234, 100);
-        m_optionButtons.add(btn2);
-        m_selectedSave = 0;
-    }
-    
-    @Override
-    public void onCreate() 
-    {
-        
     }
 
     @Override
@@ -183,158 +131,137 @@ public class GameState extends BaseState
     {
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
-        if(m_dialog != null)
+        if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
         {
-            int value = m_dialog.getValue();
-            if(value == 0)
-            {
-                m_dialog.update();
+            m_timeSound = TimerThread.MILLI;
+            m_soundPlayed = 2;
+            new Thread(Sound.sf_jungle01::play).start();
+        }
+        else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
+        {
+            m_timeSound = TimerThread.MILLI;
+            m_soundPlayed = 1;
+            new Thread(Sound.sf_jungle02::play).start();
+        }
+
+        if(m_cageToFree != m_level.nbCages && m_timeEventFree < 200){
+            m_renderFreeCageAnim = true;
+            m_timeEventFree += dt;
+            if(m_timeEventFree < 55){
+                m_eventY = this.easeOut(m_timeEventFree, -250, 290, 50);
             }
-            else
-            {
-                switch(value)
-                {
-                    case 1:
-                        if(m_selectedSave != 0)
-                        {
-                            Save.getInstance().saveGame(m_selectedSave - 1, m_level, m_player);
-                            m_jsonSaves = Save.getInstance().getSaves();
-                        }
-                        break;
-                }
-                m_dialog = null;
+            else if(m_timeEventFree > 100){
+                m_eventY = cubicEaseIn(m_timeEventFree - 100, 70, -250, 50);
             }
         }
         else
         {
-            if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
-            {
-                m_timeSound = TimerThread.MILLI;
-                m_soundPlayed = 2;
-                new Thread(Sound.sf_jungle01::play).start();
-            }
-            else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
-            {
-                m_timeSound = TimerThread.MILLI;
-                m_soundPlayed = 1;
-                new Thread(Sound.sf_jungle02::play).start();
-            }
+            m_renderFreeCageAnim = false;
+            m_timeEventFree = 0;
+            m_eventY = 0;
+            m_cageToFree = m_level.nbCages;
+        }
 
-            if(m_cageToFree != m_level.nbCages && m_timeEventFree < 200){
-                //m_game.paused = true;
-                m_renderFreeCageAnim = true;
-                m_timeEventFree += dt;
-                if(m_timeEventFree < 55){
-                    m_eventY = this.easeOut(m_timeEventFree, -250, 290, 50);
-                }
-                else if(m_timeEventFree > 100){
-                    m_eventY = cubicEaseIn(m_timeEventFree - 100, 70, -250, 50);
-                }
-            }
-            else
+        if(m_level.nbLevel == 1 && !Defines.DEV)
+        {
+            for(int i=0;i< m_level.eventsPos.length;i++)
             {
-                m_renderFreeCageAnim = false;
-                //m_game.paused = false;
-                m_timeEventFree = 0;
-                m_eventY = 0;
-                m_cageToFree = m_level.nbCages;
-            }
-            
-            if(m_level.nbLevel == 1 && !Defines.DEV)
-            {
-                for(int i=0;i< m_level.eventsPos.length;i++)
+                if(m_player.getPosX() >= m_level.eventsPos[i][0] + 64 && m_player.getPosX() <= m_level.eventsPos[i][0] + 128 && !m_level.viewedEvent[i])
                 {
-                    if(m_player.getPosX() >= m_level.eventsPos[i][0] + 64 && m_player.getPosX() <= m_level.eventsPos[i][0] + 128 && !m_level.viewedEvent[i])
+                    if(!m_displayEvent)
                     {
-                        if(!m_displayEvent)
-                        {
-                            m_eventNumber = i;
-                            m_level.viewedEvent[i] = true;
-                            m_displayEvent = true;
-                            //m_game.paused = true;
-                        }
+                        m_eventNumber = i;
+                        m_level.viewedEvent[i] = true;
+                        m_displayEvent = true;
                     }
                 }
-                if(m_displayEvent)
+            }
+            if(m_displayEvent)
+            {
+                m_timeMonkey += dt;
+                if(m_timeMonkey > 15)
                 {
-                    m_timeMonkey += dt;
-                    if(m_timeMonkey > 15)
+                    m_timeMonkey = 15;
+                    m_displayDialog = true;
+                    if(mouseX > screenWidth - 60 && mouseX < screenWidth - 26 && mouseY > screenHeight - 56 && mouseY < screenHeight - 20)
                     {
-                        m_timeMonkey = 15;
-                        m_displayDialog = true;
-                        if(mouseX > Defines.SCREEN_WIDTH - 60 && mouseX < Defines.SCREEN_WIDTH - 26 && mouseY > Defines.SCREEN_HEIGHT - 56 && mouseY < Defines.SCREEN_HEIGHT - 20)
+                        if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
                         {
-                            if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
-                            {
-                                m_timeMonkey = 0;
-                                m_displayDialog = false;
-                                m_displayEvent = false;
-                                //m_game.paused = false;
-                            }
+                            m_timeMonkey = 0;
+                            m_displayDialog = false;
+                            m_displayEvent = false;
                         }
                     }
                 }
             }
-            
-            if(m_player.win)
+        }
+
+        if(m_player.win)
+        {
+            m_player.checkpointX = 0;
+            if(m_nbLevel < Defines.LEVEL_MAX)
             {
-                m_player.checkpointX = 0;
-                if(m_nbLevel < Defines.LEVEL_MAX)
-                {
-                    m_stateManager.switchTo(StateType.MAP);
-                    /*m_level.setUnlocked(m_nbLevel);
-                    MapScene ms = new MapScene(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, m_game, m_nbLevel, m_player.score, m_level.unlockedLevels);
-                    ms.setCagesMap(m_level.cagesMap);
-                    return ms;*/
-                }
-                else
-                {
-                    reinit(m_nbLevel);
-                }
+                m_stateManager.switchTo(StateType.MAP);
+                /*m_level.setUnlocked(m_nbLevel);
+                MapScene ms = new MapScene(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, m_game, m_nbLevel, m_player.score, m_level.unlockedLevels);
+                ms.setCagesMap(m_level.cagesMap);
+                return ms;*/
             }
             else
             {
-                if(m_displayEnd)
+                reinit(m_nbLevel);
+            }
+        }
+        else
+        {
+            if(m_displayEnd)
+            {
+                m_stateManager.switchTo(StateType.END);
+            }
+            else if(m_displayStart)
+            {
+                if(m_stateManager.getContext().m_inputsListener.next.typed)
                 {
-                    m_stateManager.switchTo(StateType.END);
+                    m_displayStart = false;
+                    m_alpha = 0;
                 }
-                else if(m_displayStart)
+            }
+            else if(m_player.isDead)
+            {
+                if(m_stateManager.getContext().m_inputsListener.next.typed)
                 {
-                    if(m_stateManager.getContext().m_inputsListener.next.typed)
-                    {
-                        m_displayStart = false;
-                        m_alpha = 0;
-                    }
+                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("Name"), m_player.score);
+                    reinit(0);
+                    m_player.isDead = false;
+                    m_player.score = 0;
                 }
-                else if(m_player.isDead)
-                {
-                    if(m_stateManager.getContext().m_inputsListener.next.typed)
-                    {
-                        BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("Name"), m_player.score);
-                        reinit(0);
-                        m_player.isDead = false;
-                        m_player.score = 0;
-                    }
+                m_player.update(dt);
+            }
+            else{
+                if(!m_displayEvent){
+                    int startX = (int)(m_player.getPosX() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenX() / 2);
+                    int startY = (int)(m_player.getPosY() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenY() / 2);
+                    if(startX < 0)startX = 0;
+                    if(startY < 0)startY = 0;
+                    m_level.update(dt, startX, startY);
                     m_player.update(dt);
+
+                    m_minimap.update((int)m_player.getPosX(), (int)m_player.getPosY());
+                    m_cam.update(m_player);
                 }
-                else{
-                    if(!m_displayEvent){
-                        int startX = (int)(m_player.getPosX() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenX() / 2);
-                        int startY = (int)(m_player.getPosY() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenY() / 2);
-                        if(startX < 0)startX = 0;
-                        if(startY < 0)startY = 0;
-                        m_level.update(dt, startX, startY);
-                        m_player.update(dt);
 
-                        m_minimap.update((int)m_player.getPosX(), (int)m_player.getPosY());
-                        m_cam.update(m_player);
-                    }
-
-                    if(m_minutes >= m_maxTimeHardcore)
-                    {
-                        m_player.isDead = true;
-                    }
+                if(m_minutes >= m_maxTimeHardcore)
+                {
+                    m_player.isDead = true;
+                }
+                
+                if(m_stateManager.getContext().m_inputsListener.pause.enabled)
+                {
+                    m_stateManager.switchTo(StateType.PAUSED);
                 }
             }
         }
@@ -344,6 +271,15 @@ public class GameState extends BaseState
     public void render(Graphics2D g)
     {
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
+        Screen screen = m_stateManager.getContext().m_screen;
+        
+        Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 36.0f);
+        Font fontM = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
+        Font fontS = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 17.0f);
+        
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
@@ -354,44 +290,42 @@ public class GameState extends BaseState
             if(m_alpha > 0)
                 m_alpha--;
             
-            g.drawImage(m_background2, 0, 0, null);
+            g.drawImage(m_background2, 0, 0, screenWidth, screenHeight, null);
             g.setColor(Color.BLACK);
-            g.setFont(m_fontM);
-            FontMetrics metrics = g.getFontMetrics(m_fontM);
+            g.setFont(fontM);
+            FontMetrics metrics = g.getFontMetrics(fontM);
             String startTxt1 = i18nManager.trans("startTxt1");
             int txt1W = metrics.stringWidth(startTxt1);
-            g.drawString(startTxt1, Defines.SCREEN_WIDTH/2 - txt1W/2, 330);
+            g.drawString(startTxt1, screenWidth/2 - txt1W/2, 330);
             
             String startTxt2 = i18nManager.trans("startTxt2");
             int txt2W = metrics.stringWidth(startTxt2);
-            g.drawString(startTxt2, Defines.SCREEN_WIDTH/2 - txt2W/2, 390);
+            g.drawString(startTxt2, screenWidth/2 - txt2W/2, 390);
             
             String startTxt3 = i18nManager.trans("startTxt3");
             int txt3W = metrics.stringWidth(startTxt3);
-            g.drawString(startTxt3, Defines.SCREEN_WIDTH/2-txt3W/2, 450);
+            g.drawString(startTxt3, screenWidth/2-txt3W/2, 450);
             
-            g.setFont(m_fontS);
-            metrics = g.getFontMetrics(m_fontS);
+            g.setFont(fontS);
+            metrics = g.getFontMetrics(fontS);
             String startTxt4 = i18nManager.trans("startTxt4");
             int txt4W = metrics.stringWidth(startTxt4);
-            g.drawString(startTxt4, Defines.SCREEN_WIDTH/2-txt4W/2, 520);
+            g.drawString(startTxt4, screenWidth/2-txt4W/2, 520);
             
             g.setColor(new Color(180, 14, 22));
             
             String warningTxt = i18nManager.trans("alert");
             int txt5 = metrics.stringWidth(warningTxt);
-            g.drawString(warningTxt, Defines.SCREEN_WIDTH/2 - txt5/2, 550);
+            g.drawString(warningTxt, screenWidth/2 - txt5/2, 550);
             
             g.setColor(new Color(0, 0, 0, m_alpha));
-            g.fillRect(0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT);
+            g.fillRect(0, 0, screenWidth, screenHeight);
         }
         else
         {
-            //Boolean debug = m_game.profiler.isVisible();
-            
             //Clear Screen
             g.setColor(new Color(153, 217, 234));
-            g.fillRect(0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT);
+            g.fillRect(0, 0, screenWidth, screenHeight);
 
             //Background render
             if(m_player.getPosX() + m_player.getBounds().width/2 >= m_glueX + 1.5 * m_backgroundBottom.getWidth())
@@ -417,8 +351,8 @@ public class GameState extends BaseState
                 }
             }
             
-            g.drawImage(m_backgroundBottom, (int)(m_glueX - m_cam.x), Defines.SCREEN_HEIGHT - m_backgroundBottom.getHeight(), null);
-            g.drawImage(m_backgroundBottom2, (int)(m_glueX2 - m_cam.x), Defines.SCREEN_HEIGHT - m_backgroundBottom2.getHeight(), null);
+            g.drawImage(m_backgroundBottom, (int)(m_glueX - m_cam.x), screenHeight - m_backgroundBottom.getHeight(), null);
+            g.drawImage(m_backgroundBottom2, (int)(m_glueX2 - m_cam.x), screenHeight - m_backgroundBottom2.getHeight(), null);
             
             if(m_player.getPosX() + m_player.getBounds().width/2 + (m_cam.x/4) >= m_glueTopX + 1.5 * m_backgroundTop.getWidth())
             {
@@ -445,8 +379,8 @@ public class GameState extends BaseState
             
             g.translate(-m_cam.x/4, 0);
             
-            g.drawImage(m_backgroundTop, (int)(m_glueTopX - (m_cam.x)), Defines.SCREEN_HEIGHT - m_backgroundTop.getHeight(), null);
-            g.drawImage(m_backgroundTop2, (int)(m_glueTopX2 - (m_cam.x)), Defines.SCREEN_HEIGHT - m_backgroundTop2.getHeight(), null);
+            g.drawImage(m_backgroundTop, (int)(m_glueTopX - (m_cam.x)), screenHeight - m_backgroundTop.getHeight(), null);
+            g.drawImage(m_backgroundTop2, (int)(m_glueTopX2 - (m_cam.x)), screenHeight - m_backgroundTop2.getHeight(), null);
             
             g.translate(m_cam.x/4, 0);
             
@@ -462,7 +396,7 @@ public class GameState extends BaseState
             
             m_level.renderFirstLayer(g, startX, startY);
             
-            //m_player.render(g, debug);
+            m_player.render(g, false);
 
             m_level.renderSecondLayer(g, startX, startY);
 
@@ -486,80 +420,20 @@ public class GameState extends BaseState
                 }
                 
                 g.setColor(new Color(206, 0, 31, m_alpha));
-                g.fillRect(0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT);
+                g.fillRect(0, 0, screenWidth, screenHeight);
                 
-                FontMetrics metrics = g.getFontMetrics(m_font);
+                FontMetrics metrics = g.getFontMetrics(font);
                 String deathMsg = i18nManager.trans("deathMsg");
                 int deathMsgWidth = metrics.stringWidth(deathMsg);
-                g.setFont(m_font);
+                g.setFont(font);
                 g.setColor(Color.BLACK);
-                g.drawString(deathMsg, Defines.SCREEN_WIDTH/2 - deathMsgWidth/2, Defines.SCREEN_HEIGHT/2 - 60);
+                g.drawString(deathMsg, screenWidth/2 - deathMsgWidth/2, screenHeight/2 - 60);
                 
-                metrics = g.getFontMetrics(m_fontM);
+                metrics = g.getFontMetrics(fontM);
                 String respawn = i18nManager.trans("respawn");
                 int respawnW = metrics.stringWidth(respawn);
-                g.setFont(m_fontM);
-                g.drawString(respawn, Defines.SCREEN_WIDTH/2-respawnW/2, Defines.SCREEN_HEIGHT/2);
-                
-                //m_player.render(g, debug);
-            }
-            
-            /*if(m_game.paused && !m_displayEvent)
-            {
-                if(m_renderFreeCageAnim)
-                {
-                    renderFreeCageAnim(g);
-                }
-            }*/
-            
-            if(m_displayDialog && m_displayDialog)
-            {
-                int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
-                int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
-                g.rotate(-1.5708, 34, 400);
-                g.drawImage(m_spritesheetGui2.getSubimage(968, 0, 152, 800), -167, 366, null);
-                g.drawImage(m_spritesheetGui2.getSubimage(900, 0, 68, 800), -40, 366, null);
-                g.rotate(1.5708, 34, 400);
-                if(mouseX >= Defines.SCREEN_WIDTH - 60 && mouseX <= Defines.SCREEN_WIDTH - 26 && mouseY >= Defines.SCREEN_HEIGHT - 56 && mouseY <= Defines.SCREEN_HEIGHT -20)
-                    g.drawImage(m_spritesheetGui2.getSubimage(726, 151, 34, 36), Defines.SCREEN_WIDTH - 60, Defines.SCREEN_HEIGHT - 56, null);
-                else
-                    g.drawImage(m_spritesheetGui2.getSubimage(794, 151, 34, 36), Defines.SCREEN_WIDTH - 60, Defines.SCREEN_HEIGHT - 56, null);
-                g.setColor(Color.BLACK);
-                g.setFont(m_fontDialog);
-                ResourceBundle bundle = ResourceBundle.getBundle("lang.lang", Defines.langs[Integer.parseInt(Settings.getInstance().getConfigValue("Lang"))]);
-                String text = bundle.getString("tutoriel"+m_eventNumber);
-                switch(m_eventNumber)
-                {
-                    case 0:
-                        text = text.replaceAll("\\[.*?\\]", m_player.getName());
-                        break;
-                    case 1:
-                    case 7:
-                        text = text.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))));
-                        break;
-                    case 2:
-                        text = text.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))));
-                        break;
-                }
-                FontMetrics metrics = g.getFontMetrics(m_fontM);
-                int stringWidth = metrics.stringWidth(text);
-                if(stringWidth > Defines.SCREEN_WIDTH - 40)
-                {
-                    String label = substringLabels(text, 104);
-                    int y = Defines.SCREEN_HEIGHT - 100 - g.getFontMetrics().getHeight() - 5;
-                    for(String line : label.split("\n"))
-                    {
-                        g.drawString(line, 10, y += g.getFontMetrics().getHeight() + 5);
-                    }
-                }
-                else{
-                    g.drawString(text, 10, Defines.SCREEN_HEIGHT - 100);
-                }
-            }
-            
-            if(m_dialog != null)
-            {
-                m_dialog.render(g);
+                g.setFont(fontM);
+                g.drawString(respawn, screenWidth/2-respawnW/2, screenHeight/2);
             }
             //END REDNERING
             ///////////////////////////////////////////
@@ -584,20 +458,7 @@ public class GameState extends BaseState
     
     public void loadAssets(){
         try{
-            URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
-            m_font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            m_font = m_font.deriveFont(Font.PLAIN, 36.0f);
-            m_fontSM = m_font.deriveFont(Font.PLAIN, 22.0f);
-            m_fontDialog = m_font.deriveFont(Font.PLAIN, 19.0f);
-            m_fontM = m_font.deriveFont(Font.PLAIN, 24.0f);
-            m_fontS = m_font.deriveFont(Font.PLAIN, 17.0f);
-            m_fontB = m_font.deriveFont(Font.BOLD, 17.0f);
-            Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
-            fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-            m_fontU = m_fontS;
-            m_fontU = m_fontU.deriveFont(fontAttributes);
-            
-            url = getClass().getResource("/gui.png");
+            URL url = getClass().getResource("/gui.png");
             m_spritesheetGui = ImageIO.read(url);
             
             url = getClass().getResource("/background.png");
@@ -635,9 +496,6 @@ public class GameState extends BaseState
             
             url = getClass().getResource("/gui.png");
             m_gui = ImageIO.read(url);
-            m_cageSavesIcon = m_gui.getSubimage(150, 130, 33, 32);
-            m_levelSavesIcon = m_gui.getSubimage(183, 135, 32, 26);
-            m_dollardSavesIcon = m_gui.getSubimage(154, 188, 20, 24);
             
             url = getClass().getResource("/littles_pandas.png");
             m_littlesPandas = ImageIO.read(url);
@@ -646,7 +504,7 @@ public class GameState extends BaseState
             m_monkeySpriteSheet = ImageIO.read(url);
             
         }
-        catch(FontFormatException|IOException e)
+        catch(IOException e)
         {
             e.getMessage();
         }
@@ -654,10 +512,8 @@ public class GameState extends BaseState
         m_bgGui = m_spritesheetGui.getSubimage(0, 20, 214, 50);
         m_bgGui2 = m_spritesheetGui.getSubimage(0, 0, 214, 50);
         m_clockGui = m_spritesheetGui.getSubimage(0, 281, 55, 55);
-        m_soundBar = m_spritesheetGui.getSubimage(0, 256, 210, 25);
-        m_bgSave = m_guiAssets.getSubimage(235, 127, 217, 216);
         m_cageIcon = m_guiAssets.getSubimage(384, 101, 27, 25); 
-        m_dollardIcon = m_guiAssets.getSubimage(413, 104, 16, 20);; 
+        m_dollardIcon = m_guiAssets.getSubimage(413, 104, 16, 20);
     }
     
     /**
@@ -669,14 +525,18 @@ public class GameState extends BaseState
         m_alpha = 0;
         m_timeF = TimerThread.MILLI;
         
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
+        
         if(m_nbLevel < Defines.LEVEL_MAX || m_player.isDead){
             m_nbLevel += lvl;
             
             if(lvl != 0)
             {
                 m_level = new Level(m_nbLevel);
-                m_level.setNbTilesInScreenX(Defines.SCREEN_WIDTH);
-                m_level.setNbTilesInScreenY(Defines.SCREEN_HEIGHT);
+                m_level.setNbTilesInScreenX(screenWidth);
+                m_level.setNbTilesInScreenY(screenHeight);
             }
             else
             {
@@ -720,14 +580,17 @@ public class GameState extends BaseState
     
     public void renderFreeCageAnim(Graphics g)
     {
-        g.drawImage(m_spritesheetGui2.getSubimage(0, 547, 281, 132), Defines.SCREEN_WIDTH/2 - 140, m_eventY, null);
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        
+        g.drawImage(m_spritesheetGui2.getSubimage(0, 547, 281, 132), screenWidth/2 - 140, m_eventY, null);
         for(int i=0; i<m_level.getFreeCages();i++)
         {
-            g.drawImage(m_spritesheetGui2.getSubimage(282, 548, 37, 36),Defines.SCREEN_WIDTH/2 - 140 +((i) * 40 + 39), m_eventY + 78, null);
+            g.drawImage(m_spritesheetGui2.getSubimage(282, 548, 37, 36), screenWidth/2 - 140 +((i) * 40 + 39), m_eventY + 78, null);
         }
         for(int i=0;i<m_level.nbCages;i++)
         {
-            g.drawImage(m_spritesheetGui2.getSubimage(282, 586, 37, 36), Defines.SCREEN_WIDTH/2 - 140 + ((i + m_level.getFreeCages()) * 40 + 39), m_eventY + 78, null);
+            g.drawImage(m_spritesheetGui2.getSubimage(282, 586, 37, 36), screenWidth/2 - 140 + ((i + m_level.getFreeCages()) * 40 + 39), m_eventY + 78, null);
         }
     }
     
@@ -737,6 +600,9 @@ public class GameState extends BaseState
      */
     public void renderGUI(Graphics g)
     {
+        ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
+        Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 22.0f);
+        Font fontS = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 17.0f);
         
         g.setColor(new Color(0, 0, 0, 160));
         g.fillRoundRect(55, 85, 120, 30, 5, 5);
@@ -748,8 +614,8 @@ public class GameState extends BaseState
         g.drawImage(m_cagesIcon, 120, 10, null);
         
         g.setColor(Color.WHITE);
-        g.setFont(m_fontS);
-        FontMetrics m = g.getFontMetrics(m_fontS);
+        g.setFont(fontS);
+        FontMetrics m = g.getFontMetrics(fontS);
         int scoreW = m.stringWidth(""+m_player.score);
         g.drawString("" + m_player.score, 165 - scoreW, 106);
 
@@ -770,7 +636,7 @@ public class GameState extends BaseState
                     m_secondes = (int)((double)(TimerThread.MILLI - m_timeF - m_minutes*60000)/1000);
                 }
                 g.setColor(Color.WHITE);
-                g.setFont(m_fontSM);
+                g.setFont(font);
                 g.drawString((String.format("%02d", m_minutes))+":"+(String.format("%02d", m_secondes)), 650, 50);
             }
         }

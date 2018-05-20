@@ -16,8 +16,8 @@ public class Defines {
     public static final int     SPEED           = 5;
     public static final int     LEVEL_MAX       = 7;
     public static final int     START_LEVEL     = 1;
-    public static final int     SCREEN_WIDTH    = 800;
-    public static final int     SCREEN_HEIGHT   = 600;
+    public static final int     DEFAULT_SCREEN_WIDTH    = 800;
+    public static final int     DEFAULT_SCREEN_HEIGHT   = 600;
     public static final String  VERSION         = "2.1 - beta";
     public static final boolean DEV             = false;
     public static final Locale  langs[]         = {new Locale("en","EN"), new Locale("fr", "FR")};

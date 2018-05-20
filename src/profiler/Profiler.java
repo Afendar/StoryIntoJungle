@@ -119,16 +119,16 @@ public class Profiler {
         text = "Java : " + System.getProperty("java.version") + "  x" + System.getProperty("sun.arch.data.model") + " bit";
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
-        g.fillRect(Defines.SCREEN_WIDTH - (int)rect.getWidth() - 40, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.fillRect(Defines.DEFAULT_SCREEN_WIDTH - (int)rect.getWidth() - 40, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
-        g.drawString(text, Defines.SCREEN_WIDTH - (int)rect.getWidth() - 30, 30);
+        g.drawString(text, Defines.DEFAULT_SCREEN_WIDTH - (int)rect.getWidth() - 30, 30);
                 
         text = "Story Into Jungle : v" + Defines.VERSION;
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
-        g.fillRect(Defines.SCREEN_WIDTH - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
+        g.fillRect(Defines.DEFAULT_SCREEN_WIDTH - (int)rect.getWidth() - 40, 60 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
-        g.drawString(text, Defines.SCREEN_WIDTH - (int)rect.getWidth() - 30, 60);
+        g.drawString(text, Defines.DEFAULT_SCREEN_WIDTH - (int)rect.getWidth() - 30, 60);
     }
     
     /**

@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -36,18 +35,16 @@ public class Game extends JPanel implements Runnable
     
     /**
      * 
-     * @param w
-     * @param h 
      */
     public Game()
     {   
         this.running = false;
         this.paused = false;
         this.instance = Runtime.getRuntime();
-        this.setMinimumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
-        this.setMaximumSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
-        this.setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
-        this.setSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        this.setMinimumSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
+        this.setMaximumSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
+        this.setPreferredSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
+        this.setSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
         this.frame = this.memoryUsed = this.nbEntities = 0;
         
         this.profiler = Profiler.getInstance();
@@ -72,12 +69,11 @@ public class Game extends JPanel implements Runnable
         m_context.m_inputsListener = new InputsListeners(this);
         m_context.m_I18nManager = I18nManager.getInstance();
         m_context.m_resourceManager = ResourceManager.getInstance();
-
-        m_stateManager = new StateManager(m_context);
-        m_stateManager.switchTo(StateType.SETTINGS);
         
+        m_stateManager = new StateManager(m_context);
         m_context.m_screen = new Screen(this);
         
+        m_stateManager.switchTo(StateType.SETTINGS);
         start();
     }
     
@@ -127,7 +123,6 @@ public class Game extends JPanel implements Runnable
             
             if((current - lastTime) / nsms  >= 1)
             {         
-                //tick
                 frameCpt++;
                 lastTime = current;
                 needUpdate = true;
@@ -176,50 +171,7 @@ public class Game extends JPanel implements Runnable
     @Override
     public void paint(Graphics g){
         
-        //requestFocus();
-        /*BufferStrategy bs = this.getBufferStrategy();
-        
-        if(bs == null){
-            this.createBufferStrategy(2);
-            requestFocus();
-            return;
-        }
-        
-        Graphics g = bs.getDrawGraphics();*/
-        
-        //this.gs.render(g);
-        
-        /*if(!this.paused && (!this.hasFocus() || this.listener.mouseExited || this.listener.pause.enabled) && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
-        {
-            GameScene scene = (GameScene)this.gs;
-            this.pauseTime = TimerThread.MILLI;
-            this.paused = true;
-            scene.currentScene = GameScene.popinsScenes.MENU;
-        }
-        if(this.paused && this.listener.pause.enabled && this.gs instanceof GameScene && (TimerThread.MILLI - this.pauseTime) > 400)
-        {
-            GameScene gameScene = (GameScene)this.gs;
-            if(gameScene.dialog != null){
-                gameScene.dialog = null;
-            }
-            else{
-                if(gameScene.currentScene != GameScene.popinsScenes.MENU && ((GameScene)this.gs).currentScene != GameScene.popinsScenes.NONE){
-                    this.listener.pause.enabled = false;
-                    gameScene.currentScene = GameScene.popinsScenes.MENU;
-                }
-                else{
-                    this.pauseTime = TimerThread.MILLI;
-                    int[][] posBtns = {
-                        {this.w/2 - 107 - (15*30), 140},
-                        {this.w/2 - 107 - (17*30), 240},
-                        {this.w/2 - 107 - (19*30), 340},
-                        {this.w/2 - 107 - (21*30), 440}
-                    };
-                    gameScene.btnPosMenu = posBtns;
-                    this.paused = false;
-                }
-            }
-        }*/
+        requestFocus();
         
         if(this.profiler.isVisible())
         {
@@ -228,8 +180,5 @@ public class Game extends JPanel implements Runnable
         
         Graphics2D g2d = (Graphics2D)g;
         m_stateManager.render(g2d);
-        /*
-        g.dispose();
-        bs.show();*/
     }
 }

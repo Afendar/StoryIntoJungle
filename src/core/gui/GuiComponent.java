@@ -121,7 +121,7 @@ public abstract class GuiComponent
             } 
             catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
             {
-                Logger.getLogger(GuiComponent.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getCause());
             }
         }
         m_status = status;

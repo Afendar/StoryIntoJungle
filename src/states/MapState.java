@@ -2,6 +2,7 @@ package states;
 
 import audio.Sound;
 import core.Defines;
+import core.Screen;
 import core.StateManager;
 import core.StateType;
 import entity.CageEntity;
@@ -59,6 +60,13 @@ public class MapState extends BaseState
     public MapState(StateManager stateManager)
     {
         super(stateManager);
+    }
+    
+    @Override
+    public void onCreate()
+    {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
         
         try{
             URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -87,11 +95,11 @@ public class MapState extends BaseState
         }
         
         int [][]coords = {
-            {Defines.SCREEN_WIDTH/6 - 60, 480},
-            {2* Defines.SCREEN_WIDTH/6 - 60, 480},
-            {3* Defines.SCREEN_WIDTH/6 - 60, 480},
-            {4* Defines.SCREEN_WIDTH/6 - 60, 480},
-            {5* Defines.SCREEN_WIDTH/6 - 60, 480}
+            {screenWidth/6 - 60, 480},
+            {2* screenWidth/6 - 60, 480},
+            {3* screenWidth/6 - 60, 480},
+            {4* screenWidth/6 - 60, 480},
+            {5* screenWidth/6 - 60, 480}
         };
         
         m_btnCoords = coords;
@@ -135,12 +143,6 @@ public class MapState extends BaseState
         m_pos = new Point2D.Double(m_coordsPins[m_currentLvl - 1][0], m_coordsPins[m_currentLvl - 1][1]);
         
         m_points = new ArrayList<>(25);
-    }
-    
-    @Override
-    public void onCreate()
-    {
-        
     }
 
     @Override

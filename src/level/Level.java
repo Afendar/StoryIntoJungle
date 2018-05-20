@@ -199,8 +199,8 @@ public class Level {
         for(int i=0;i<this.braconeers.size();i++){
             Braconeers b = this.braconeers.get(i);
             
-            if(playerX >= b.getPosX() - Defines.SCREEN_WIDTH/2 && playerX <= b.getPosX() + b.getBounds().width + Defines.SCREEN_WIDTH/2 &&
-                    playerY >= b.getPosY() - Defines.SCREEN_HEIGHT/2 && playerY <= b.getPosY() + Defines.SCREEN_HEIGHT/2)
+            if(playerX >= b.getPosX() - Defines.DEFAULT_SCREEN_WIDTH/2 && playerX <= b.getPosX() + b.getBounds().width + Defines.DEFAULT_SCREEN_WIDTH/2 &&
+                    playerY >= b.getPosY() - Defines.DEFAULT_SCREEN_HEIGHT/2 && playerY <= b.getPosY() + Defines.DEFAULT_SCREEN_HEIGHT/2)
             {
                 if((this.nbLevel == 1 && this.viewedEvent[7]) || this.nbLevel > 1 )
                 {

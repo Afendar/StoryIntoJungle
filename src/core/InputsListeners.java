@@ -103,7 +103,7 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
      * @param e
      * @param enabled 
      */
-    public void processKey(KeyEvent e, boolean enabled){
+    public void processKey(KeyEvent e, boolean enabled){    
         if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))) 
             jump.switched(enabled);
         if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Walk")))

@@ -2,8 +2,8 @@ package states;
 
 import audio.Sound;
 import core.Camera;
-import core.Defines;
 import core.I18nManager;
+import core.Screen;
 import core.StateManager;
 import core.StateType;
 import entity.CageEntity;
@@ -36,7 +36,11 @@ public class SavesState extends BaseState
     public SavesState(StateManager stateManager)
     {
         super(stateManager);
-        
+    }
+
+    @Override
+    public void onCreate()
+    {
         try
         {
             URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -86,12 +90,6 @@ public class SavesState extends BaseState
     }
 
     @Override
-    public void onCreate()
-    {
-        
-    }
-
-    @Override
     public void onDestroy()
     {
         
@@ -126,19 +124,21 @@ public class SavesState extends BaseState
     public void render(Graphics2D g)
     {
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
         
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(m_background, 0, 0, null);
         g.setColor(new Color(0, 0, 0, 76));
-        g.fillRect(0, 35, Defines.SCREEN_WIDTH, 60);
+        g.fillRect(0, 35, screenWidth, 60);
         
         FontMetrics metrics = g.getFontMetrics(m_fontM);
         g.setFont(m_fontM);
         g.setColor(Color.BLACK);
         String title = i18nManager.trans("loadGame");
         int titlewidth = metrics.stringWidth(title);
-        g.drawString(title, Defines.SCREEN_WIDTH / 2 - titlewidth / 2, 75);
+        g.drawString(title, screenWidth / 2 - titlewidth / 2, 75);
         
         metrics = g.getFontMetrics(m_font);
         g.setFont(m_font);
@@ -305,6 +305,9 @@ public class SavesState extends BaseState
     {
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
         if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
         {
@@ -330,7 +333,7 @@ public class SavesState extends BaseState
                             level.setUnlockedLevels(unlockedLevels);
                             
                             JSONArray coords = (JSONArray)jsonPlayer.get("coords");
-                            Camera cam = new Camera(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, level);
+                            Camera cam = new Camera(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), screenWidth, screenHeight, level);
                             Player player = new Player(Integer.parseInt((String)coords.get(0)), Integer.parseInt((String)coords.get(1)), level, m_stateManager.getContext().m_inputsListener, cam, Integer.parseInt((String)jsonLevel.get("difficulty")));
                             player.score = Integer.parseInt((String)jsonPlayer.get("score"));
 

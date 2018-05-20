@@ -1,6 +1,6 @@
 package states;
 
-import core.Defines;
+import core.Screen;
 import core.StateManager;
 import core.StateType;
 import java.awt.Color;
@@ -95,25 +95,29 @@ public class IntroState extends BaseState
     @Override
     public void render(Graphics2D g)
     {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
+        
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         BufferedImage img = m_stateManager.getContext().m_resourceManager.getSpritesheets("afendar");
-        g.drawImage(img, Defines.SCREEN_WIDTH/2 - img.getWidth()/2, 160 , null);
+        g.drawImage(img, screenWidth/2 - img.getWidth()/2, 160 , null);
         
         g.setColor(Color.WHITE);
         Font font = m_stateManager.getContext().m_resourceManager.getFont("kaushanscriptregular").deriveFont(36.0f);
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);
         int txt1W = metrics.stringWidth("Afendar games");
-        g.drawString("Afendar games", Defines.SCREEN_WIDTH/2 - txt1W/2, 390);
+        g.drawString("Afendar games", screenWidth/2 - txt1W/2, 390);
         
         font = m_stateManager.getContext().m_resourceManager.getFont("kaushanscriptregular").deriveFont(22.0f);
         g.setFont(font);
         metrics = g.getFontMetrics(font);
         int txt2W = metrics.stringWidth("present");
-        g.drawString("present", Defines.SCREEN_WIDTH/2 - txt2W/2, 430);
+        g.drawString("present", screenWidth/2 - txt2W/2, 430);
         
         g.setColor(new Color(0, 0, 0, m_alpha));
-        g.fillRect(0, 0, Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT);
+        g.fillRect(0, 0, screenWidth, screenHeight);
     }
 }

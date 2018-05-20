@@ -23,8 +23,6 @@ public class Screen extends JFrame
     private DisplayMode m_displayMode;
     private DisplayMode m_oldDisplayMode;
     
-    private DisplayMode[] m_availableModes;
-    
     protected boolean m_fullscreen;
     protected double m_oldWidth, m_newWidth;
     protected double m_oldHeight, m_newHeight;
@@ -59,13 +57,16 @@ public class Screen extends JFrame
             }
         }
         
-        m_oldWidth = Defines.SCREEN_WIDTH;
-        m_newWidth = Defines.SCREEN_WIDTH;
-        m_oldHeight = Defines.SCREEN_HEIGHT;
-        m_newHeight = Defines.SCREEN_HEIGHT;
+        int width = game.getWidth();
+        int height = game.getHeight();
+        
+        m_oldWidth = width;
+        m_newWidth = width;
+        m_oldHeight = height;
+        m_newHeight = height;
         
         m_game = game;
-        m_displayMode = new DisplayMode(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, 32, 60);
+        m_displayMode = new DisplayMode(width, height, 32, 60);
         
         init();
     }
@@ -77,7 +78,7 @@ public class Screen extends JFrame
     {       
         setTitle("Story Into Jungle - v" + Defines.VERSION);
         add(m_game);
-        getContentPane().setPreferredSize(new Dimension(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT));
+        getContentPane().setPreferredSize(new Dimension(m_game.getWidth(), m_game.getHeight()));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setFullscreen(false);
@@ -133,7 +134,7 @@ public class Screen extends JFrame
     
     public void setResolution(int width, int height)
     {
-        m_oldWidth = getWidth();
+        m_oldWidth = getContentPane().getWidth();
         m_newWidth = width;
         
         m_game.setMinimumSize(new Dimension(width, height));
@@ -153,13 +154,7 @@ public class Screen extends JFrame
     }
     
     public double getRatio()
-    {
-        if(m_newWidth > m_oldWidth)
-        {
-            System.out.println(Math.floor((m_newWidth / m_oldWidth) * 10.0) / 10.0);
-            return Math.floor((m_newWidth / m_oldWidth) * 10.0) / 10.0;
-        }
-        System.out.println(Math.round((m_newWidth / m_oldWidth) * 10.0) / 10.0);
-        return Math.round((m_newWidth / m_oldWidth) * 10.0) / 10.0;
+    {   
+        return m_newWidth / m_oldWidth;
     }
 }

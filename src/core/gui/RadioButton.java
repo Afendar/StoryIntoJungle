@@ -9,7 +9,7 @@ public class RadioButton extends Button
 {
     private static final String componentID = "RadioButton";
     
-    private boolean m_checked;
+    protected boolean m_checked;
     
     public RadioButton(String label)
     {
