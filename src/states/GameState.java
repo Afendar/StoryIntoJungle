@@ -281,8 +281,6 @@ public class GameState extends BaseState
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
         //RENDERING
         ///////////////////////////////////////////
         if(m_displayStart)

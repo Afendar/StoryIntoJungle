@@ -526,8 +526,6 @@ public class SettingsState extends BaseState
         double scale = screen != null ? screen.getScale() : 1.0;
         int screenWidth = screen.getContentPane().getWidth();
         
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
         g.drawImage(m_background, 0, 0, (int)(800 * scale), (int)(600 * scale), null);
         
         g.drawImage(m_backgroundMenu, 0, 0, null);

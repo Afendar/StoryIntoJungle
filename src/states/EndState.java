@@ -1,6 +1,5 @@
 package states;
 
-import core.Defines;
 import core.I18nManager;
 import core.Screen;
 import core.StateManager;
@@ -104,8 +103,6 @@ public class EndState extends BaseState
         I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
-        
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(m_background, 0, 0, null);
         

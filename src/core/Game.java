@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -73,7 +74,7 @@ public class Game extends JPanel implements Runnable
         m_stateManager = new StateManager(m_context);
         m_context.m_screen = new Screen(this);
         
-        m_stateManager.switchTo(StateType.SETTINGS);
+        m_stateManager.switchTo(StateType.SAVES);
         start();
     }
     
@@ -179,6 +180,9 @@ public class Game extends JPanel implements Runnable
         }
         
         Graphics2D g2d = (Graphics2D)g;
+        
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
         m_stateManager.render(g2d);
     }
 }

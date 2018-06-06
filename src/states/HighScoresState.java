@@ -10,7 +10,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -110,8 +109,6 @@ public class HighScoresState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
-
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(m_background, 0, 0, screenWidth, screenHeight, null);
         

@@ -7,7 +7,6 @@ import core.StateManager;
 import core.StateType;
 import core.gui.Button;
 import core.gui.GuiComponent;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

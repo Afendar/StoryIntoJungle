@@ -11,7 +11,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -105,8 +104,6 @@ public class CreditsState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
-        
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         g.drawImage(resourceManager.getSpritesheets("background"), 0, 0, screenWidth, screenHeight, null);
         

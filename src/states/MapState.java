@@ -191,10 +191,7 @@ public class MapState extends BaseState
 
     @Override
     public void render(Graphics2D g)
-    {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
+    {        
         g.drawImage(m_mapBg, 0, 0, null);
         
         g.setFont(m_font);
@@ -254,20 +251,20 @@ public class MapState extends BaseState
         
         //draw curves lvl 1 to 2
         g.setColor(Color.RED);
-        g2d.setStroke(new BasicStroke(3));
-        g2d.draw(m_curve[0]);
+        g.setStroke(new BasicStroke(3));
+        g.draw(m_curve[0]);
         
         //draw curve lvl 2 to 3
-        g2d.draw(m_curve[1]);
+        g.draw(m_curve[1]);
         
         //draw curve lvl 3 to 4
-        g2d.draw(m_curve[2]);
+        g.draw(m_curve[2]);
         
         //draw curve lvl 4 to 5
-        g2d.draw(m_curve[3]);
+        g.draw(m_curve[3]);
         
         //draw curve lvl 5 to 6
-        g2d.draw(m_curve[4]);
+        g.draw(m_curve[4]);
         
         for(int i=0 ; i < Defines.LEVEL_MAX - 1;i++)
         {
@@ -283,7 +280,7 @@ public class MapState extends BaseState
         
         AffineTransform at = new AffineTransform();
         at.rotate(0, 16, 16);
-        g2d.drawImage(m_panda, null, (int)m_pos.getX() - 24, (int)m_pos.getY() - 24);
+        g.drawImage(m_panda, null, (int)m_pos.getX() - 24, (int)m_pos.getY() - 24);
     }
     
     public void processHover()

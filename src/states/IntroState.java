@@ -98,8 +98,6 @@ public class IntroState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
-        
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         BufferedImage img = m_stateManager.getContext().m_resourceManager.getSpritesheets("afendar");
         g.drawImage(img, screenWidth/2 - img.getWidth()/2, 160 , null);
