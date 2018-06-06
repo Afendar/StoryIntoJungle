@@ -8,7 +8,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import ld34.Camera;
@@ -39,17 +38,17 @@ public class GameScene extends Scene {
         this.player = new Player(32, 460, this.level, this.game.listener, this.cam, this.game.difficulty);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/amburegul.otf").openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 36.0f);
             this.fontM = this.font.deriveFont(Font.PLAIN, 24.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
             this.fontB = this.font.deriveFont(Font.BOLD, 17.0f);
-            this.background = ImageIO.read(new File("gfx/background.png"));
-            this.background2 = ImageIO.read(new File("gfx/background2.png"));
-            this.foreground = ImageIO.read(new File("gfx/foreground2.png"));
-            this.gui = ImageIO.read(new File("gfx/gui.png"));
+            this.background = ImageIO.read(getClass().getResource("/background.png"));
+            this.background2 = ImageIO.read(getClass().getResource("/background2.png"));
+            this.foreground = ImageIO.read(getClass().getResource("/foreground2.png"));
+            this.gui = ImageIO.read(getClass().getResource("/gui.png"));
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.bgGui = this.gui.getSubimage(0, 20, 214, 50);

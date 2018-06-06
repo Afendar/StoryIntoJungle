@@ -28,18 +28,18 @@ public class OptionsScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/amburegul.otf").openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 18.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
             Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
             fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
             this.fontU = this.font;
             this.fontU = this.fontU.deriveFont(fontAttributes);
-            this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
-            this.background = ImageIO.read(new File("gfx/background.png"));
-            this.forground = ImageIO.read(new File("gfx/foreground2.png"));
+            this.spritesheetGui = ImageIO.read(getClass().getResource("/gui.png"));
+            this.background = ImageIO.read(getClass().getResource("/background.png"));
+            this.forground = ImageIO.read(getClass().getResource("/foreground2.png"));
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.darkGreen = new Color(128, 0, 19);

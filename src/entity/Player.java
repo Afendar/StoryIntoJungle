@@ -3,7 +3,6 @@ package entity;
 import audio.Sound;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import ld34.Camera;
@@ -47,9 +46,9 @@ public class Player extends Entity {
         this.PLAYER_SIZE = 32;
         
         try{
-            this.spritesheet = ImageIO.read(new File("gfx/spritesheet.png"));
+            this.spritesheet = ImageIO.read(getClass().getResource("/spritesheet.png"));
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.sprite = this.spritesheet.getSubimage(this.animX, this.animY*this.PLAYER_SIZE, this.PLAYER_SIZE, this.PLAYER_SIZE);
@@ -269,7 +268,7 @@ public class Player extends Entity {
     
     public void reloadSpritesheet(int lvl){
         try{
-            this.spritesheet = ImageIO.read(new File("gfx/spritesheet"+lvl+".png"));
-        }catch(IOException e){e.printStackTrace();}
+            this.spritesheet = ImageIO.read(getClass().getResource("/spritesheet"+lvl+".png"));
+        }catch(IOException e){e.getMessage();}
     }
 }

@@ -75,7 +75,7 @@ public class Level {
     
     public void loadLevel(int nbLevel){
         try{
-            BufferedImage lvlImg = ImageIO.read(new File("levels/lvl"+nbLevel+".png"));
+            BufferedImage lvlImg = ImageIO.read(getClass().getResource("/lvl"+nbLevel+".png"));
             
             byte[] pixels = ((DataBufferByte) lvlImg.getRaster().getDataBuffer()).getData();
             int width = lvlImg.getWidth();
@@ -137,7 +137,7 @@ public class Level {
             }
             
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 }

@@ -24,7 +24,7 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     }
     
     public boolean[] keys;
-    public ArrayList<Action> actions = new ArrayList<Action>();
+    public ArrayList<Action> actions = new ArrayList<>();
     
     public Action jump = new Action();
     public Action slow = new Action();

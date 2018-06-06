@@ -2,7 +2,6 @@ package level.tiles;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import ld34.Defines;
@@ -20,9 +19,9 @@ public abstract class Tile {
         this.ID = ID;
         
         try{
-            this.tileset = ImageIO.read(new File("gfx/tileset.png"));
+            this.tileset = ImageIO.read(getClass().getResource("/tileset.png"));
         }catch(IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.tile = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);

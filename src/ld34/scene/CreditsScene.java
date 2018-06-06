@@ -7,7 +7,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import ld34.Game;
@@ -25,14 +24,14 @@ public class CreditsScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/amburegul.otf").openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontL = this.font.deriveFont(Font.PLAIN, 36.0f);
-            this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
-            this.background = ImageIO.read(new File("gfx/background.png"));
-            this.forground = ImageIO.read(new File("gfx/foreground2.png"));
+            this.spritesheetGui = ImageIO.read(getClass().getResource("/gui.png"));
+            this.background = ImageIO.read(getClass().getResource("/background.png"));
+            this.forground = ImageIO.read(getClass().getResource("/foreground2.png"));
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.darkGreen = new Color(128, 0, 19);
@@ -47,7 +46,7 @@ public class CreditsScene extends Scene {
         
         this.title = "About Story Into Jungle";
         this.btnBack = "Back to main";
-        this.text1 = "This game was made in 48 hours by COMESSE Mickael";
+        this.text1 = "This game was made in 48 hours by Afendar";
         this.text2 = "for the LudumDare 34 competition.";
         this.text3 = "Edited in 12-13 december 2015.";
     }

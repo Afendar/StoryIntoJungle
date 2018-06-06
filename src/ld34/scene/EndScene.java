@@ -7,7 +7,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import ld34.Game;
@@ -26,14 +25,14 @@ public class EndScene extends Scene {
         super(w, h, game);
         
         try{
-            this.font = Font.createFont(Font.TRUETYPE_FONT, new File("gfx/fonts/amburegul.otf"));
+            this.font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/amburegul.otf").openStream());
             this.font = this.font.deriveFont(Font.PLAIN, 22.0f);
             this.fontS = this.font.deriveFont(Font.PLAIN, 17.0f);
-            this.spritesheetGui = ImageIO.read(new File("gfx/gui.png"));
-            this.foreground = ImageIO.read(new File("gfx/foreground3.png"));
-            this.background = ImageIO.read(new File("gfx/background.png"));
+            this.spritesheetGui = ImageIO.read(getClass().getResource("/gui.png"));
+            this.foreground = ImageIO.read(getClass().getResource("/foreground3.png"));
+            this.background = ImageIO.read(getClass().getResource("/background.png"));
         }catch(FontFormatException|IOException e){
-            e.printStackTrace();
+            e.getMessage();
         }
         
         this.darkGreen = new Color(128, 0, 19);
