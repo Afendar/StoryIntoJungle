@@ -106,7 +106,6 @@ public class Game extends Canvas implements Runnable {
             
             if(System.currentTimeMillis() - startTime >= 1000)
             {
-                System.out.println("FPS : " + frame);
                 frame = 0;
                 startTime = System.currentTimeMillis();
             }
