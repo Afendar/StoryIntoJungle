@@ -65,8 +65,8 @@ public class SavesState extends BaseState
         
         BufferedImage[] icons = {
             m_gui.getSubimage(176, 93, 34, 35),
-            m_gui.getSubimage(243, 94, 42, 34),
-            m_gui.getSubimage(211, 92, 33, 35)
+            m_gui.getSubimage(211, 92, 33, 35),
+            m_gui.getSubimage(243, 94, 42, 34)
         };
         int[][] coords = {
             {190, 420},
@@ -83,8 +83,9 @@ public class SavesState extends BaseState
         {
             IconButton b = new IconButton(icons[i]);
             b.setPosition(coords[i][0], coords[i][1]);
-            b.addApearance(GuiComponent.Status.NEUTRAL, m_gui.getSubimage(370, 1, 120, 99));
+            b.addApearance(GuiComponent.Status.NEUTRAL, m_gui.getSubimage(491, 1, 120, 99));
             b.addApearance(GuiComponent.Status.FOCUSED, m_gui.getSubimage(370, 1, 120, 99));
+            b.addCallback(GuiComponent.Status.CLICKED, callbacks[i], this);
             m_guiElements.add(b);
         }
         

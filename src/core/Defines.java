@@ -18,7 +18,7 @@ public class Defines {
     public static final int     START_LEVEL     = 1;
     public static final int     DEFAULT_SCREEN_WIDTH    = 800;
     public static final int     DEFAULT_SCREEN_HEIGHT   = 600;
-    public static final String  VERSION         = "2.1 - beta";
+    public static final String  VERSION         = "3.0";
     public static final boolean DEV             = false;
     public static final Locale  langs[]         = {new Locale("en","EN"), new Locale("fr", "FR")};
     public static final String  DATA_DIRECTORY  = "/data";

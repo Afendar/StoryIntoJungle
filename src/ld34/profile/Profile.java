@@ -19,9 +19,17 @@ import org.json.simple.parser.ParseException;
  */
 public abstract class Profile {
     
+    /** */
     protected JSONObject profile;
+    
+    /** */
     protected JSONParser parser;
-    protected String FILENAME = "data.json";
+    
+    /** */
+    protected String FOLDER = "saves";
+    
+    /** */
+    protected String FILENAME = FOLDER + File.separatorChar + "data.json";
     
     /**
      * 
@@ -33,6 +41,13 @@ public abstract class Profile {
         this.profile.put("BestScores", new JSONArray());
 
         this.parser = new JSONParser();
+        
+        File folder = new File(FOLDER);
+        if(!folder.exists() && !folder.isDirectory())
+        {
+            folder.mkdir();
+        }
+        load();
     }
     
     /**
@@ -42,7 +57,7 @@ public abstract class Profile {
         try{
             PrintWriter pw = new PrintWriter(
                 new BufferedWriter(
-                        new FileWriter(this.FILENAME)
+                        new FileWriter(FILENAME)
                 )
             );
             pw.println(this.profile.toString());
@@ -58,10 +73,10 @@ public abstract class Profile {
      * 
      */
     protected void load(){
-        File f = new File(this.FILENAME);
+        File f = new File(FILENAME);
         if(f.exists() && !f.isDirectory()){
             try{
-                this.profile = (JSONObject) this.parser.parse(new FileReader(this.FILENAME));
+                this.profile = (JSONObject) this.parser.parse(new FileReader(FILENAME));
             }
             catch(IOException|ParseException e){
                 e.getMessage();

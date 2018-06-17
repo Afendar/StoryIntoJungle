@@ -39,7 +39,6 @@ public class Save extends Profile {
      * 
      */
     private void loadSaves(){
-        this.load();
         this.jsonSaves = (JSONObject) this.profile.get("Saves");
         if(this.jsonSaves.isEmpty()){
             for(int i=0;i<3;i++){

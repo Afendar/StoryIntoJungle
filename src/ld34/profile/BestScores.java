@@ -42,7 +42,6 @@ public class BestScores extends Profile {
      * 
      */
     private void loadBestScores(){
-        this.load();
         this.bestScores = (JSONArray)this.profile.get("BestScores");
     }
     

@@ -72,9 +72,9 @@ public class MainMenuState extends BaseState
         if(Save.getInstance().hasSave())
         {
             coords = new Integer[][]{
-                {screenWidth/2 - 117 - (15*30), (screenHeight / 3)},
-                {screenWidth/2 - 117 - (17*30), 2 * (screenHeight / 3)},
-                {screenWidth/2 - 117 - (19*30), 3* (screenHeight / 3)},
+                {screenWidth/2 - 117 - (15*30), 2 * (screenHeight / 6)},
+                {screenWidth/2 - 117 - (17*30), 3 * (screenHeight / 6)},
+                {screenWidth/2 - 117 - (19*30), 4 * (screenHeight / 6)},
                 {16, screenHeight - 82},
                 {107, screenHeight - 82},
                 {703, screenHeight - 82}
@@ -149,6 +149,7 @@ public class MainMenuState extends BaseState
             
             m_guiElements.add(b);
         }
+        System.out.println("Construct : " + m_guiElements.size());
         
         for(int i = 0 ; i < 5 ; i++){
             m_leavesList.add(new Leaf(5, 0, 0, screenWidth, screenHeight));
@@ -187,9 +188,9 @@ public class MainMenuState extends BaseState
         if(Save.getInstance().hasSave())
         {
             coords = new Integer[][]{
-                {screenWidth/2 - 117 - (15*30), (screenHeight / 3)},
-                {screenWidth/2 - 117 - (17*30), 2 * (screenHeight / 3)},
-                {screenWidth/2 - 117 - (19*30), 3* (screenHeight / 3)},
+                {screenWidth/2 - 117 - (15*30), 2 * (screenHeight / 6)},
+                {screenWidth/2 - 117 - (17*30), 3 * (screenHeight / 6)},
+                {screenWidth/2 - 117 - (19*30), 4 * (screenHeight / 6)},
                 {16, screenHeight - 82},
                 {107, screenHeight - 82},
                 {703, screenHeight - 82}
