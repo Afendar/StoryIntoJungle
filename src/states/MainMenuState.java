@@ -126,7 +126,7 @@ public class MainMenuState extends BaseState
             Button b;
             if(i < coords.length - 3)
             {                
-                b = new Button(labels[i]);
+                b = new Button(labels[i], this);
                 b.setFont(font);
                 b.setPadding(4, 0);
                 b.setTextCenter(true);            
@@ -139,7 +139,7 @@ public class MainMenuState extends BaseState
             }
             else
             {
-                b = new IconButton(icons[i - (coords.length - 3)]);
+                b = new IconButton(icons[i - (coords.length - 3)], this);
                 b.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(0, 69, 76, 63));
                 b.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(76, 69, 76, 63));
             }
@@ -149,7 +149,6 @@ public class MainMenuState extends BaseState
             
             m_guiElements.add(b);
         }
-        System.out.println("Construct : " + m_guiElements.size());
         
         for(int i = 0 ; i < 5 ; i++){
             m_leavesList.add(new Leaf(5, 0, 0, screenWidth, screenHeight));
@@ -169,7 +168,7 @@ public class MainMenuState extends BaseState
         int screenHeight = screen.getContentPane().getHeight();
         
         m_foreground = getScaledInstance(
-                m_foreground, 
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("foreground"), 
                 screenWidth, 
                 screenHeight, 
                 RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
@@ -276,7 +275,11 @@ public class MainMenuState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
@@ -309,7 +312,6 @@ public class MainMenuState extends BaseState
     @Override
     public void render(Graphics2D g)
     {
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Screen screen = m_stateManager.getContext().m_screen;
         
         int screenWidth = screen.getContentPane().getWidth();
@@ -382,48 +384,46 @@ public class MainMenuState extends BaseState
                                        int targetHeight,
                                        Object hint,
                                        boolean higherQuality)
-{
-    int type = (img.getTransparency() == Transparency.OPAQUE) ?
-        BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-    BufferedImage ret = (BufferedImage)img;
-    int w, h;
-    if (higherQuality) {
-        // Use multi-step technique: start with original size, then
-        // scale down in multiple passes with drawImage()
-        // until the target size is reached
-        w = img.getWidth();
-        h = img.getHeight();
-    } else {
-        // Use one-step technique: scale directly from original
-        // size to target size with a single drawImage() call
-        w = targetWidth;
-        h = targetHeight;
+    {
+        int type = (img.getTransparency() == Transparency.OPAQUE) ?
+            BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+            BufferedImage ret = (BufferedImage)img;
+        int w, h;
+        if (higherQuality)
+        {
+            w = img.getWidth();
+            h = img.getHeight();
+        } 
+        else
+        {
+            w = targetWidth;
+            h = targetHeight;
+        }
+
+        do {
+            if (higherQuality && w > targetWidth) {
+                w /= 2;
+                if (w < targetWidth) {
+                    w = targetWidth;
+                }
+            }
+
+            if (higherQuality && h > targetHeight) {
+                h /= 2;
+                if (h < targetHeight) {
+                    h = targetHeight;
+                }
+            }
+
+            BufferedImage tmp = new BufferedImage(w, h, type);
+            Graphics2D g2 = tmp.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
+            g2.drawImage(ret, 0, 0, w, h, null);
+            g2.dispose();
+
+            ret = tmp;
+        } while (w != targetWidth || h != targetHeight);
+
+        return ret;
     }
-
-    do {
-        if (higherQuality && w > targetWidth) {
-            w /= 2;
-            if (w < targetWidth) {
-                w = targetWidth;
-            }
-        }
-
-        if (higherQuality && h > targetHeight) {
-            h /= 2;
-            if (h < targetHeight) {
-                h = targetHeight;
-            }
-        }
-
-        BufferedImage tmp = new BufferedImage(w, h, type);
-        Graphics2D g2 = tmp.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
-        g2.drawImage(ret, 0, 0, w, h, null);
-        g2.dispose();
-
-        ret = tmp;
-    } while (w != targetWidth || h != targetHeight);
-
-    return ret;
-}
 }

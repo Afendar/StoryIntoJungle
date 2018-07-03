@@ -12,5 +12,5 @@ public enum StateType
     SAVES,
     INTRO,
     PAUSED,
-    TEST
+    TUTORIAL
 }

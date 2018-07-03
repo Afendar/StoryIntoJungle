@@ -5,78 +5,83 @@ import java.awt.Rectangle;
 
 /**
  * Entity class
- * 
+ *
  * @version %I%, %G%
  * @author Afendar
  */
-public abstract class Entity {
-    
+public abstract class Entity
+{
     protected float posX, posY;
-    
+
     /**
-     * 
+     *
      * @param posX
-     * @param posY 
+     * @param posY
      */
-    public Entity(int posX, int posY){
+    public Entity(int posX, int posY)
+    {
         this.posX = posX;
         this.posY = posY;
     }
 
     /**
-     * 
-     * @param posX 
+     *
+     * @param posX
      */
-    public void setPosX(int posX) {
+    public void setPosX(int posX)
+    {
         this.posX = posX;
     }
 
     /**
-     * 
-     * @param posY 
+     *
+     * @param posY
      */
-    public void setPosY(int posY) {
+    public void setPosY(int posY)
+    {
         this.posY = posY;
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    public float getPosX() {
+    public float getPosX()
+    {
         return posX;
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    public float getPosY() {
+    public float getPosY()
+    {
         return posY;
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public abstract Rectangle getBounds();
-    
+
     /**
-     * 
-     * @param dt 
+     *
+     * @param dt
      */
     public abstract void update(double dt);
-    
+
     /**
-     * 
+     *
      * @param g
-     * @param debug 
+     * @param debug
      */
     public abstract void render(Graphics g, Boolean debug);
-    
+
     /**
-     * 
-     * @param g 
+     *
+     * @param g
      */
     public abstract void renderHitbox(Graphics g);
 }

@@ -4,6 +4,7 @@ import audio.Sound;
 import core.CustomTextField;
 import core.I18nManager;
 import core.OptionButton;
+import core.ResourceManager;
 import core.Screen;
 import core.StateManager;
 import core.StateType;
@@ -14,6 +15,7 @@ import core.gui.RadioIconButton;
 import core.gui.GuiComponent;
 import core.gui.IconButton;
 import core.gui.RadioButton;
+import core.gui.Slider;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -134,7 +136,7 @@ public class SettingsState extends BaseState
 
     private void createScreenInterface()
     {
-        CheckBox cb = new CheckBox("Fullscreen");
+        CheckBox cb = new CheckBox("Fullscreen", this);
         cb.setPosition(189, 390);
         cb.addCallback(GuiComponent.Status.CLICKED, "toggleFullscreen", this);
         cb.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
@@ -142,7 +144,7 @@ public class SettingsState extends BaseState
         cb.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(320, 620, 41, 33));
         m_screenGuiElements.add(cb);
         
-        RadioButton rb1 = new RadioButton("800 x 600");
+        RadioButton rb1 = new RadioButton("800 x 600", this);
         rb1.setPosition(190, 230);
         rb1.setChecked(true);
         rb1.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 800, 600);
@@ -150,27 +152,27 @@ public class SettingsState extends BaseState
         rb1.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb1.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
         
-        RadioButton rb2 = new RadioButton("1024 x 768");
+        RadioButton rb2 = new RadioButton("1024 x 768", this);
         rb2.setPosition(190, 280);
         rb2.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 1024, 768);
         rb2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
         
-        RadioButton rb3 = new RadioButton("1280 x 960");
+        RadioButton rb3 = new RadioButton("1280 x 960", this);
         rb3.setPosition(190, 330);
         rb3.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 1280, 960);
         rb3.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb3.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb3.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
         
-        ButtonGroup bg = new ButtonGroup();
+        ButtonGroup bg = new ButtonGroup(this);
         bg.add(rb1);
         bg.add(rb2);
         bg.add(rb3);
         m_screenGuiElements.add(bg);
         
-        IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34));
+        IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34), this);
         ib.setPosition(595, 471);
         ib.addCallback(GuiComponent.Status.CLICKED, "backToMain", this);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(370, 1, 120, 99));
@@ -178,12 +180,30 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         
         m_screenGuiElements.add(ib);
+        
+        Slider s = new Slider(this);
+        s.setPosition(455, 204);
+        s.addCallback(GuiComponent.Status.CLICKED, "setSoundVolume", this);
+        s.addCallback(GuiComponent.Status.NEUTRAL, "setSoundVolume", this);
+        s.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        s.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        s.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        m_screenGuiElements.add(s);
+        
+        s = new Slider(this);
+        s.setPosition(455, 324);
+        s.addCallback(GuiComponent.Status.CLICKED, "setMusicVolume", this);
+        s.addCallback(GuiComponent.Status.NEUTRAL, "setSoundVolume", this);
+        s.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        s.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        s.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        m_screenGuiElements.add(s);
     }
     
     private void createPlayerInterface()
     {
-        ButtonGroup bg = new ButtonGroup();
-        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(820, 1, 35, 36));
+        ButtonGroup bg = new ButtonGroup(this);
+        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(820, 1, 35, 36), this);
         ib.setPosition(199, 266);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 0);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -192,7 +212,7 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
         bg.add(ib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(858, 1, 27, 40));
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(858, 1, 27, 40), this);
         ib.setPosition(368, 265);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 1);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -202,8 +222,8 @@ public class SettingsState extends BaseState
         bg.add(ib);
         m_playerGuiElements.add(bg);
         
-        bg = new ButtonGroup();
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(674, 103, 47, 38));
+        bg = new ButtonGroup(this);
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(674, 103, 47, 38), this);
         ib.setPosition(199, 386);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 0);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -212,7 +232,7 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
         bg.add(ib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(676, 147, 49, 38));
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(676, 147, 49, 38), this);
         ib.setPosition(369, 386);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 1);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -235,8 +255,8 @@ public class SettingsState extends BaseState
     
     private void createGameInterface()
     {
-        ButtonGroup bg = new ButtonGroup();
-        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 69, 17, 16));
+        ButtonGroup bg = new ButtonGroup(this);
+        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 69, 17, 16), this);
         ib.setPosition(189, 186);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 0);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -245,7 +265,7 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
         bg.add(ib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(325, 69, 35, 16));
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(325, 69, 35, 16), this);
         ib.setPosition(339, 186);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 1);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -254,7 +274,7 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
         bg.add(ib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 89, 33, 32));
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 89, 33, 32), this);
         ib.setPosition(479, 186);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 2);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -263,7 +283,7 @@ public class SettingsState extends BaseState
         ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
         bg.add(ib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(326, 90, 33, 32));
+        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(326, 90, 33, 32), this);
         ib.setPosition(629, 186);
         ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 3);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -279,8 +299,8 @@ public class SettingsState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         
-        ButtonGroup bg = new ButtonGroup();
-        RadioIconButton rib1 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 344, 42, 28));
+        ButtonGroup bg = new ButtonGroup(this);
+        RadioIconButton rib1 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 344, 42, 28), this);
         rib1.setPosition((screenWidth - 115) / 2 - 15, 150);
         rib1.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 0);
         rib1.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -289,7 +309,7 @@ public class SettingsState extends BaseState
         rib1.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
         bg.add(rib1);
         
-        RadioIconButton rib2 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 372, 42, 28));
+        RadioIconButton rib2 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 372, 42, 28), this);
         rib2.setPosition((screenWidth - 115) / 2 + 125, 150);
         rib2.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 1);
         rib2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -385,7 +405,11 @@ public class SettingsState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
@@ -422,7 +446,11 @@ public class SettingsState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
@@ -459,7 +487,11 @@ public class SettingsState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
@@ -496,7 +528,11 @@ public class SettingsState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
@@ -624,6 +660,8 @@ public class SettingsState extends BaseState
      */
     public void processClick()
     {
+        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
+        
         if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
         {
             switch(m_currentTab)
@@ -636,26 +674,29 @@ public class SettingsState extends BaseState
                     break;
             }
             
+            Sound select = rm.getSound("select");
+            
             switch(m_selectedItem)
             {
                 case 2:
                     m_currentTab = 0;
-                    new Thread(Sound.select::play).start();
+                    
+                    new Thread(select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 3:
                     m_currentTab = 1;
-                    new Thread(Sound.select::play).start();
+                    new Thread(select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 4:
                     m_currentTab = 2;
-                    new Thread(Sound.select::play).start();
+                    new Thread(select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
                 case 5:
                     m_currentTab = 3;
-                    new Thread(Sound.select::play).start();
+                    new Thread(select::play).start();
                     Settings.getInstance().saveConfig();
                     break;
             }
@@ -668,9 +709,11 @@ public class SettingsState extends BaseState
      */
     public void renderScreenSettings(Graphics2D g)
     {   
+        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        
         g.setColor(Color.BLACK);
         g.setFont(m_fontS);
-        String resolution = "Resolutions:";
+        String resolution = i18nManager.trans("resolution");
         g.drawString(resolution, 170, 188);
         
         for(GuiComponent gc : m_screenGuiElements)
@@ -681,28 +724,11 @@ public class SettingsState extends BaseState
         FontMetrics metrics = g.getFontMetrics(m_fontS);
         
         g.setFont(m_fontS);
-        String volume = "Sounds:";
+        String volume = i18nManager.trans("sounds");
         g.drawString(volume, 470, 165 + metrics.getAscent());
         
-        String music = "Music:";
+        String music = i18nManager.trans("musics");
         g.drawString(music, 470, 300 + metrics.getAscent());
-        
-        int red = 255;
-        int green = 0;
-        for(int i=0;i<255;i++)
-        {
-            g.setColor(new Color(red, green, 0));
-            g.fillRect((int)(480 + i), 232, 1, 19);
-            
-            g.fillRect((int)(480 + i), 352, 1, 19);
-            red--;
-            green++;
-        }
-        g.drawImage(m_spritesheetGui2.getSubimage(0, 438, 299, 62), 455, 204, null);
-        g.drawImage(m_spritesheetGui2.getSubimage(0, 438, 299, 62), 455, 324, null);
-        g.setColor(Color.BLACK);
-        g.fillRect(m_posBar, 235, 9, 14);
-        g.fillRect(m_posBar, 355, 9, 14);
     }
     
     /**
@@ -945,6 +971,24 @@ public class SettingsState extends BaseState
      */
     public void selectLanguage(Integer language)
     {
-        System.out.println("Select laguage:" + language);
+        switch(language)
+        {
+            case 0:
+                m_stateManager.getContext().m_I18nManager.setLanguage(I18nManager.Language.ENGLISH);
+                break;
+            case 1:
+                m_stateManager.getContext().m_I18nManager.setLanguage(I18nManager.Language.FRENCH);
+                break;
+        }
+    }
+    
+    public void setSoundVolume()
+    {
+        System.out.println("setSound");
+    }
+    
+    public void setMusicVolume()
+    {
+        System.out.println("setMusic");
     }
 }

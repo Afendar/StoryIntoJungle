@@ -17,7 +17,7 @@ import states.MapState;
 import states.PausedState;
 import states.SavesState;
 import states.SettingsState;
-import states.TestState;
+import states.TutorialState;
 
 /**
  * StateManager class for managing states ( menu, pause, in game... ).
@@ -50,8 +50,7 @@ public class StateManager
         registerState(StateType.GAME);
         registerState(StateType.MAP);
         registerState(StateType.PAUSED);
-        
-        registerState(StateType.TEST);
+        registerState(StateType.TUTORIAL);
     }
     
     public void update(double dt)
@@ -218,8 +217,9 @@ public class StateManager
             case PAUSED:
                 m_statesFactory.put(StateType.PAUSED, new PausedState(this));
                 break;
-            case TEST:
-                m_statesFactory.put(StateType.TEST, new TestState(this));
+            case TUTORIAL:
+                m_statesFactory.put(StateType.TUTORIAL, new TutorialState(this));
+                break;
         }
     }
     

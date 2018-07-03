@@ -81,7 +81,7 @@ public class SavesState extends BaseState
         
         for(int i = 0 ; i < 3 ; i++)
         {
-            IconButton b = new IconButton(icons[i]);
+            IconButton b = new IconButton(icons[i], this);
             b.setPosition(coords[i][0], coords[i][1]);
             b.addApearance(GuiComponent.Status.NEUTRAL, m_gui.getSubimage(491, 1, 120, 99));
             b.addApearance(GuiComponent.Status.FOCUSED, m_gui.getSubimage(370, 1, 120, 99));
@@ -130,7 +130,11 @@ public class SavesState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)

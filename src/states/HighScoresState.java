@@ -1,6 +1,5 @@
 package states;
 
-import audio.Sound;
 import core.I18nManager;
 import core.ResourceManager;
 import core.Screen;
@@ -37,7 +36,7 @@ public class HighScoresState extends BaseState
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
-        IconButton b = new IconButton(spritesheet.getSubimage(243, 94, 42, 34));
+        IconButton b = new IconButton(spritesheet.getSubimage(243, 94, 42, 34), this);
         b.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(491, 1, 120, 99));
         b.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(370, 1, 120, 99));
         b.setPosition((3 * screenWidth / 4), screenHeight - 120);
@@ -79,7 +78,11 @@ public class HighScoresState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)

@@ -7,6 +7,7 @@ import core.StateManager;
 import core.StateType;
 import core.gui.Button;
 import core.gui.GuiComponent;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -52,14 +53,14 @@ public class PausedState extends BaseState
             "dispose",
             "save",
             "settings",
-            "backToMain "
+            "backToMain"
         };
         
         Font font = ressourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
         
         for(int i = 0 ; i < 4 ; i++)
         {
-            Button b = new Button(labels[i]);
+            Button b = new Button(labels[i], this);
             b.setFont(font);
             b.setPadding(4, 0);
             b.setTextCenter(true);
@@ -111,7 +112,11 @@ public class PausedState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
@@ -134,7 +139,15 @@ public class PausedState extends BaseState
 
     @Override
     public void render(Graphics2D g)
-    {        
+    {      
+        Screen screen = m_stateManager.getContext().m_screen;
+        
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
+        
+        g.setColor(new Color(127, 127, 127, 150));
+        g.fillRect(0, 0, screenWidth, screenHeight);
+        
         for(GuiComponent element : m_guiElements)
         {
             element.render(g);

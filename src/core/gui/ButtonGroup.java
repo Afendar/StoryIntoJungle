@@ -2,14 +2,16 @@ package core.gui;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import states.BaseState;
 
 public class ButtonGroup extends GuiComponent
 {
     protected ArrayList<Button> m_buttons;
     protected int m_mouseX, m_mouseY;
     
-    public ButtonGroup()
+    public ButtonGroup(BaseState owner)
     {
+        super(owner);
         m_buttons = new ArrayList<>();
     }
     
@@ -65,13 +67,13 @@ public class ButtonGroup extends GuiComponent
     public void onLeave(){}
     
     @Override
-    public void onClick()
+    public void onClick(int mouseX, int mouseY)
     {
         for(Button b : m_buttons)
         {
             if(b.isInside(m_mouseX, m_mouseY))
             {
-                b.onClick();
+                b.onClick(mouseX, mouseY);
             }
             else
             {

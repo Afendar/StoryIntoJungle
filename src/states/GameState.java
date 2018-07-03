@@ -17,7 +17,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -99,7 +98,7 @@ public class GameState extends BaseState
         m_minimap = new Minimap(screenWidth, screenHeight, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
         
         m_timeSound = TimerThread.MILLI;
-        m_soundPlayed = 1;
+        m_soundPlayed = 0;
     }
 
     @Override
@@ -111,7 +110,28 @@ public class GameState extends BaseState
     @Override
     public void activate()
     {
-        new Thread(Sound.sf_jungle01::play).start();
+        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
+        if(m_soundPlayed == 0)
+        {
+            m_timeSound = TimerThread.MILLI;
+            m_soundPlayed = 2;
+            Sound jungle1 = rm.getSound("jungle1");
+            new Thread(jungle1::play).start();
+        }
+        else if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
+        {
+            m_timeSound = TimerThread.MILLI;
+            m_soundPlayed = 2;
+            Sound jungle1 = rm.getSound("jungle1");
+            new Thread(jungle1::play).start();
+        }
+        else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
+        {
+            m_timeSound = TimerThread.MILLI;
+            m_soundPlayed = 1;
+            Sound jungle2 = rm.getSound("jungle2");
+            new Thread(jungle2::play).start();
+        }
     }
 
     @Override
@@ -129,23 +149,21 @@ public class GameState extends BaseState
     @Override
     public void update(double dt)
     {
-        int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
-        int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
-        Screen screen = m_stateManager.getContext().m_screen;
-        int screenWidth = screen.getContentPane().getWidth();
-        int screenHeight = screen.getContentPane().getHeight();
+        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
         
         if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 2;
-            new Thread(Sound.sf_jungle01::play).start();
+            Sound jungle1 = rm.getSound("jungle1");
+            new Thread(jungle1::play).start();
         }
         else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 1;
-            new Thread(Sound.sf_jungle02::play).start();
+            Sound jungle2 = rm.getSound("jungle2");
+            new Thread(jungle2::play).start();
         }
 
         if(m_cageToFree != m_level.nbCages && m_timeEventFree < 200){
@@ -172,29 +190,17 @@ public class GameState extends BaseState
             {
                 if(m_player.getPosX() >= m_level.eventsPos[i][0] + 64 && m_player.getPosX() <= m_level.eventsPos[i][0] + 128 && !m_level.viewedEvent[i])
                 {
-                    if(!m_displayEvent)
+                    TutorialState ts = (TutorialState)m_stateManager.getState(StateType.TUTORIAL);
+                    if(ts == null)
                     {
-                        m_eventNumber = i;
-                        m_level.viewedEvent[i] = true;
-                        m_displayEvent = true;
+                        m_stateManager.switchTo(StateType.TUTORIAL);
+                        ts = (TutorialState)m_stateManager.getState(StateType.TUTORIAL);
+                        ts.setTutorialNumber(i + 1);
                     }
-                }
-            }
-            if(m_displayEvent)
-            {
-                m_timeMonkey += dt;
-                if(m_timeMonkey > 15)
-                {
-                    m_timeMonkey = 15;
-                    m_displayDialog = true;
-                    if(mouseX > screenWidth - 60 && mouseX < screenWidth - 26 && mouseY > screenHeight - 56 && mouseY < screenHeight - 20)
+                    else if(ts.getTutorialNumber() != i + 1)
                     {
-                        if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
-                        {
-                            m_timeMonkey = 0;
-                            m_displayDialog = false;
-                            m_displayEvent = false;
-                        }
+                        ts.setTutorialNumber(i + 1);
+                        m_stateManager.switchTo(StateType.TUTORIAL);
                     }
                 }
             }

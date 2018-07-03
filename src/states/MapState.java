@@ -2,6 +2,7 @@ package states;
 
 import audio.Sound;
 import core.Defines;
+import core.ResourceManager;
 import core.Screen;
 import core.StateManager;
 import core.StateType;
@@ -12,7 +13,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -285,6 +285,7 @@ public class MapState extends BaseState
     
     public void processHover()
     {
+        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         
@@ -321,7 +322,8 @@ public class MapState extends BaseState
         
         if(m_selectedItem != 0 && m_selectedItem != oldSelected)
         {
-            new Thread(Sound.hover::play).start();
+            Sound hover = rm.getSound("hover");
+            new Thread(hover::play).start();
         }
     }
     

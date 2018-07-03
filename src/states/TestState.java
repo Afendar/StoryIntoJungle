@@ -38,26 +38,26 @@ public class TestState extends BaseState
         
         m_guiElements = new ArrayList<>();
         
-        CheckBox cb = new CheckBox("Mon super Label");
+        CheckBox cb = new CheckBox("Mon super Label", this);
         cb.setPosition(150, 150);
         cb.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
         cb.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
         cb.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(320, 620, 41, 33));
         m_guiElements.add(cb);
         
-        RadioButton rb = new RadioButton("Choix 1");
+        RadioButton rb = new RadioButton("Choix 1", this);
         rb.setPosition(150, 200);
         rb.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
         
-        RadioButton rb2 = new RadioButton("Choix 2");
+        RadioButton rb2 = new RadioButton("Choix 2", this);
         rb2.setPosition(150, 250);
         rb2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
         
-        ButtonGroup bg = new ButtonGroup();
+        ButtonGroup bg = new ButtonGroup(this);
         bg.add(rb);
         bg.add(rb2);
         
@@ -102,7 +102,11 @@ public class TestState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
-                    element.onClick();
+                    element.onClick(mouseX, mouseY);
+                }
+                else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
+                {
+                    element.onRelease();
                 }
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)

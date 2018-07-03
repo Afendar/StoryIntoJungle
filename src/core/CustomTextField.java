@@ -15,29 +15,30 @@ import javax.swing.JComponent;
 
 /**
  * CustomTextField class
- * 
+ *
  * @version %I%, %G%
  * @author Afendar
  */
-public final class CustomTextField extends JComponent {
-    
+public final class CustomTextField extends JComponent
+{
     private boolean isEditing;
     private String value, name;
     private int x, y, w, h;
     private final long threshold = 150;
     private long lastPress;
     private BufferedImage background;
-    
+
     /**
-     * 
+     *
      * @param name
      * @param value
      * @param x
      * @param y
      * @param w
-     * @param h 
+     * @param h
      */
-    public CustomTextField(String name, String value, int x, int y, int w, int h){
+    public CustomTextField(String name, String value, int x, int y, int w, int h)
+    {
         super();
         this.x = x;
         this.y = y;
@@ -47,145 +48,175 @@ public final class CustomTextField extends JComponent {
         this.isEditing = false;
         this.value = value;
         this.lastPress = System.currentTimeMillis();
-        
+
         this.setFont(new Font("Arial", Font.PLAIN, 12));
-        try{
+        try
+        {
             URL url = this.getClass().getResource("/gui2.png");
             this.background = ImageIO.read(url);
             this.background = this.background.getSubimage(1, 501, 287, 46);
         }
-        catch(IOException e){
+        catch (IOException e)
+        {
             e.getMessage();
         }
     }
-    
+
     /**
-     * 
+     *
      * @param name
      * @param value
      * @param w
-     * @param h 
+     * @param h
      */
-    public CustomTextField(String name, String value, int w, int h){
+    public CustomTextField(String name, String value, int w, int h)
+    {
         this(name, value, 0, 0, w, h);
     }
-    
+
     @Override
-    public void setFont(Font font){
+    public void setFont(Font font)
+    {
         super.setFont(font);
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    public boolean isEditing(){
+    public boolean isEditing()
+    {
         return this.isEditing;
     }
-    
+
     /**
-     * 
-     * @param e 
+     *
+     * @param e
      */
-    private void configure(KeyEvent e){
-        if(e.getKeyCode() > 47 && e.getKeyCode() < 91){
+    private void configure(KeyEvent e)
+    {
+        if (e.getKeyCode() > 47 && e.getKeyCode() < 91)
+        {
             long now = System.currentTimeMillis();
             FontMetrics metrics = this.getFontMetrics(this.getFont());
             int charW = metrics.stringWidth(this.value);
-            
-            if(now - lastPress > threshold && charW < this.w){
+
+            if (now - lastPress > threshold && charW < this.w)
+            {
                 this.value += e.getKeyChar();
                 Settings.getInstance().setConfigValue("Name", this.value);
                 lastPress = now;
             }
         }
-        else if(e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
-            
+        else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+        {
             long now = System.currentTimeMillis();
-            
-            
-            if(now - lastPress > threshold){
-                
+
+            if (now - lastPress > threshold)
+            {
                 this.value += e.getKeyChar();
                 lastPress = now;
-                if(this.value.length() > 1)
+                if (this.value.length() > 1)
+                {
                     this.value = this.value.substring(0, this.value.length() - 2);
-                else{
+                }
+                else
+                {
                     this.value = "";
                 }
                 Settings.getInstance().setConfigValue("Name", this.value);
             }
         }
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    public String getValue(){
+    public String getValue()
+    {
         return this.value;
     }
-    
+
     /**
-     * 
+     *
      */
-    private void editing(){
+    private void editing()
+    {
         this.requestFocus(true);
         this.isEditing = true;
-        if(this.value.equals("Enter name"))
+        if (this.value.equals("Enter name"))
+        {
             this.value = "";
+        }
     }
-    
+
     /**
-     * 
-     * @param g 
+     *
+     * @param g
      */
-    public void render(Graphics g){
+    public void render(Graphics g)
+    {
         g.drawImage(this.background, this.x, this.y, null);
-        if(this.value.equals("Enter name")){
+        if (this.value.equals("Enter name"))
+        {
             g.setColor(Color.DARK_GRAY);
         }
-        else{
+        else
+        {
             g.setColor(Color.BLACK);
         }
         g.setFont(this.getFont());
         FontMetrics metrics = this.getFontMetrics(this.getFont());
-        g.drawString(this.value, x + 20, y + 20 + metrics.getAscent()/2);
-        if(this.isEditing){
+        g.drawString(this.value, x + 20, y + 20 + metrics.getAscent() / 2);
+        if (this.isEditing)
+        {
             int stringWidth = metrics.stringWidth(this.value);
             g.drawLine(this.x + 23 + stringWidth, this.y + 13, this.x + 23 + stringWidth, this.y + this.h - 13);
         }
     }
-    
+
     /**
-     * 
+     *
      * @param x
-     * @param y 
+     * @param y
      */
-    public void processClick(int x, int y){
-        if(x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h){
+    public void processClick(int x, int y)
+    {
+        if (x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h)
+        {
             editing();
-            new Thread(Sound.select::play).start();
+            //TODO change sound call
+            //new Thread(Sound.select::play).start();
         }
-        else{
-            if(this.isEditing){
-                    new Thread(Sound.select::play).start();
+        else
+        {
+            if (this.isEditing)
+            {
+                //TODO change sound call
+                //new Thread(Sound.select::play).start();
             }
             this.isEditing = false;
-            if(this.value.equals("")){
+            if (this.value.equals(""))
+            {
                 this.value = "Enter name";
             }
             Settings.getInstance().setConfigValue("Enter name", this.value);
         }
     }
-    
+
     /**
-     * 
-     * @param e 
+     *
+     * @param e
      */
-    public void processKey(KeyEvent e){
-        if(this.isEditing){
-            if(this.value.equals("Enter name"))this.value = "";
+    public void processKey(KeyEvent e)
+    {
+        if (this.isEditing)
+        {
+            if (this.value.equals("Enter name"))
+            {
+                this.value = "";
+            }
             configure(e);
         }
     }

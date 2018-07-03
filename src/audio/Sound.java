@@ -21,48 +21,81 @@ import static javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
 
 /**
  * Sound class
- * 
+ *
  * @version %I%, %G%
  * @author Afendar
  */
-public class Sound {
-    
-    public static Sound bonus = new Sound("/bonus.wav");
-    public static Sound death = new Sound("/death.wav");
-    public static Sound jump = new Sound("/jump.wav");
-    public static Sound levelup = new Sound("/levelup.wav");
-    public static Sound sf_jungle01 = new Sound("/jungle01.wav");
-    public static Sound sf_jungle02 = new Sound("/jungle02.wav");
-    public static Sound hover = new Sound("/hover3.wav");
-    public static Sound select = new Sound("/select3.wav");
-    public static Sound explosion = new Sound("/explosion.wav");
-    public String path;
-    public int volume;
+public class Sound
+{
+    private String m_path;
+    private int m_volume;
 
     /**
-     * 
-     * @param path 
+     *
+     * @param path
      */
-    private Sound(String path){
-        this.path = path;
-        this.volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+    public Sound(String path)
+    {
+        m_path = path;
+        m_volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
     }
-    
+
     /**
-     * 
+     *
+     * @return
      */
-    public void play2(){
-        try{
-            URI url = this.getClass().getResource(this.path).toURI();
+    public String getPath()
+    {
+        return m_path;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getVolume()
+    {
+        return m_volume;
+    }
+
+    /**
+     *
+     * @param path
+     */
+    public void setPath(String path)
+    {
+        this.m_path = path;
+    }
+
+    /**
+     *
+     * @param volume
+     */
+    public void setVolume(int volume)
+    {
+        this.m_volume = volume;
+    }
+
+    /**
+     *
+     */
+    public void play2()
+    {
+        try
+        {
+            URI url = this.getClass().getResource(m_path).toURI();
             final File file = new File(url);
-            try(final AudioInputStream in = getAudioInputStream(file)){
-                
+            try (final AudioInputStream in = getAudioInputStream(file))
+            {
+
                 final AudioFormat outFormat = getOutFormat(in.getFormat());
                 final Info info = new Info(SourceDataLine.class, outFormat);
-                
-                try(final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info)){
-                    
-                    if(line != null){
+
+                try (final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info))
+                {
+
+                    if (line != null)
+                    {
                         line.open(outFormat);
                         line.start();
                         AudioInputStream inputStream = AudioSystem.getAudioInputStream(outFormat, in);
@@ -72,80 +105,93 @@ public class Sound {
                     }
                 }
             }
-            catch(UnsupportedAudioFileException | LineUnavailableException | IOException e){
+            catch (UnsupportedAudioFileException | LineUnavailableException | IOException e)
+            {
                 e.getMessage();
             }
         }
-        catch(URISyntaxException e){
+        catch (URISyntaxException e)
+        {
             e.getMessage();
         }
     }
-    
+
     /**
-     * 
+     *
      * @param inFormat
-     * @return 
+     * @return
      */
-    private AudioFormat getOutFormat(AudioFormat inFormat){
+    private AudioFormat getOutFormat(AudioFormat inFormat)
+    {
         final int ch = inFormat.getChannels();
         final float rate = inFormat.getSampleRate();
         return new AudioFormat(PCM_SIGNED, rate, 16, ch, ch * 2, rate, false);
     }
-    
+
     /**
-     * 
+     *
      * @param in
-     * @param line 
+     * @param line
      */
-    private void stream(AudioInputStream in, SourceDataLine line){
-        try{
+    private void stream(AudioInputStream in, SourceDataLine line)
+    {
+        try
+        {
             final byte[] buffer = new byte[65536];
-            for(int n = 0;n != -1; n = in.read(buffer, 0, buffer.length)){
+            for (int n = 0; n != -1; n = in.read(buffer, 0, buffer.length))
+            {
                 line.write(buffer, 0, n);
             }
         }
-        catch(IOException e){
+        catch (IOException e)
+        {
             e.getMessage();
         }
     }
-    
+
     /**
-     * 
+     *
      */
-    public void play(){
-        this.volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        try{
-            URL url = this.getClass().getResource(this.path);
+    public void play()
+    {
+        m_volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+        try
+        {
+            URL url = this.getClass().getResource(m_path);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
             Clip clip = AudioSystem.getClip();
-            
+
             AudioFormat audioFormat = audioInputStream.getFormat();
-            
+
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-            
+
             SourceDataLine sourceLine = (SourceDataLine) AudioSystem.getLine(info);
             sourceLine.open(audioFormat);
-            
-            if(sourceLine.isControlSupported(FloatControl.Type.MASTER_GAIN)){
+
+            if (sourceLine.isControlSupported(FloatControl.Type.MASTER_GAIN))
+            {
                 FloatControl gainControl = (FloatControl) sourceLine.getControl(FloatControl.Type.MASTER_GAIN);
-                float attenuation = -80 + (80 * this.volume / 100);
+                float attenuation = -80 + (80 * m_volume / 100);
                 gainControl.setValue(attenuation);
             }
-                
+
             sourceLine.start();
-            
+
             int nBytesRead = 0;
             byte[] abData = new byte[128000];
-            while (nBytesRead != -1) {
-                    nBytesRead = audioInputStream.read(abData, 0, abData.length);
-                if (nBytesRead >= 0) {
+            while (nBytesRead != -1)
+            {
+                nBytesRead = audioInputStream.read(abData, 0, abData.length);
+                if (nBytesRead >= 0)
+                {
                     @SuppressWarnings("unused")
                     int nBytesWritten = sourceLine.write(abData, 0, nBytesRead);
                 }
             }
             sourceLine.drain();
             sourceLine.close();
-        }catch(IOException|UnsupportedAudioFileException|LineUnavailableException e)
+        }
+        catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
         {
             e.printStackTrace();
         }

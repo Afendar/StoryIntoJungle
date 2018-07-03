@@ -6,42 +6,46 @@ import level.Level;
 
 /**
  * SandEntity class
- * 
+ *
  * @version %I%, %G%
  * @author Afendar
  */
-public class SandEntity extends Entity {
-    
+public class SandEntity extends Entity
+{
     public double dt;
     public Level level;
-    
+
     /**
-     * 
+     *
      * @param level
      * @param posX
-     * @param posY 
+     * @param posY
      */
-    public SandEntity(Level level, int posX, int posY){
+    public SandEntity(Level level, int posX, int posY)
+    {
         super(posX, posY);
         this.level = level;
     }
-    
+
     @Override
-    public void update(double dt) {
-        int data = level.getData((int)this.posX, (int)this.posY);
-        switch(data){
+    public void update(double dt)
+    {
+        int data = level.getData((int) this.posX, (int) this.posY);
+        switch (data)
+        {
             case 1:
-                this.dt += dt;            
-                if(this.dt > 90)
+                this.dt += dt;
+                if (this.dt > 90)
                 {
-                    level.setData((int)this.posX, (int)this.posY, 2);
+                    level.setData((int) this.posX, (int) this.posY, 2);
                     this.dt = 0;
                 }
                 break;
             case 2:
                 this.dt += dt;
-                if(this.dt > 270){
-                    level.setData((int)this.posX, (int)this.posY, 0);
+                if (this.dt > 270)
+                {
+                    level.setData((int) this.posX, (int) this.posY, 0);
                     this.dt = 0;
                 }
                 break;
@@ -51,16 +55,19 @@ public class SandEntity extends Entity {
     }
 
     @Override
-    public Rectangle getBounds(){
-        return new Rectangle((int)this.posX, (int)this.posY, 10, 10);
+    public Rectangle getBounds()
+    {
+        return new Rectangle((int) this.posX, (int) this.posY, 10, 10);
     }
-    
+
     @Override
-    public void render(Graphics g, Boolean debug) {
+    public void render(Graphics g, Boolean debug)
+    {
     }
-    
+
     @Override
-    public void renderHitbox(Graphics g){
-        
+    public void renderHitbox(Graphics g)
+    {
+
     }
 }
