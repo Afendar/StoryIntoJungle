@@ -6,10 +6,20 @@ import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.swing.JPanel;
+import ld34.profile.Settings;
 import profiler.Profiler;
 
 /**
@@ -42,10 +52,30 @@ public class Game extends JPanel implements Runnable
         this.running = false;
         this.paused = false;
         this.instance = Runtime.getRuntime();
-        this.setMinimumSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
-        this.setMaximumSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
-        this.setPreferredSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
-        this.setSize(new Dimension(Defines.DEFAULT_SCREEN_WIDTH, Defines.DEFAULT_SCREEN_HEIGHT));
+        
+        int res = Integer.parseInt(Settings.getInstance().getConfigValue("Resolution"));
+        int width, height;
+        switch(res)
+        {
+            case Screen.RES_2X:
+                width = Screen.RES_2X_WIDTH;
+                height = Screen.RES_2X_HEIGHT;
+                break;
+            case Screen.RES_15X:
+                width = Screen.RES_15X_WIDTH;
+                height = Screen.RES_15X_HEIGHT;
+                break;
+            default:
+            case Screen.RES_1X:
+                width = Screen.RES_1X_WIDTH;
+                height = Screen.RES_1X_HEIGHT;
+                break;
+        }
+        
+        this.setMinimumSize(new Dimension(width, height));
+        this.setMaximumSize(new Dimension(width, height));
+        this.setPreferredSize(new Dimension(width, height));
+        this.setSize(new Dimension(width, height));
         this.frame = this.memoryUsed = this.nbEntities = 0;
 
         this.profiler = Profiler.getInstance();
@@ -70,11 +100,44 @@ public class Game extends JPanel implements Runnable
         m_context.m_inputsListener = new InputsListeners(this);
         m_context.m_I18nManager = I18nManager.getInstance();
         m_context.m_resourceManager = ResourceManager.getInstance();
+        
+        m_context.m_logger = Logger.getLogger("logger");
+        if(Defines.DEV)
+        {
+            m_context.m_logger.addHandler(new ConsoleHandler());
+        }
+        else
+        {
+            try
+            {
+                File logDir = new File(Defines.LOGS_DIRECTORY); 
+		if(!(logDir.exists()))
+                {
+                    logDir.mkdir();
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                FileHandler handler = new FileHandler(Defines.LOGS_DIRECTORY + sdf.format(new Date()) + ".log", true);
+                handler.setFormatter(new SimpleFormatter()
+                {
+                    @Override
+                    public String format(LogRecord record)
+                    {
+                        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+                        return String.format("[%s] [%s] %s%n", sdf2.format(new Date()), record.getLevel(), record.getMessage());
+                    }
+                });
+                m_context.m_logger.addHandler(handler);
+            }
+            catch(IOException e)
+            {
+                m_context.m_logger.addHandler(new ConsoleHandler());
+            }
+        }
 
         m_stateManager = new StateManager(m_context);
         m_context.m_screen = new Screen(this);
 
-        m_stateManager.switchTo(StateType.CREDITS);
+        m_stateManager.switchTo(StateType.SAVES);
         start();
     }
 
@@ -83,7 +146,7 @@ public class Game extends JPanel implements Runnable
      */
     private void start()
     {
-
+        m_context.m_logger.log(Level.INFO, "Starting Story Into Jungle v" + Defines.VERSION);
         if (this.running)
         {
             return;

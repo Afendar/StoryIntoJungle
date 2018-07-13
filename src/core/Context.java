@@ -1,5 +1,7 @@
 package core;
 
+import java.util.logging.Logger;
+
 /**
  * 
  */
@@ -9,6 +11,7 @@ public class Context
     public I18nManager m_I18nManager;
     public ResourceManager m_resourceManager;
     public Screen m_screen;
+    public Logger m_logger;
 
     /**
      * 

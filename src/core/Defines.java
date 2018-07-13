@@ -8,7 +8,8 @@ import java.util.Locale;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Defines {
+public class Defines
+{
     public static final float   GRAVITY         = 0.2f;
     public static final float   MAX_SPEED       = 5;
     public static final float   MIN_SPEED       = 1;
@@ -23,4 +24,5 @@ public class Defines {
     public static final Locale  langs[]         = {new Locale("en","EN"), new Locale("fr", "FR")};
     public static final String  DATA_DIRECTORY  = "/data";
     public static final String  SAVES_DIRECTORY = "/saves";
+    public static final String  LOGS_DIRECTORY = "./logs/";
 }

@@ -115,21 +115,21 @@ public class GameState extends BaseState
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 2;
-            Sound jungle1 = rm.getSound("jungle1");
+            Sound jungle1 = rm.getMusic("jungle1");
             new Thread(jungle1::play).start();
         }
         else if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 2;
-            Sound jungle1 = rm.getSound("jungle1");
+            Sound jungle1 = rm.getMusic("jungle1");
             new Thread(jungle1::play).start();
         }
         else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 1;
-            Sound jungle2 = rm.getSound("jungle2");
+            Sound jungle2 = rm.getMusic("jungle2");
             new Thread(jungle2::play).start();
         }
     }
@@ -155,14 +155,14 @@ public class GameState extends BaseState
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 2;
-            Sound jungle1 = rm.getSound("jungle1");
+            Sound jungle1 = rm.getMusic("jungle1");
             new Thread(jungle1::play).start();
         }
         else if(m_soundPlayed == 2 && ( TimerThread.MILLI - m_soundPlayed ) > 28000)
         {
             m_timeSound = TimerThread.MILLI;
             m_soundPlayed = 1;
-            Sound jungle2 = rm.getSound("jungle2");
+            Sound jungle2 = rm.getMusic("jungle2");
             new Thread(jungle2::play).start();
         }
 

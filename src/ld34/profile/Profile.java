@@ -17,8 +17,8 @@ import org.json.simple.parser.ParseException;
  * @version %I%, %G%
  * @author Afendar
  */
-public abstract class Profile {
-    
+public abstract class Profile
+{    
     /** */
     protected JSONObject profile;
     
@@ -34,7 +34,8 @@ public abstract class Profile {
     /**
      * 
      */
-    public Profile(){
+    public Profile()
+    {
         this.profile = new JSONObject();
         this.profile.put("Settings", new JSONObject());
         this.profile.put("Saves", new JSONObject());
@@ -53,8 +54,10 @@ public abstract class Profile {
     /**
      * 
      */
-    protected void save(){
-        try{
+    protected void save()
+    {
+        try
+        {
             PrintWriter pw = new PrintWriter(
                 new BufferedWriter(
                         new FileWriter(FILENAME)
@@ -64,7 +67,8 @@ public abstract class Profile {
             pw.flush();
             pw.close();
         }
-        catch(IOException e){
+        catch(IOException e)
+        {
             e.getMessage();
         }
     }
@@ -72,17 +76,21 @@ public abstract class Profile {
     /**
      * 
      */
-    protected void load(){
+    protected void load()
+    {
         File f = new File(FILENAME);
-        if(f.exists() && !f.isDirectory()){
-            try{
+        if(f.exists() && !f.isDirectory())
+        {
+            try
+            {
                 this.profile = (JSONObject) this.parser.parse(new FileReader(FILENAME));
             }
             catch(IOException|ParseException e){
                 e.getMessage();
             }
         }
-        else{
+        else
+        {
             this.save();
         }
     }

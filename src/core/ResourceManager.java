@@ -16,8 +16,61 @@ public class ResourceManager
     private Map<String, BufferedImage> m_spritesheets = new HashMap<>();
     private Map<String, Font> m_fonts = new HashMap<>();
     private Map<String, Sound> m_sounds = new HashMap<>();
+    private Map<String, Sound> m_musics = new HashMap<>();
     
     private static ResourceManager INSTANCE = null;
+    
+    /**
+     * 
+     */
+    private ResourceManager()
+    {
+        try
+        {
+            m_spritesheets.put("afendar", ImageIO.read(getClass().getResource("/afendar.png")));
+            m_spritesheets.put("spritesheetGui", ImageIO.read(getClass().getResource("/gui.png")));
+            m_spritesheets.put("spritesheetGui2", ImageIO.read(getClass().getResource("/gui2.png")));
+            m_spritesheets.put("background", ImageIO.read(getClass().getResource("/background.png")));
+            m_spritesheets.put("foreground", ImageIO.read(getClass().getResource("/foreground1.png")));
+            m_spritesheets.put("foreground2", ImageIO.read(getClass().getResource("/foreground2.png")));
+            m_spritesheets.put("foreground3", ImageIO.read(getClass().getResource("/foreground3.png")));
+            m_spritesheets.put("littles_pandas", ImageIO.read(getClass().getResource("/littles_pandas.png")));
+            
+            m_fonts.put("kaushanscriptregular", Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/kaushanscriptregular.ttf").openStream()));
+            
+            m_sounds.put("bonus", new Sound("/bonus.wav"));
+            m_sounds.put("death", new Sound("/death.wav"));
+            m_sounds.put("jump", new Sound("/jump.wav"));
+            m_sounds.put("levelup", new Sound("/levelup.wav"));
+            m_sounds.put("hover", new Sound("/hover3.wav"));
+            m_sounds.put("select", new Sound("/select3.wav"));
+            m_sounds.put("explosion", new Sound("/explosion.wav"));
+            
+            m_musics.put("jungle1", new Sound("/jungle01.wav"));
+            m_musics.put("jungle2", new Sound("/jungle02.wav"));
+        }
+        catch(IOException e)
+        {
+            e.getMessage();
+        }
+        catch (FontFormatException ex)
+        {
+            Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public static ResourceManager getInstance()
+    {
+        if(INSTANCE == null)
+        {
+            INSTANCE = new ResourceManager();
+        }
+        return INSTANCE;
+    }
     
     /**
      * 
@@ -49,54 +102,28 @@ public class ResourceManager
         return m_sounds.get(name);
     }
     
-    /**
-     * 
-     */
-    private ResourceManager()
+    public Sound getMusic(String name)
     {
-        try
-        {
-            m_spritesheets.put("afendar", ImageIO.read(getClass().getResource("/afendar.png")));
-            m_spritesheets.put("spritesheetGui", ImageIO.read(getClass().getResource("/gui.png")));
-            m_spritesheets.put("spritesheetGui2", ImageIO.read(getClass().getResource("/gui2.png")));
-            m_spritesheets.put("background", ImageIO.read(getClass().getResource("/background.png")));
-            m_spritesheets.put("foreground", ImageIO.read(getClass().getResource("/foreground1.png")));
-            m_spritesheets.put("foreground2", ImageIO.read(getClass().getResource("/foreground2.png")));
-            m_spritesheets.put("foreground3", ImageIO.read(getClass().getResource("/foreground3.png")));
-            
-            m_fonts.put("kaushanscriptregular", Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/kaushanscriptregular.ttf").openStream()));
-            
-            m_sounds.put("bonus", new Sound("/bonus.wav"));
-            m_sounds.put("death", new Sound("/death.wav"));
-            m_sounds.put("jump", new Sound("/jump.wav"));
-            m_sounds.put("levelup", new Sound("/levelup.wav"));
-            m_sounds.put("hover", new Sound("/hover3.wav"));
-            m_sounds.put("select", new Sound("/select3.wav"));
-            m_sounds.put("explosion", new Sound("/explosion.wav"));
-            
-            m_sounds.put("jungle1", new Sound("/jungle01.wav"));
-            m_sounds.put("jungle2", new Sound("/jungle02.wav"));
-        }
-        catch(IOException e)
-        {
-            e.getMessage();
-        }
-        catch (FontFormatException ex)
-        {
-            Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        return m_musics.get(name);
     }
     
     /**
      * 
-     * @return 
+     * @param volume 
      */
-    public static ResourceManager getInstance()
+    public void setSoundVolume(int volume)
     {
-        if(INSTANCE == null)
+        for(Map.Entry<String, Sound> e : m_sounds.entrySet())
         {
-            INSTANCE = new ResourceManager();
+            e.getValue().setVolume(volume);
         }
-        return INSTANCE;
+    }
+    
+    public void setMusicVolume(int volume)
+    {
+        for(Map.Entry<String, Sound> e : m_musics.entrySet())
+        {
+            e.getValue().setVolume(volume);
+        }
     }
 }

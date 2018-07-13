@@ -12,6 +12,11 @@ public class RadioButton extends Button
 
     protected boolean m_checked;
 
+    public RadioButton(BaseState owner)
+    {
+        this("", owner);
+    }
+    
     public RadioButton(String label, BaseState owner)
     {
         super(label, owner);

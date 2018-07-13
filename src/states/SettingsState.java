@@ -109,9 +109,6 @@ public class SettingsState extends BaseState
         
         m_startSlide = false;
         
-        int volumeVal = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
-        m_posBar = (int)(470 + (2.4 * volumeVal));
-        
         m_iconPlayer = m_spritesheetGui2.getSubimage(679, 187, 50, 50);
         m_iconSettings = m_spritesheetGui2.getSubimage(729, 187, 50, 50); 
         m_iconControls = m_spritesheetGui2.getSubimage(779, 187, 50, 50);
@@ -144,13 +141,18 @@ public class SettingsState extends BaseState
         cb.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(320, 620, 41, 33));
         m_screenGuiElements.add(cb);
         
+        int res = Integer.parseInt(Settings.getInstance().getConfigValue("Resolution"));
+        
         RadioButton rb1 = new RadioButton("800 x 600", this);
         rb1.setPosition(190, 230);
-        rb1.setChecked(true);
         rb1.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 800, 600);
         rb1.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb1.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb1.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
+        if(res == Screen.RES_1X)
+        {
+            rb1.setChecked(true);
+        }
         
         RadioButton rb2 = new RadioButton("1024 x 768", this);
         rb2.setPosition(190, 280);
@@ -158,6 +160,10 @@ public class SettingsState extends BaseState
         rb2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
+        if(res == Screen.RES_15X)
+        {
+            rb2.setChecked(true);
+        }
         
         RadioButton rb3 = new RadioButton("1280 x 960", this);
         rb3.setPosition(190, 330);
@@ -165,6 +171,10 @@ public class SettingsState extends BaseState
         rb3.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb3.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb3.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(365, 624, 29, 29));
+        if(res == Screen.RES_2X)
+        {
+            rb3.setChecked(true);
+        }
         
         ButtonGroup bg = new ButtonGroup(this);
         bg.add(rb1);
@@ -188,15 +198,17 @@ public class SettingsState extends BaseState
         s.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        s.setValue(Integer.parseInt(Settings.getInstance().getConfigValue("Sound")));
         m_screenGuiElements.add(s);
         
         s = new Slider(this);
         s.setPosition(455, 324);
         s.addCallback(GuiComponent.Status.CLICKED, "setMusicVolume", this);
-        s.addCallback(GuiComponent.Status.NEUTRAL, "setSoundVolume", this);
+        s.addCallback(GuiComponent.Status.NEUTRAL, "setMusicVolume", this);
         s.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
+        s.setValue(Integer.parseInt(Settings.getInstance().getConfigValue("Music")));
         m_screenGuiElements.add(s);
     }
     
@@ -753,11 +765,13 @@ public class SettingsState extends BaseState
         {
             int w = 128 - ( 570 - m_x2 + 46);
             int w2 = w + 20;
-            if(w > 0){
+            if(w > 0)
+            {
                 BufferedImage previewOldPlayer = m_oldPreview.getSubimage(570 - m_x2 + 46, 0, w, 128);
                 g.drawImage(previewOldPlayer, 616, 234, null);
             }
-            if(128 - w2 > 0 && 128 - w2 < 128 ){
+            if(128 - w2 > 0 && 128 - w2 < 128 )
+            {
                 BufferedImage previewCurrentPlayer = m_currentPreview.getSubimage(0, 0, 128 - w2, 128);
                 g.drawImage(previewCurrentPlayer, m_x2 + 128 + 20, 234, null);
             }
@@ -888,6 +902,20 @@ public class SettingsState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         screen.setResolution(width, height);
         
+        switch(width)
+        {
+            case 1280:
+                Settings.getInstance().setConfigValue("Resolution", Integer.toString(Screen.RES_2X));
+                break;
+            case 1024:
+                Settings.getInstance().setConfigValue("Resolution", Integer.toString(Screen.RES_15X));
+                break;
+            default:
+            case 800:
+                Settings.getInstance().setConfigValue("Resolution", Integer.toString(Screen.RES_1X));
+                break;
+        }
+        
         for(GuiComponent gc : m_screenGuiElements)
         {
             if(gc instanceof ButtonGroup)
@@ -918,6 +946,7 @@ public class SettingsState extends BaseState
      */
     public void backToMain()
     {
+        Settings.getInstance().saveConfig();
         m_stateManager.switchTo(StateType.MAIN_MENU);
     }
     
@@ -984,11 +1013,17 @@ public class SettingsState extends BaseState
     
     public void setSoundVolume()
     {
-        System.out.println("setSound");
+        Slider s = (Slider)m_screenGuiElements.get(m_screenGuiElements.size() - 2);
+        int volume = s.getValue();
+        m_stateManager.getContext().m_resourceManager.setSoundVolume(volume);
+        Settings.getInstance().setConfigValue("Sound", Integer.toString(volume));
     }
     
     public void setMusicVolume()
     {
-        System.out.println("setMusic");
+        Slider s = (Slider)m_screenGuiElements.get(m_screenGuiElements.size() - 1);
+        int volume = s.getValue();
+        m_stateManager.getContext().m_resourceManager.setMusicVolume(volume);
+        Settings.getInstance().setConfigValue("Music", Integer.toString(volume));
     }
 }

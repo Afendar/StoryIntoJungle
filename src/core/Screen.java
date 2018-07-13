@@ -29,6 +29,19 @@ public class Screen extends JFrame
     
     protected Game m_game;
     
+    public static final int RES_1X = 0;
+    public static final int RES_15X = 1;
+    public static final int RES_2X = 2;
+    
+    public static final int RES_1X_WIDTH = 800;
+    public static final int RES_1X_HEIGHT = 600;
+    
+    public static final int RES_15X_WIDTH = 1024;
+    public static final int RES_15X_HEIGHT = 768;
+    
+    public static final int RES_2X_WIDTH = 1280;
+    public static final int RES_2X_HEIGHT = 960;
+    
     /**
      * 
      */

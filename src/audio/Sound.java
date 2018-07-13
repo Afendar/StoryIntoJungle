@@ -159,7 +159,6 @@ public class Sound
         {
             URL url = this.getClass().getResource(m_path);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
-            Clip clip = AudioSystem.getClip();
 
             AudioFormat audioFormat = audioInputStream.getFormat();
 
@@ -171,8 +170,10 @@ public class Sound
             if (sourceLine.isControlSupported(FloatControl.Type.MASTER_GAIN))
             {
                 FloatControl gainControl = (FloatControl) sourceLine.getControl(FloatControl.Type.MASTER_GAIN);
-                float attenuation = -80 + (80 * m_volume / 100);
-                gainControl.setValue(attenuation);
+                float range = gainControl.getMaximum() - (gainControl.getMinimum() / 2);
+                float volume = m_volume / 100.0f;
+                float gain = (range * volume) + (gainControl.getMinimum() / 2);
+                gainControl.setValue(gain);
             }
 
             sourceLine.start();
@@ -184,7 +185,6 @@ public class Sound
                 nBytesRead = audioInputStream.read(abData, 0, abData.length);
                 if (nBytesRead >= 0)
                 {
-                    @SuppressWarnings("unused")
                     int nBytesWritten = sourceLine.write(abData, 0, nBytesRead);
                 }
             }
@@ -193,7 +193,7 @@ public class Sound
         }
         catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
         {
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 }

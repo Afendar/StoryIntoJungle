@@ -11,17 +11,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import ld34.profile.Save;
 import org.json.simple.JSONObject;
 
 public class SavesState extends BaseState
 {
-    private BufferedImage m_gui, m_bgSave, m_levelIcon, m_cageIcon, m_dollardIcon, m_littlesPandas, m_background, m_foreground2;
+    private BufferedImage m_gui, m_bgSave, m_levelIcon, m_cageIcon, m_dollardIcon, m_littlesPandas, m_background, m_foreground;
     private int m_selectedSave;
     private JSONObject m_jsonSaves;
     
@@ -39,39 +37,43 @@ public class SavesState extends BaseState
     @Override
     public void onCreate()
     {
-        m_guiElements = new ArrayList<>();
-        try
-        {            
-            URL url = this.getClass().getResource("/gui2.png");
-            m_gui = ImageIO.read(url);
-            m_bgSave = m_gui.getSubimage(235, 127, 217, 216);
-            m_levelIcon = m_gui.getSubimage(362, 107, 19, 16);
-            m_cageIcon = m_gui.getSubimage(384, 101, 27, 25);
-            m_dollardIcon = m_gui.getSubimage(413, 104, 16, 20);
-            
-            url = this.getClass().getResource("/littles_pandas.png");
-            m_littlesPandas = ImageIO.read(url);
-            
-            url = getClass().getResource("/background.png");
-            m_background = ImageIO.read(url);
-            
-            url = getClass().getResource("/foreground2.png");
-            m_foreground2 = ImageIO.read(url);
-        }
-        catch(IOException e)
-        {
-            e.getMessage();
-        }
+        ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
+        m_guiElements = new ArrayList<>();
+        m_gui = resourceManager.getSpritesheets("spritesheetGui2");
+        m_bgSave = m_gui.getSubimage(235, 127, 217, 216);
+        m_levelIcon = m_gui.getSubimage(362, 107, 19, 16);
+        m_cageIcon = m_gui.getSubimage(384, 101, 27, 25);
+        m_dollardIcon = m_gui.getSubimage(413, 104, 16, 20);
+        m_littlesPandas = resourceManager.getSpritesheets("littles_pandas");
+        
+        m_background = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("background"),
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+        m_foreground = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("foreground2"), 
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+
         BufferedImage[] icons = {
             m_gui.getSubimage(176, 93, 34, 35),
             m_gui.getSubimage(211, 92, 33, 35),
             m_gui.getSubimage(243, 94, 42, 34)
         };
         int[][] coords = {
-            {190, 420},
-            {340, 420},
-            {490, 420}
+            {((screenWidth/5)) + (screenWidth/5)/2 - 60, 2 * (screenHeight/3)},
+            {(2*(screenWidth/5)) + (screenWidth/5)/2 - 60, 2 * (screenHeight/3)},
+            {(3*(screenWidth/5)) + (screenWidth/5)/2 - 60, 2 * (screenHeight/3)}
         };
         String[] callbacks = {
             "loadSave",
@@ -162,6 +164,7 @@ public class SavesState extends BaseState
         ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
         g.drawImage(m_background, 0, 0, null);
         g.setColor(new Color(0, 0, 0, 76));
@@ -183,11 +186,21 @@ public class SavesState extends BaseState
         {
             if(m_selectedSave == i + 1)
             {
-                g.drawImage(m_gui.getSubimage(453, 125, 221, 220), (i * 230) + 68, 153, null);
+                g.drawImage(
+                        m_gui.getSubimage(453, 125, 221, 220), 
+                        ((i + 1) * (screenWidth / 5)) + (screenWidth/5)/2 - 121, 
+                        (screenHeight/3) - 40,
+                        null
+                );
             }
             else
             {
-                g.drawImage(m_bgSave, i * 230 + 70, 155, null);
+                g.drawImage(
+                        m_bgSave, 
+                        (i * ((screenWidth - 40)/ 3)) + ((screenWidth - 60)/3)/2 - 81, 
+                        (screenHeight/3) - 40, 
+                        null
+                );
             }
             
             //get save datas
@@ -266,7 +279,8 @@ public class SavesState extends BaseState
                 metrics = g.getFontMetrics(f);
                 
                 int offset = 0;
-                switch(levelNum){
+                switch(levelNum)
+                {
                     case 1:
                     case 2:
                         offset = 0;
@@ -291,7 +305,7 @@ public class SavesState extends BaseState
             element.render(g);
         }
         
-        g.drawImage(m_foreground2, 0, 0, null);
+        g.drawImage(m_foreground, 0, 0, null);
     }
     
     public void loadSave()
