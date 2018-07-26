@@ -11,12 +11,17 @@ import core.gui.IconButton;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import ld34.profile.Save;
 import particles.Leaf;
 
+/**
+ * MainMenuState class
+ *
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class MainMenuState extends BaseState
 {
     public BufferedImage m_logo, m_foreground, m_background;
@@ -299,14 +304,17 @@ public class MainMenuState extends BaseState
             }
         }
         
-        for(Leaf leaf : m_leavesList)
+        m_leavesList.stream().map((leaf) ->
         {
             if(!leaf.isGenStartX())
             {
                 leaf.genRandStartX();
             }
+            return leaf;
+        }).forEachOrdered((leaf) ->
+        {
             leaf.update(dt);
-        }
+        });
     }
 
     @Override
@@ -315,22 +323,21 @@ public class MainMenuState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         
         int screenWidth = screen.getContentPane().getWidth();
-        int screenHeight = screen.getContentPane().getHeight();
         
         g.drawImage(m_background, 0, 0, null);
         
         g.drawImage(m_logo, (screenWidth - m_logo.getWidth()) / 2, 20, null);
         g.drawImage(m_foreground, 0, 0, null);
         
-        for(GuiComponent element : m_guiElements)
+        m_guiElements.forEach((element) ->
         {
             element.render(g);
-        }
+        });
         
-        for (Leaf leaf : m_leavesList)
+        m_leavesList.forEach((leaf) ->
         {
             leaf.render(g);
-        }
+        });
     }
     
     /**
@@ -349,31 +356,49 @@ public class MainMenuState extends BaseState
         return dimg;  
     }
 
+    /**
+     * 
+     */
     public void play()
     {
         m_stateManager.switchTo(StateType.GAME);
     }
 
+    /**
+     * 
+     */
     public void load()
     {
         m_stateManager.switchTo(StateType.SAVES);
     }
 
+    /**
+     * 
+     */
     public void quit()
     {
         System.exit(0);
     }
 
+    /**
+     * 
+     */
     public void settings()
     {
         m_stateManager.switchTo(StateType.SETTINGS);
     }
 
+    /**
+     * 
+     */
     public void highScores()
     {
         m_stateManager.switchTo(StateType.HIGHT_SCORES);
     }
 
+    /**
+     * 
+     */
     public void credits()
     {
         m_stateManager.switchTo(StateType.CREDITS);

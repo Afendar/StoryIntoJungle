@@ -12,11 +12,20 @@ public class Button extends GuiComponent
     private boolean m_textCenter;
     private int m_paddingTop, m_paddingLeft;
 
+    /**
+     * 
+     * @param owner 
+     */
     public Button(BaseState owner)
     {
         this("", owner);
     }
 
+    /**
+     * 
+     * @param label
+     * @param owner 
+     */
     public Button(String label, BaseState owner)
     {
         super(owner);
@@ -60,17 +69,30 @@ public class Button extends GuiComponent
         setStatus(Status.NEUTRAL);
     }
 
+    /**
+     * 
+     * @param top
+     * @param left 
+     */
     public void setPadding(int top, int left)
     {
         m_paddingTop = top;
         m_paddingLeft = left;
     }
 
+    /**
+     * 
+     * @param center 
+     */
     public void setTextCenter(boolean center)
     {
         m_textCenter = center;
     }
 
+    /**
+     * 
+     * @param bg 
+     */
     public void setGroup(ButtonGroup bg)
     {
 

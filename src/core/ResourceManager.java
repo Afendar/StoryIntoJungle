@@ -102,6 +102,11 @@ public class ResourceManager
         return m_sounds.get(name);
     }
     
+    /**
+     * 
+     * @param name
+     * @return 
+     */
     public Sound getMusic(String name)
     {
         return m_musics.get(name);
@@ -113,17 +118,21 @@ public class ResourceManager
      */
     public void setSoundVolume(int volume)
     {
-        for(Map.Entry<String, Sound> e : m_sounds.entrySet())
+        m_sounds.entrySet().forEach((e) ->
         {
             e.getValue().setVolume(volume);
-        }
+        });
     }
     
+    /**
+     * 
+     * @param volume 
+     */
     public void setMusicVolume(int volume)
     {
-        for(Map.Entry<String, Sound> e : m_musics.entrySet())
+        m_musics.entrySet().forEach((e) ->
         {
             e.getValue().setVolume(volume);
-        }
+        });
     }
 }

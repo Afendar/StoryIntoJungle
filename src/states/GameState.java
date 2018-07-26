@@ -27,6 +27,12 @@ import ld34.profile.BestScores;
 import ld34.profile.Settings;
 import level.Level;
 
+/**
+ * GameState class
+ *
+ * @version %I%, %G%
+ * @author Afendar
+ */
 public class GameState extends BaseState
 {
     public Player m_player;
@@ -184,7 +190,7 @@ public class GameState extends BaseState
             m_cageToFree = m_level.nbCages;
         }
 
-        if(m_level.nbLevel == 1 && !Defines.DEV)
+        if(m_level.nbLevel == 1)
         {
             for(int i=0;i< m_level.eventsPos.length;i++)
             {
@@ -195,11 +201,11 @@ public class GameState extends BaseState
                     {
                         m_stateManager.switchTo(StateType.TUTORIAL);
                         ts = (TutorialState)m_stateManager.getState(StateType.TUTORIAL);
-                        ts.setTutorialNumber(i + 1);
+                        ts.setTutorialNumber(i);
                     }
-                    else if(ts.getTutorialNumber() != i + 1)
+                    else if(ts.getTutorialNumber() != i)
                     {
-                        ts.setTutorialNumber(i + 1);
+                        ts.setTutorialNumber(i);
                         m_stateManager.switchTo(StateType.TUTORIAL);
                     }
                 }

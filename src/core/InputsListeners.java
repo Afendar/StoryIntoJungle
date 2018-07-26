@@ -14,20 +14,21 @@ import java.util.ArrayList;
  * @version %I%, %G%
  * @author Afendar
  */
-public class InputsListeners implements KeyListener, MouseMotionListener, MouseListener {
-
+public class InputsListeners implements KeyListener, MouseMotionListener, MouseListener 
+{
     /**
      * Internal Action class
      */
-    public class Action{
-        
+    public class Action
+    {    
         public boolean enabled, typed;
         public int pressCpt, absorbCpt;
         
          /**
           * 
           */
-        public Action(){
+        public Action()
+        {
             actions.add(this);
         }
         
@@ -35,10 +36,14 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
          * 
          * @param enabled 
          */
-        public void switched(boolean enabled){
+        public void switched(boolean enabled)
+        {
             if(enabled != this.enabled)
+            {
                 this.enabled = enabled;
-            if(enabled){
+            }
+            if(enabled)
+            {
                 this.pressCpt++;
             }
         }
@@ -46,12 +51,15 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
         /**
          * 
          */
-        public void update(){
-            if(this.absorbCpt < this.pressCpt){
+        public void update()
+        {
+            if(this.absorbCpt < this.pressCpt)
+            {
                 this.absorbCpt++;
                 this.typed = true;
             }
-            else{
+            else
+            {
                 this.typed = false;
             }
         }
@@ -74,8 +82,8 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
      * 
      * @param game 
      */
-    public InputsListeners(Game game){
-        
+    public InputsListeners(Game game)
+    {    
         game.addKeyListener(this);
         game.addMouseMotionListener(this);
         game.addMouseListener(this);
@@ -91,9 +99,12 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     /**
      * 
      */
-    public void update(){
+    public void update()
+    {
         this.mouseClickCount = 0;
-        for(int i=0; i<this.actions.size();i++){
+        
+        for(int i=0 ; i < this.actions.size() ; i++)
+        {
             actions.get(i).update();
         }
     }
@@ -103,7 +114,8 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
      * @param e
      * @param enabled 
      */
-    public void processKey(KeyEvent e, boolean enabled){    
+    public void processKey(KeyEvent e, boolean enabled)
+    {    
         if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))) 
             jump.switched(enabled);
         if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Walk")))
@@ -121,56 +133,66 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
     }
     
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e)
+    {
         
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent e)
+    {
         processKey(e, true);
         this.e = e;
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e)
+    {
         processKey(e, false);
         this.e = null;
     }
     
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e)
+    {
         this.mouseX = e.getX();
         this.mouseY = e.getY();
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(MouseEvent e)
+    {
         this.mouseX = e.getX();
         this.mouseY = e.getY();
     }
     
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e)
+    {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e)
+    {
         this.mousePressed = true;
         this.mouseClickCount = e.getClickCount();
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e)
+    {
         this.mousePressed = false;
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(MouseEvent e)
+    {
         this.mouseExited = false;
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e)
+    {
         this.mouseExited = true;
     }
 }

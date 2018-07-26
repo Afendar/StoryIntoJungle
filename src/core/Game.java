@@ -137,7 +137,7 @@ public class Game extends JPanel implements Runnable
         m_stateManager = new StateManager(m_context);
         m_context.m_screen = new Screen(this);
 
-        m_stateManager.switchTo(StateType.SAVES);
+        m_stateManager.switchTo(StateType.MAP);
         start();
     }
 

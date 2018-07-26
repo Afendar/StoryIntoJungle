@@ -300,24 +300,33 @@ public class SavesState extends BaseState
             }
         }
         
-        for(GuiComponent element : m_guiElements)
+        m_guiElements.forEach((element) ->
         {
             element.render(g);
-        }
+        });
         
         g.drawImage(m_foreground, 0, 0, null);
     }
     
+    /**
+     * 
+     */
     public void loadSave()
     {
         
     }
     
+    /**
+     * 
+     */
     public void deleteSave()
     {
         
     }
     
+    /**
+     * 
+     */
     public void backToMain()
     {
         m_stateManager.switchTo(StateType.MAIN_MENU);
