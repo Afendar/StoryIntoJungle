@@ -26,8 +26,8 @@ import profiler.Profiler;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Level {
-    
+public class Level
+{    
     public int w, h;
     public int nbTilesW, nbTilesH;
     protected int nbTilesInScreenX, nbTilesInScreenY;
@@ -45,6 +45,7 @@ public class Level {
     public List<CageEntity> cageEntity = new ArrayList<>();
     public List<Braconeers> braconeers = new ArrayList<>();
     public boolean[] unlockedLevels;
+    private String m_time;
     
     private int complete;
     private int freeCages;

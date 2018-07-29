@@ -141,7 +141,7 @@ public class SettingsState extends BaseState
         cb.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(320, 620, 41, 33));
         m_screenGuiElements.add(cb);
         
-        int res = Integer.parseInt(Settings.getInstance().getConfigValue("Resolution"));
+        int res = Integer.parseInt(Settings.getInstance().getConfigValue("resolution"));
         
         RadioButton rb1 = new RadioButton("800 x 600", this);
         rb1.setPosition(190, 230);
@@ -198,7 +198,7 @@ public class SettingsState extends BaseState
         s.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
-        s.setValue(Integer.parseInt(Settings.getInstance().getConfigValue("Sound")));
+        s.setValue(Integer.parseInt(Settings.getInstance().getConfigValue("sound")));
         m_screenGuiElements.add(s);
         
         s = new Slider(this);
@@ -208,7 +208,7 @@ public class SettingsState extends BaseState
         s.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
         s.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(0, 438, 299, 62));
-        s.setValue(Integer.parseInt(Settings.getInstance().getConfigValue("Music")));
+        s.setValue(Integer.parseInt(Settings.getInstance().getConfigValue("music")));
         m_screenGuiElements.add(s);
     }
     
@@ -254,12 +254,12 @@ public class SettingsState extends BaseState
         bg.add(ib);
         m_playerGuiElements.add(bg);
         
-        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("Sex"));
-        int spicies = Integer.parseInt(Settings.getInstance().getConfigValue("Spicies"));
+        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("sex"));
+        int spicies = Integer.parseInt(Settings.getInstance().getConfigValue("spicies"));
         
         m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + spicies), 0, 128, 128);
         
-        m_nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("Name"), 203, 183, 287, 46);
+        m_nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("name"), 203, 183, 287, 46);
         m_nameField.setFont(m_font);
         
         m_sliderContainer = new JPanel();
@@ -333,7 +333,7 @@ public class SettingsState extends BaseState
         m_languageGuiElements.add(bg);
         
         OptionButton btn1 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))), 
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("jump"))), 
                 "Jump", 
                 219, 
                 462
@@ -341,7 +341,7 @@ public class SettingsState extends BaseState
         btn1.setFont(m_font);
         m_optionButtons.add(btn1);
         OptionButton btn2 = new OptionButton(
-                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))), 
+                KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("walk"))), 
                 "Walk", 
                 476, 
                 462
@@ -692,24 +692,23 @@ public class SettingsState extends BaseState
             {
                 case 2:
                     m_currentTab = 0;
-                    
                     new Thread(select::play).start();
-                    Settings.getInstance().saveConfig();
+                    Settings.getInstance().save();
                     break;
                 case 3:
                     m_currentTab = 1;
                     new Thread(select::play).start();
-                    Settings.getInstance().saveConfig();
+                    Settings.getInstance().save();
                     break;
                 case 4:
                     m_currentTab = 2;
                     new Thread(select::play).start();
-                    Settings.getInstance().saveConfig();
+                    Settings.getInstance().save();
                     break;
                 case 5:
                     m_currentTab = 3;
                     new Thread(select::play).start();
-                    Settings.getInstance().saveConfig();
+                    Settings.getInstance().save();
                     break;
             }
         }
@@ -905,14 +904,14 @@ public class SettingsState extends BaseState
         switch(width)
         {
             case 1280:
-                Settings.getInstance().setConfigValue("Resolution", Integer.toString(Screen.RES_2X));
+                Settings.getInstance().setConfigValue("resolution", Integer.toString(Screen.RES_2X));
                 break;
             case 1024:
-                Settings.getInstance().setConfigValue("Resolution", Integer.toString(Screen.RES_15X));
+                Settings.getInstance().setConfigValue("resolution", Integer.toString(Screen.RES_15X));
                 break;
             default:
             case 800:
-                Settings.getInstance().setConfigValue("Resolution", Integer.toString(Screen.RES_1X));
+                Settings.getInstance().setConfigValue("resolution", Integer.toString(Screen.RES_1X));
                 break;
         }
         
@@ -946,7 +945,7 @@ public class SettingsState extends BaseState
      */
     public void backToMain()
     {
-        Settings.getInstance().saveConfig();
+        Settings.getInstance().save();
         m_stateManager.switchTo(StateType.MAIN_MENU);
     }
     
@@ -1016,7 +1015,7 @@ public class SettingsState extends BaseState
         Slider s = (Slider)m_screenGuiElements.get(m_screenGuiElements.size() - 2);
         int volume = s.getValue();
         m_stateManager.getContext().m_resourceManager.setSoundVolume(volume);
-        Settings.getInstance().setConfigValue("Sound", Integer.toString(volume));
+        Settings.getInstance().setConfigValue("sound", Integer.toString(volume));
     }
     
     public void setMusicVolume()
@@ -1024,6 +1023,6 @@ public class SettingsState extends BaseState
         Slider s = (Slider)m_screenGuiElements.get(m_screenGuiElements.size() - 1);
         int volume = s.getValue();
         m_stateManager.getContext().m_resourceManager.setMusicVolume(volume);
-        Settings.getInstance().setConfigValue("Music", Integer.toString(volume));
+        Settings.getInstance().setConfigValue("music", Integer.toString(volume));
     }
 }

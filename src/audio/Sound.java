@@ -37,7 +37,7 @@ public class Sound
     public Sound(String path)
     {
         m_path = path;
-        m_volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+        m_volume = Integer.parseInt(Settings.getInstance().getConfigValue("sound"));
     }
 
     /**
@@ -154,7 +154,7 @@ public class Sound
      */
     public void play()
     {
-        m_volume = Integer.parseInt(Settings.getInstance().getConfigValue("Sound"));
+        m_volume = Integer.parseInt(Settings.getInstance().getConfigValue("sound"));
         try
         {
             URL url = this.getClass().getResource(m_path);

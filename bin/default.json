@@ -1,0 +1,23 @@
+{
+    "settings":{
+        "fullscreen":"0",
+        "resolution":"0",
+        "lang":"0",
+        "difficulty":"0",
+        "jump":"32",
+        "walk":"17",
+        "sex":"0",
+        "spicies":"0",
+        "sound":"80",
+        "music":"80",
+        "name":""
+    },
+    "saves":{
+        "slot1":{
+        },
+        "slot2":{
+        },
+        "slot3":{
+        }
+    }
+}

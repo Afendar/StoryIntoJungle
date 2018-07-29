@@ -1,10 +1,7 @@
 package ld34.profile;
 
-import entity.CageEntity;
 import entity.Player;
-import java.util.List;
 import level.Level;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -13,60 +10,53 @@ import org.json.simple.JSONObject;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Save extends Profile {
-    
-    private JSONObject jsonSaves;
-    
-    private static final Save INSTANCE = new Save();
+public class Save extends Profile
+{
+    protected static Save INSTANCE;
     
     /**
      * 
      */
-    private Save(){
-        super();
-        this.loadSaves();
+    private Save(String profileName)
+    {
+        super(profileName);
     }
     
-    /**
-     * 
-     * @return 
-     */
-    public static Save getInstance(){
-        return INSTANCE;
-    }
-    
-    /**
-     * 
-     */
-    private void loadSaves(){
-        this.jsonSaves = (JSONObject) this.profile.get("Saves");
-        if(this.jsonSaves.isEmpty()){
-            for(int i=0;i<3;i++){
-                this.jsonSaves.put("Slot" + i, new JSONObject());
-            }
+    public static void init(String profileName)
+    {
+        if(INSTANCE != null)
+        {
+            return;
         }
+        
+        INSTANCE = new Save(profileName);
+    }
+    
+    public static Save getInstance()
+    {
+        if(INSTANCE == null)
+        {
+            throw new RuntimeException("Save INSTANCE may not be initialized");
+        }
+        
+        return INSTANCE;
     }
     
     /**
      * 
      * @param slotNumber 
      */
-    public void removeSave(int slotNumber){
-        this.jsonSaves.replace("Slot" + slotNumber, new JSONObject());
-        this.save();
+    public void removeSave(int slotNumber)
+    {
+        
     }
     
     /**
      * 
      * @return 
      */
-    public boolean hasSave(){
-        for(int i = 0;i<this.jsonSaves.size();i++){
-            JSONObject save = (JSONObject)this.jsonSaves.get("Slot" + i);
-            if(!save.isEmpty()){
-                return true;
-            }
-        }
+    public boolean hasSave()
+    {
         return false;
     }
     
@@ -76,62 +66,9 @@ public class Save extends Profile {
      * @param level
      * @param player 
      */
-    public void saveGame(int slotId, Level level, Player player){
-        JSONObject data = new JSONObject();
+    public void saveGame(int slotId, Level level, Player player)
+    {
         
-        JSONObject levelData = new JSONObject();
-        levelData.put("difficulty", Integer.toString(player.difficulty));
-        levelData.put("number", Integer.toString(level.nbLevel));
-        levelData.put("time", "00:00");
-        levelData.put("complete", Integer.toString(level.getComplete()));
-        levelData.put("freeCages", Integer.toString(level.getFreeCages()));
-        
-        JSONObject cages = new JSONObject();
-        for(int i = 0; i < level.cagesMap.size(); i++){
-            List<CageEntity> cagesInLevel = level.cagesMap.get(i);
-            JSONArray cagesDatasInLevel = new JSONArray();
-            for(int j = 0;j < cagesInLevel.size();j++){
-                CageEntity ce = cagesInLevel.get(j);
-                JSONArray cageDatas = new JSONArray();
-                cageDatas.add(Integer.toString((int)ce.getPosX()));
-                cageDatas.add(Integer.toString((int)ce.getPosY()));
-                cageDatas.add(ce.isBreak());
-                cagesDatasInLevel.add(cageDatas);
-            }
-            cages.put(i + 1, cagesDatasInLevel);
-        }
-        levelData.put("cages", cages);
-        
-        JSONArray unlockedLevels = new JSONArray();
-        for(int i=0 ; i < level.unlockedLevels.length; i++){
-            unlockedLevels.add(Boolean.toString(level.unlockedLevels[i]));
-        }
-        levelData.put("unlockedLevels", unlockedLevels);
-        
-        data.put("level", levelData);
-        
-        JSONObject playerData = new JSONObject();
-        playerData.put("spicies", Settings.getInstance().getConfigValue("Spicies"));
-        playerData.put("score", Integer.toString(player.score));
-        playerData.put("sex", Settings.getInstance().getConfigValue("Sex"));
-        playerData.put("name", player.getName() != null ? player.getName() : "");
-        JSONArray coords = new JSONArray();
-        coords.add(Integer.toString((int)player.getPosX()));
-        coords.add(Integer.toString((int)player.getPosY()));
-        playerData.put("coords", coords);
-        data.put("player", playerData);
-        
-        this.jsonSaves.replace("Slot" + slotId, data);
-        this.saveSaves();
-        this.loadSaves();
-    }
-    
-    /**
-     * 
-     */
-    public void saveSaves(){
-        this.profile.replace("Saves", this.jsonSaves);
-        this.save();
     }
     
     /**
@@ -139,15 +76,13 @@ public class Save extends Profile {
      * @param slotNumber
      * @return 
      */
-    public JSONObject getSave(int slotNumber){
-        return (JSONObject) this.jsonSaves.get("Slot" + slotNumber);
+    public JSONObject getSave(int slotNumber)
+    {
+        return new JSONObject();
     }
     
-    /**
-     * 
-     * @return 
-     */
-    public JSONObject getSaves(){
-        return this.jsonSaves;
+    public JSONObject getSaves()
+    {
+        return new JSONObject();
     }
 }

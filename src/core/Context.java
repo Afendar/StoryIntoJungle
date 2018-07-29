@@ -12,6 +12,8 @@ public class Context
     public ResourceManager m_resourceManager;
     public Screen m_screen;
     public Logger m_logger;
+    
+    public String m_profileName;
 
     /**
      * 

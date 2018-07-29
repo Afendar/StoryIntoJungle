@@ -1,6 +1,5 @@
 package entity;
 
-import audio.Sound;
 import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -88,7 +87,7 @@ public class Player extends Entity
         this.timeRespawn = 0;
         this.timeLastBlink = 0;
 
-        this.setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")));
+        setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")));
 
         switch (Integer.parseInt(Settings.getInstance().getConfigValue("Sex")))
         {

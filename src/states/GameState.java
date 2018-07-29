@@ -3,6 +3,7 @@ package states;
 import audio.Sound;
 import core.Camera;
 import core.Defines;
+import core.Easing;
 import core.I18nManager;
 import core.Minimap;
 import core.ResourceManager;
@@ -84,7 +85,16 @@ public class GameState extends BaseState
         m_cageToFree = m_level.nbCages;
         
         m_cam = new Camera(0, 0, screenWidth, screenHeight, m_level);
-        m_player = new Player(32, 445, m_level, m_stateManager.getContext().m_inputsListener, m_cam, Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")));
+        m_player = new Player(
+            32, 
+            445, 
+            m_level, 
+            m_stateManager.getContext().m_inputsListener, 
+            m_cam, 
+            Integer.parseInt(
+                    Settings.getInstance().getConfigValue("Difficulty")
+            )
+        );
         m_player.score = 0;
         
         m_level.addPlayer(m_player);
@@ -93,7 +103,8 @@ public class GameState extends BaseState
         
         m_alpha = 255;
         m_alphaMax = 128;
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5){
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5)
+        {
             m_timer = true;
             m_timeF = TimerThread.MILLI;
         }
@@ -175,11 +186,13 @@ public class GameState extends BaseState
         if(m_cageToFree != m_level.nbCages && m_timeEventFree < 200){
             m_renderFreeCageAnim = true;
             m_timeEventFree += dt;
-            if(m_timeEventFree < 55){
-                m_eventY = this.easeOut(m_timeEventFree, -250, 290, 50);
+            if(m_timeEventFree < 55)
+            {
+                m_eventY = Easing.bounceEaseOut(m_timeEventFree, -250, 290, 50);
             }
-            else if(m_timeEventFree > 100){
-                m_eventY = cubicEaseIn(m_timeEventFree - 100, 70, -250, 50);
+            else if(m_timeEventFree > 100)
+            {
+                m_eventY = Easing.cubicEaseIn(m_timeEventFree - 100, 70, -250, 50);
             }
         }
         else
@@ -665,39 +678,6 @@ public class GameState extends BaseState
             else
                 m_level.cagesMap.set(i, cagesMap.get(i));
         }
-    }
-    
-    /**
-     * 
-     * @param t time elapsed from start of animation
-     * @param b start value
-     * @param c value change
-     * @param d duration of animation
-     * @return 
-     */
-    public int easeOut(float t, float b, float c, float d)
-    {
-        if((t /= d) < (1 / 2.75f))
-            return (int)((c * 7.5625f * t * t) + b);
-        else if(t < (2 / 2.75f))
-            return (int)(c * (7.5625f * (t -= (1.5f / 2.75f)) * t + .75f) + b);
-        else if(t < (2.5 / 2.75))
-            return (int)(c * (7.5625f * (t -= (2.25f / 2.75f)) * t + .9375f) + b);
-        else
-            return (int)(c * (7.5625f * (t -= (2.625f / 2.75f)) * t + .984375f) + b);
-    }
-    
-    /**
-     * 
-     * @param t
-     * @param b
-     * @param c
-     * @param d
-     * @return 
-     */
-    public int cubicEaseIn (float t,float b , float c, float d)
-    {
-        return (int)(c * (t /= d) * t * t + b);
     }
     
     /**

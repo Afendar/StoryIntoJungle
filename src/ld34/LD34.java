@@ -17,9 +17,14 @@ public class LD34
      * @param args
      */
     public static void main(String[] args)
-    {
+    {   
+        if(args.length == 0)
+        {
+            throw new RuntimeException("Unknow profile name");
+        }
+
         TimerThread timer = new TimerThread();
         timer.start();
-        Game game = new Game();
+        Game game = new Game(args[0]);
     }
 }

@@ -1,6 +1,7 @@
 package states;
 
 import core.Defines;
+import core.Easing;
 import core.ResourceManager;
 import core.Screen;
 import core.StateManager;
@@ -243,12 +244,12 @@ public class MapState extends BaseState
 
         if(m_posY > 330)
         {
-            m_posY = cubicEaseIn((float)m_time, 400, -330, 80);
-            m_scale = cubicEaseIn((float)m_time, 10, 200, 80) / 50.0;
+            m_posY = Easing.cubicEaseIn(m_time, 400, -330, 80);
+            m_scale = Easing.cubicEaseIn(m_time, 10, 200, 80) / 50.0;
         }
         else if(m_displayStar < 3)
         {
-            m_displayStar = cubicEaseIn((float)m_time, 0, 1, 100);
+            m_displayStar = Easing.linearEase(m_time, 0, 1, 40);
         }
         
         if(!m_points.isEmpty())
@@ -325,19 +326,6 @@ public class MapState extends BaseState
             if(m_displayStar > 2)
                 g.drawImage(m_plainStar, 360, m_posY + 10, null);
         }
-    }
-    
-    /**
-     * 
-     * @param t
-     * @param b
-     * @param c
-     * @param d
-     * @return 
-     */
-    public int cubicEaseIn (float t, float b, float c, float d)
-    {
-        return (int)(c * (t /= d) * t * t + b);
     }
     
     /*

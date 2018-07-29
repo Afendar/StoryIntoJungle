@@ -8,16 +8,17 @@ import org.json.simple.JSONArray;
  * @version %I%, %G%
  * @author Afendar
  */
-public class BestScores extends Profile {
-    
+public class BestScores
+{
     private JSONArray bestScores;
     
-    private static final BestScores INSTANCE = new BestScores();
+    private static BestScores INSTANCE;
     
     /**
      * 
      */
-    private BestScores(){
+    private BestScores()
+    {
         super();
         this.loadBestScores();
     }
@@ -34,15 +35,17 @@ public class BestScores extends Profile {
      * 
      * @return 
      */
-    public JSONArray getBestScores(){
-        return this.bestScores;
+    public JSONArray getBestScores()
+    {
+        return new JSONArray();
     }
     
     /**
      * 
      */
-    private void loadBestScores(){
-        this.bestScores = (JSONArray)this.profile.get("BestScores");
+    private void loadBestScores()
+    {
+        
     }
     
     /**
@@ -50,7 +53,8 @@ public class BestScores extends Profile {
      * @param name
      * @param score 
      */
-    public void insertScore(String name, int score){
+    public void insertScore(String name, int score)
+    {
         JSONArray jsonScores = this.bestScores;
         int insertion = -1;
         for(int i = 0; i<this.bestScores.size();i++){
@@ -75,7 +79,8 @@ public class BestScores extends Profile {
     /**
      * 
      */
-    public void saveBestScores(){
-        this.profile.replace("BestScores", this.bestScores);
+    public void saveBestScores()
+    {
+        
     }
 }

@@ -120,7 +120,7 @@ public final class OptionButton extends JComponent
     {
         this.isEditing = false;
         this.value = Integer.toString(e.getKeyCode());
-        Settings.getInstance().setConfigValue(this.name, this.value);
+        //Settings.getInstance().setConfigValue(this.name, this.value);
         this.setText(KeyEvent.getKeyText(e.getKeyCode()));
     }
 

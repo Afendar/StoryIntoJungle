@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -18,52 +17,39 @@ import org.json.simple.parser.ParseException;
  * @author Afendar
  */
 public abstract class Profile
-{    
-    /** */
-    protected JSONObject profile;
+{   
+    protected JSONParser m_parser;
     
-    /** */
-    protected JSONParser parser;
-    
-    /** */
     protected String FOLDER = "saves";
     
-    /** */
-    protected String FILENAME = FOLDER + File.separatorChar + "data.json";
+    protected String m_filePath;
     
-    /**
-     * 
-     */
-    public Profile()
+    protected JSONObject m_data;
+    
+    protected Profile(String profileName)
     {
-        this.profile = new JSONObject();
-        this.profile.put("Settings", new JSONObject());
-        this.profile.put("Saves", new JSONObject());
-        this.profile.put("BestScores", new JSONArray());
-
-        this.parser = new JSONParser();
+        m_parser = new JSONParser();
+        m_filePath = FOLDER + File.separator + profileName + ".json";
         
         File folder = new File(FOLDER);
         if(!folder.exists() && !folder.isDirectory())
         {
             folder.mkdir();
         }
+        
         load();
     }
     
-    /**
-     * 
-     */
-    protected void save()
+    public void save()
     {
         try
         {
             PrintWriter pw = new PrintWriter(
                 new BufferedWriter(
-                        new FileWriter(FILENAME)
+                        new FileWriter(m_filePath)
                 )
             );
-            pw.println(this.profile.toString());
+            pw.println(m_data.toString());
             pw.flush();
             pw.close();
         }
@@ -73,25 +59,45 @@ public abstract class Profile
         }
     }
     
-    /**
-     * 
-     */
-    protected void load()
+    public void load()
     {
-        File f = new File(FILENAME);
+        File f = new File(m_filePath);
         if(f.exists() && !f.isDirectory())
         {
             try
             {
-                this.profile = (JSONObject) this.parser.parse(new FileReader(FILENAME));
+                m_data = (JSONObject) m_parser.parse(new FileReader(m_filePath));
             }
-            catch(IOException|ParseException e){
+            catch(IOException|ParseException e)
+            {
                 e.getMessage();
             }
         }
         else
         {
-            this.save();
+            m_data = setDefaultData();
+            save();
         }
+    }
+    
+    protected JSONObject setDefaultData()
+    {
+        File f = new File("bin" + File.separator + "default.json");
+        JSONObject data = null;
+        
+        if(!f.exists())
+        {
+            throw new RuntimeException("default.json not exist");
+        }
+        
+        try
+        {
+           data = (JSONObject) m_parser.parse(new FileReader(f));
+        }
+        catch(IOException|ParseException e)
+        {
+            e.getMessage();
+        }
+        return data;
     }
 }

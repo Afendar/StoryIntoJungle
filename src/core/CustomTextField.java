@@ -104,7 +104,7 @@ public final class CustomTextField extends JComponent
             if (now - lastPress > threshold && charW < this.w)
             {
                 this.value += e.getKeyChar();
-                Settings.getInstance().setConfigValue("Name", this.value);
+                //Settings.getInstance().setConfigValue("Name", this.value);
                 lastPress = now;
             }
         }
@@ -124,7 +124,7 @@ public final class CustomTextField extends JComponent
                 {
                     this.value = "";
                 }
-                Settings.getInstance().setConfigValue("Name", this.value);
+                //Settings.getInstance().setConfigValue("Name", this.value);
             }
         }
     }
@@ -201,7 +201,7 @@ public final class CustomTextField extends JComponent
             {
                 this.value = "Enter name";
             }
-            Settings.getInstance().setConfigValue("Enter name", this.value);
+            //Settings.getInstance().setConfigValue("Enter name", this.value);
         }
     }
 
