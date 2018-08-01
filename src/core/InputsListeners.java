@@ -116,9 +116,9 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
      */
     public void processKey(KeyEvent e, boolean enabled)
     {    
-        if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))) 
+        if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("jump"))) 
             jump.switched(enabled);
-        if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("Walk")))
+        if(e.getKeyCode() == Integer.parseInt(Settings.getInstance().getConfigValue("walk")))
             slow.switched(enabled);
         if(e.getKeyCode() == KeyEvent.VK_ENTER) 
             next.switched(enabled);

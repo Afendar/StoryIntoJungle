@@ -51,14 +51,14 @@ public class TutorialState extends BaseState
         switch(m_tutorialNumber)
         {
             case 0:
-                m_tmpText = m_tmpText.replaceAll("\\[.*?\\]", Settings.getInstance().getConfigValue("Name"));
+                m_tmpText = m_tmpText.replaceAll("\\[.*?\\]", Settings.getInstance().getConfigValue("name"));
                 break;
             case 1:
             case 7:
-                m_tmpText = m_tmpText.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Jump"))));
+                m_tmpText = m_tmpText.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("jump"))));
                 break;
             case 2:
-                m_tmpText = m_tmpText.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("Walk"))));
+                m_tmpText = m_tmpText.replaceAll("\\[.*?\\]", KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("walk"))));
                 break;
         }
     }

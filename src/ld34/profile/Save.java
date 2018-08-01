@@ -68,7 +68,13 @@ public class Save extends Profile
      */
     public void saveGame(int slotId, Level level, Player player)
     {
-        
+        JSONObject saves = (JSONObject)m_data.get("saves");
+        JSONObject slot = (JSONObject)saves.get("slot" + slotId);
+        slot.put("level", level.toSave());
+        slot.put("player", player.toSave());
+        saves.put("slot" + slotId, slot);
+        m_data.put("saves", saves);
+        save();
     }
     
     /**

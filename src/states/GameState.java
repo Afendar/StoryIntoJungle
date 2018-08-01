@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import ld34.profile.BestScores;
+import ld34.profile.Save;
 import ld34.profile.Settings;
 import level.Level;
 
@@ -85,6 +86,9 @@ public class GameState extends BaseState
         m_cageToFree = m_level.nbCages;
         
         m_cam = new Camera(0, 0, screenWidth, screenHeight, m_level);
+        
+        System.out.println(Settings.getInstance().getConfigValue("difficulty"));
+        
         m_player = new Player(
             32, 
             445, 
@@ -92,7 +96,7 @@ public class GameState extends BaseState
             m_stateManager.getContext().m_inputsListener, 
             m_cam, 
             Integer.parseInt(
-                    Settings.getInstance().getConfigValue("Difficulty")
+                    Settings.getInstance().getConfigValue("difficulty")
             )
         );
         m_player.score = 0;
@@ -103,7 +107,7 @@ public class GameState extends BaseState
         
         m_alpha = 255;
         m_alphaMax = 128;
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5)
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("difficulty")) == 5)
         {
             m_timer = true;
             m_timeF = TimerThread.MILLI;
@@ -259,7 +263,7 @@ public class GameState extends BaseState
             {
                 if(m_stateManager.getContext().m_inputsListener.next.typed)
                 {
-                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("Name"), m_player.score);
+                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("name"), m_player.score);
                     reinit(0);
                     m_player.isDead = false;
                     m_player.score = 0;
@@ -646,7 +650,7 @@ public class GameState extends BaseState
         
         g.drawString("" + m_level.nbCages, 210, 47);
 
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("Difficulty")) == 5)
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("difficulty")) == 5)
         {
             g.setColor(new Color(0,0,0,160));
             g.fillRoundRect(640, 27, 100, 30, 5, 5);
@@ -702,5 +706,12 @@ public class GameState extends BaseState
             lineLen += word.length();
         }
         return output.toString();
+    }
+    
+    public boolean save()
+    {
+        Save s = Save.getInstance();
+        s.saveGame(1, m_level, m_player);
+        return true;
     }
 }

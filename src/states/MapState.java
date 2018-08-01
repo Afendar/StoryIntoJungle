@@ -12,6 +12,7 @@ import core.gui.IconButton;
 import entity.CageEntity;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -78,7 +79,8 @@ public class MapState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         
-        try{
+        try
+        {
             URL url = getClass().getResource("/bgmap2.png");
             m_mapBg = ImageIO.read(url);
             url = getClass().getResource("/littles_pandas.png");
@@ -268,6 +270,10 @@ public class MapState extends BaseState
     @Override
     public void render(Graphics2D g)
     {   
+        Screen screen = m_stateManager.getContext().m_screen;
+        ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
+        int screenWidth = screen.getContentPane().getWidth();
+        
         g.drawImage(m_mapBg, 0, 0, null);
         //draw curves lvl 1 to 2
         //g.setColor(Color.RED);
@@ -326,6 +332,33 @@ public class MapState extends BaseState
             if(m_displayStar > 2)
                 g.drawImage(m_plainStar, 360, m_posY + 10, null);
         }
+        
+        g.drawImage(m_panel, 175, 235, null);
+        g.drawImage(m_plainStar, 185, 235 + 12, null);
+        g.drawImage(m_plainStar, 202, 235 + 9, null);
+        g.drawImage(m_emptyStar, 220, 235 + 10, null);
+        
+        g.drawImage(m_panel, 355, 186, null);
+        g.drawImage(m_plainStar, 365, 186 + 12, null);
+        g.drawImage(m_emptyStar, 382, 186 + 9, null);
+        g.drawImage(m_emptyStar, 400, 186 + 10, null);
+        
+        //g.drawImage(m_panel, 545, 305, null);
+        
+        //g.drawImage(m_panel, 530, 118, null);
+        
+        //g.drawImage(m_panel, 265, 40, null);
+        
+        Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
+        FontMetrics metrics = g.getFontMetrics(font);
+        g.setFont(font);
+        String levelName = "Mystic Lagoon";
+        int levelNameWidth = metrics.stringWidth(levelName);
+        
+        g.setColor(new Color(0, 0, 0, 128));
+        g.fillRect(screenWidth - levelNameWidth - 60, 30, levelNameWidth + 20, 40);
+        g.setColor(new Color(255, 255, 255));
+        g.drawString(levelName, screenWidth - 50 - levelNameWidth, 58);
     }
     
     /*

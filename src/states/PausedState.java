@@ -161,7 +161,21 @@ public class PausedState extends BaseState
     
     public void save()
     {
+        GameState gs = (GameState)m_stateManager.getState(StateType.GAME);
+        if(gs == null)
+        {
+            System.out.println("game scene not found");
+            return;
+        }
         
+        if(gs.save())
+        {
+            System.out.println("Save completed");
+        }
+        else
+        {
+            System.out.println("Error during save");
+        }
     }
     
     public void settings()

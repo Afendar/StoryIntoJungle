@@ -17,6 +17,8 @@ import java.awt.Color;
 import java.util.List;
 import level.Level;
 import level.tiles.TileAtlas;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Player class
@@ -87,9 +89,9 @@ public class Player extends Entity
         this.timeRespawn = 0;
         this.timeLastBlink = 0;
 
-        setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("Spicies")));
+        setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("spicies")));
 
-        switch (Integer.parseInt(Settings.getInstance().getConfigValue("Sex")))
+        switch (Integer.parseInt(Settings.getInstance().getConfigValue("sex")))
         {
             case Player.SEX_BOY:
                 this.sex = "boy";
@@ -132,7 +134,7 @@ public class Player extends Entity
         this.spritefx = this.spritesheetfx.getSubimage(0, 0, 60, 32);
         this.spritefxend = this.spritesheetfxend.getSubimage(0, 0, 60, 32);
         this.sprite = this.spritesheet.getSubimage(this.animX, this.animY * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-        this.name = Settings.getInstance().getConfigValue("Name");
+        this.name = Settings.getInstance().getConfigValue("name");
     }
 
     /**
@@ -685,5 +687,28 @@ public class Player extends Entity
     public void die()
     {
         this.isDead = true;
+    }
+    
+    public JSONObject toSave()
+    {
+        /*
+        "difficulty": 0,
+        "species": 0,
+        "score": 3000,
+        "sex": 0,
+        "name": "pipouille",
+        "coords": [1040, 100]
+        */
+        JSONObject data = new JSONObject();
+        data.put("difficulty", difficulty);
+        data.put("species", species);
+        data.put("score", score);
+        data.put("sex", sex);
+        data.put("name", name);
+        JSONArray coords = new JSONArray();
+        coords.add(posX);
+        coords.add(posY);
+        data.put("coords", coords);
+        return data;
     }
 }

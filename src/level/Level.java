@@ -16,6 +16,8 @@ import core.Defines;
 import java.awt.Rectangle;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import particles.Leaf;
 import particles.Particle;
 import profiler.Profiler;
@@ -759,5 +761,35 @@ public class Level
         }
         
         return result;
+    }
+    
+    public JSONObject toSave()
+    {       
+        JSONObject data = new JSONObject();
+        data.put("number", nbLevel);
+        data.put("time", "00:00");
+        data.put("complete", complete);
+        data.put("nbFreeCages", freeCages);
+        
+        JSONArray cages = new JSONArray();
+        for(List list : cagesMap)
+        {
+            JSONArray levelCages = new JSONArray();
+            for(int i = 0 ; i < list.size() ; i++)
+            {
+                JSONObject cageInfo = new JSONObject();
+                CageEntity ce = (CageEntity)list.get(i);
+                JSONArray pos = new JSONArray();
+                pos.add(ce.getPosX());
+                pos.add(ce.getPosY());
+                cageInfo.put("pos", pos);
+                cageInfo.put("free", ce.isBreak());
+                levelCages.add(cageInfo);
+            }           
+            cages.add(levelCages);
+        }
+        data.put("cages", cages);
+        
+        return data;
     }
 }
