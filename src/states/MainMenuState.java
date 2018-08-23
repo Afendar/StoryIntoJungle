@@ -80,9 +80,9 @@ public class MainMenuState extends BaseState
                 {screenWidth/2 - 117 - (15*30), 2 * (screenHeight / 6)},
                 {screenWidth/2 - 117 - (17*30), 3 * (screenHeight / 6)},
                 {screenWidth/2 - 117 - (19*30), 4 * (screenHeight / 6)},
-                {16, screenHeight - 82},
-                {107, screenHeight - 82},
-                {703, screenHeight - 82}
+                {screenWidth * 20 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 110 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 700 / Screen.RES_1X_WIDTH, screenHeight - 82}
             };
             
             labels = new String[]{
@@ -105,9 +105,9 @@ public class MainMenuState extends BaseState
             coords = new Integer[][]{
                 {screenWidth/2 - 117 - 15*30, 2 * (screenHeight / 5)},
                 {screenWidth/2 - 117 - 19*30, 3 * (screenHeight / 5)},
-                {16, screenHeight - 82},
-                {107, screenHeight - 82},
-                {screenWidth - 92, screenHeight - 82}
+                {screenWidth * 20 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 110 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 700 / Screen.RES_1X_WIDTH, screenHeight - 82}
             };
             
             labels = new String[]{
@@ -195,9 +195,9 @@ public class MainMenuState extends BaseState
                 {screenWidth/2 - 117 - (15*30), 2 * (screenHeight / 6)},
                 {screenWidth/2 - 117 - (17*30), 3 * (screenHeight / 6)},
                 {screenWidth/2 - 117 - (19*30), 4 * (screenHeight / 6)},
-                {16, screenHeight - 82},
-                {107, screenHeight - 82},
-                {703, screenHeight - 82}
+                {screenWidth * 20 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 110 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 700 / Screen.RES_1X_WIDTH, screenHeight - 82}
             };
         }
         else
@@ -205,9 +205,9 @@ public class MainMenuState extends BaseState
             coords = new Integer[][]{
                 {screenWidth/2 - 117 - 15*30, 2 * (screenHeight / 5)},
                 {screenWidth/2 - 117 - 19*30, 3 * (screenHeight / 5)},
-                {16, screenHeight - 82},
-                {107, screenHeight - 82},
-                {screenWidth - 92, screenHeight - 82}
+                {screenWidth * 20 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 110 / Screen.RES_1X_WIDTH, screenHeight - 82},
+                {screenWidth * 700 / Screen.RES_1X_WIDTH, screenHeight - 82}
             };
         }
         

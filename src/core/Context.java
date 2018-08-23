@@ -1,6 +1,7 @@
 package core;
 
 import java.util.logging.Logger;
+import profiler.Profiler;
 
 /**
  * 
@@ -12,6 +13,7 @@ public class Context
     public ResourceManager m_resourceManager;
     public Screen m_screen;
     public Logger m_logger;
+    public Profiler m_profiler;
     
     public String m_profileName;
 

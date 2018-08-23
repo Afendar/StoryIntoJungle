@@ -44,7 +44,8 @@ public class Profiler {
         this.datas = new String[]{"0", "0", "0", "0", "true", "true"};
         this.visible = false;
         
-        try{
+        try
+        {
             URL url = this.getClass().getResource("/fonts/arial.ttf");
             this.fontD = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
             this.fontD = this.fontD.deriveFont(Font.PLAIN, 18.0f);

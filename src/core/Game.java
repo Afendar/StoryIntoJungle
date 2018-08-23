@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 import javax.swing.JPanel;
 import ld34.profile.Save;
 import ld34.profile.Settings;
@@ -36,11 +36,10 @@ public class Game extends JPanel implements Runnable
     private Thread m_tGame;
     private Font m_font, m_fontD;
     private int m_nbEntities;
-    private ResourceBundle m_bundle;
     private int m_elapsedTime, m_lastTime, m_pauseTime;
     private Runtime m_instance;
-    private Profiler m_profiler;
     private int m_frame, m_memoryUsed;
+    private StreamHandler m_handler;
 
     private final Context m_context;
     private final StateManager m_stateManager;
@@ -83,9 +82,6 @@ public class Game extends JPanel implements Runnable
         setSize(new Dimension(width, height));
         m_frame = m_memoryUsed = m_nbEntities = 0;
 
-        m_profiler = Profiler.getInstance();
-        m_profiler.addGame(this);
-
         try
         {
             URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -111,7 +107,8 @@ public class Game extends JPanel implements Runnable
         m_context.m_logger = Logger.getLogger("logger");
         if(Defines.DEV)
         {
-            m_context.m_logger.addHandler(new ConsoleHandler());
+            m_handler = new ConsoleHandler();
+            m_context.m_logger.addHandler(m_handler);
         }
         else
         {
@@ -123,8 +120,8 @@ public class Game extends JPanel implements Runnable
                     logDir.mkdir();
                 }
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                FileHandler handler = new FileHandler(Defines.LOGS_DIRECTORY + sdf.format(new Date()) + ".log", true);
-                handler.setFormatter(new SimpleFormatter()
+                m_handler = new FileHandler(Defines.LOGS_DIRECTORY + sdf.format(new Date()) + ".log", true);
+                m_handler.setFormatter(new SimpleFormatter()
                 {
                     @Override
                     public String format(LogRecord record)
@@ -133,18 +130,21 @@ public class Game extends JPanel implements Runnable
                         return String.format("[%s] [%s] %s%n", sdf2.format(new Date()), record.getLevel(), record.getMessage());
                     }
                 });
-                m_context.m_logger.addHandler(handler);
+                m_context.m_logger.addHandler(m_handler);
             }
             catch(IOException e)
             {
-                m_context.m_logger.addHandler(new ConsoleHandler());
+                m_handler = new ConsoleHandler();
+                m_context.m_logger.addHandler(m_handler);
             }
         }
 
         m_stateManager = new StateManager(m_context);
         m_context.m_screen = new Screen(this);
+        m_context.m_profiler = Profiler.getInstance();
+        m_context.m_profiler.addGame(this);
 
-        m_stateManager.switchTo(StateType.MAP);
+        m_stateManager.switchTo(StateType.GAME);
         start();
     }
 
@@ -169,6 +169,7 @@ public class Game extends JPanel implements Runnable
      */
     public void stop()
     {
+        m_context.m_logger.log(Level.INFO, "Stopping game.");
         m_running = false;
     }
 
@@ -206,13 +207,12 @@ public class Game extends JPanel implements Runnable
                 needUpdate = true;
             }
 
-            repaint();
-
             if(needUpdate)
             {
-                this.update(delta);
+                update(delta);
+                repaint();
             }
-
+            
             if(System.currentTimeMillis() - startTime >= 1000)
             {
                 m_memoryUsed = (int) ((m_instance.totalMemory() - m_instance.freeMemory()) / 1024) / 1024;
@@ -221,8 +221,10 @@ public class Game extends JPanel implements Runnable
                 startTime = System.currentTimeMillis();
             }
 
-            m_profiler.update(Integer.toString(m_frame), Integer.toString(m_memoryUsed));
+            m_context.m_profiler.update(Integer.toString(m_frame), Integer.toString(m_memoryUsed));
         }
+        
+        m_handler.close();
     }
 
     /**
@@ -238,11 +240,6 @@ public class Game extends JPanel implements Runnable
         {
             m_context.m_screen.setFullscreen(!m_context.m_screen.isFullscreen());
         }
-
-        if(m_context.m_inputsListener.profiler.typed)
-        {
-            m_profiler.toggleVisible();
-        }
     }
 
     @Override
@@ -250,16 +247,20 @@ public class Game extends JPanel implements Runnable
     {
         requestFocus();
 
-        if(m_profiler.isVisible())
-        {
-            m_profiler.render(g);
-        }
-
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         m_stateManager.render(g2d);
+        
+        if(m_context.m_profiler.isVisible())
+        {
+            m_context.m_profiler.render(g);
+        }
     }
     
+    /**
+     * 
+     * @return 
+     */
     public String getProfileName()
     {
         return m_context.m_profileName;

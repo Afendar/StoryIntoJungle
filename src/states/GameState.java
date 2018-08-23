@@ -11,6 +11,7 @@ import core.Screen;
 import core.StateManager;
 import core.StateType;
 import core.TimerThread;
+import core.gui.GuiConsole;
 import entity.CageEntity;
 import entity.Player;
 import java.awt.Color;
@@ -41,6 +42,8 @@ public class GameState extends BaseState
     public Level m_level;
     public Camera m_cam;
     
+    public GuiConsole m_guiConsole;
+    
     public BufferedImage m_background2, m_bgGui, m_gui, m_bgGui2, m_clockGui, m_backgroundBottom, m_backgroundTop, m_monkeySpriteSheet,
             m_backgroundBottomAll, m_backgroundBottom2, m_backgroundTop2, m_backgroundTopAll, m_guiAssets, m_scoreIcon, m_timeIcon, m_levelIcon, m_cagesIcon, 
             m_cageIcon, m_dollardIcon, m_littlesPandas, m_spritesheetGui, m_background, m_foregroundGame, m_spritesheetGui2;
@@ -67,6 +70,8 @@ public class GameState extends BaseState
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
+        
+        m_guiConsole = new GuiConsole(0, 400, 350, 200, m_stateManager.getContext().m_inputsListener);
         
         m_nbLevel = 1;
         m_displayEnd = false;
@@ -99,7 +104,7 @@ public class GameState extends BaseState
                     Settings.getInstance().getConfigValue("difficulty")
             )
         );
-        m_player.score = 0;
+        m_player.setScore(0);
         
         m_level.addPlayer(m_player);
 
@@ -172,6 +177,14 @@ public class GameState extends BaseState
     {
         ResourceManager rm = m_stateManager.getContext().m_resourceManager;
         
+        m_guiConsole.update(dt);
+        
+        if(m_stateManager.getContext().m_inputsListener.profiler.typed)
+        {
+            m_stateManager.getContext().m_profiler.toggleVisible();
+            m_guiConsole.toggleVisible();
+        }
+        
         if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
         {
             m_timeSound = TimerThread.MILLI;
@@ -229,9 +242,9 @@ public class GameState extends BaseState
             }
         }
 
-        if(m_player.win)
+        if(m_player.hasWon())
         {
-            m_player.checkpointX = 0;
+            m_player.setCheckpointX(0);
             if(m_nbLevel < Defines.LEVEL_MAX)
             {
                 m_stateManager.switchTo(StateType.MAP);
@@ -259,14 +272,14 @@ public class GameState extends BaseState
                     m_alpha = 0;
                 }
             }
-            else if(m_player.isDead)
+            else if(m_player.isDead())
             {
                 if(m_stateManager.getContext().m_inputsListener.next.typed)
                 {
-                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("name"), m_player.score);
+                    BestScores.getInstance().insertScore(Settings.getInstance().getConfigValue("name"), m_player.getScore());
                     reinit(0);
-                    m_player.isDead = false;
-                    m_player.score = 0;
+                    m_player.die(false);
+                    m_player.setScore(0);
                 }
                 m_player.update(dt);
             }
@@ -285,7 +298,7 @@ public class GameState extends BaseState
 
                 if(m_minutes >= m_maxTimeHardcore)
                 {
-                    m_player.isDead = true;
+                    m_player.die(true);
                 }
                 
                 if(m_stateManager.getContext().m_inputsListener.pause.enabled)
@@ -410,9 +423,8 @@ public class GameState extends BaseState
             g.drawImage(m_backgroundTop2, (int)(m_glueTopX2 - (m_cam.x)), screenHeight - m_backgroundTop2.getHeight(), null);
             
             g.translate(m_cam.x/4, 0);
-            
             g.translate(-m_cam.x, -m_cam.y);
-
+            
             //Map Render
             int startX = (int)(m_player.getPosX() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenX() / 2);
             int startY = (int)(m_player.getPosY() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenY() / 2);
@@ -431,15 +443,15 @@ public class GameState extends BaseState
             {
                 g.drawImage(m_monkeySpriteSheet.getSubimage(105 * (int)(m_timeMonkey / 4), 0, 105, 107), m_level.eventsPos[m_eventNumber][0] + 139, m_level.eventsPos[m_eventNumber][1] - 81, null);
             }
-            
+
             g.translate(m_cam.x, m_cam.y);
             
             g.drawImage(m_foregroundGame, 0, 300, null);
 
             //Render GUI
-            this.renderGUI(g);
+            renderGUI(g);
             
-            if(m_player.isDead)
+            if(m_player.isDead())
             {
                 if(m_alpha < m_alphaMax)
                 {
@@ -471,6 +483,8 @@ public class GameState extends BaseState
                 m_minimap.render(g);
             }
         }
+        
+        m_guiConsole.render(g);
     }
     
     public void setPlayer(Player player)
@@ -514,10 +528,12 @@ public class GameState extends BaseState
             m_timeIcon = m_guiAssets.getSubimage(6, 8, 61, 60);
             m_scoreIcon = m_guiAssets.getSubimage(82, 8, 61, 59);
             m_levelIcon = m_guiAssets.getSubimage(156, 7, 61, 61);
-            if(m_player.species.equals("panda")){
+            if(m_player.getSpecies().equals("panda"))
+            {
                 m_cagesIcon = m_guiAssets.getSubimage(232, 7, 61, 61);
             }
-            else{
+            else
+            {
                 m_cagesIcon = m_guiAssets.getSubimage(307, 7, 61, 61);
             }
             
@@ -556,7 +572,7 @@ public class GameState extends BaseState
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
-        if(m_nbLevel < Defines.LEVEL_MAX || m_player.isDead){
+        if(m_nbLevel < Defines.LEVEL_MAX || m_player.isDead()){
             m_nbLevel += lvl;
             
             if(lvl != 0)
@@ -569,10 +585,11 @@ public class GameState extends BaseState
             {
                 m_player.setIsRespawning(true);
             }
-            m_player.level = m_level;
+            m_player.setLevel(m_level);
             m_level.addPlayer(m_player);
-            if(m_player.checkpointX != 0){
-                m_player.setPosX(m_player.checkpointX);
+            if(m_player.getCheckpointX() != 0)
+            {
+                m_player.setPosX(m_player.getCheckpointX());
             }
             else
             {
@@ -586,22 +603,22 @@ public class GameState extends BaseState
             }
             else
             {
-                if(m_player.checkpointY != 0)
+                if(m_player.getCheckpointY() != 0)
                 {
-                    m_player.setPosY(m_player.checkpointY);
+                    m_player.setPosY(m_player.getCheckpointY());
                 }
                 else
                 {
                     m_player.setPosY(460);
                 }
             }
-            m_player.win = false;
+            m_player.setWin(false);
             m_renderFreeCageAnim = false;
         }
         else
         {
             m_displayEnd = true;
-            m_player.win = false;
+            m_player.setWin(false);
         }
     }
     
@@ -643,11 +660,9 @@ public class GameState extends BaseState
         g.setColor(Color.WHITE);
         g.setFont(fontS);
         FontMetrics m = g.getFontMetrics(fontS);
-        int scoreW = m.stringWidth(""+m_player.score);
-        g.drawString("" + m_player.score, 165 - scoreW, 106);
-
+        int scoreW = m.stringWidth("" + m_player.getScore());
+        g.drawString("" + m_player.getScore(), 165 - scoreW, 106);
         g.drawString("" + m_nbLevel, 95, 47);
-        
         g.drawString("" + m_level.nbCages, 210, 47);
 
         if(Integer.parseInt(Settings.getInstance().getConfigValue("difficulty")) == 5)
@@ -657,7 +672,7 @@ public class GameState extends BaseState
             g.drawImage(m_timeIcon, 722, 3, null);
             if(m_timer)
             {
-                if(!m_player.isDead)
+                if(!m_player.isDead())
                 {
                     m_minutes = (int)((double)(TimerThread.MILLI - m_timeF)/60000);
                     m_secondes = (int)((double)(TimerThread.MILLI - m_timeF - m_minutes*60000)/1000);

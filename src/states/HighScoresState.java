@@ -135,8 +135,10 @@ public class HighScoresState extends BaseState
         g.setFont(font);
         g.setColor(Color.BLACK);
         
-        for(int i=0;i<m_bestScores.size();i++){
-            if(m_bestScores.get(i) instanceof JSONArray){
+        for(int i=0;i<m_bestScores.size();i++)
+        {
+            if(m_bestScores.get(i) instanceof JSONArray)
+            {
                 JSONArray array = (JSONArray) m_bestScores.get(i);
                 if(array.size() == 2)
                 {

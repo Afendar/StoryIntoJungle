@@ -14,6 +14,7 @@ import core.Defines;
 import core.InputsListeners;
 import core.TimerThread;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import level.Level;
 import level.tiles.TileAtlas;
@@ -28,31 +29,34 @@ import org.json.simple.JSONObject;
  */
 public class Player extends Entity
 {
-    public Level level;
-    public float velX, velY;
-    public InputsListeners listener;
-    public BufferedImage spritesheet, sprite, spritefx, spritesheetfx, spritesheetfxend, spritefxend;
-    public Camera cam;
-    public boolean isDead, win;
-    public int difficulty;
-    public int score;
-    public String sex, age, species;
-    public int checkpointX, checkpointY;
-    public int direction, timeJAnim, offset, oldposX, oldposY, offset2, timeJEndAnim;
-    public Thread jumpParticles, endJumpParticles;
-
     public static final int SPECIES_PANDA = 0;
     public static final int SPECIES_REDPANDA = 1;
+    
     public static final int SEX_BOY = 0;
     public static final int SEX_GIRL = 1;
+    
     public static final int PLAYER_SIZE = 64;
+    
+    private Level m_level;
+    private float m_velX, m_velY;
+    private InputsListeners m_listener;
+    private BufferedImage m_spritesheet, m_sprite, m_spritefx, m_spritesheetfx, m_spritesheetfxend, m_spritefxend;
+    private Camera m_cam;
+    private boolean m_isDead, m_win, m_splash;
+    private int m_difficulty;
+    private int m_score;
+    private String m_sex, m_age, m_species;
+    private int m_checkpointX, m_checkpointY;
+    private int m_direction, m_timeJAnim, m_offset, m_oldposX, m_oldposY, m_offset2, m_timeJEndAnim;
+    private Thread jumpParticles, endJumpParticles;
 
-    protected boolean isFalling, isRespawn;
-    protected boolean isJumping, renderJump, renderJumpEnd;
+    private boolean m_isFalling, m_isRespawn;
+    private boolean m_isJumping, m_renderJump, m_renderJumpEnd;
 
-    private double timeRespawn, timeLastBlink;
-    private int animX, animY, timeAnim;
-    private String name;
+    private double m_timeRespawn, m_timeLastBlink;
+    private int m_animX, m_animY, m_timeAnim;
+    private String m_name;
+    private ArrayList<Animation> m_animations;
 
     /**
      *
@@ -67,74 +71,78 @@ public class Player extends Entity
     {
         super(posX, posY);
 
-        this.velX = 0;
-        this.velY = 0;
-        this.isFalling = true;
-        this.isJumping = false;
-        this.isRespawn = false;
-        this.isDead = false;
-        this.renderJump = this.renderJumpEnd = false;
-        this.level = level;
-        this.win = false;
-        this.listener = listener;
-        this.cam = cam;
-        this.difficulty = difficulty;
-        this.score = 0;
-        this.animX = 0;
-        this.animY = 3;
-        this.timeAnim = 5;
-        this.checkpointX = this.checkpointY = 0;
-        this.direction = this.timeJEndAnim = 0;
-        this.timeJAnim = offset = oldposX = oldposY = offset2 = 0;
-        this.timeRespawn = 0;
-        this.timeLastBlink = 0;
+        m_velX = 0;
+        m_velY = 0;
+        m_isFalling = true;
+        m_isJumping = false;
+        m_isRespawn = false;
+        m_splash = false;
+        m_isDead = false;
+        m_renderJump = m_renderJumpEnd = false;
+        m_level = level;
+        m_win = false;
+        m_listener = listener;
+        m_cam = cam;
+        m_difficulty = difficulty;
+        m_score = 0;
+        m_animX = 0;
+        m_animY = 3;
+        m_timeAnim = 5;
+        m_checkpointX = m_checkpointY = 0;
+        m_direction = m_timeJEndAnim = 0;
+        m_timeJAnim = m_offset = m_oldposX = m_oldposY = m_offset2 = 0;
+        m_timeRespawn = 0;
+        m_timeLastBlink = 0;
 
         setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("spicies")));
 
         switch (Integer.parseInt(Settings.getInstance().getConfigValue("sex")))
         {
             case Player.SEX_BOY:
-                this.sex = "boy";
+                m_sex = "boy";
                 break;
             case Player.SEX_GIRL:
-                this.sex = "girl";
+                m_sex = "girl";
                 break;
         }
 
-        switch (this.level.nbLevel)
+        switch (m_level.nbLevel)
         {
             case 1:
             case 2:
             case 3:
-                this.age = "baby";
+                m_age = "baby";
                 break;
             case 4:
             case 5:
-                this.age = "teen";
+                m_age = "teen";
                 break;
             case 6:
             case 7:
-                this.age = "adult";
+                m_age = "adult";
                 break;
         }
 
         try
         {
-            URL url = this.getClass().getResource("/" + this.species + "_" + this.sex + "_" + this.age + ".png");
-            this.spritesheet = ImageIO.read(url);
+            URL url = this.getClass().getResource("/" + m_species + "_" + m_sex + "_" + m_age + ".png");
+            m_spritesheet = ImageIO.read(url);
             url = this.getClass().getResource("/effects_jump.png");
-            this.spritesheetfx = ImageIO.read(url);
+            m_spritesheetfx = ImageIO.read(url);
             url = this.getClass().getResource("/effects_end.png");
-            this.spritesheetfxend = ImageIO.read(url);
+            m_spritesheetfxend = ImageIO.read(url);
         }
         catch (IOException e)
         {
             e.getMessage();
         }
-        this.spritefx = this.spritesheetfx.getSubimage(0, 0, 60, 32);
-        this.spritefxend = this.spritesheetfxend.getSubimage(0, 0, 60, 32);
-        this.sprite = this.spritesheet.getSubimage(this.animX, this.animY * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-        this.name = Settings.getInstance().getConfigValue("name");
+        
+        m_spritefx = m_spritesheetfx.getSubimage(0, 0, 60, 32);
+        m_spritefxend = m_spritesheetfxend.getSubimage(0, 0, 60, 32);
+        m_sprite = m_spritesheet.getSubimage(m_animX, m_animY * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+        m_name = Settings.getInstance().getConfigValue("name");
+        
+        m_animations = new ArrayList<>();
     }
 
     /**
@@ -143,52 +151,52 @@ public class Player extends Entity
      */
     public void setIsRespawning(boolean isRespawning)
     {
-        this.isRespawn = isRespawning;
-        this.sprite = this.spritesheet.getSubimage(0, 2 * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+        m_isRespawn = isRespawning;
+        m_sprite = m_spritesheet.getSubimage(0, 2 * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
     }
 
     @Override
     public void update(double dt)
     {
 
-        if (this.isRespawn)
+        if(m_isRespawn)
         {
-            this.timeRespawn += dt;
-            this.timeLastBlink += dt;
-            if (this.timeRespawn > 200)
+            m_timeRespawn += dt;
+            m_timeLastBlink += dt;
+            if (m_timeRespawn > 200)
             {
-                this.timeRespawn = 0;
-                this.timeLastBlink = 0;
-                this.isRespawn = false;
+                m_timeRespawn = 0;
+                m_timeLastBlink = 0;
+                m_isRespawn = false;
             }
             return;
         }
 
-        if (this.isDead)
+        if(m_isDead)
         {
-            this.sprite = this.spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+            m_sprite = m_spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
             return;
         }
 
-        if (this.isFalling || this.isJumping)
+        if(m_isFalling || m_isJumping)
         {
-            this.velY += Defines.GRAVITY;
+            m_velY += Defines.GRAVITY;
 
-            if (this.velY > Defines.MAX_SPEED)
+            if(m_velY > Defines.MAX_SPEED)
             {
-                this.velY = Defines.MAX_SPEED;
+                m_velY = Defines.MAX_SPEED;
             }
         }
 
-        int x0 = (int) (this.getBounds().x) / Defines.TILE_SIZE;
-        int y0 = (int) (this.getBounds().y) / Defines.TILE_SIZE;
-        int x1 = (int) (this.getBounds().x - 1 + this.getBounds().width) / Defines.TILE_SIZE;
-        int y1 = (int) (this.getBounds().y - 1 + this.getBounds().height) / Defines.TILE_SIZE;
+        int x0 = (int) (getBounds().x) / Defines.TILE_SIZE;
+        int y0 = (int) (getBounds().y) / Defines.TILE_SIZE;
+        int x1 = (int) (getBounds().x - 1 + getBounds().width) / Defines.TILE_SIZE;
+        int y1 = (int) (getBounds().y - 1 + getBounds().height) / Defines.TILE_SIZE;
 
-        if (listener.jump.enabled && !this.isJumping && !this.isFalling)
+        if (m_listener.jump.enabled && !m_isJumping && !m_isFalling)
         {
-            List<Braconeers> bl = this.level.getBraconeersEntities(this.getBounds().x + (this.direction == 0 ? Defines.TILE_SIZE : -Defines.TILE_SIZE), this.getBounds().y, this.getBounds().width, this.getBounds().height, false);
-            if (bl.size() > 0)
+            List<Braconeers> bl = m_level.getBraconeersEntities(this.getBounds().x + (m_direction == 0 ? Defines.TILE_SIZE : -Defines.TILE_SIZE), getBounds().y, getBounds().width, getBounds().height, false);
+            if(bl.size() > 0)
             {
                 for (int i = 0; i < bl.size(); i++)
                 {
@@ -200,295 +208,309 @@ public class Player extends Entity
             {
                 //TODO change sound call
                 //new Thread(Sound.jump::play).start();
-                this.renderJump = true;
-                this.offset = 0;
-                this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
-                this.oldposX = (int) this.posX;
-                this.oldposY = (int) this.posY;
-                this.timeJAnim = TimerThread.MILLI;
-                this.isJumping = true;
-                this.velY = - 6;
+                m_renderJump = true;
+                m_offset = 0;
+                m_spritefx = m_spritesheetfx.getSubimage(m_offset * 60, 0, 60, 32);
+                m_oldposX = (int) m_posX;
+                m_oldposY = (int) m_posY;
+                m_timeJAnim = TimerThread.MILLI;
+                m_isJumping = true;
+                m_velY = - 6;
             }
         }
 
         //On the bridge        
-        if (y1 + 1 <= this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 3
-                && !listener.slow.enabled)
+        if (y1 + 1 <= m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x1, y1 + 1)).ID == 3
+                && !m_listener.slow.enabled)
         {
-            this.level.removeTile(x1, y1 + 1);
+            m_level.removeTile(x1, y1 + 1);
         }
-        if (y1 + 1 <= this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 3
-                && !listener.slow.enabled)
+        if (y1 + 1 <= m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x0, y1 + 1)).ID == 3
+                && !m_listener.slow.enabled)
         {
-            this.level.removeTile(x0, y1 + 1);
+            m_level.removeTile(x0, y1 + 1);
         }
 
         //cage
-        if (y1 + 1 <= this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 10
-                && this.isJumping && this.isFalling)
+        if (y1 + 1 <= m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x1, y1 + 1)).ID == 10
+                && m_isJumping && m_isFalling)
         {
-            CageEntity ce = this.level.getCageEntity(x1, y1 + 1);
+            CageEntity ce = m_level.getCageEntity(x1, y1 + 1);
             if (ce != null && !ce.isBreak())
             {
                 ce.hurt();
             }
         }
-        else if (y1 + 1 <= this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 10
-                && this.isJumping && this.isFalling)
+        else if(y1 + 1 <= m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x0, y1 + 1)).ID == 10
+                && m_isJumping && m_isFalling)
         {
-            CageEntity ce = this.level.getCageEntity(x0, y1 + 1);
-            if (ce != null && !ce.isBreak())
+            CageEntity ce = m_level.getCageEntity(x0, y1 + 1);
+            if(ce != null && !ce.isBreak())
             {
                 ce.hurt();
             }
         }
 
         //Sand
-        if (y1 + 1 <= this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x1, y1 + 1)).ID == 9)
+        if (y1 + 1 <= m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x1, y1 + 1)).ID == 9)
         {
-            if (this.level.getData(x1, y1 + 1) < 1)
+            if (m_level.getData(x1, y1 + 1) < 1)
             {
-                this.level.setData(x1, y1 + 1, 1);
+                m_level.setData(x1, y1 + 1, 1);
             }
         }
-        else if (y1 + 1 <= this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x0, y1 + 1)).ID == 9)
+        else if (y1 + 1 <= m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x0, y1 + 1)).ID == 9)
         {
-            if (this.level.getData(x0, y1 + 1) < 1)
+            if (m_level.getData(x0, y1 + 1) < 1)
             {
-                this.level.setData(x0, y1 + 1, 1);
+                m_level.setData(x0, y1 + 1, 1);
             }
         }
 
         //bonus test
-        if (TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 4
-                || TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 5)
+        if (TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 4
+                || TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 5)
         {
-            this.score += TileAtlas.atlas.get(this.level.getTile(x1, y1)).bonus;
-            this.level.removeTile(x1, y1);
+            m_score += TileAtlas.atlas.get(m_level.getTile(x1, y1)).bonus;
+            m_level.removeTile(x1, y1);
             //TODO change sound call
             //new Thread(Sound.bonus::play).start();
         }
-        else if (TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 4
-                || TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 5)
+        else if (TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 4
+                || TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 5)
         {
-            this.score += TileAtlas.atlas.get(this.level.getTile(x0, y1)).bonus;
-            this.level.removeTile(x0, y1);
+            m_score += TileAtlas.atlas.get(m_level.getTile(x0, y1)).bonus;
+            m_level.removeTile(x0, y1);
             //TODO change sound call
             //new Thread(Sound.bonus::play).start();
         }
 
         //checkpoint
-        if (TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 8)
+        if (TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 8)
         {
-            TileAtlas.atlas.get(this.level.getTile(x1, y1)).update(this.level, x1, y1, dt);
-            this.checkpointX = x1 * Defines.TILE_SIZE;
-            this.checkpointY = y1 * Defines.TILE_SIZE;
+            TileAtlas.atlas.get(m_level.getTile(x1, y1)).update(m_level, x1, y1, dt);
+            m_checkpointX = x1 * Defines.TILE_SIZE;
+            m_checkpointY = y1 * Defines.TILE_SIZE;
         }
 
         //end level test
-        if (TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 7)
+        if (TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 7)
         {
-            this.win = true;
+            m_win = true;
             //TODO change sound call
             //new Thread(Sound.levelup::play).start();
         }
 
         //spikes
-        if (y1 < this.level.nbTilesH - 1
-                && TileAtlas.atlas.get(this.level.getTile(x0, y1)).ID == 6
-                || TileAtlas.atlas.get(this.level.getTile(x1, y1)).ID == 6)
+        if (y1 < m_level.nbTilesH - 1
+                && TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 6
+                || TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 6)
         {
-            this.isDead = true;
+            m_isDead = true;
             //TODO change sound call
             //new Thread(Sound.death::play).start();
         }
 
-        if (listener.mouseExited)
+        if (m_listener.mouseExited)
         {
-            this.velX = 0;
+            m_velX = 0;
         }
         else
         {
-            if (listener.mouseX + this.cam.x < (int) this.getBounds().x)
+            if (m_listener.mouseX + m_cam.x < (int) this.getBounds().x)
             {
                 //Left Pose
-                if (this.direction == 0)
+                if (m_direction == 0)
                 {
-                    this.timeAnim = 0;
+                    m_timeAnim = 0;
                 }
-                this.direction = 1;
-                this.animY = 0;
+                m_direction = 1;
+                m_animY = 0;
 
-                if (listener.slow.enabled)
+                if (m_listener.slow.enabled)
                 {
-                    this.velX = (-(Defines.SPEED + this.difficulty)) / 2;
+                    m_velX = (-(Defines.SPEED + m_difficulty)) / 2;
                 }
                 else
                 {
-                    this.velX = -(Defines.SPEED + this.difficulty);
+                    m_velX = -(Defines.SPEED + m_difficulty);
                 }
-                if (this.timeAnim == 0)
+                if (m_timeAnim == 0)
                 {
-                    this.animX += Player.PLAYER_SIZE;
-                    if (this.animX > 2 * Player.PLAYER_SIZE)
+                    m_animX += Player.PLAYER_SIZE;
+                    if (m_animX > 2 * Player.PLAYER_SIZE)
                     {
-                        this.animX = 0;
+                        m_animX = 0;
                     }
-                    this.timeAnim = 5;
+                    m_timeAnim = 5;
                 }
 
-                if (this.timeAnim > 0)
+                if (m_timeAnim > 0)
                 {
-                    this.timeAnim--;
+                    m_timeAnim--;
                 }
 
             }
-            else if (listener.mouseX + this.cam.x > (int) this.getBounds().x + this.getBounds().width)
+            else if (m_listener.mouseX + m_cam.x > (int) this.getBounds().x + this.getBounds().width)
             {
                 //Right Pose
-                if (this.direction == 1)
+                if (m_direction == 1)
                 {
-                    this.timeAnim = 0;
+                    m_timeAnim = 0;
                 }
-                this.direction = 0;
-                this.animY = Player.PLAYER_SIZE;
+                m_direction = 0;
+                m_animY = Player.PLAYER_SIZE;
 
-                if (listener.slow.enabled)
+                if(m_listener.slow.enabled)
                 {
-                    this.velX = (Defines.SPEED + this.difficulty) / 2;
+                    m_velX = (Defines.SPEED + m_difficulty) / 2;
                 }
                 else
                 {
-                    this.velX = (Defines.SPEED + this.difficulty);
+                    m_velX = (Defines.SPEED + m_difficulty);
                 }
 
-                if (this.timeAnim == 0)
+                if (m_timeAnim == 0)
                 {
-                    this.animX += Player.PLAYER_SIZE;
-                    if (this.animX > 2 * Player.PLAYER_SIZE)
+                    m_animX += Player.PLAYER_SIZE;
+                    if (m_animX > 2 * Player.PLAYER_SIZE)
                     {
-                        this.animX = 0;
+                        m_animX = 0;
                     }
-                    this.timeAnim = 5;
+                    m_timeAnim = 5;
                 }
 
-                if (this.timeAnim > 0)
+                if (m_timeAnim > 0)
                 {
-                    this.timeAnim--;
+                    m_timeAnim--;
                 }
 
             }
-            else if (listener.mouseX + this.cam.x < (int) this.getBounds().x + this.getBounds().width / 2 + 5 && listener.mouseX + this.cam.x > (int) this.getBounds().x + this.getBounds().width / 2 - 5)
+            else if (m_listener.mouseX + m_cam.x < (int) this.getBounds().x + this.getBounds().width / 2 + 5 && m_listener.mouseX + m_cam.x > (int) this.getBounds().x + this.getBounds().width / 2 - 5)
             {
                 //Stand Pose
-                this.velX = 0;
-                this.animY = 2 * Player.PLAYER_SIZE;
-                if (this.timeAnim == 0)
+                m_velX = 0;
+                m_animY = 2 * Player.PLAYER_SIZE;
+                if (m_timeAnim == 0)
                 {
-                    this.animX += Player.PLAYER_SIZE;
-                    if (this.animX > 2 * Player.PLAYER_SIZE)
+                    m_animX += Player.PLAYER_SIZE;
+                    if (m_animX > 2 * Player.PLAYER_SIZE)
                     {
-                        this.animX = 0;
+                        m_animX = 0;
                     }
-                    this.timeAnim = 40;
+                    m_timeAnim = 40;
                 }
 
-                if (this.timeAnim > 0)
+                if (m_timeAnim > 0)
                 {
-                    this.timeAnim--;
+                    m_timeAnim--;
                 }
             }
-            this.sprite = this.spritesheet.getSubimage(this.animX, this.animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+            m_sprite = m_spritesheet.getSubimage(m_animX, m_animY, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
         }
 
         //LEFT
-        if ((int) (this.getBounds().x + this.velX) / Defines.TILE_SIZE > 0
-                && (!TileAtlas.atlas.get(this.level.getTile(((int) (this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + 2) / Defines.TILE_SIZE)).canPass(this.level, ((int) (this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + 2) / Defines.TILE_SIZE)
-                || !TileAtlas.atlas.get(this.level.getTile(((int) (this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + this.getBounds().height - 2) / Defines.TILE_SIZE)).canPass(this.level, ((int) (this.getBounds().x + velX) / Defines.TILE_SIZE), (this.getBounds().y + this.getBounds().height - 2) / Defines.TILE_SIZE)))
+        if ((int) (getBounds().x + m_velX) / Defines.TILE_SIZE > 0
+                && (!TileAtlas.atlas.get(m_level.getTile(((int) (getBounds().x + m_velX) / Defines.TILE_SIZE), (getBounds().y + 2) / Defines.TILE_SIZE)).canPass(m_level, ((int) (getBounds().x + m_velX) / Defines.TILE_SIZE), (getBounds().y + 2) / Defines.TILE_SIZE)
+                || !TileAtlas.atlas.get(m_level.getTile(((int) (getBounds().x + m_velX) / Defines.TILE_SIZE), (getBounds().y + getBounds().height - 2) / Defines.TILE_SIZE)).canPass(m_level, ((int) (getBounds().x + m_velX) / Defines.TILE_SIZE), (getBounds().y + getBounds().height - 2) / Defines.TILE_SIZE)))
         {
-            this.velX = 0;
+            m_velX = 0;
         }
         //RIGHT
-        else if ((int) (this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE < this.level.nbTilesW - 1
-                && (!TileAtlas.atlas.get(this.level.getTile((int) (this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2) / Defines.TILE_SIZE)).canPass(this.level, (int) (this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + 2) / Defines.TILE_SIZE)
-                || !TileAtlas.atlas.get(this.level.getTile((int) (this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2) / Defines.TILE_SIZE)).canPass(this.level, (int) (this.getBounds().x + this.getBounds().width + velX) / Defines.TILE_SIZE, (this.getBounds().y + this.getBounds().height - 2) / Defines.TILE_SIZE)))
+        else if ((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE < m_level.nbTilesW - 1
+                && (!TileAtlas.atlas.get(m_level.getTile((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + 2) / Defines.TILE_SIZE)).canPass(m_level, (int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + 2) / Defines.TILE_SIZE)
+                || !TileAtlas.atlas.get(m_level.getTile((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + getBounds().height - 2) / Defines.TILE_SIZE)).canPass(m_level, (int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + getBounds().height - 2) / Defines.TILE_SIZE)))
         {
-            this.velX = 0;
+            m_velX = 0;
         }
 
         //DOWN 
-        int y1VelY = (int) ((this.getBounds().y + this.getBounds().height + 4) / Defines.TILE_SIZE);
-        if (y1 + 1 < this.level.nbTilesH)
+        int y1VelY = (int) ((getBounds().y + getBounds().height + 4) / Defines.TILE_SIZE);
+        if(y1 + 1 < m_level.nbTilesH)
         {
-            if ((!TileAtlas.atlas.get(this.level.getTile(x0, y1VelY)).canPass(this.level, x0, y1VelY)
-                    || !TileAtlas.atlas.get(this.level.getTile(x1, y1VelY)).canPass(this.level, x1, y1VelY)) && this.velY >= 0)
+            if ((!TileAtlas.atlas.get(m_level.getTile(x0, y1VelY)).canPass(m_level, x0, y1VelY)
+                    || !TileAtlas.atlas.get(m_level.getTile(x1, y1VelY)).canPass(m_level, x1, y1VelY)) && m_velY >= 0)
             {
-                this.isJumping = false;
-                this.isFalling = false;
-                this.renderJump = false;
+                m_isJumping = false;
+                m_isFalling = false;
+                m_renderJump = false;
 
-                if (this.velY > 0)
+                if(m_velY > 0)
                 {
-                    this.renderJumpEnd = true;
-                    this.offset2 = 0;
-                    this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
-                    this.oldposX = (int) this.posX;
-                    this.oldposY = (int) this.posY;
-                    this.timeJEndAnim = TimerThread.MILLI;
+                    m_renderJumpEnd = true;
+                    m_offset2 = 0;
+                    m_spritefxend = m_spritesheetfxend.getSubimage(m_offset2 * 60, 0, 60, 32);
+                    m_oldposX = (int) m_posX;
+                    m_oldposY = (int) m_posY;
+                    m_timeJEndAnim = TimerThread.MILLI;
                 }
-                this.velY = 0;
+                m_velY = 0;
             }
-            else if (!this.isFalling && !this.isJumping)
+            else if(!m_isFalling && !m_isJumping)
             {
-                this.velY = Defines.GRAVITY;
+                m_velY = Defines.GRAVITY;
             }
         }
 
-        this.isFalling = this.velY > 0;
-
-        if (this.renderJump && TimerThread.MILLI - this.timeJAnim > 80)
+        if(m_posY > 1050 - 20 && m_posY < 1050 + 5  && !m_splash)
         {
-            this.timeJAnim = TimerThread.MILLI;
-            this.offset++;
-            if (this.offset > 4)
+            m_level.splash(m_posX + 32, 6.3f);
+            m_splash = true;
+        }
+        else if(m_posY > m_level.h - 70 && m_splash)
+        {
+            //TODO Check if in water stop velocity and start to floating
+            m_velY = 0;
+            m_isJumping = false;
+            m_isFalling = false;
+            m_splash = false;
+        }
+        
+        m_isFalling = m_velY > 0;
+
+        if(m_renderJump && TimerThread.MILLI - m_timeJAnim > 80)
+        {
+            m_timeJAnim = TimerThread.MILLI;
+            m_offset++;
+            if (m_offset > 4)
             {
-                this.offset = 0;
-                this.renderJump = false;
+                m_offset = 0;
+                m_renderJump = false;
             }
             else
             {
-                this.spritefx = this.spritesheetfx.getSubimage(this.offset * 60, 0, 60, 32);
+                m_spritefx = m_spritesheetfx.getSubimage(m_offset * 60, 0, 60, 32);
             }
         }
 
-        if (this.renderJumpEnd && TimerThread.MILLI - this.timeJEndAnim > 80)
+        if(m_renderJumpEnd && TimerThread.MILLI - m_timeJEndAnim > 80)
         {
-            this.timeJEndAnim = TimerThread.MILLI;
-            this.offset2++;
-            if (this.offset2 > 3)
+            m_timeJEndAnim = TimerThread.MILLI;
+            m_offset2++;
+            if (m_offset2 > 3)
             {
-                this.offset2 = 0;
-                this.renderJumpEnd = false;
+                m_offset2 = 0;
+                m_renderJumpEnd = false;
             }
             else
             {
-                this.spritefxend = this.spritesheetfxend.getSubimage(this.offset2 * 60, 0, 60, 32);
+                m_spritefxend = m_spritesheetfxend.getSubimage(m_offset2 * 60, 0, 60, 32);
             }
         }
 
-        if (!this.move(velX, velY))
+        if(!this.move(m_velX, m_velY))
         {
-            this.velX = 0;
-            this.velY = 0;
-            this.isFalling = false;
-            this.isJumping = false;
-            this.renderJump = false;
+            m_velX = 0;
+            m_velY = 0;
+            m_isFalling = false;
+            m_isJumping = false;
+            m_renderJump = false;
         }
     }
 
@@ -500,30 +522,29 @@ public class Player extends Entity
      */
     public boolean move(float x, float y)
     {
+        m_posX += x;
+        m_posY += y;
 
-        this.posX += x;
-        this.posY += y;
-
-        if (this.posX < 0)
+        if(m_posX < 0)
         {
-            this.posX = 0;
+            m_posX = 0;
             return false;
         }
-        if (this.posY < 0)
+        if(m_posY < 0)
         {
-            this.posY = 0;
+            m_posY = 0;
             return false;
         }
-        if (this.getBounds().x + this.getBounds().width > this.level.w)
+        if(getBounds().x + getBounds().width > m_level.w)
         {
-            this.posX = this.level.w - this.getBounds().width;
+            m_posX = m_level.w - getBounds().width;
             return false;
         }
-        if (this.getBounds().y + this.getBounds().height > this.level.h)
+        if(getBounds().y + getBounds().height > m_level.h)
         {
-            this.posY = this.level.h - this.getBounds().height;
-            this.isDead = true;
-            this.sprite = this.spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
+            m_posY = m_level.h - getBounds().height;
+            m_isDead = true;
+            m_sprite = m_spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
             //TODO change sound call
             //new Thread(Sound.death::play).start();
             return false;
@@ -534,30 +555,29 @@ public class Player extends Entity
     @Override
     public void render(Graphics g, Boolean debug)
     {
-
-        if (this.renderJump)
+        if (m_renderJump)
         {
-            g.drawImage(this.spritefx, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
+            g.drawImage(m_spritefx, m_oldposX + 20, m_oldposY + getBounds().height, null);
         }
-        if (this.renderJumpEnd)
+        if(m_renderJumpEnd)
         {
-            g.drawImage(this.spritefxend, this.oldposX + 20, this.oldposY + this.getBounds().height, null);
+            g.drawImage(m_spritefxend, m_oldposX + 20, m_oldposY + getBounds().height, null);
         }
 
-        if (this.timeLastBlink > 20)
+        if (m_timeLastBlink > 20)
         {
-            if (this.timeLastBlink > 30)
+            if (m_timeLastBlink > 30)
             {
-                this.timeLastBlink = 0;
+                m_timeLastBlink = 0;
             }
             Graphics2D g2d = (Graphics2D) g;
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
-            g2d.drawImage(this.sprite, (int) this.posX, (int) this.posY, null);
+            g2d.drawImage(m_sprite, (int) m_posX, (int) m_posY, null);
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
         else
         {
-            g.drawImage(this.sprite, (int) this.posX, (int) this.posY, null);
+            g.drawImage(m_sprite, (int) m_posX, (int) m_posY, null);
         }
 
         if (debug)
@@ -577,22 +597,22 @@ public class Player extends Entity
         {
             case 1:
             case 2:
-                this.age = "baby";
+                m_age = "baby";
                 break;
             case 3:
             case 4:
-                this.age = "teen";
+                m_age = "teen";
                 break;
             case 5:
             case 6:
-                this.age = "adult";
+                m_age = "adult";
                 break;
         }
 
         try
         {
-            URL url = this.getClass().getResource("/" + this.species + "_" + this.sex + "_" + this.age + ".png");
-            this.spritesheet = ImageIO.read(url);
+            URL url = this.getClass().getResource("/" + m_species + "_" + m_sex + "_" + m_age + ".png");
+            m_spritesheet = ImageIO.read(url);
         }
         catch (IOException e)
         {
@@ -604,17 +624,17 @@ public class Player extends Entity
     public Rectangle getBounds()
     {
         Rectangle bounds;
-        switch (this.age)
+        switch (m_age)
         {
             default:
             case "baby":
-                bounds = new Rectangle((int) this.posX + 5, (int) this.posY + 20, Player.PLAYER_SIZE - 10, Player.PLAYER_SIZE - 20);
+                bounds = new Rectangle((int) m_posX + 5, (int) m_posY + 20, Player.PLAYER_SIZE - 10, Player.PLAYER_SIZE - 20);
                 break;
             case "teen":
-                bounds = new Rectangle((int) this.posX + 2, (int) this.posY + 16, Player.PLAYER_SIZE - 6, Player.PLAYER_SIZE - 16);
+                bounds = new Rectangle((int) m_posX + 2, (int) m_posY + 16, Player.PLAYER_SIZE - 6, Player.PLAYER_SIZE - 16);
                 break;
             case "adult":
-                bounds = new Rectangle((int) this.posX + 2, (int) this.posY + 8, Player.PLAYER_SIZE - 6, Player.PLAYER_SIZE - 8);
+                bounds = new Rectangle((int) m_posX + 2, (int) m_posY + 8, Player.PLAYER_SIZE - 6, Player.PLAYER_SIZE - 8);
                 break;
         }
         return bounds;
@@ -626,16 +646,21 @@ public class Player extends Entity
      */
     public boolean isJumping()
     {
-        return this.isJumping;
+        return m_isJumping;
     }
 
+    public boolean isDead()
+    {
+        return m_isDead;
+    }
+    
     /**
      *
      * @return
      */
     public boolean isFalling()
     {
-        return this.isFalling;
+        return m_isFalling;
     }
 
     @Override
@@ -646,22 +671,67 @@ public class Player extends Entity
         g.drawRect((int) rect.x, (int) rect.y, (int) rect.getWidth(), (int) rect.getHeight());
     }
 
+    public boolean hasWon()
+    {
+        return m_win;
+    }
+    
     /**
      *
      * @return
      */
     public String getName()
     {
-        return this.name;
+        return m_name;
     }
 
+    public String getSpecies()
+    {
+        return m_species;
+    }
+    
+    public int getCheckpointX()
+    {
+        return m_checkpointX;
+    }
+    
+    public int getCheckpointY()
+    {
+        return m_checkpointY;
+    }
+    
+    public int getScore()
+    {
+        return m_score;
+    }
+    
+    public void setLevel(Level lvl)
+    {
+        m_level = lvl;
+    }
+    
+    public void setCheckpointX(int pos)
+    {
+        m_checkpointX = pos;
+    }
+    
+    public void setScore(int score)
+    {
+        m_score = score;
+    }
+        
+    public void setWin(boolean win)
+    {
+        m_win = win;
+    }
+    
     /**
      *
      * @param name
      */
     public void setName(String name)
     {
-        this.name = name;
+        m_name = name;
     }
 
     /**
@@ -673,10 +743,10 @@ public class Player extends Entity
         switch (species)
         {
             case Player.SPECIES_PANDA:
-                this.species = "panda";
+                m_species = "panda";
                 break;
             case Player.SPECIES_REDPANDA:
-                this.species = "redpanda";
+                m_species = "redpanda";
                 break;
         }
     }
@@ -684,9 +754,9 @@ public class Player extends Entity
     /**
      *
      */
-    public void die()
+    public void die(boolean die)
     {
-        this.isDead = true;
+        m_isDead = die;
     }
     
     public JSONObject toSave()
@@ -700,14 +770,14 @@ public class Player extends Entity
         "coords": [1040, 100]
         */
         JSONObject data = new JSONObject();
-        data.put("difficulty", difficulty);
-        data.put("species", species);
-        data.put("score", score);
-        data.put("sex", sex);
-        data.put("name", name);
+        data.put("difficulty", m_difficulty);
+        data.put("species", m_species);
+        data.put("score", m_score);
+        data.put("sex", m_sex);
+        data.put("name", m_name);
         JSONArray coords = new JSONArray();
-        coords.add(posX);
-        coords.add(posY);
+        coords.add(m_posX);
+        coords.add(m_posY);
         data.put("coords", coords);
         return data;
     }

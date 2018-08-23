@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import core.Defines;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
@@ -20,6 +23,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import particles.Leaf;
 import particles.Particle;
+import particles.Water;
 import profiler.Profiler;
 
 /**
@@ -67,6 +71,15 @@ public class Level
     public static final int BRACONEER = 32960;//RGB(0, 128, 192) BRACONEERS
     public static final int LIME = 11920925;//RGB(181, 230, 29) PLANTS
     
+    private final Color water = new Color(100, 255, 235);
+    private int num_springs = 150;
+    private int y_offset = 1050;
+    private Spring[] springs = new Spring[num_springs];
+    private final float spread = 0.25f;
+    private final float gravity = 0.3f;
+    private int start_pos = 6 * 64;
+    private int end_pos = 4 * 64;
+    
     /**
      * 
      * @param nbLevel 
@@ -108,6 +121,13 @@ public class Level
         this.cageEntity = new ArrayList<>();
         
         this.startPosY = this.loadLevel(nbLevel);
+        
+        //water test integration
+        for(int n = 0; n < springs.length; n++)
+        {
+            float t = (float) n / (float) springs.length;
+            springs[n] = new Spring(t * end_pos + start_pos, y_offset - 10);
+        }
     }
     
     /**
@@ -215,6 +235,55 @@ public class Level
                 this.braconeers.remove(i);
             }
         }
+        /*
+        for(int i = 0; i < springs.length; i++) springs[i].update();
+
+            float[] leftDeltas = new float[springs.length];
+            float[] rightDeltas = new float[springs.length];
+
+            for(int j = 0; j < 15; j++)
+            {
+                    for(int i = 0; i < springs.length; i++)
+                    {
+                        if(i > 0) 
+                        {
+                            leftDeltas[i] = spread * (springs[i].posy - springs[i - 1].posy);
+                            springs[i - 1].speed += leftDeltas[i];
+                        }
+
+                        if(i < springs.length - 1)
+                        {
+                            rightDeltas[i] = spread * (springs[i].posy - springs[i + 1].posy);
+                            springs[i + 1].speed += rightDeltas[i];
+                        }			
+                    }
+
+                    for(int i = 0; i < springs.length; i++)
+                    {
+                        if(i > 0)
+                            springs[i - 1].posy += leftDeltas[i];
+                        if(i < springs.length - 1)
+                            springs[i + 1].posy += rightDeltas[i];
+                    }
+            }
+
+            for(int i = 0; i < particles.size(); i++) 
+            {
+                Particle particle = particles.get(i);
+                if(particle instanceof Water)
+                {
+                    Water p = (Water)particle;
+                    p.vely += gravity;
+
+                    p.x += p.velx;
+                    p.y += p.vely;
+
+                    p.orientation = (float) Math.atan2(p.vely, p.velx);
+
+                    if(p.x < 0 || p.x > Screen.RES_1X_WIDTH || p.y > y_offset)
+                        particles.remove(i);
+                }
+            }*/
     }
     
     /**
@@ -260,6 +329,22 @@ public class Level
         Boolean debug = Profiler.getInstance().isVisible();
         int endX = (startX + this.nbTilesInScreenX + 2 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 2 : this.nbTilesW;
         int endY = (startY + this.nbTilesInScreenY + 2 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 2 : this.nbTilesH;
+        
+        g.setColor(water);
+
+        Graphics2D g2 = (Graphics2D)g;
+
+        for(int i = 0; i < springs.length - 1; i++)
+        {
+            int[] xPoints = new int[] {(int)springs[i].posx, (int)springs[i + 1].posx,
+                                                               (int)springs[i+1].posx, (int)springs[i].posx};
+            int[] yPoints = new int[] {(int)springs[i].posy, (int)springs[i + 1].posy,
+                                                                this.h, this.h};
+            GradientPaint gp = new GradientPaint(this.y_offset, this.h, new Color(0, 0, 90),
+                            0, 0, water);
+            g2.setPaint(gp);
+            g2.fillPolygon(xPoints, yPoints, 4);
+        }
         
         for(int i = startX;i<endX;i++){
             for(int j = startY;j<endY;j++){
@@ -365,11 +450,13 @@ public class Level
         if(startY < 0)
             startY = 0;
         
-        int endX = (startX + this.nbTilesInScreenX + 6 <= this.nbTilesW)? startX + this.nbTilesInScreenX + 6 : this.nbTilesW;
-        int endY = (startY + this.nbTilesInScreenY + 4 <= this.nbTilesH)? startY + this.nbTilesInScreenY + 4 : this.nbTilesH;
+        int endX = (startX + this.nbTilesInScreenX + 6 <= this.nbTilesW) ? startX + this.nbTilesInScreenX + 6 : this.nbTilesW;
+        int endY = (startY + this.nbTilesInScreenY + 4 <= this.nbTilesH) ? startY + this.nbTilesInScreenY + 4 : this.nbTilesH;
         
-        for(int i = startX;i<endX;i++){
-            for(int j = startY;j<endY;j++){
+        for(int i = startX;i<endX;i++)
+        {
+            for(int j = startY;j<endY;j++)
+            {
                 switch(this.topMap[i][j]){
                     case 10:
                         CageEntity ce = this.getCageEntity(i, j);
@@ -761,6 +848,42 @@ public class Level
         }
         
         return result;
+    }
+    
+    public void splash(float x, float speed)
+    {
+        float bestDistanceSoFar = end_pos;
+
+        if(x > springs[springs.length - 1].posx || x < springs[0].posx)
+        {
+            return;
+        }
+        
+        int index = springs.length / 2;
+
+        for(int i = 0; i < springs.length; i++)
+        {
+                float distance = Math.abs(springs[i].posx - x);
+
+                if(distance < bestDistanceSoFar)
+                {
+                    bestDistanceSoFar = distance;
+                    index = i;
+                }
+        }
+
+        springs[index].speed = speed*20;
+
+        for(int i = 0; i < 20; i++) {
+
+                float velx = (float) (Math.random()*speed - speed / 2);
+
+                float vely = (float)(-Math.random()*speed);
+
+                particles.add(new Water(springs[index].posx, springs[index].posy,
+                                velx, vely, (float)Math.atan2(vely, velx)));
+
+        }
     }
     
     public JSONObject toSave()

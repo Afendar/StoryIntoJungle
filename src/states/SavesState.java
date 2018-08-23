@@ -71,9 +71,9 @@ public class SavesState extends BaseState
             m_gui.getSubimage(243, 94, 42, 34)
         };
         int[][] coords = {
-            {((screenWidth/5)) + (screenWidth/5)/2 - 60, 2 * (screenHeight/3)},
-            {(2*(screenWidth/5)) + (screenWidth/5)/2 - 60, 2 * (screenHeight/3)},
-            {(3*(screenWidth/5)) + (screenWidth/5)/2 - 60, 2 * (screenHeight/3)}
+            {((screenWidth/5)) + (screenWidth/5)/2 - 60, 3 * (screenHeight/4)},
+            {(2*(screenWidth/5)) + (screenWidth/5)/2 - 60, 3 * (screenHeight/4)},
+            {(3*(screenWidth/5)) + (screenWidth/5)/2 - 60, 3 * (screenHeight/4)}
         };
         String[] callbacks = {
             "loadSave",
@@ -104,7 +104,36 @@ public class SavesState extends BaseState
     @Override
     public void activate()
     {
+        Screen screen = m_stateManager.getContext().m_screen;
+        int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
+        m_background = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("background"),
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+        m_foreground = getScaledInstance(
+                m_stateManager.getContext().m_resourceManager.getSpritesheets("foreground2"), 
+                screenWidth, 
+                screenHeight, 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC, 
+                false
+        );
+        
+        int[][] coords = {
+            {((screenWidth/5)) + (screenWidth/5)/2 - 60, 3 * (screenHeight/4)},
+            {(2*(screenWidth/5)) + (screenWidth/5)/2 - 60, 3 * (screenHeight/4)},
+            {(3*(screenWidth/5)) + (screenWidth/5)/2 - 60, 3 * (screenHeight/4)}
+        };
+        
+        for(int i = 0 ; i < coords.length ; i++)
+        {
+            GuiComponent ge = m_guiElements.get(i);
+            ge.setPosition(coords[i][0], coords[i][1]);
+        }
     }
 
     @Override

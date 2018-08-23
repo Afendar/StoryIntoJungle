@@ -168,7 +168,7 @@ public class CageEntity extends Entity
     @Override
     public Rectangle getBounds()
     {
-        return new Rectangle((int) posX, (int) posY - Defines.TILE_SIZE + 25, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+        return new Rectangle((int) m_posX, (int) m_posY - Defines.TILE_SIZE + 25, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
     }
 
     @Override
@@ -180,17 +180,17 @@ public class CageEntity extends Entity
             {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, this.alpha));
-                g.drawImage(this.pandas, (int) posX, (int) (posY - 7), null);
+                g.drawImage(this.pandas, (int) m_posX, (int) (m_posY - 7), null);
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
             else
             {
-                g.drawImage(this.pandas, (int) posX, (int) (posY - 7), null);
+                g.drawImage(this.pandas, (int) m_posX, (int) (m_posY - 7), null);
             }
         }
 
-        g.drawImage(this.topLeftSprite, (int) posX, (int) (posY - Defines.TILE_SIZE + 25), null);
-        g.drawImage(this.topRightSprite, (int) (posX + Defines.TILE_SIZE), (int) (posY - Defines.TILE_SIZE + 25), null);
+        g.drawImage(this.topLeftSprite, (int) m_posX, (int) (m_posY - Defines.TILE_SIZE + 25), null);
+        g.drawImage(this.topRightSprite, (int) (m_posX + Defines.TILE_SIZE), (int) (m_posY - Defines.TILE_SIZE + 25), null);
 
         if (debug)
         {
@@ -204,8 +204,8 @@ public class CageEntity extends Entity
      */
     public void renderTop(Graphics g)
     {
-        g.drawImage(this.bottomLeftSprite, (int) posX, (int) (posY + 25), null);
-        g.drawImage(this.bottomRightSprite, (int) (posX + Defines.TILE_SIZE), (int) (posY + 25), null);
+        g.drawImage(this.bottomLeftSprite, (int) m_posX, (int) (m_posY + 25), null);
+        g.drawImage(this.bottomRightSprite, (int) (m_posX + Defines.TILE_SIZE), (int) (m_posY + 25), null);
     }
 
     @Override

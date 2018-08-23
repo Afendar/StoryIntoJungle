@@ -57,6 +57,15 @@ public class Save extends Profile
      */
     public boolean hasSave()
     {
+        JSONObject saves = (JSONObject)m_data.get("saves");
+        for(int i = 1 ; i <= saves.size() ; i++)
+        {
+            JSONObject save = (JSONObject)saves.get("slot" + i);
+            if(!save.isEmpty())
+            {
+                return true;
+            }
+        }
         return false;
     }
     

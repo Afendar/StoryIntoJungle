@@ -1,6 +1,5 @@
 package entity;
 
-import audio.Sound;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -76,7 +75,7 @@ public class Braconeers extends Entity
 
         int playerX = (int) this.level.player.getPosX();
         int playerY = (int) this.level.player.getPosY();
-        if (playerX >= this.posX - 200 && playerX <= this.posX + 200 && playerY >= this.posY && playerY <= this.posY + 128)
+        if(playerX >= m_posX - 200 && playerX <= m_posX + 200 && playerY >= m_posY && playerY <= m_posY + 128)
         {
             this.isShooting = true;
         }
@@ -212,7 +211,7 @@ public class Braconeers extends Entity
             if (b.x > playerDim.x && b.x < playerDim.x + playerDim.width
                     && b.y > playerDim.y && b.y < playerDim.y + playerDim.height)
             {
-                this.level.player.die();
+                this.level.player.die(true);
                 this.bullets.remove(i);
             }
             else
@@ -231,35 +230,35 @@ public class Braconeers extends Entity
      */
     protected void move()
     {
-        this.posX += this.velX;
+        m_posX += this.velX;
 
         if (this.direction == RIGHT)
         {
-            int x = (int) (this.posX + 59) / Defines.TILE_SIZE;
-            int y = (int) (this.posY + ((Defines.TILE_SIZE - 1) * 2)) / Defines.TILE_SIZE;
-            if (this.level.getTile(x, y + 1) == 0 || !TileAtlas.atlas.get(this.level.getTile((int) (this.posX + this.getBounds().width) / Defines.TILE_SIZE, (int) (this.posY + Defines.TILE_SIZE) / Defines.TILE_SIZE)).canPass(level, (int) (this.velX + this.getBounds().width) / Defines.TILE_SIZE, (int) (this.posY + Defines.TILE_SIZE) / Defines.TILE_SIZE))
+            int x = (int) (m_posX + 59) / Defines.TILE_SIZE;
+            int y = (int) (m_posY + ((Defines.TILE_SIZE - 1) * 2)) / Defines.TILE_SIZE;
+            if (this.level.getTile(x, y + 1) == 0 || !TileAtlas.atlas.get(this.level.getTile((int) (m_posX + this.getBounds().width) / Defines.TILE_SIZE, (int) (m_posY + Defines.TILE_SIZE) / Defines.TILE_SIZE)).canPass(level, (int) (this.velX + this.getBounds().width) / Defines.TILE_SIZE, (int) (m_posY + Defines.TILE_SIZE) / Defines.TILE_SIZE))
             {
                 this.direction = LEFT;
             }
         }
         else if (this.direction == LEFT)
         {
-            int x = (int) (this.posX + 25) / Defines.TILE_SIZE;
-            int y = (int) (this.posY + ((Defines.TILE_SIZE - 1) * 2)) / Defines.TILE_SIZE;
-            if (this.level.getTile(x, y + 1) == 0 || !TileAtlas.atlas.get(this.level.getTile((int) this.posX / Defines.TILE_SIZE, (int) (this.posY + Defines.TILE_SIZE) / Defines.TILE_SIZE)).canPass(level, (int) this.posX / Defines.TILE_SIZE, (int) (this.posY + Defines.TILE_SIZE) / Defines.TILE_SIZE))
+            int x = (int) (m_posX + 25) / Defines.TILE_SIZE;
+            int y = (int) (m_posY + ((Defines.TILE_SIZE - 1) * 2)) / Defines.TILE_SIZE;
+            if (this.level.getTile(x, y + 1) == 0 || !TileAtlas.atlas.get(this.level.getTile((int) m_posX / Defines.TILE_SIZE, (int) (m_posY + Defines.TILE_SIZE) / Defines.TILE_SIZE)).canPass(level, (int) m_posX / Defines.TILE_SIZE, (int) (m_posY + Defines.TILE_SIZE) / Defines.TILE_SIZE))
             {
                 this.direction = RIGHT;
             }
         }
 
-        if (this.posX < 0)
+        if (m_posX < 0)
         {
-            this.posX = 0;
+            m_posX = 0;
             this.direction = RIGHT;
         }
-        else if (this.posX + 84 > this.level.w)
+        else if (m_posX + 84 > this.level.w)
         {
-            this.posX = this.level.w - 84;
+            m_posX = this.level.w - 84;
             this.direction = LEFT;
         }
     }
@@ -275,7 +274,7 @@ public class Braconeers extends Entity
     @Override
     public Rectangle getBounds()
     {
-        return new Rectangle((int) this.posX + 18, (int) this.posY, 55, 128);
+        return new Rectangle((int) m_posX + 18, (int) m_posY, 55, 128);
     }
 
     @Override
@@ -286,11 +285,11 @@ public class Braconeers extends Entity
             this.bullets.get(i).render(g);
         }
 
-        g.drawImage(this.sprite, (int) this.posX, (int) ((this.timeAnimDeath - 60) / 10 > 8 ? this.posY + 8 : this.posY), null);
+        g.drawImage(this.sprite, (int) m_posX, (int) ((this.timeAnimDeath - 60) / 10 > 8 ? m_posY + 8 : m_posY), null);
 
         if (this.isDeadAnim && this.timeAnimDeath < 50)
         {
-            g.drawImage(this.explosion, (int) this.posX - 15, (int) this.posY, null);
+            g.drawImage(this.explosion, (int) m_posX - 15, (int) m_posY, null);
         }
 
         if (debug)
@@ -332,18 +331,18 @@ public class Braconeers extends Entity
     {
         int velX = 0;
         int velY = 2;
-        if (this.posX <= this.level.player.posX)
+        if (m_posX <= this.level.player.getPosX())
         {
             velX = 4;
         }
-        if (this.posX > this.level.player.posX)
+        if (m_posX > this.level.player.getPosX())
         {
             velX = -4;
         }
 
         Bullet b = new Bullet(
                 (velX > 0) ? this.getBounds().x + this.getBounds().width : this.getBounds().x,
-                (int) this.posY + 60,
+                (int) m_posY + 60,
                 velX,
                 velY,
                 250

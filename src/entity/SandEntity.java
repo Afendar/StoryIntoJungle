@@ -30,14 +30,14 @@ public class SandEntity extends Entity
     @Override
     public void update(double dt)
     {
-        int data = level.getData((int) this.posX, (int) this.posY);
+        int data = level.getData((int) m_posX, (int) m_posY);
         switch (data)
         {
             case 1:
                 this.dt += dt;
                 if (this.dt > 90)
                 {
-                    level.setData((int) this.posX, (int) this.posY, 2);
+                    level.setData((int) m_posX, (int) m_posY, 2);
                     this.dt = 0;
                 }
                 break;
@@ -45,7 +45,7 @@ public class SandEntity extends Entity
                 this.dt += dt;
                 if (this.dt > 270)
                 {
-                    level.setData((int) this.posX, (int) this.posY, 0);
+                    level.setData((int) m_posX, (int) m_posY, 0);
                     this.dt = 0;
                 }
                 break;
@@ -57,7 +57,7 @@ public class SandEntity extends Entity
     @Override
     public Rectangle getBounds()
     {
-        return new Rectangle((int) this.posX, (int) this.posY, 10, 10);
+        return new Rectangle((int) m_posX, (int) m_posY, 10, 10);
     }
 
     @Override

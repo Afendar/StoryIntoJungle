@@ -11,7 +11,7 @@ import java.awt.Rectangle;
  */
 public abstract class Entity
 {
-    protected float posX, posY;
+    protected float m_posX, m_posY;
 
     /**
      *
@@ -20,8 +20,8 @@ public abstract class Entity
      */
     public Entity(int posX, int posY)
     {
-        this.posX = posX;
-        this.posY = posY;
+        m_posX = posX;
+        m_posY = posY;
     }
 
     /**
@@ -30,7 +30,7 @@ public abstract class Entity
      */
     public void setPosX(int posX)
     {
-        this.posX = posX;
+        m_posX = posX;
     }
 
     /**
@@ -39,7 +39,7 @@ public abstract class Entity
      */
     public void setPosY(int posY)
     {
-        this.posY = posY;
+        m_posY = posY;
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class Entity
      */
     public float getPosX()
     {
-        return posX;
+        return m_posX;
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class Entity
      */
     public float getPosY()
     {
-        return posY;
+        return m_posY;
     }
 
     /**
