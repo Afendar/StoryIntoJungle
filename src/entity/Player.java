@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import core.Camera;
+import core.Context;
 import ld34.profile.Settings;
 import core.Defines;
 import core.InputsListeners;
@@ -67,9 +68,9 @@ public class Player extends Entity
      * @param cam
      * @param difficulty
      */
-    public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty)
+    public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty, Context context)
     {
-        super(posX, posY);
+        super(posX, posY, context);
 
         m_velX = 0;
         m_velY = 0;
@@ -155,7 +156,6 @@ public class Player extends Entity
         m_sprite = m_spritesheet.getSubimage(0, 2 * Player.PLAYER_SIZE, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
     }
 
-    @Override
     public void update(double dt)
     {
 
@@ -206,8 +206,7 @@ public class Player extends Entity
             }
             else
             {
-                //TODO change sound call
-                //new Thread(Sound.jump::play).start();
+                new Thread(m_context.m_resourceManager.getSound("jump")::play).start();
                 m_renderJump = true;
                 m_offset = 0;
                 m_spritefx = m_spritesheetfx.getSubimage(m_offset * 60, 0, 60, 32);
@@ -279,16 +278,14 @@ public class Player extends Entity
         {
             m_score += TileAtlas.atlas.get(m_level.getTile(x1, y1)).bonus;
             m_level.removeTile(x1, y1);
-            //TODO change sound call
-            //new Thread(Sound.bonus::play).start();
+            new Thread(m_context.m_resourceManager.getSound("bonus")::play).start();
         }
         else if (TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 4
                 || TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 5)
         {
             m_score += TileAtlas.atlas.get(m_level.getTile(x0, y1)).bonus;
             m_level.removeTile(x0, y1);
-            //TODO change sound call
-            //new Thread(Sound.bonus::play).start();
+            new Thread(m_context.m_resourceManager.getSound("bonus")::play).start();
         }
 
         //checkpoint
@@ -303,8 +300,7 @@ public class Player extends Entity
         if (TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 7)
         {
             m_win = true;
-            //TODO change sound call
-            //new Thread(Sound.levelup::play).start();
+            new Thread(m_context.m_resourceManager.getSound("levelup")::play).start();
         }
 
         //spikes
@@ -313,8 +309,7 @@ public class Player extends Entity
                 || TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 6)
         {
             m_isDead = true;
-            //TODO change sound call
-            //new Thread(Sound.death::play).start();
+            new Thread(m_context.m_resourceManager.getSound("death")::play).start();
         }
 
         if (m_listener.mouseExited)
@@ -545,14 +540,12 @@ public class Player extends Entity
             m_posY = m_level.h - getBounds().height;
             m_isDead = true;
             m_sprite = m_spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
-            //TODO change sound call
-            //new Thread(Sound.death::play).start();
+            new Thread(m_context.m_resourceManager.getSound("death")::play).start();
             return false;
         }
         return true;
     }
 
-    @Override
     public void render(Graphics g, Boolean debug)
     {
         if (m_renderJump)
@@ -649,6 +642,10 @@ public class Player extends Entity
         return m_isJumping;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public boolean isDead()
     {
         return m_isDead;
@@ -670,7 +667,17 @@ public class Player extends Entity
         g.setColor(Color.BLUE);
         g.drawRect((int) rect.x, (int) rect.y, (int) rect.getWidth(), (int) rect.getHeight());
     }
+    
+    @Override
+    public void die()
+    {
+        
+    }
 
+    /**
+     * 
+     * @return 
+     */
     public boolean hasWon()
     {
         return m_win;
@@ -685,41 +692,73 @@ public class Player extends Entity
         return m_name;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public String getSpecies()
     {
         return m_species;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getCheckpointX()
     {
         return m_checkpointX;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getCheckpointY()
     {
         return m_checkpointY;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public int getScore()
     {
         return m_score;
     }
     
+    /**
+     * 
+     * @param lvl 
+     */
     public void setLevel(Level lvl)
     {
         m_level = lvl;
     }
     
+    /**
+     * 
+     * @param pos 
+     */
     public void setCheckpointX(int pos)
     {
         m_checkpointX = pos;
     }
     
+    /**
+     * 
+     * @param score 
+     */
     public void setScore(int score)
     {
         m_score = score;
     }
-        
+      
+    /**
+     * 
+     * @param win 
+     */
     public void setWin(boolean win)
     {
         m_win = win;
@@ -752,23 +791,20 @@ public class Player extends Entity
     }
 
     /**
-     *
+     * 
+     * @param die 
      */
     public void die(boolean die)
     {
         m_isDead = die;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public JSONObject toSave()
     {
-        /*
-        "difficulty": 0,
-        "species": 0,
-        "score": 3000,
-        "sex": 0,
-        "name": "pipouille",
-        "coords": [1040, 100]
-        */
         JSONObject data = new JSONObject();
         data.put("difficulty", m_difficulty);
         data.put("species", m_species);

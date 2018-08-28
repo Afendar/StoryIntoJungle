@@ -176,52 +176,42 @@ public class Game extends JPanel implements Runnable
     @Override
     public void run()
     {
-        long startTime = System.currentTimeMillis();
-        long lastTime = System.nanoTime();
-        double nsms = 1000000000 / 60;
         int frameCpt = 0;
-
-        boolean needUpdate;
-        m_lastTime = TimerThread.MILLI;
-        m_pauseTime = 0;
+        long lastFpsTime = 0;
+        long lastLoopTime = System.nanoTime();
+        final int TARGET_FPS = 60;
+        final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
 
         while(m_running)
         {
-            long current = System.nanoTime();
+            long now = System.nanoTime();
+            long updateLength = now - lastLoopTime;
+            lastLoopTime = now;
+            double delta = updateLength / ((double)OPTIMAL_TIME);
 
-            try
-            {
-                Thread.sleep(2);
-            }
-            catch(InterruptedException e)
-            {
-            }
+            lastFpsTime += updateLength;
+            frameCpt++;
 
-            needUpdate = false;
-            double delta = (current - lastTime) / nsms;
-
-            if((current - lastTime) / nsms >= 1)
-            {
-                frameCpt++;
-                lastTime = current;
-                needUpdate = true;
-            }
-
-            if(needUpdate)
-            {
-                update(delta);
-                repaint();
-            }
-            
-            if(System.currentTimeMillis() - startTime >= 1000)
+            if(lastFpsTime >= 1000000000)
             {
                 m_memoryUsed = (int) ((m_instance.totalMemory() - m_instance.freeMemory()) / 1024) / 1024;
                 m_frame = frameCpt;
+                System.out.println("(FPS: " + frameCpt + ")");
+                lastFpsTime = 0;
                 frameCpt = 0;
-                startTime = System.currentTimeMillis();
             }
+            
+            update(delta);
+            repaint();
 
             m_context.m_profiler.update(Integer.toString(m_frame), Integer.toString(m_memoryUsed));
+            
+            try{
+                Thread.sleep((lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
+            }
         }
         
         m_handler.close();

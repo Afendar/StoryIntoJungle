@@ -11,6 +11,7 @@ import core.Screen;
 import core.StateManager;
 import core.StateType;
 import core.TimerThread;
+import core.Context;
 import core.gui.GuiConsole;
 import entity.CageEntity;
 import entity.Player;
@@ -81,7 +82,8 @@ public class GameState extends BaseState
             m_displayStart = false;
         }
         
-        m_level = new Level(m_nbLevel);
+        Context c = m_stateManager.getContext();
+        m_level = new Level(m_nbLevel, c);
         for(int i=1;i<m_nbLevel;i++){
             m_level.setUnlocked(i);
         }
@@ -102,7 +104,8 @@ public class GameState extends BaseState
             m_cam, 
             Integer.parseInt(
                     Settings.getInstance().getConfigValue("difficulty")
-            )
+            ),
+            c
         );
         m_player.setScore(0);
         
@@ -484,7 +487,7 @@ public class GameState extends BaseState
             }
         }
         
-        m_guiConsole.render(g);
+        //m_guiConsole.render(g);
     }
     
     public void setPlayer(Player player)
@@ -577,7 +580,7 @@ public class GameState extends BaseState
             
             if(lvl != 0)
             {
-                m_level = new Level(m_nbLevel);
+                m_level = new Level(m_nbLevel, m_stateManager.getContext());
                 m_level.setNbTilesInScreenX(screenWidth);
                 m_level.setNbTilesInScreenY(screenHeight);
             }

@@ -1,5 +1,6 @@
 package entity;
 
+import core.Context;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -36,9 +37,9 @@ public class CageEntity extends Entity
      * @param posX
      * @param posY
      */
-    public CageEntity(Level level, int posX, int posY)
+    public CageEntity(Level level, int posX, int posY, Context context)
     {
-        super(posX, posY);
+        super(posX, posY, context);
 
         this.level = level;
         this.brokenStep = this.offset = this.offsetPandas = 0;
@@ -87,7 +88,6 @@ public class CageEntity extends Entity
         }
     }
 
-    @Override
     public void update(double dt)
     {
         if (this.renderHurt && !this.isBreak)
@@ -171,7 +171,6 @@ public class CageEntity extends Entity
         return new Rectangle((int) m_posX, (int) m_posY - Defines.TILE_SIZE + 25, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
     }
 
-    @Override
     public void render(Graphics g, Boolean debug)
     {
         if (this.isBreak)
@@ -214,6 +213,12 @@ public class CageEntity extends Entity
         Rectangle rect = this.getBounds();
         g.setColor(Color.MAGENTA);
         g.drawRect((int) rect.x, (int) rect.y, (int) rect.getWidth(), (int) rect.getHeight());
+    }
+    
+    @Override
+    public void die()
+    {
+        
     }
 
     /**

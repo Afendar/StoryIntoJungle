@@ -1,5 +1,6 @@
 package level;
 
+import core.Context;
 import entity.Braconeers;
 import entity.CageEntity;
 import entity.Player;
@@ -79,12 +80,14 @@ public class Level
     private final float gravity = 0.3f;
     private int start_pos = 6 * 64;
     private int end_pos = 4 * 64;
+    private Context m_context;
     
     /**
      * 
      * @param nbLevel 
      */
-    public Level(int nbLevel){
+    public Level(int nbLevel, Context context)
+    {
         System.out.println("Loading level : " + nbLevel);
         this.nbLevel = nbLevel;
         this.nbCages = 0;
@@ -636,11 +639,11 @@ public class Level
                             break;
                         case SAND:
                             map[col][row] = TileAtlas.sand.ID;
-                            this.sandEntity.add(new SandEntity(this, col, row));
+                            this.sandEntity.add(new SandEntity(this, col, row, m_context));
                             break;
                         case CAGE:
                             this.nbCages++;
-                            CageEntity ce = new CageEntity(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE);
+                            CageEntity ce = new CageEntity(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE, m_context);
                             this.cageEntity.add(ce);
                             cageLevelMapping.add(ce);
                             map[col][row] = TileAtlas.cage.ID;
@@ -649,7 +652,7 @@ public class Level
                             pixel += pixelLength;
                             break;
                         case BRACONEER:
-                            this.braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE));
+                            this.braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE, m_context));
                             break;
                         case LIME:
                             map[col][row] = TileAtlas.plant.ID;

@@ -1,5 +1,6 @@
 package entity;
 
+import core.Context;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -43,9 +44,9 @@ public class Braconeers extends Entity
      * @param posX
      * @param posY
      */
-    public Braconeers(Level level, int posX, int posY)
+    public Braconeers(Level level, int posX, int posY, Context context)
     {
-        super(posX, posY - Defines.TILE_SIZE);
+        super(posX, posY - Defines.TILE_SIZE, context);
         this.level = level;
 
         try
@@ -68,7 +69,6 @@ public class Braconeers extends Entity
         this.rnd = new Random();
     }
 
-    @Override
     public void update(double dt)
     {
         this.elapsedTime += dt;
@@ -277,7 +277,6 @@ public class Braconeers extends Entity
         return new Rectangle((int) m_posX + 18, (int) m_posY, 55, 128);
     }
 
-    @Override
     public void render(Graphics g, Boolean debug)
     {
         for (int i = 0; i < this.bullets.size(); i++)
@@ -306,6 +305,12 @@ public class Braconeers extends Entity
         g.drawRect((int) rect.x, (int) rect.y, (int) rect.getWidth(), (int) rect.getHeight());
     }
 
+    @Override
+    public void die()
+    {
+        //TODO implement die function
+    }
+    
     /**
      *
      * @return

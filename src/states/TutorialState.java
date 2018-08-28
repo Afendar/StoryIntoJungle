@@ -102,9 +102,16 @@ public class TutorialState extends BaseState
     @Override
     public void update(double dt)
     {
-        if(m_stateManager.getContext().m_inputsListener.next.enabled)
+        if(m_stateManager.getContext().m_inputsListener.next.typed && m_text.length() == m_tmpText.length())
         {
             m_stateManager.switchTo(StateType.GAME);
+            return;
+        }
+        else if(m_stateManager.getContext().m_inputsListener.next.typed)
+        {
+            m_counter = m_tmpText.length();
+            m_text = m_tmpText;
+            return;
         }
         
         m_timer += dt;

@@ -1,5 +1,6 @@
 package entity;
 
+import core.Context;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import level.Level;
@@ -21,13 +22,12 @@ public class SandEntity extends Entity
      * @param posX
      * @param posY
      */
-    public SandEntity(Level level, int posX, int posY)
+    public SandEntity(Level level, int posX, int posY, Context context)
     {
-        super(posX, posY);
+        super(posX, posY, context);
         this.level = level;
     }
 
-    @Override
     public void update(double dt)
     {
         int data = level.getData((int) m_posX, (int) m_posY);
@@ -60,7 +60,6 @@ public class SandEntity extends Entity
         return new Rectangle((int) m_posX, (int) m_posY, 10, 10);
     }
 
-    @Override
     public void render(Graphics g, Boolean debug)
     {
     }
@@ -69,5 +68,11 @@ public class SandEntity extends Entity
     public void renderHitbox(Graphics g)
     {
 
+    }
+    
+    @Override
+    public void die()
+    {
+        
     }
 }

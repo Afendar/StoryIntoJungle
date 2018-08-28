@@ -17,22 +17,27 @@ import core.Game;
  * @version %I%, %G%
  * @author Afendar
  */
-public class Profiler {
-
-    private String[] labels;
-    private String[] datas;
-    private boolean visible;
-    private Game game;
-    private Font fontD;
+public class Profiler
+{
+    private String[] m_labels;
+    private String[] m_datas;
+    private boolean m_visible;
+    private Game m_game;
+    private Font m_fontD;
     
-    private static final Profiler _instance = new Profiler();
+    private static Profiler m_instance = null;
     
     /**
      * 
      * @return 
      */
-    public static Profiler getInstance(){
-        return _instance;
+    public static Profiler getInstance()
+    {
+        if(m_instance == null)
+        {
+            m_instance = new Profiler();
+        }
+        return m_instance;
     }
     
     /**
@@ -40,17 +45,18 @@ public class Profiler {
      */
     private Profiler()
     {
-        this.labels = new String[]{"fps", "memory", "x", "y", "jump", "fall"};
-        this.datas = new String[]{"0", "0", "0", "0", "true", "true"};
-        this.visible = false;
+        m_labels = new String[]{"fps", "memory", "x", "y", "jump", "fall"};
+        m_datas = new String[]{"0", "0", "0", "0", "true", "true"};
+        m_visible = false;
         
         try
         {
-            URL url = this.getClass().getResource("/fonts/arial.ttf");
-            this.fontD = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            this.fontD = this.fontD.deriveFont(Font.PLAIN, 18.0f);
+            URL url = getClass().getResource("/fonts/arial.ttf");
+            m_fontD = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
+            m_fontD = m_fontD.deriveFont(Font.PLAIN, 18.0f);
         }
-        catch(FontFormatException|IOException e){
+        catch(FontFormatException|IOException e)
+        {
             e.getMessage();
         }
     }
@@ -59,8 +65,9 @@ public class Profiler {
      * 
      * @param game 
      */
-    public void addGame(Game game){
-        this.game = game;
+    public void addGame(Game game)
+    {
+        m_game = game;
     }
     
     /**
@@ -68,10 +75,10 @@ public class Profiler {
      * @param frames
      * @param memory 
      */
-    public void update(String frames, String memory){
-        
-        this.datas[0] = frames;
-        this.datas[1] = memory;
+    public void update(String frames, String memory)
+    {
+        m_datas[0] = frames;
+        m_datas[1] = memory;
         
         /*if(this.game.gs instanceof GameScene){
             GameScene gs = (GameScene)this.game.gs;
@@ -86,9 +93,9 @@ public class Profiler {
      * 
      * @param g 
      */
-    public void render(Graphics g){
-        
-        this.renderGlobalDebug(g);
+    public void render(Graphics g)
+    {
+        renderGlobalDebug(g);
 
         /*if(this.game.gs instanceof GameScene){
             this.renderGameDebug(g);
@@ -99,18 +106,19 @@ public class Profiler {
      * 
      * @param g 
      */
-    public void renderGlobalDebug(Graphics g){
-        FontMetrics fm = g.getFontMetrics(this.fontD);
+    public void renderGlobalDebug(Graphics g)
+    {
+        FontMetrics fm = g.getFontMetrics(m_fontD);
         String text = "FPS : ";
-        text += this.datas[0];
+        text += m_datas[0];
         Rectangle2D rect = fm.getStringBounds(text, g);
-        g.setFont(this.fontD);
+        g.setFont(m_fontD);
         g.setColor(new Color(0,0,0,150));
         g.fillRect(0, 30 - fm.getAscent() - 3, (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 30);
         
-        text = "Memory : " + this.datas[1] + "Mo";
+        text = "Memory : " + m_datas[1] + "Mo";
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0,0,0,150));
         g.fillRect(0, 57 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
@@ -136,66 +144,76 @@ public class Profiler {
      * 
      * @param g 
      */
-    public void renderGameDebug(Graphics g){
-        
-        FontMetrics fm = g.getFontMetrics(this.fontD);
-        String text = "X : " + this.datas[2];
+    public void renderGameDebug(Graphics g)
+    {
+        FontMetrics fm = g.getFontMetrics(m_fontD);
+        String text = "X : " + m_datas[2];
         Rectangle2D rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 84 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 87);
 
-        text = "Y : " + this.datas[3];
+        text = "Y : " + m_datas[3];
         rect = fm.getStringBounds(text, g);
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 111 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 114);
 
-        text = "Jump : " + this.datas[4];
+        text = "Jump : " + m_datas[4];
         rect = fm.getStringBounds(text, g);
         text = "Jump : ";
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 138 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 141);
-        if(this.datas[4].equals("true")){
+        
+        if(m_datas[4].equals("true"))
+        {
             g.setColor(Color.GREEN);
         }
-        else{
+        else
+        {
             g.setColor(Color.RED);
         }
-        g.drawString(this.datas[4], 30 + fm.stringWidth(text), 141);
         
-        text = "Fall : " + this.datas[5];
+        g.drawString(m_datas[4], 30 + fm.stringWidth(text), 141);
+        
+        text = "Fall : " + m_datas[5];
         rect = fm.getStringBounds(text, g);
         text = "Fall : ";
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 165 - fm.getAscent(), (int)rect.getWidth() + 40, (int)rect.getHeight() + 6);
         g.setColor(Color.WHITE);
         g.drawString(text, 30, 168);
-        if(this.datas[5].equals("true")){
+        
+        if(m_datas[5].equals("true"))
+        {
             g.setColor(Color.GREEN);
         }
-        else{
+        else
+        {
             g.setColor(Color.RED);
         }
-        g.drawString(this.datas[5], 30 + fm.stringWidth(text), 168);
+        
+        g.drawString(m_datas[5], 30 + fm.stringWidth(text), 168);
     }
     
     /**
      * 
      * @return 
      */
-    public boolean isVisible(){
-        return this.visible;
+    public boolean isVisible()
+    {
+        return m_visible;
     }
     
     /**
      * 
      */
-    public void toggleVisible(){
-        this.visible = !this.visible;
+    public void toggleVisible()
+    {
+        m_visible = !m_visible;
     }
 }
