@@ -42,14 +42,21 @@ public class Game extends JPanel implements Runnable
     private int m_frame, m_memoryUsed;
     private StreamHandler m_handler;
 
-    private final Context m_context;
-    private final StateManager m_stateManager;
+    private Context m_context;
+    private StateManager m_stateManager;
 
     /**
      *
      * @param profileName
      */
     public Game(String profileName)
+    {
+        init(profileName);
+        m_stateManager.switchTo(StateType.SAVES);
+        start();
+    }
+
+    private void init(String profileName)
     {
         m_running = false;
         m_paused = false;
@@ -146,11 +153,8 @@ public class Game extends JPanel implements Runnable
         m_context.m_screen = new Screen(this);
         m_context.m_profiler = Profiler.getInstance();
         m_context.m_profiler.addGame(this);
-
-        m_stateManager.switchTo(StateType.END);
-        start();
     }
-
+    
     /**
      *
      */
@@ -209,7 +213,8 @@ public class Game extends JPanel implements Runnable
 
             m_context.m_profiler.update(Integer.toString(m_frame), Integer.toString(m_memoryUsed));
             
-            try{
+            try
+            {
                 Thread.sleep((System.nanoTime() - lastLoopTime + OPTIMAL_TIME) / 1000000);
             }
             catch(InterruptedException e)
@@ -238,7 +243,12 @@ public class Game extends JPanel implements Runnable
 
     @Override
     public void paint(Graphics g)
-    {
+    {   
+        if(!m_running)
+        {
+            return;
+        }
+        
         requestFocus();
 
         Graphics2D g2d = (Graphics2D) g;

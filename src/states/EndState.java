@@ -127,15 +127,15 @@ public class EndState extends BaseState
         
         String text1 = i18nManager.trans("end_text1");
         int text1Width = metrics.stringWidth(text1);
-        g.drawString(text1, screenWidth/2 - text1Width/2, 240);
+        g.drawString(text1, screenWidth/2 - text1Width/2, screenHeight * 240 / Screen.RES_1X_HEIGHT);
         
         String text2 = i18nManager.trans("end_text2");
         int text2Width = metrics.stringWidth(text2);
-        g.drawString(text2, screenWidth/2 - text2Width/2, 300);
+        g.drawString(text2, screenWidth/2 - text2Width/2, screenHeight * 300 / Screen.RES_1X_HEIGHT);
         
         String text3 = i18nManager.trans("end_text3");
         int text3Width = metrics.stringWidth(text3);
-        g.drawString(text3, screenWidth/2 - text3Width/2, 360);
+        g.drawString(text3, screenWidth/2 - text3Width/2, screenHeight * 360 / Screen.RES_1X_HEIGHT);
         
         if(m_alpha > 0)
         {
@@ -155,9 +155,9 @@ public class EndState extends BaseState
         metrics = g.getFontMetrics(fontS);
         String text4 = i18nManager.trans("end_text4");
         int text4Width = metrics.stringWidth(text4);
-        g.drawString(text4, screenWidth/3 - text4Width/2 + 40, 490);
+        g.drawString(text4, screenWidth/3 - text4Width/2 + 40, screenHeight * 490 / Screen.RES_1X_HEIGHT);
         
-        g.drawImage(resourceManager.getSpritesheets("foreground3"), 0, 0, null);
+        g.drawImage(resourceManager.getSpritesheets("foreground3"), 0, 0, screenWidth, screenHeight, null);
         
         g.setColor(new Color(0, 0, 0, m_alpha));
         g.fillRect(0, 0, screenWidth, screenWidth);

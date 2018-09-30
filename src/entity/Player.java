@@ -808,9 +808,9 @@ public class Player extends Entity
     {
         JSONObject data = new JSONObject();
         data.put("difficulty", m_difficulty);
-        data.put("species", m_species);
+        data.put("species", m_species.equals("panda") ? Player.SPECIES_PANDA : Player.SPECIES_REDPANDA);
         data.put("score", m_score);
-        data.put("sex", m_sex);
+        data.put("sex", m_sex.equals("boy") ? Player.SEX_BOY : Player.SEX_GIRL);
         data.put("name", m_name);
         JSONArray coords = new JSONArray();
         coords.add(m_posX);

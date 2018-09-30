@@ -22,6 +22,10 @@ public class Save extends Profile
         super(profileName);
     }
     
+    /**
+     * 
+     * @param profileName 
+     */
     public static void init(String profileName)
     {
         if(INSTANCE != null)
@@ -32,6 +36,10 @@ public class Save extends Profile
         INSTANCE = new Save(profileName);
     }
     
+    /**
+     * 
+     * @return 
+     */
     public static Save getInstance()
     {
         if(INSTANCE == null)
@@ -93,11 +101,16 @@ public class Save extends Profile
      */
     public JSONObject getSave(int slotNumber)
     {
-        return new JSONObject();
+        JSONObject saves = (JSONObject)m_data.get("saves");
+        return (JSONObject)saves.get("slot" + slotNumber);
     }
     
+    /**
+     * 
+     * @return 
+     */
     public JSONObject getSaves()
     {
-        return new JSONObject();
+        return (JSONObject)m_data.get("saves");
     }
 }

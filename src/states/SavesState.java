@@ -5,8 +5,11 @@ import core.ResourceManager;
 import core.Screen;
 import core.StateManager;
 import core.StateType;
+import core.gui.Button;
+import core.gui.ButtonGroup;
 import core.gui.GuiComponent;
 import core.gui.IconButton;
+import core.gui.SaveSlot;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -19,11 +22,11 @@ import org.json.simple.JSONObject;
 
 public class SavesState extends BaseState
 {
-    private BufferedImage m_gui, m_bgSave, m_levelIcon, m_cageIcon, m_dollardIcon, m_littlesPandas, m_background, m_foreground;
-    private int m_selectedSave;
+    private BufferedImage m_gui, m_background, m_foreground;
     private JSONObject m_jsonSaves;
-    
+    private boolean m_displayError;
     private ArrayList<GuiComponent> m_guiElements;
+    private String m_errorMsg;
     
     /**
      * 
@@ -43,12 +46,9 @@ public class SavesState extends BaseState
         int screenHeight = screen.getContentPane().getHeight();
         
         m_guiElements = new ArrayList<>();
+        m_displayError = false;
+        m_errorMsg = "";
         m_gui = resourceManager.getSpritesheets("spritesheetGui2");
-        m_bgSave = m_gui.getSubimage(235, 127, 217, 216);
-        m_levelIcon = m_gui.getSubimage(362, 107, 19, 16);
-        m_cageIcon = m_gui.getSubimage(384, 101, 27, 25);
-        m_dollardIcon = m_gui.getSubimage(413, 104, 16, 20);
-        m_littlesPandas = resourceManager.getSpritesheets("littles_pandas");
         
         m_background = getScaledInstance(
                 m_stateManager.getContext().m_resourceManager.getSpritesheets("background"),
@@ -91,8 +91,43 @@ public class SavesState extends BaseState
             m_guiElements.add(b);
         }
         
-        m_selectedSave = 0;
+        Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 18.0f);
+        ButtonGroup bg = new ButtonGroup(this);
         m_jsonSaves = Save.getInstance().getSaves();
+        
+        int offset = (screenWidth - 217) / 2 - 227;
+        for(int i = 0 ; i < m_jsonSaves.size() ; i++)
+        {
+            JSONObject saveData = (JSONObject)m_jsonSaves.get("slot" + (i + 1));
+            SaveSlot ss = new SaveSlot(this, false);
+            if(saveData.isEmpty())
+            {
+                ss.setEmpty(true);
+            }
+            else
+            {
+                JSONObject playerData = (JSONObject)saveData.get("player");
+                JSONObject levelData = (JSONObject)saveData.get("level");
+                ss.setData(
+                    (int)(long)playerData.get("sex"), 
+                    (int)(long)playerData.get("species"), 
+                    (int)(long)playerData.get("score"), 
+                    (int)(long)levelData.get("nbFreeCages"), 
+                    (int)(long)levelData.get("complete"), 
+                    (int)(long)playerData.get("difficulty"), 
+                    (int)(long)levelData.get("number"), 
+                    (String)playerData.get("name")
+                );
+            }
+            ss.setFont(font);
+            ss.addApearance(GuiComponent.Status.NEUTRAL, m_gui.getSubimage(235, 127, 217, 216));
+            ss.addApearance(GuiComponent.Status.FOCUSED, m_gui.getSubimage(235, 127, 217, 216));
+            ss.addApearance(GuiComponent.Status.CHECKED, m_gui.getSubimage(453, 125, 221, 220));
+            ss.setPosition(offset, screenHeight * 170 / Screen.RES_1X_HEIGHT);
+            bg.add(ss);
+            offset += 227;
+        }
+        m_guiElements.add(bg);
     }
 
     @Override
@@ -153,7 +188,11 @@ public class SavesState extends BaseState
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         
-        for(GuiComponent element : m_guiElements)
+        m_guiElements.stream().map((element) ->
+        {
+            element.update(dt);
+            return element;            
+        }).forEachOrdered((element) ->
         {
             element.update(dt);
             
@@ -170,7 +209,7 @@ public class SavesState extends BaseState
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
                 {
-                    continue;
+                    return;
                 }
 
                 element.onHover();
@@ -183,7 +222,7 @@ public class SavesState extends BaseState
             {
                 element.onRelease();
             }
-        }
+        });
     }
 
     @Override
@@ -207,132 +246,20 @@ public class SavesState extends BaseState
         int titlewidth = metrics.stringWidth(title);
         g.drawString(title, screenWidth / 2 - titlewidth / 2, 75);
         
-        f = f.deriveFont(Font.PLAIN, 18.0f);
-        metrics = g.getFontMetrics(f);
-        g.setFont(f);
-        
-        for(int i=0;i<m_jsonSaves.size();i++)
-        {
-            if(m_selectedSave == i + 1)
-            {
-                g.drawImage(
-                        m_gui.getSubimage(453, 125, 221, 220), 
-                        ((i + 1) * (screenWidth / 5)) + (screenWidth/5)/2 - 121, 
-                        (screenHeight/3) - 40,
-                        null
-                );
-            }
-            else
-            {
-                g.drawImage(
-                        m_bgSave, 
-                        (i * ((screenWidth - 40)/ 3)) + ((screenWidth - 60)/3)/2 - 81, 
-                        (screenHeight/3) - 40, 
-                        null
-                );
-            }
-            
-            //get save datas
-            JSONObject save = (JSONObject) m_jsonSaves.get("Slot" + i);
-            if(save.isEmpty())
-            {
-                String empty = i18nManager.trans("empty");
-                int emptyTxtWidth = metrics.stringWidth(empty);
-                g.setColor(Color.BLACK);
-                g.drawString(empty, i * 230 + 178 - emptyTxtWidth/2, 256 + metrics.getAscent()/2);
-            }
-            else
-            {
-                JSONObject player = (JSONObject) save.get("player");
-                String name = (String) player.get("name");
-                int sex = Integer.parseInt((String) player.get("sex"));
-                int spicies = Integer.parseInt((String) player.get("spicies"));
-                g.setFont(f);
-                g.setColor(Color.BLACK);
-                metrics = g.getFontMetrics(f);
-                int nameW = metrics.stringWidth(name);
-                g.drawString(name, i * 230 + 178 - nameW/2, 192 + (metrics.getAscent()/2));
-                
-                int x = 0;
-                int y = 160;
-                if(sex == 0)
-                {
-                    x = 50;
-                }
-                
-                if(spicies == 1)
-                {
-                    y = 208;
-                }
-                
-                Font fs = f.deriveFont(Font.PLAIN, 14.0f);
-                g.drawImage(m_dollardIcon, i * 230 + 181, 232 ,null);
-                g.setFont(fs);
-                String score =  (String) player.get("score");
-                g.drawString(score, i * 230 + 199, 237 + metrics.getAscent()/2);
-                
-                g.drawImage(m_levelIcon, i * 230 + 107, 315, null);
-                JSONObject jsonLevel = (JSONObject) save.get("level");
-                String levelNumber = (String) jsonLevel.get("number");
-                int levelNum = Integer.parseInt((String) jsonLevel.get("number"));
-                g.drawString(levelNumber, i * 230 + 130, 318 + metrics.getAscent()/2);
-                
-                g.drawImage(m_cageIcon, i * 230 + 176, 266, null);
-                String cageNumbers = (String) jsonLevel.get("freeCages") + "/30";
-                g.drawString(cageNumbers, i * 230 + 208, 274 + metrics.getAscent()/2);
-                
-                String complete = (String) jsonLevel.get("complete") + "%";
-                int completeW = metrics.stringWidth(complete);
-                g.drawString(complete, i * 230 + 178 - completeW/2, 318 + metrics.getAscent()/2);
-                
-                int difficulty = Integer.parseInt((String) jsonLevel.get("difficulty"));
-                
-                switch(difficulty){
-                    case 0:
-                        g.drawImage(m_gui.getSubimage(285, 69, 17, 16), i * 230 + 226, 305, null);
-                        break;
-                    case 2:
-                        g.drawImage(m_gui.getSubimage(325, 69, 35, 16), i * 230 + 226, 305, null);
-                        break;
-                    case 4:
-                        g.drawImage(m_gui.getSubimage(285, 89, 33, 32), i * 230 + 226, 305, null);
-                        break;
-                    case 5:
-                        g.drawImage(m_gui.getSubimage(326, 90, 33, 32), i * 230 + 226, 305, null);
-                        break;
-                    default:
-                        break;
-                }
-                
-                g.setFont(f);
-                metrics = g.getFontMetrics(f);
-                
-                int offset = 0;
-                switch(levelNum)
-                {
-                    case 1:
-                    case 2:
-                        offset = 0;
-                        break;
-                    case 3:
-                    case 4:
-                        offset = 2;
-                        break;
-                    case 5:
-                    case 6:
-                        offset = 4;
-                        break;
-                }
-                g.setColor(new Color(193, 182, 129));
-                g.fillRoundRect(i * 230 + 102, 225, 70, 70, 8, 8);
-                g.drawImage(m_littlesPandas.getSubimage(((sex + offset ) + ( 6 * spicies)) * 64, 0, 64, 64), i * 230 + 105, 228, null);
-            }
-        }
-        
         m_guiElements.forEach((element) ->
         {
             element.render(g);
         });
+        
+        if(m_displayError)
+        {
+            g.setColor(new Color(136, 0, 21));
+            f = f.deriveFont(Font.PLAIN, 18.0f);
+            g.setFont(f);
+            metrics = g.getFontMetrics(f);
+            int strW = metrics.stringWidth(m_errorMsg);
+            g.drawString(m_errorMsg, (screenWidth - strW) / 2, screenHeight * 417 / Screen.RES_1X_HEIGHT);
+        }
         
         g.drawImage(m_foreground, 0, 0, null);
     }
@@ -342,7 +269,33 @@ public class SavesState extends BaseState
      */
     public void loadSave()
     {
+        int index = 0;
         
+        for(GuiComponent gc : m_guiElements)
+        {
+            if(gc instanceof ButtonGroup)
+            {
+                ButtonGroup bg = (ButtonGroup)gc;
+                ArrayList<Button> buttons = bg.getButtons();
+                for(int i = 0 ; i < buttons.size() ; i++)
+                {
+                    SaveSlot ss = (SaveSlot)buttons.get(i);
+                    if(ss.isChecked())
+                    {
+                        index = i + 1;
+                    }
+                }
+            }
+        }
+        
+        if(index == 0)
+        {
+            m_displayError = true;
+            m_errorMsg = "Please select the save to load";
+            return;
+        }
+        
+        System.out.println("load save: " + index);
     }
     
     /**
@@ -350,7 +303,33 @@ public class SavesState extends BaseState
      */
     public void deleteSave()
     {
+        int index = 0;
         
+        for(GuiComponent gc : m_guiElements)
+        {
+            if(gc instanceof ButtonGroup)
+            {
+                ButtonGroup bg = (ButtonGroup)gc;
+                ArrayList<Button> buttons = bg.getButtons();
+                for(int i = 0 ; i < buttons.size() ; i++)
+                {
+                    SaveSlot ss = (SaveSlot)buttons.get(i);
+                    if(ss.isChecked())
+                    {
+                        index = i + 1;
+                    }
+                }
+            }
+        }
+        
+        if(index == 0)
+        {
+            m_displayError = true;
+            m_errorMsg = "Please select the save to remove";
+            return;
+        }
+        
+        System.out.println("remove save: " + index);
     }
     
     /**

@@ -6,18 +6,39 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import states.BaseState;
 
+/**
+ * 
+ */
 public class CheckBox extends Button
 {
     private static final String componentID = "CheckBox";
 
     protected boolean m_checked;
 
+    /**
+     * 
+     * @param owner 
+     */
+    public CheckBox(BaseState owner)
+    {
+        this("", owner);
+    }
+    
+    /**
+     * 
+     * @param label
+     * @param owner 
+     */
     public CheckBox(String label, BaseState owner)
     {
         super(label, owner);
         setChecked(false);
     }
 
+    /**
+     * 
+     * @param checked 
+     */
     public void setChecked(boolean checked)
     {
         setStatus(checked ? Status.CHECKED : Status.NEUTRAL);

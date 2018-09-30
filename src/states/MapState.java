@@ -46,10 +46,10 @@ public class MapState extends BaseState
     private String[] m_levelsNames = {
         "Forgotten Temple",
         "Mystic Lagoon",
-        "level_3",
-        "level_4",
-        "level_5",
-        "level_6"
+        "Sticky Swamp",
+        "Pheasants Forest",
+        "Flamboyant Uplands",
+        "Frozen Valley"
     };
     
     private int[][] m_coordsPins = {
@@ -154,7 +154,7 @@ public class MapState extends BaseState
         m_currentLvl = 1;
         m_currentScore = 0;
         
-        m_unlockedLevels = new boolean[]{true, true, true, false, false, false};
+        m_unlockedLevels = new boolean[]{true, true, true, true, true, true};
         
         m_index = 0;
         

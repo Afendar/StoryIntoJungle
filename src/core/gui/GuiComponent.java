@@ -24,7 +24,7 @@ public abstract class GuiComponent
 
     public enum Status
     {
-        CLICKED, FOCUSED, CHECKED, NEUTRAL
+        CLICKED, FOCUSED, CHECKED, NEUTRAL, DISABLED
     };
 
     public class Callback
@@ -175,6 +175,11 @@ public abstract class GuiComponent
                 && x < m_position.m_x + m_width
                 && y > m_position.m_y
                 && y < m_position.m_y + m_height;
+    }
+    
+    public boolean isDisabled()
+    {
+        return m_status == Status.DISABLED;
     }
 
     public void onClick(int mouseX, int mouseY)
