@@ -8,12 +8,17 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
 
 public class IntroState extends BaseState
 {
     public int m_alpha;
     public boolean m_increase, m_first;
     
+    /**
+     * 
+     * @param stateManager 
+     */
     public IntroState(StateManager stateManager)
     {
         super(stateManager);
@@ -59,13 +64,13 @@ public class IntroState extends BaseState
             }
             catch(InterruptedException e)
             {
-                e.printStackTrace();
+                m_stateManager.getContext().m_logger.log(Level.SEVERE, e.toString());
             }
         }
         
         try
         {
-            Thread.sleep(5);
+            Thread.sleep(3);
             if(m_alpha > 0 && !m_increase)
             {
                 m_alpha--;
@@ -81,7 +86,7 @@ public class IntroState extends BaseState
         }
         catch(InterruptedException e)
         {
-            e.printStackTrace();
+            m_stateManager.getContext().m_logger.log(Level.SEVERE, e.toString());
         }
         
         if(m_alpha == 0)
@@ -99,20 +104,20 @@ public class IntroState extends BaseState
         int screenHeight = screen.getContentPane().getHeight();
 
         BufferedImage img = m_stateManager.getContext().m_resourceManager.getSpritesheets("afendar");
-        g.drawImage(img, screenWidth/2 - img.getWidth()/2, 160 , null);
+        g.drawImage(img, screenWidth/2 - img.getWidth()/2, screenHeight * 170 / Screen.RES_1X_HEIGHT, null);
         
         g.setColor(Color.WHITE);
         Font font = m_stateManager.getContext().m_resourceManager.getFont("kaushanscriptregular").deriveFont(36.0f);
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);
         int txt1W = metrics.stringWidth("Afendar games");
-        g.drawString("Afendar games", screenWidth/2 - txt1W/2, 390);
+        g.drawString("Afendar games", screenWidth/2 - txt1W/2, screenHeight * 170 / Screen.RES_1X_HEIGHT + img.getHeight() + 50);
         
         font = m_stateManager.getContext().m_resourceManager.getFont("kaushanscriptregular").deriveFont(22.0f);
         g.setFont(font);
         metrics = g.getFontMetrics(font);
         int txt2W = metrics.stringWidth("present");
-        g.drawString("present", screenWidth/2 - txt2W/2, 430);
+        g.drawString("present", screenWidth/2 - txt2W/2, screenHeight * 170 / Screen.RES_1X_HEIGHT + img.getHeight() + 90);
         
         g.setColor(new Color(0, 0, 0, m_alpha));
         g.fillRect(0, 0, screenWidth, screenHeight);

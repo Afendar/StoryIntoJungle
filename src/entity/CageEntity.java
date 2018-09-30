@@ -83,16 +83,16 @@ public class CageEntity extends Entity
         {
             this.isBreak = true;
             this.renderBreak = true;
-
             this.level.freeCage();
         }
     }
-
+    
+    @Override
     public void update(double dt)
     {
-        if (this.renderHurt && !this.isBreak)
+        if(this.renderHurt && !this.isBreak)
         {
-            if (this.timerender > 10)
+            if (this.timerender > 0.5)
             {
                 this.renderHurt = false;
                 this.timerender = 0;
@@ -106,14 +106,12 @@ public class CageEntity extends Entity
                 this.timerender += dt;
             }
         }
-
-        if (this.isBreak)
+        else if(this.isBreak)
         {
-            if (this.renderBreak && this.alpha > 0)
+            if(this.renderBreak && this.alpha > 0)
             {
-                if (this.timerender > 3 && this.offset < 4)
+                if (this.timerender > 0.5 && this.offset < 4)
                 {
-
                     this.timerender = 0;
 
                     if (this.offset < 4)
@@ -121,9 +119,8 @@ public class CageEntity extends Entity
                         this.offset += 2;
                     }
                 }
-                else if (this.timerender > 6)
+                else if (this.timerender > 0.5)
                 {
-
                     this.timerender = 0;
 
                     if (this.offset == 4 && this.offsetPandas < 10)
@@ -171,11 +168,12 @@ public class CageEntity extends Entity
         return new Rectangle((int) m_posX, (int) m_posY - Defines.TILE_SIZE + 25, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
     }
 
+    @Override
     public void render(Graphics g, Boolean debug)
     {
-        if (this.isBreak)
+        if(this.isBreak)
         {
-            if (this.offsetPandas == 10)
+            if(this.offsetPandas == 10)
             {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, this.alpha));

@@ -6,5 +6,6 @@ manifest.mf
 settings.dat
 /dist/
 /logs/*
+/saves/*
 *.log
 data.json

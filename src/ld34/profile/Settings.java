@@ -47,7 +47,9 @@ public class Settings extends Profile
      */
     public void setConfigValue(String key, String value)
     {
-        
+        JSONObject o = (JSONObject)(m_data.get("settings"));
+        o.put(key, value);
+        m_data.put("settings", o);
     }
 
     /**

@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.StringTokenizer;
 import ld34.profile.Settings;
 
@@ -21,6 +22,7 @@ public class TutorialState extends BaseState
     private float m_timer, m_timeFloating;
     private int m_counter, m_yBtn;
     private boolean m_levit, m_goingDown;
+    private BufferedImage m_background;
     
     public TutorialState(StateManager stateManager)
     {
@@ -72,7 +74,8 @@ public class TutorialState extends BaseState
     public void onCreate()
     {
         m_tutorialNumber = 0;
-        m_yBtn = m_stateManager.getContext().m_screen.getHeight() - 60;
+        m_yBtn = m_stateManager.getContext().m_screen.getHeight() - 66;
+        m_background = m_stateManager.getContext().m_resourceManager.getSpritesheets("spritesheetGui2").getSubimage(0, 723, 780, 140);
     }
 
     @Override
@@ -128,7 +131,7 @@ public class TutorialState extends BaseState
             int screenH = m_stateManager.getContext().m_screen.getHeight();
             if (m_goingDown == true)
             {
-                if (m_yBtn <= screenH - 63)
+                if (m_yBtn <= screenH - 66)
                 {
                     m_goingDown = false;
                     m_yBtn++;
@@ -140,7 +143,7 @@ public class TutorialState extends BaseState
             }
             else
             {
-                if (m_yBtn >= screenH - 57)
+                if (m_yBtn >= screenH - 61)
                 {
                     m_goingDown = true;
                     m_yBtn--;
@@ -162,8 +165,7 @@ public class TutorialState extends BaseState
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
-        g.setColor(Color.WHITE);
-        g.fillRect(10, screenHeight - 150, 780, 140);
+        g.drawImage(m_background, 10, screenHeight - 150, null);
         
         g.setColor(Color.BLACK);
         Font font = ressourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 16.0f);
@@ -172,24 +174,24 @@ public class TutorialState extends BaseState
         
         FontMetrics metrics = g.getFontMetrics(font);
         int stringWidth = metrics.stringWidth(m_text);
-        if(stringWidth > screenWidth - 20)
+        if(stringWidth > screenWidth - 70)
         {
-            String label = this.substringLabels(m_text, 120);
-            int y = screenHeight - 140 - 10;
+            String label = this.substringLabels(m_text, 110);
+            int y = screenHeight - 135 - 10;
             for(String line : label.split("\n"))
             {
-                g.drawString(line, 20, y += m.getAscent() + 10);
+                g.drawString(line, 35, y += m.getAscent() + 10);
             }
         }
         else
         {
-            g.drawString(m_text, 20, screenHeight - 140 + m.getAscent());
+            g.drawString(m_text, 35, screenHeight - 135 + m.getAscent());
         }
         
         if(m_text.length() == m_tmpText.length())
         {
             m_levit = true;
-            g.drawString("Enter", (screenWidth / 2) + 330, m_yBtn);
+            g.drawString("Enter", (screenWidth / 2) + 320, m_yBtn);
         }
     }
     
@@ -204,7 +206,7 @@ public class TutorialState extends BaseState
         StringTokenizer tok = new StringTokenizer(text, " ");
         StringBuilder output = new StringBuilder(text.length());
         int lineLen = 0;
-        while (tok.hasMoreTokens())
+        while(tok.hasMoreTokens())
         {
             String word = tok.nextToken() + " ";
 

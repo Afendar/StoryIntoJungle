@@ -29,7 +29,7 @@ import org.json.simple.JSONObject;
  * @author Afendar
  */
 public class Player extends Entity
-{
+{   
     public static final int SPECIES_PANDA = 0;
     public static final int SPECIES_REDPANDA = 1;
     
@@ -95,7 +95,7 @@ public class Player extends Entity
         m_timeRespawn = 0;
         m_timeLastBlink = 0;
 
-        setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("spicies")));
+        setSpecies(Integer.parseInt(Settings.getInstance().getConfigValue("species")));
 
         switch (Integer.parseInt(Settings.getInstance().getConfigValue("sex")))
         {
@@ -455,10 +455,10 @@ public class Player extends Entity
 
         if(m_posY > 1050 - 20 && m_posY < 1050 + 5  && !m_splash)
         {
-            m_level.splash(m_posX + 32, 6.3f);
+            //m_level.splash(m_posX + 32, 6.3f);
             m_splash = true;
         }
-        else if(m_posY > m_level.h - 70 && m_splash)
+        else if((m_posY > m_level.h - 70 || m_posY < 1050 - 20) && m_splash)
         {
             //TODO Check if in water stop velocity and start to floating
             m_velY = 0;
@@ -546,6 +546,7 @@ public class Player extends Entity
         return true;
     }
 
+    @Override
     public void render(Graphics g, Boolean debug)
     {
         if (m_renderJump)

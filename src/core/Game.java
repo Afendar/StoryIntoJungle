@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -100,11 +101,13 @@ public class Game extends JPanel implements Runnable
         m_context = new Context();
         m_context.m_inputsListener = new InputsListeners(this);
         m_context.m_I18nManager = I18nManager.getInstance();
+        m_context.m_I18nManager.setLanguage(
+                (Integer.parseInt(Settings.getInstance().getConfigValue("lang")) == 1) ? I18nManager.Language.FRENCH : I18nManager.Language.ENGLISH
+        );
         m_context.m_resourceManager = ResourceManager.getInstance();
-        
         m_context.m_profileName = profileName;
-        
         m_context.m_logger = Logger.getLogger("logger");
+        
         if(Defines.DEV)
         {
             m_handler = new ConsoleHandler();
@@ -144,7 +147,7 @@ public class Game extends JPanel implements Runnable
         m_context.m_profiler = Profiler.getInstance();
         m_context.m_profiler.addGame(this);
 
-        m_stateManager.switchTo(StateType.GAME);
+        m_stateManager.switchTo(StateType.END);
         start();
     }
 
@@ -207,10 +210,11 @@ public class Game extends JPanel implements Runnable
             m_context.m_profiler.update(Integer.toString(m_frame), Integer.toString(m_memoryUsed));
             
             try{
-                Thread.sleep((lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000);
+                Thread.sleep((System.nanoTime() - lastLoopTime + OPTIMAL_TIME) / 1000000);
             }
-            catch(InterruptedException e){
-                e.printStackTrace();
+            catch(InterruptedException e)
+            {
+                m_context.m_logger.log(Level.SEVERE, e.toString());
             }
         }
         
@@ -239,6 +243,10 @@ public class Game extends JPanel implements Runnable
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, m_context.m_screen.getWidth(), m_context.m_screen.getHeight());
+        
         m_stateManager.render(g2d);
         
         if(m_context.m_profiler.isVisible())

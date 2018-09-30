@@ -16,6 +16,7 @@ import core.gui.GuiComponent;
 import core.gui.IconButton;
 import core.gui.RadioButton;
 import core.gui.Slider;
+import entity.Player;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import ld34.profile.Settings;
+import level.Level;
 
 public class SettingsState extends BaseState
 {
@@ -65,6 +67,7 @@ public class SettingsState extends BaseState
         
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
+        int screenHeight = screen.getContentPane().getHeight();
         
         try{
             URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
@@ -96,12 +99,7 @@ public class SettingsState extends BaseState
         {
             e.getMessage();
         }
-        
-        int [][]coords = {
-            {(3 * screenWidth / 4) - 80, 455}
-        };
-        
-        m_btnCoords = coords;
+
         m_selectedItem = 0;
         m_currentTab = 0;
         m_timerSlider = 0;
@@ -125,13 +123,13 @@ public class SettingsState extends BaseState
         m_jumpingPlayer = m_spritesheetGui2.getSubimage(739, 65, 112, 84);
         m_walkingPlayer = m_spritesheetGui2.getSubimage(737, 1, 79, 64);
         
-        createScreenInterface();
-        createPlayerInterface();
-        createGameInterface();
-        createLanguageInterface();
+        createScreenInterface(screenWidth, screenHeight);
+        createPlayerInterface(screenWidth, screenHeight);
+        createGameInterface(screenWidth, screenHeight);
+        createLanguageInterface(screenWidth, screenHeight);
     }
 
-    private void createScreenInterface()
+    private void createScreenInterface(int screenWidth, int screenHeight)
     {
         CheckBox cb = new CheckBox("Fullscreen", this);
         cb.setPosition(189, 390);
@@ -183,7 +181,7 @@ public class SettingsState extends BaseState
         m_screenGuiElements.add(bg);
         
         IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34), this);
-        ib.setPosition(595, 471);
+        ib.setPosition((3 * screenWidth / 4), screenHeight - 120);
         ib.addCallback(GuiComponent.Status.CLICKED, "backToMain", this);
         ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(370, 1, 120, 99));
         ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
@@ -212,52 +210,68 @@ public class SettingsState extends BaseState
         m_screenGuiElements.add(s);
     }
     
-    private void createPlayerInterface()
+    private void createPlayerInterface(int screenWidth, int screenHeight)
     {
-        ButtonGroup bg = new ButtonGroup(this);
-        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(820, 1, 35, 36), this);
-        ib.setPosition(199, 266);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 0);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("sex"));
+        int species = Integer.parseInt(Settings.getInstance().getConfigValue("species"));
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(858, 1, 27, 40), this);
-        ib.setPosition(368, 265);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 1);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        ButtonGroup bg = new ButtonGroup(this);
+        RadioIconButton rib = new RadioIconButton(m_spritesheetGui2.getSubimage(820, 1, 35, 36), this);
+        rib.setPosition(199, 266);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 0);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(sex == Player.SEX_BOY)
+            rib.setChecked(true);
+        bg.add(rib);
+        
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(858, 1, 27, 40), this);
+        rib.setPosition(368, 265);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectSex", this, 1);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(sex == Player.SEX_GIRL)
+            rib.setChecked(true);
+        bg.add(rib);
         m_playerGuiElements.add(bg);
         
         bg = new ButtonGroup(this);
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(674, 103, 47, 38), this);
-        ib.setPosition(199, 386);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 0);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(674, 103, 47, 38), this);
+        rib.setPosition(199, 386);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 0);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(species == Player.SPECIES_PANDA)
+            rib.setChecked(true);
+        bg.add(rib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(676, 147, 49, 38), this);
-        ib.setPosition(369, 386);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 1);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(676, 147, 49, 38), this);
+        rib.setPosition(369, 386);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectSpecies", this, 1);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(species == Player.SPECIES_REDPANDA)
+            rib.setChecked(true);
+        bg.add(rib);
         m_playerGuiElements.add(bg);
         
-        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("sex"));
-        int spicies = Integer.parseInt(Settings.getInstance().getConfigValue("spicies"));
+        IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34), this);
+        ib.setPosition((3 * screenWidth / 4), screenHeight - 120);
+        ib.addCallback(GuiComponent.Status.CLICKED, "backToMain", this);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(370, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        m_playerGuiElements.add(ib);
         
-        m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + spicies), 0, 128, 128);
+        m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + species), 0, 128, 128);
         
         m_nameField = new CustomTextField("name", Settings.getInstance().getConfigValue("name"), 203, 183, 287, 46);
         m_nameField.setFont(m_font);
@@ -265,72 +279,100 @@ public class SettingsState extends BaseState
         m_sliderContainer = new JPanel();
     }
     
-    private void createGameInterface()
+    private void createGameInterface(int screenWidth, int screenHeight)
     {
+        int difficulty = Integer.parseInt(Settings.getInstance().getConfigValue("difficulty"));
+        
         ButtonGroup bg = new ButtonGroup(this);
-        RadioIconButton ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 69, 17, 16), this);
-        ib.setPosition(189, 186);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 0);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        RadioIconButton rib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 69, 17, 16), this);
+        rib.setPosition(189, 186);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 0);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(difficulty == Level.DIFFICULTY_EASY)
+            rib.setChecked(true);
+        bg.add(rib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(325, 69, 35, 16), this);
-        ib.setPosition(339, 186);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 1);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(325, 69, 35, 16), this);
+        rib.setPosition(339, 186);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 1);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(difficulty == Level.DIFFICULTY_MEDIUM)
+            rib.setChecked(true);
+        bg.add(rib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 89, 33, 32), this);
-        ib.setPosition(479, 186);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 2);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(285, 89, 33, 32), this);
+        rib.setPosition(479, 186);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 2);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(difficulty == Level.DIFFICULTY_HARD)
+            rib.setChecked(true);
+        bg.add(rib);
         
-        ib = new RadioIconButton(m_spritesheetGui2.getSubimage(326, 90, 33, 32), this);
-        ib.setPosition(629, 186);
-        ib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 3);
-        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        ib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(ib);
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(326, 90, 33, 32), this);
+        rib.setPosition(629, 186);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectDifficulty", this, 3);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(difficulty == Level.DIFFICULTY_HARDCORE)
+            rib.setChecked(true);
+        bg.add(rib);
         m_gameGuiElements.add(bg);
+        
+        IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34), this);
+        ib.setPosition((3 * screenWidth / 4), screenHeight - 120);
+        ib.addCallback(GuiComponent.Status.CLICKED, "backToMain", this);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(370, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        m_gameGuiElements.add(ib);
     }
     
-    private void createLanguageInterface()
-    {
-        Screen screen = m_stateManager.getContext().m_screen;
-        int screenWidth = screen.getContentPane().getWidth();
+    private void createLanguageInterface(int screenWidth, int screenHeight)
+    {   
+        int lang = Integer.parseInt(Settings.getInstance().getConfigValue("lang"));
         
         ButtonGroup bg = new ButtonGroup(this);
-        RadioIconButton rib1 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 344, 42, 28), this);
-        rib1.setPosition((screenWidth - 115) / 2 - 15, 150);
-        rib1.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 0);
-        rib1.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        rib1.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        rib1.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        rib1.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(rib1);
+        RadioIconButton rib = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 344, 42, 28), this);
+        rib.setPosition((screenWidth - 115) / 2 - 15, 150);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 0);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(lang == 0)
+            rib.setChecked(true);
+        bg.add(rib);
         
-        RadioIconButton rib2 = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 372, 42, 28), this);
-        rib2.setPosition((screenWidth - 115) / 2 + 125, 150);
-        rib2.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 1);
-        rib2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        rib2.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        rib2.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
-        rib2.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        bg.add(rib2);
-        
+        rib = new RadioIconButton(m_spritesheetGui2.getSubimage(238, 372, 42, 28), this);
+        rib.setPosition((screenWidth - 115) / 2 + 125, 150);
+        rib.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 1);
+        rib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
+        if(lang == 1)
+            rib.setChecked(true);
+        bg.add(rib);
         m_languageGuiElements.add(bg);
+        
+        IconButton ib = new IconButton(m_spritesheetGui2.getSubimage(243, 94, 42, 34), this);
+        ib.setPosition((3 * screenWidth / 4), screenHeight - 120);
+        ib.addCallback(GuiComponent.Status.CLICKED, "backToMain", this);
+        ib.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(370, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
+        m_languageGuiElements.add(ib);
         
         OptionButton btn1 = new OptionButton(
                 KeyEvent.getKeyText(Integer.parseInt(Settings.getInstance().getConfigValue("jump"))), 
@@ -937,7 +979,7 @@ public class SettingsState extends BaseState
             }
         }
         
-        //screen.setLocationRelativeTo(null);
+        screen.setLocationRelativeTo(null);
     }
     
     /**
@@ -972,7 +1014,9 @@ public class SettingsState extends BaseState
      */
     public void selectSex(Integer sex)
     {
-        
+        Settings.getInstance().setConfigValue("sex", Integer.toString(sex));
+        int species = Integer.parseInt(Settings.getInstance().getConfigValue("species"));
+        m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + species * 2), 0, 128, 128);
     }
     
     /**
@@ -981,7 +1025,9 @@ public class SettingsState extends BaseState
      */
     public void selectSpecies(Integer species)
     {
-        
+        Settings.getInstance().setConfigValue("species", Integer.toString(species));
+        int sex = Integer.parseInt(Settings.getInstance().getConfigValue("sex"));
+        m_currentPreview = m_previewsPandas.getSubimage(128 * (sex + species * 2), 0, 128, 128);
     }
     
     /**
@@ -990,7 +1036,7 @@ public class SettingsState extends BaseState
      */
     public void selectDifficulty(Integer difficulty)
     {
-        
+        Settings.getInstance().setConfigValue("difficulty", Integer.toString(difficulty));
     }
     
     /**
@@ -999,6 +1045,7 @@ public class SettingsState extends BaseState
      */
     public void selectLanguage(Integer language)
     {
+        Settings.getInstance().setConfigValue("lang", Integer.toString(language));
         switch(language)
         {
             case 0:
@@ -1010,6 +1057,9 @@ public class SettingsState extends BaseState
         }
     }
     
+    /**
+     * 
+     */
     public void setSoundVolume()
     {
         Slider s = (Slider)m_screenGuiElements.get(m_screenGuiElements.size() - 2);
@@ -1018,6 +1068,9 @@ public class SettingsState extends BaseState
         Settings.getInstance().setConfigValue("sound", Integer.toString(volume));
     }
     
+    /**
+     * 
+     */
     public void setMusicVolume()
     {
         Slider s = (Slider)m_screenGuiElements.get(m_screenGuiElements.size() - 1);

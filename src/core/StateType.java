@@ -12,5 +12,8 @@ public enum StateType
     SAVES,
     INTRO,
     PAUSED,
-    TUTORIAL
+    PAUSED_SAVES,
+    PAUSED_SETTINGS,
+    TUTORIAL,
+    TEST
 }

@@ -18,6 +18,10 @@ public class CreditsState extends BaseState
 {   
     private final ArrayList<GuiComponent> m_guiElements = new ArrayList<>();
     
+    /**
+     * 
+     * @param stateManager 
+     */
     public CreditsState(StateManager stateManager)
     {
         super(stateManager);
@@ -67,10 +71,12 @@ public class CreditsState extends BaseState
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         
-        for(GuiComponent element : m_guiElements)
+        m_guiElements.stream().map((element) ->
         {
             element.update(dt);
-            
+            return element;            
+        }).forEachOrdered((element) ->
+        {
             if(element.isInside(mouseX, mouseY))
             {
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
@@ -84,7 +90,7 @@ public class CreditsState extends BaseState
                 
                 if(element.getStatus() != GuiComponent.Status.NEUTRAL)
                 {
-                    continue;
+                    return;
                 }
 
                 element.onHover();
@@ -97,7 +103,7 @@ public class CreditsState extends BaseState
             {
                 element.onRelease();
             }
-        }
+        });
     }
 
     @Override
@@ -128,24 +134,27 @@ public class CreditsState extends BaseState
         
         String text1 = i18nManager.trans("credits_text1");
         int text1Width = metrics.stringWidth(text1);
-        g.drawString(text1, screenWidth / 2 - text1Width / 2, 200);
+        g.drawString(text1, screenWidth / 2 - text1Width / 2, screenHeight * 200 / Screen.RES_1X_HEIGHT);
         
         String text2 = i18nManager.trans("credits_text2");
         int text2Width = metrics.stringWidth(text2);
-        g.drawString(text2, screenWidth / 2 - text2Width / 2, 250);
+        g.drawString(text2, screenWidth / 2 - text2Width / 2, screenHeight * 250 / Screen.RES_1X_HEIGHT);
         
         String text3 = i18nManager.trans("credits_text3");
         int text3Width = metrics.stringWidth(text3);
-        g.drawString(text3, screenWidth / 2 - text3Width / 2, 300);
+        g.drawString(text3, screenWidth / 2 - text3Width / 2, screenHeight * 300 / Screen.RES_1X_HEIGHT);
         
-        for(GuiComponent element : m_guiElements)
+        m_guiElements.forEach((element) ->
         {
             element.render(g);
-        }
+        });
         
         g.drawImage(resourceManager.getSpritesheets("foreground2"), 0, 0, screenWidth, screenHeight, null);
     }
     
+    /**
+     * 
+     */
     public void backToMain()
     {
         m_stateManager.switchTo(StateType.MAIN_MENU);

@@ -355,12 +355,6 @@ public class GameState extends BaseState
             int txt4W = metrics.stringWidth(startTxt4);
             g.drawString(startTxt4, screenWidth/2-txt4W/2, 520);
             
-            g.setColor(new Color(180, 14, 22));
-            
-            String warningTxt = i18nManager.trans("alert");
-            int txt5 = metrics.stringWidth(warningTxt);
-            g.drawString(warningTxt, screenWidth/2 - txt5/2, 550);
-            
             g.setColor(new Color(0, 0, 0, m_alpha));
             g.fillRect(0, 0, screenWidth, screenHeight);
         }
@@ -568,6 +562,7 @@ public class GameState extends BaseState
      */
     public void reinit(int lvl)
     {
+        System.out.println("ici");
         m_alpha = 0;
         m_timeF = TimerThread.MILLI;
         
@@ -615,6 +610,7 @@ public class GameState extends BaseState
                     m_player.setPosY(460);
                 }
             }
+            m_player.die(false);
             m_player.setWin(false);
             m_renderFreeCageAnim = false;
         }

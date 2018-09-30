@@ -43,6 +43,15 @@ public class MapState extends BaseState
         {292, 110}
     };
     
+    private String[] m_levelsNames = {
+        "Forgotten Temple",
+        "Mystic Lagoon",
+        "level_3",
+        "level_4",
+        "level_5",
+        "level_6"
+    };
+    
     private int[][] m_coordsPins = {
         {350, 405},
         {210, 312},
@@ -352,7 +361,7 @@ public class MapState extends BaseState
         Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
         FontMetrics metrics = g.getFontMetrics(font);
         g.setFont(font);
-        String levelName = "Mystic Lagoon";
+        String levelName = m_levelsNames[m_currentLvl - 1];
         int levelNameWidth = metrics.stringWidth(levelName);
         
         g.setColor(new Color(0, 0, 0, 128));
@@ -445,6 +454,10 @@ public class MapState extends BaseState
     {
         if(!m_animated)
         {
+            GameState gs = (GameState)m_stateManager.getState(StateType.GAME);
+            gs.reinit(m_currentLvl);
+            m_stateManager.switchTo(StateType.GAME);
+            
             /*GameScene gs = new GameScene(Defines.SCREEN_WIDTH, this.h, this.game, this.currentLvl + 1, this.currentScore);
             gs.level.setUnlockedLevels(m_unlockedLevels);
             if(m_cagesMap.get(m_currentLvl).isEmpty())

@@ -2,8 +2,10 @@ package entity;
 
 import core.Context;
 import core.Game;
+import entity.components.EntityComponentBase;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 /**
  * Entity class
@@ -13,6 +15,8 @@ import java.awt.Rectangle;
  */
 public abstract class Entity
 {
+    protected ArrayList<EntityComponentBase> m_components;
+    
     protected Game m_game;
     protected float m_posX, m_posY;
     protected int m_width, m_height;
