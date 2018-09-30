@@ -87,6 +87,7 @@ public class SavesState extends BaseState
             b.setPosition(coords[i][0], coords[i][1]);
             b.addApearance(GuiComponent.Status.NEUTRAL, m_gui.getSubimage(491, 1, 120, 99));
             b.addApearance(GuiComponent.Status.FOCUSED, m_gui.getSubimage(370, 1, 120, 99));
+            b.addApearance(GuiComponent.Status.DISABLED, m_gui.getSubimage(665, 551, 120, 99));
             b.addCallback(GuiComponent.Status.CLICKED, callbacks[i], this);
             m_guiElements.add(b);
         }
@@ -221,6 +222,33 @@ public class SavesState extends BaseState
             else if(element.getStatus() == GuiComponent.Status.CLICKED)
             {
                 element.onRelease();
+            }
+            
+            if(element instanceof ButtonGroup)
+            {
+                ButtonGroup bg = (ButtonGroup)element;
+                ArrayList<Button> bl = bg.getButtons();
+                bl.stream().map((b) -> (SaveSlot)b).forEachOrdered((ss) ->
+                {
+                    if(ss.isChecked() && ss.isEmpty())
+                    {
+                        IconButton ib1 = (IconButton)m_guiElements.get(0);
+                        IconButton ib2 = (IconButton)m_guiElements.get(1);
+                        ib1.setStatus(GuiComponent.Status.DISABLED);
+                        ib1.setDisabled(true);
+                        ib2.setStatus(GuiComponent.Status.DISABLED);
+                        ib2.setDisabled(true);
+                    }
+                    else if(ss.isChecked())
+                    {
+                        IconButton ib1 = (IconButton)m_guiElements.get(0);
+                        IconButton ib2 = (IconButton)m_guiElements.get(1);
+                        ib1.setStatus(GuiComponent.Status.NEUTRAL);
+                        ib1.setDisabled(false);
+                        ib2.setStatus(GuiComponent.Status.NEUTRAL);
+                        ib2.setDisabled(false);
+                    }
+                });
             }
         });
     }

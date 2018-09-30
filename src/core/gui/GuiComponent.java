@@ -21,6 +21,7 @@ public abstract class GuiComponent
     protected Color m_color;
     protected int m_width, m_height;
     protected BaseState m_owner;
+    protected boolean m_disabled;
 
     public enum Status
     {
@@ -81,6 +82,11 @@ public abstract class GuiComponent
         }
     }
 
+    public void setDisabled(boolean disabled)
+    {
+        m_disabled = disabled;
+    }
+    
     private void calculateBounds()
     {
         if (m_appearances.containsKey(m_status))
@@ -119,7 +125,7 @@ public abstract class GuiComponent
             return;
         }
 
-        if (m_callbacks.containsKey(status))
+        if(!m_disabled && m_callbacks.containsKey(status))
         {
             Callback c = m_callbacks.get(status);
             try
