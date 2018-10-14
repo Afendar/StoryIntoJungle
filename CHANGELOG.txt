@@ -19,12 +19,14 @@ RELEASE 3.0.0 [DD.MM.YYYY]
 
         - New application Icon;
         - Screen Resolution management;
+        - Launcher application;
 
     [EHANCE]
         
         - State management;
         - Resources management;
         - I18n management;
+        - Save management;
 
     [FIX]
 

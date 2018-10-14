@@ -120,12 +120,12 @@ public abstract class GuiComponent
 
     public void setStatus(Status status)
     {
-        if (m_status == status)
+        if (m_status == status || m_disabled)
         {
             return;
         }
 
-        if(!m_disabled && m_callbacks.containsKey(status))
+        if(m_callbacks.containsKey(status))
         {
             Callback c = m_callbacks.get(status);
             try

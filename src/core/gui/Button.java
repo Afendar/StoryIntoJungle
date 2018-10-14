@@ -111,11 +111,10 @@ public class Button extends GuiComponent
         FontMetrics fm = g.getFontMetrics(m_font);
         int labelHeight = fm.getHeight();
         int labelWidth = 0;
-        if (!m_label.isEmpty())
+        if (m_label != null && !m_label.isEmpty())
         {
             labelWidth = fm.stringWidth(m_label);
-        }
-        g.drawString(
+            g.drawString(
                 m_label,
                 m_textCenter
                         ? m_position.m_x + (m_width - labelWidth) / 2 + m_paddingLeft
@@ -123,5 +122,6 @@ public class Button extends GuiComponent
                 m_textCenter
                         ? (m_position.m_y + (m_height - labelHeight) / 2) + (labelHeight + m_paddingTop) / 2
                         : m_position.m_y + labelHeight + m_paddingTop);
+        }
     }
 }

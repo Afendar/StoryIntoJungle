@@ -50,24 +50,30 @@ public class TabsPanelsContainer extends GuiComponent
         m_tabPlacement = tabsPlacement;
         m_pages = new ArrayList<>();
         m_selectedIndex = -1;
-        m_tabWidth = 64;
-        m_tabHeight = 64;
+        m_tabWidth = 48;
+        m_tabHeight = 48;
         m_tabPadding = 10;
     }
 
     @Override
     public void update(double dt)
     {
+        m_pages.forEach((p) ->
+        {
+            p.update(dt);
+        });
     }
 
     @Override
     public void render(Graphics2D g)
     {
         FontMetrics fm = g.getFontMetrics(m_font);
-        int positionTab = m_position.m_x;
+        int positionTab = m_position.m_x + 50;
         
         g.setColor(Color.BLACK);
         g.setFont(m_font);
+        
+        g.drawImage(m_owner.getStateManager().getContext().m_resourceManager.getSpritesheets("bgPause"), m_position.m_x, m_position.m_y, null);
         
         for(int i = 0 ; i < m_pages.size(); i++)
         {
@@ -76,10 +82,8 @@ public class TabsPanelsContainer extends GuiComponent
             if(m_pages.size() > 1)
             {
                 String title = p.getTitle();
-                p.setTitlePosition(new int[]{positionTab, m_position.m_y});
-                g.setColor(new Color(239, 228, 176));
-                g.fillRect(positionTab, m_position.m_y, m_tabWidth, m_tabHeight);
-                positionTab += m_tabWidth + 20;
+                p.setTitlePosition(new int[]{positionTab, m_position.m_y + 50});
+                positionTab += m_tabWidth + 10;
             }
             g.setColor(Color.BLACK);
             p.renderTitle(g, fm.getAscent());
@@ -103,10 +107,10 @@ public class TabsPanelsContainer extends GuiComponent
         {
             Page p = m_pages.get(i);
             p.setEnabled(false);
-            if(mouseX >= m_position.m_x + i * m_tabWidth + i * m_tabPadding &&
-                mouseX <= m_position.m_x + i * m_tabWidth + i * m_tabPadding + m_tabWidth &&
-                mouseY >= m_position.m_y &&
-                mouseY <= m_position.m_y + m_tabHeight)
+            if(mouseX >= m_position.m_x + 50 + i * (m_tabWidth + 10) &&
+                mouseX <= m_position.m_x + 50 + i * (m_tabWidth + 10) + m_tabWidth &&
+                mouseY >= m_position.m_y + 50 &&
+                mouseY <= m_position.m_y + 50 + m_tabHeight)
                 p.setEnabled(true);
         }
     }
@@ -129,10 +133,10 @@ public class TabsPanelsContainer extends GuiComponent
         for(int i = 0 ; i < m_pages.size() ; i++)
         {
             Page p = m_pages.get(i);
-            if(posX >= m_position.m_x + i * m_tabWidth + i * m_tabPadding &&
-                posX <= m_position.m_x + i * m_tabWidth + i * m_tabPadding + m_tabWidth &&
-                posY >= m_position.m_y &&
-                posY <= m_position.m_y + m_tabHeight)
+            if(posX >= m_position.m_x + 50 + i * (m_tabWidth + 10) &&
+                posX <= m_position.m_x + 50 + i * (m_tabWidth + 10) + m_tabWidth &&
+                posY >= m_position.m_y + 50 &&
+                posY <= m_position.m_y + 50 + m_tabHeight)
                 return true;
         }
         return false;
@@ -282,6 +286,11 @@ public class TabsPanelsContainer extends GuiComponent
             this.m_icon = icon;
         }
         
+        public void update(double dt)
+        {
+            m_content.update(dt);
+        }
+        
         /**
          * 
          * @param g 
@@ -290,7 +299,19 @@ public class TabsPanelsContainer extends GuiComponent
         {
             if(m_icon != null)
             {            
-                g.drawImage(m_icon, m_titlePosition[0] + ((m_tabWidth - m_iconSize[0]) / 2), m_titlePosition[1] + ((m_tabHeight - m_iconSize[1]) / 2), m_iconSize[0], m_iconSize[1], null);
+                if(m_enabled)
+                {
+                    g.setColor(new Color(192, 179, 114));
+                    g.fillRect(m_titlePosition[0], m_titlePosition[1], 48, 48);
+                }
+                g.drawImage(
+                        m_icon, 
+                        m_titlePosition[0] + ((m_tabWidth - m_iconSize[0]) / 2), 
+                        m_titlePosition[1] + ((m_tabHeight - m_iconSize[1]) / 2), 
+                        m_iconSize[0], 
+                        m_iconSize[1], 
+                        null
+                );
             }
             g.drawString(
                     m_title, 
@@ -305,10 +326,7 @@ public class TabsPanelsContainer extends GuiComponent
          */
         public void renderContent(Graphics2D g)
         {
-            g.setColor(new Color(200, 191, 231));
-            g.fillRect(m_position.m_x, m_position.m_y + m_tabHeight, 600, 280);
-            g.setColor(Color.BLACK);
-            m_content.render(g, m_position.m_x + 10, m_position.m_y + m_tabHeight + 25);
+            m_content.render(g);
         }
         
         /**
@@ -346,6 +364,15 @@ public class TabsPanelsContainer extends GuiComponent
     public void setSelectedIndex(int index)
     {
         m_selectedIndex = index;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public int getTabHeight()
+    {
+        return m_tabHeight; 
     }
     
     /**

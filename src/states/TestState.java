@@ -30,13 +30,13 @@ public class TestState extends BaseState
         m_tabPanel = new TabsPanelsContainer(this);
         m_tabPanel.setPosition(100, 150);
         m_tabPanel.setFont(font);
-        m_tabPanel.addTab("", spritesheet.getSubimage(475, 554, 110, 93), new TabContent("Lorem ipsum dolor sit amet"));
+        m_tabPanel.addTab("", spritesheet.getSubimage(475, 554, 110, 93), new TabContent(this));
         m_tabPanel.setIconSize(0, 55, 46);
-        m_tabPanel.addTab("", spritesheet.getSubimage(590, 552, 68, 74), new TabContent("Little Content"));
+        m_tabPanel.addTab("", spritesheet.getSubimage(590, 552, 68, 74), new TabContent(this));
         m_tabPanel.setIconSize(1, 34, 37);
-        m_tabPanel.addTab("", spritesheet.getSubimage(480, 667, 94, 50), new TabContent("Tab content 2"));
+        m_tabPanel.addTab("", spritesheet.getSubimage(480, 667, 94, 50), new TabContent(this));
         m_tabPanel.setIconSize(2, 47, 25);
-        m_tabPanel.addTab("", spritesheet.getSubimage(588, 637, 74, 74), new TabContent("Tab content 3"));
+        m_tabPanel.addTab("", spritesheet.getSubimage(588, 637, 74, 74), new TabContent(this));
         m_tabPanel.setIconSize(3, 37, 37);
     }
 

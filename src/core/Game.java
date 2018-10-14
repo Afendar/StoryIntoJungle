@@ -52,10 +52,14 @@ public class Game extends JPanel implements Runnable
     public Game(String profileName)
     {
         init(profileName);
-        m_stateManager.switchTo(StateType.SAVES);
+        m_stateManager.switchTo(StateType.GAME);
         start();
     }
 
+    /**
+     * 
+     * @param profileName 
+     */
     private void init(String profileName)
     {
         m_running = false;

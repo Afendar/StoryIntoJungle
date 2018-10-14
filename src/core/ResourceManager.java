@@ -35,6 +35,7 @@ public class ResourceManager
             m_spritesheets.put("foreground2", ImageIO.read(getClass().getResource("/foreground2.png")));
             m_spritesheets.put("foreground3", ImageIO.read(getClass().getResource("/foreground3.png")));
             m_spritesheets.put("littles_pandas", ImageIO.read(getClass().getResource("/littles_pandas.png")));
+            m_spritesheets.put("bgPause", ImageIO.read(getClass().getResource("/gui_pausesettings.png")));
             
             m_fonts.put("kaushanscriptregular", Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/kaushanscriptregular.ttf").openStream()));
             

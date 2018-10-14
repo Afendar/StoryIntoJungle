@@ -7,6 +7,7 @@ import core.StateManager;
 import core.StateType;
 import core.gui.Button;
 import core.gui.ButtonGroup;
+import core.gui.Dialog;
 import core.gui.GuiComponent;
 import core.gui.IconButton;
 import core.gui.SaveSlot;
@@ -24,9 +25,8 @@ public class SavesState extends BaseState
 {
     private BufferedImage m_gui, m_background, m_foreground;
     private JSONObject m_jsonSaves;
-    private boolean m_displayError;
     private ArrayList<GuiComponent> m_guiElements;
-    private String m_errorMsg;
+    private Dialog m_dialog;
     
     /**
      * 
@@ -42,12 +42,11 @@ public class SavesState extends BaseState
     {
         ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Screen screen = m_stateManager.getContext().m_screen;
+        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
         m_guiElements = new ArrayList<>();
-        m_displayError = false;
-        m_errorMsg = "";
         m_gui = resourceManager.getSpritesheets("spritesheetGui2");
         
         m_background = getScaledInstance(
@@ -84,6 +83,11 @@ public class SavesState extends BaseState
         for(int i = 0 ; i < 3 ; i++)
         {
             IconButton b = new IconButton(icons[i], this);
+            if(i < 2)
+            {
+                b.setStatus(GuiComponent.Status.DISABLED);
+                b.setDisabled(true);
+            }
             b.setPosition(coords[i][0], coords[i][1]);
             b.addApearance(GuiComponent.Status.NEUTRAL, m_gui.getSubimage(491, 1, 120, 99));
             b.addApearance(GuiComponent.Status.FOCUSED, m_gui.getSubimage(370, 1, 120, 99));
@@ -129,6 +133,11 @@ public class SavesState extends BaseState
             offset += 227;
         }
         m_guiElements.add(bg);
+        
+        m_dialog = new Dialog(this, i18nManager.trans("alert_remove_save"), Dialog.YES_NO_OPTION);
+        m_dialog.addCallbackOption(0, "deleteSave", 1);
+        m_dialog.addCallbackOption(1, "dispose");
+        m_dialog.setPosition((screenWidth - 300) / 2, (screenHeight - 200) / 2);
     }
 
     @Override
@@ -189,6 +198,12 @@ public class SavesState extends BaseState
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         
+        if(m_dialog != null && m_dialog.isVisible())
+        {
+            m_dialog.update(dt);
+            return;
+        }
+        
         m_guiElements.stream().map((element) ->
         {
             element.update(dt);
@@ -202,6 +217,27 @@ public class SavesState extends BaseState
                 if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount >= 1)
                 {
                     element.onClick(mouseX, mouseY);
+                    
+                    m_guiElements.stream().filter((gc) -> (gc instanceof ButtonGroup)).map((gc) -> (ButtonGroup)gc).map((bg) -> bg.getButtons()).forEachOrdered((bl) ->
+                    {
+                        bl.stream().map((b) -> (SaveSlot)b).forEachOrdered((ss) ->
+                        {
+                            if(ss.isChecked() && ss.isEmpty())
+                            {
+                                m_guiElements.get(0).setStatus(GuiComponent.Status.DISABLED);
+                                m_guiElements.get(0).setDisabled(true);
+                                m_guiElements.get(1).setStatus(GuiComponent.Status.DISABLED);
+                                m_guiElements.get(1).setDisabled(true);
+                            }
+                            else if(ss.isChecked())
+                            {
+                                m_guiElements.get(0).setDisabled(false);
+                                m_guiElements.get(0).setStatus(GuiComponent.Status.NEUTRAL);
+                                m_guiElements.get(1).setDisabled(false);
+                                m_guiElements.get(1).setStatus(GuiComponent.Status.NEUTRAL);
+                            }
+                        });
+                    });
                 }
                 else if(!m_stateManager.getContext().m_inputsListener.mousePressed && element.getStatus() == GuiComponent.Status.CLICKED)
                 {
@@ -223,33 +259,6 @@ public class SavesState extends BaseState
             {
                 element.onRelease();
             }
-            
-            if(element instanceof ButtonGroup)
-            {
-                ButtonGroup bg = (ButtonGroup)element;
-                ArrayList<Button> bl = bg.getButtons();
-                bl.stream().map((b) -> (SaveSlot)b).forEachOrdered((ss) ->
-                {
-                    if(ss.isChecked() && ss.isEmpty())
-                    {
-                        IconButton ib1 = (IconButton)m_guiElements.get(0);
-                        IconButton ib2 = (IconButton)m_guiElements.get(1);
-                        ib1.setStatus(GuiComponent.Status.DISABLED);
-                        ib1.setDisabled(true);
-                        ib2.setStatus(GuiComponent.Status.DISABLED);
-                        ib2.setDisabled(true);
-                    }
-                    else if(ss.isChecked())
-                    {
-                        IconButton ib1 = (IconButton)m_guiElements.get(0);
-                        IconButton ib2 = (IconButton)m_guiElements.get(1);
-                        ib1.setStatus(GuiComponent.Status.NEUTRAL);
-                        ib1.setDisabled(false);
-                        ib2.setStatus(GuiComponent.Status.NEUTRAL);
-                        ib2.setDisabled(false);
-                    }
-                });
-            }
         });
     }
 
@@ -260,7 +269,6 @@ public class SavesState extends BaseState
         ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
-        int screenHeight = screen.getContentPane().getHeight();
         
         g.drawImage(m_background, 0, 0, null);
         g.setColor(new Color(0, 0, 0, 76));
@@ -279,17 +287,49 @@ public class SavesState extends BaseState
             element.render(g);
         });
         
-        if(m_displayError)
+        g.drawImage(m_foreground, 0, 0, null);
+        
+        if(m_dialog != null)
         {
-            g.setColor(new Color(136, 0, 21));
-            f = f.deriveFont(Font.PLAIN, 18.0f);
-            g.setFont(f);
-            metrics = g.getFontMetrics(f);
-            int strW = metrics.stringWidth(m_errorMsg);
-            g.drawString(m_errorMsg, (screenWidth - strW) / 2, screenHeight * 417 / Screen.RES_1X_HEIGHT);
+            m_dialog.render(g);
+        }
+    }
+    
+    public void rebuildGui()
+    {
+        m_jsonSaves = Save.getInstance().getSaves();
+        ButtonGroup bg = (ButtonGroup)m_guiElements.get(m_guiElements.size() - 1);
+        
+        for(int i = 0 ; i <  bg.size(); i++)
+        {
+            JSONObject saveData = (JSONObject)m_jsonSaves.get("slot" + (i + 1));
+            SaveSlot ss = (SaveSlot)bg.getButton(i);
+            ss.setChecked(false);
+            if(saveData.isEmpty())
+            {
+                ss.setEmpty(true);
+            }
+            else
+            {
+                JSONObject playerData = (JSONObject)saveData.get("player");
+                JSONObject levelData = (JSONObject)saveData.get("level");
+                ss.setData(
+                    (int)(long)playerData.get("sex"), 
+                    (int)(long)playerData.get("species"), 
+                    (int)(long)playerData.get("score"), 
+                    (int)(long)levelData.get("nbFreeCages"), 
+                    (int)(long)levelData.get("complete"), 
+                    (int)(long)playerData.get("difficulty"), 
+                    (int)(long)levelData.get("number"), 
+                    (String)playerData.get("name")
+                );
+            }
         }
         
-        g.drawImage(m_foreground, 0, 0, null);
+        m_guiElements.get(0).setStatus(GuiComponent.Status.DISABLED);
+        m_guiElements.get(0).setDisabled(true);
+        m_guiElements.get(1).setStatus(GuiComponent.Status.DISABLED);
+        m_guiElements.get(1).setDisabled(true);
     }
     
     /**
@@ -316,21 +356,25 @@ public class SavesState extends BaseState
             }
         }
         
-        if(index == 0)
+        System.out.println("load save: " + index);
+        
+        //TODO load save and switch to game state.
+    }
+    
+    public void deleteSave()
+    {
+        deleteSave(null);
+    }
+    
+    public void deleteSave(Integer answer)
+    {
+        if(answer == null && m_dialog != null)
         {
-            m_displayError = true;
-            m_errorMsg = "Please select the save to load";
+            m_dialog.showDialog();
             return;
         }
         
-        System.out.println("load save: " + index);
-    }
-    
-    /**
-     * 
-     */
-    public void deleteSave()
-    {
+        m_dialog.hideDialog();
         int index = 0;
         
         for(GuiComponent gc : m_guiElements)
@@ -342,7 +386,7 @@ public class SavesState extends BaseState
                 for(int i = 0 ; i < buttons.size() ; i++)
                 {
                     SaveSlot ss = (SaveSlot)buttons.get(i);
-                    if(ss.isChecked())
+                    if(ss.isChecked() && !ss.isEmpty())
                     {
                         index = i + 1;
                     }
@@ -350,14 +394,13 @@ public class SavesState extends BaseState
             }
         }
         
-        if(index == 0)
-        {
-            m_displayError = true;
-            m_errorMsg = "Please select the save to remove";
-            return;
-        }
-        
-        System.out.println("remove save: " + index);
+        Save.getInstance().removeSave(index);
+        rebuildGui();
+    }
+    
+    public void dispose()
+    {
+        m_dialog.hideDialog();
     }
     
     /**

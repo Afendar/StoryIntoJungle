@@ -42,6 +42,16 @@ public class ButtonGroup extends GuiComponent
         return m_buttons;
     }
     
+    public int size()
+    {
+        return m_buttons.size();
+    }
+    
+    public Button getButton(int index)
+    {
+        return m_buttons.get(index);
+    }
+    
     @Override
     public boolean isInside(int mouseX, int mouseY)
     {
@@ -69,7 +79,7 @@ public class ButtonGroup extends GuiComponent
     @Override
     public void onClick(int mouseX, int mouseY)
     {
-        for(Button b : m_buttons)
+        m_buttons.forEach((b) ->
         {
             if(b.isInside(m_mouseX, m_mouseY))
             {
@@ -83,16 +93,16 @@ public class ButtonGroup extends GuiComponent
                 }
                 b.setStatus(Status.NEUTRAL);
             }
-        }
+        });
     }
     
     @Override
     public void render(Graphics2D g)
     {
-        for(Button b : m_buttons)
+        m_buttons.forEach((b) ->
         {
             b.render(g);
-        }
+        });
     }
 
     @Override

@@ -56,7 +56,10 @@ public class Save extends Profile
      */
     public void removeSave(int slotNumber)
     {
-        
+        JSONObject saves = (JSONObject)m_data.get("saves");
+        saves.replace("slot" + slotNumber, new JSONObject());
+        m_data.put("saves", saves);
+        save();
     }
     
     /**
