@@ -20,13 +20,17 @@ RELEASE 3.0.0 [DD.MM.YYYY]
         - New application Icon;
         - Screen Resolution management;
         - Launcher application;
+        - Idle states and animations;
 
-    [EHANCE]
+    [ENHANCE]
         
         - State management;
         - Resources management;
         - I18n management;
         - Save management;
+        - Map refactoring and design;
+        - Level management;
+        - Level data system loading;
 
     [FIX]
 

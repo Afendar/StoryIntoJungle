@@ -1,0 +1,10 @@
+{
+    "name":"Pheasants Forest",
+    "weather":"SUN",
+    "season":"SUMMER",
+    "map": {
+        "top": "lvl5-top.png",
+        "layer-1": "lvl5.png"
+    },
+    "background": "background-summer"
+}

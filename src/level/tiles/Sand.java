@@ -1,6 +1,6 @@
 package level.tiles;
 
-import level.Level;
+import level.LevelOld;
 
 /**
  * Sand class
@@ -28,7 +28,7 @@ public class Sand extends Tile {
     }
     
     @Override
-    public boolean canPass(Level level, int x, int y){
+    public boolean canPass(LevelOld level, int x, int y){
         return level.getData(x, y) == 2;
     }
     
@@ -41,6 +41,6 @@ public class Sand extends Tile {
     }
     
     @Override
-    public void update(Level level, int x, int y, double dt){
+    public void update(LevelOld level, int x, int y, double dt){
     }
 }

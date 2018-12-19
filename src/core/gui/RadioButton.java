@@ -84,6 +84,7 @@ public class RadioButton extends Button
     public void render(Graphics2D g)
     {
         g.setColor(Color.BLACK);
+        g.setFont(m_font);
         int w = 0;
         int h = 0;
         if (m_appearances.get(m_status) != null)

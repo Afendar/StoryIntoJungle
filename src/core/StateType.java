@@ -7,6 +7,7 @@ public enum StateType
     CREDITS,
     HIGHT_SCORES,
     MAP,
+    MAP_SAVES,
     MAIN_MENU,
     SETTINGS,
     SAVES,

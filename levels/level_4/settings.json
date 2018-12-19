@@ -1,0 +1,10 @@
+{
+    "name":"Sticky Swamp",
+    "weather":"RAIN",
+    "season":"SUMMER",
+    "map": {
+        "top": "lvl4-top.png",
+        "layer-1": "lvl4.png"
+    },
+    "background": "background-swamp"
+}

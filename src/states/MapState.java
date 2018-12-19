@@ -118,6 +118,9 @@ public class MapState extends BaseState
         ib.addApearance(GuiComponent.Status.NEUTRAL, spritesheetGui2.getSubimage(370, 1, 120, 99));
         ib.addApearance(GuiComponent.Status.FOCUSED, spritesheetGui2.getSubimage(491, 1, 120, 99));
         ib.addApearance(GuiComponent.Status.CLICKED, spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.DISABLED, spritesheetGui2.getSubimage(665, 551, 120, 99));
+        ib.setStatus(GuiComponent.Status.DISABLED);
+        ib.setDisabled(true);
         m_guiElements.add(ib);
         
         ib = new IconButton(spritesheetGui2.getSubimage(726, 151, 34, 36), this);
@@ -126,6 +129,7 @@ public class MapState extends BaseState
         ib.addApearance(GuiComponent.Status.NEUTRAL, spritesheetGui2.getSubimage(370, 1, 120, 99));
         ib.addApearance(GuiComponent.Status.FOCUSED, spritesheetGui2.getSubimage(491, 1, 120, 99));
         ib.addApearance(GuiComponent.Status.CLICKED, spritesheetGui2.getSubimage(491, 1, 120, 99));
+        ib.addApearance(GuiComponent.Status.DISABLED, spritesheetGui2.getSubimage(665, 551, 120, 99));
         m_guiElements.add(ib);
         
         ib = new IconButton(spritesheetGui2.getSubimage(176, 93, 34, 35), this);
@@ -199,11 +203,6 @@ public class MapState extends BaseState
     }
 
     @Override
-    public void activate()
-    {
-    }
-
-    @Override
     public void desactivate() 
     {
     }
@@ -220,7 +219,12 @@ public class MapState extends BaseState
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         
         for(GuiComponent element : m_guiElements)
-        {   
+        { 
+            if(element.isDisabled())
+            {
+                continue;
+            }
+            
             element.update(dt);
             
             if(element.isInside(mouseX, mouseY))
@@ -263,13 +267,40 @@ public class MapState extends BaseState
             m_displayStar = Easing.linearEase(m_time, 0, 1, 40);
         }
         
-        if(!m_points.isEmpty())
+        if(!m_points.isEmpty() && m_animated == true)
         {
+            m_guiElements.get(2).setStatus(GuiComponent.Status.DISABLED);
+            m_guiElements.get(2).setDisabled(true);
+            m_guiElements.get(1).setStatus(GuiComponent.Status.DISABLED);
+            m_guiElements.get(1).setDisabled(true);
+            
             if(m_index < m_points.size() - 1)
                 m_index++;
             else
             {
                 m_animated = false;
+                System.out.println(m_currentLvl);
+                switch (m_currentLvl)
+                {
+                    case Defines.LEVEL_MAX - 1:
+                        m_guiElements.get(2).setStatus(GuiComponent.Status.DISABLED);
+                        m_guiElements.get(2).setDisabled(true);
+                        m_guiElements.get(1).setDisabled(false);
+                        m_guiElements.get(1).setStatus(GuiComponent.Status.NEUTRAL);
+                        break;
+                    case 1:
+                        m_guiElements.get(1).setStatus(GuiComponent.Status.DISABLED);
+                        m_guiElements.get(1).setDisabled(true);
+                        m_guiElements.get(2).setDisabled(false);
+                        m_guiElements.get(2).setStatus(GuiComponent.Status.NEUTRAL);
+                        break;
+                    default:
+                        m_guiElements.get(2).setDisabled(false);
+                        m_guiElements.get(2).setStatus(GuiComponent.Status.NEUTRAL);
+                        m_guiElements.get(1).setDisabled(false);
+                        m_guiElements.get(1).setStatus(GuiComponent.Status.NEUTRAL);
+                        break;
+                }
             }
         
             m_pos = m_points.get(m_index);
@@ -352,12 +383,6 @@ public class MapState extends BaseState
         g.drawImage(m_emptyStar, 382, 186 + 9, null);
         g.drawImage(m_emptyStar, 400, 186 + 10, null);
         
-        //g.drawImage(m_panel, 545, 305, null);
-        
-        //g.drawImage(m_panel, 530, 118, null);
-        
-        //g.drawImage(m_panel, 265, 40, null);
-        
         Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
         FontMetrics metrics = g.getFontMetrics(font);
         g.setFont(font);
@@ -369,41 +394,6 @@ public class MapState extends BaseState
         g.setColor(new Color(255, 255, 255));
         g.drawString(levelName, screenWidth - 50 - levelNameWidth, 58);
     }
-    
-    /*
-    public void processClick()
-    {
-        if(m_stateManager.getContext().m_inputsListener.mousePressed && m_stateManager.getContext().m_inputsListener.mouseClickCount == 1)
-        {
-            switch(m_selectedItem)
-            {
-                case 1:
-                    m_stateManager.switchTo(StateType.MAIN_MENU);
-                    break;
-                case 2:
-                    // TODO save
-                    break;
-                case 3:
-                    if(m_currentLvl > 1 && m_unlockedLevels[m_currentLvl - 2])
-                    {
-                        m_animated = true;
-                        m_currentLvl--;
-                        followPrevious();
-                    }
-                    break;
-                case 4:
-                    if(m_currentLvl < 6 && m_unlockedLevels[m_currentLvl]){
-                        m_animated = true;
-                        m_currentLvl++;
-                        followNext();
-                    }
-                    break;
-                case 5:
-                    
-                    break;
-            }
-        }
-    }*/
     
     /**
      * 
@@ -444,7 +434,7 @@ public class MapState extends BaseState
      */
     public void save()
     {
-        //TODO save
+        m_stateManager.switchTo(StateType.MAP_SAVES);
     }
     
     /**

@@ -30,6 +30,7 @@ import ld34.profile.BestScores;
 import ld34.profile.Save;
 import ld34.profile.Settings;
 import level.Level;
+import level.LevelManager;
 
 /**
  * GameState class
@@ -42,6 +43,7 @@ public class GameState extends BaseState
     public Player m_player;
     public Level m_level;
     public Camera m_cam;
+    private LevelManager m_levelManager;
     
     public GuiConsole m_guiConsole;
     
@@ -68,33 +70,34 @@ public class GameState extends BaseState
     @Override
     public void onCreate() 
     {
-        Screen screen = m_stateManager.getContext().m_screen;
+        /*Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
         m_guiConsole = new GuiConsole(0, 400, 350, 200, m_stateManager.getContext().m_inputsListener);
+        m_levelManager = new LevelManager();
         
         m_nbLevel = 1;
         m_displayEnd = false;
         m_displayStart = true;
         
-        if(m_nbLevel > 1){
+        if(m_nbLevel > 1)
+        {
             m_displayStart = false;
         }
         
         Context c = m_stateManager.getContext();
-        m_level = new Level(m_nbLevel, c);
-        for(int i=1;i<m_nbLevel;i++){
+        m_level = m_levelManager.loadLevel(m_nbLevel);
+        for(int i=1;i<m_nbLevel;i++)
+        {
             m_level.setUnlocked(i);
         }
         m_level.setNbTilesInScreenX(screenWidth);
         m_level.setNbTilesInScreenY(screenHeight);
         
-        m_cageToFree = m_level.nbCages;
+        m_cageToFree = m_level.m_nbCages;
         
         m_cam = new Camera(0, 0, screenWidth, screenHeight, m_level);
-        
-        System.out.println(Settings.getInstance().getConfigValue("difficulty"));
         
         m_player = new Player(
             32, 
@@ -108,6 +111,8 @@ public class GameState extends BaseState
             c
         );
         m_player.setScore(0);
+        
+        m_stateManager.getContext().m_profiler.addObjectToDebug(m_player, new String[]{"getPosX", "getPosY", "getState"});
         
         m_level.addPlayer(m_player);
 
@@ -127,7 +132,7 @@ public class GameState extends BaseState
         m_minimap = new Minimap(screenWidth, screenHeight, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
         
         m_timeSound = TimerThread.MILLI;
-        m_soundPlayed = 0;
+        m_soundPlayed = 0;*/
     }
 
     @Override
@@ -139,7 +144,9 @@ public class GameState extends BaseState
     @Override
     public void activate()
     {
-        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
+        super.activate();
+        
+        /*ResourceManager rm = m_stateManager.getContext().m_resourceManager;
         if(m_soundPlayed == 0)
         {
             m_timeSound = TimerThread.MILLI;
@@ -160,7 +167,7 @@ public class GameState extends BaseState
             m_soundPlayed = 1;
             Sound jungle2 = rm.getMusic("jungle2");
             new Thread(jungle2::play).start();
-        }
+        }*/
     }
 
     @Override
@@ -178,7 +185,7 @@ public class GameState extends BaseState
     @Override
     public void update(double dt)
     {
-        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
+        /*ResourceManager rm = m_stateManager.getContext().m_resourceManager;
         
         m_guiConsole.update(dt);
         
@@ -203,7 +210,7 @@ public class GameState extends BaseState
             new Thread(jungle2::play).start();
         }
 
-        if(m_cageToFree != m_level.nbCages && m_timeEventFree < 200){
+        if(m_cageToFree != m_level.m_nbCages && m_timeEventFree < 200){
             m_renderFreeCageAnim = true;
             m_timeEventFree += dt;
             if(m_timeEventFree < 55)
@@ -220,14 +227,14 @@ public class GameState extends BaseState
             m_renderFreeCageAnim = false;
             m_timeEventFree = 0;
             m_eventY = 0;
-            m_cageToFree = m_level.nbCages;
+            m_cageToFree = m_level.m_nbCages;
         }
 
-        if(m_level.nbLevel == 1)
+        if(m_level.m_nbLevel == 1)
         {
-            for(int i=0;i< m_level.eventsPos.length;i++)
+            for(int i=0;i< m_level.getEventsPos().length;i++)
             {
-                if(m_player.getPosX() >= m_level.eventsPos[i][0] + 64 && m_player.getPosX() <= m_level.eventsPos[i][0] + 128 && !m_level.viewedEvent[i])
+                if(m_player.getPosX() >= m_level.getEventsPos()[i][0] + 64 && m_player.getPosX() <= m_level.getEventsPos()[i][0] + 128 && !m_level.m_viewedEvent[i])
                 {
                     TutorialState ts = (TutorialState)m_stateManager.getState(StateType.TUTORIAL);
                     if(ts == null)
@@ -250,12 +257,12 @@ public class GameState extends BaseState
             m_player.setCheckpointX(0);
             if(m_nbLevel < Defines.LEVEL_MAX)
             {
-                m_stateManager.switchTo(StateType.MAP);
+                m_stateManager.switchTo(StateType.MAP);*/
                 /*m_level.setUnlocked(m_nbLevel);
                 MapScene ms = new MapScene(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, m_game, m_nbLevel, m_player.score, m_level.unlockedLevels);
                 ms.setCagesMap(m_level.cagesMap);
                 return ms;*/
-            }
+            /*}
             else
             {
                 reinit(m_nbLevel);
@@ -309,13 +316,13 @@ public class GameState extends BaseState
                     m_stateManager.switchTo(StateType.PAUSED);
                 }
             }
-        }
+        }*/
     }
 
     @Override
     public void render(Graphics2D g)
     {
-        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        /*I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Screen screen = m_stateManager.getContext().m_screen;
         
@@ -425,8 +432,8 @@ public class GameState extends BaseState
             //Map Render
             int startX = (int)(m_player.getPosX() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenX() / 2);
             int startY = (int)(m_player.getPosY() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenY() / 2);
-            if(startX > m_level.nbTilesW - m_level.getNbTilesInScreenX())startX = m_level.nbTilesW - m_level.getNbTilesInScreenX();
-            if(startY > m_level.nbTilesH - m_level.getNbTilesInScreenY())startY = m_level.nbTilesH - m_level.getNbTilesInScreenY();
+            if(startX > m_level.m_nbTilesW - m_level.getNbTilesInScreenX())startX = m_level.m_nbTilesW - m_level.getNbTilesInScreenX();
+            if(startY > m_level.m_nbTilesH - m_level.getNbTilesInScreenY())startY = m_level.m_nbTilesH - m_level.getNbTilesInScreenY();
             if(startX < 0)startX = 0;
             if(startY < 0)startY = 0;
             
@@ -438,7 +445,7 @@ public class GameState extends BaseState
 
             if(m_displayEvent)
             {
-                g.drawImage(m_monkeySpriteSheet.getSubimage(105 * (int)(m_timeMonkey / 4), 0, 105, 107), m_level.eventsPos[m_eventNumber][0] + 139, m_level.eventsPos[m_eventNumber][1] - 81, null);
+                g.drawImage(m_monkeySpriteSheet.getSubimage(105 * (int)(m_timeMonkey / 4), 0, 105, 107), m_level.getEventsPos()[m_eventNumber][0] + 139, m_level.getEventsPos()[m_eventNumber][1] - 81, null);
             }
 
             g.translate(m_cam.x, m_cam.y);
@@ -489,7 +496,7 @@ public class GameState extends BaseState
         m_player = player;
     }
     
-    public void setLevel(Level level)
+    public void setLevel(LevelOld level)
     {
         m_level = level;
     }
@@ -553,7 +560,7 @@ public class GameState extends BaseState
         m_bgGui2 = m_spritesheetGui.getSubimage(0, 0, 214, 50);
         m_clockGui = m_spritesheetGui.getSubimage(0, 281, 55, 55);
         m_cageIcon = m_guiAssets.getSubimage(384, 101, 27, 25); 
-        m_dollardIcon = m_guiAssets.getSubimage(413, 104, 16, 20);
+        m_dollardIcon = m_guiAssets.getSubimage(413, 104, 16, 20);*/
     }
     
     /**
@@ -562,7 +569,7 @@ public class GameState extends BaseState
      */
     public void reinit(int lvl)
     {
-        System.out.println("ici");
+        /*System.out.println("ici");
         m_alpha = 0;
         m_timeF = TimerThread.MILLI;
         
@@ -575,7 +582,7 @@ public class GameState extends BaseState
             
             if(lvl != 0)
             {
-                m_level = new Level(m_nbLevel, m_stateManager.getContext());
+                m_level = new LevelOld(m_nbLevel);
                 m_level.setNbTilesInScreenX(screenWidth);
                 m_level.setNbTilesInScreenY(screenHeight);
             }
@@ -618,12 +625,12 @@ public class GameState extends BaseState
         {
             m_displayEnd = true;
             m_player.setWin(false);
-        }
+        }*/
     }
     
     public void renderFreeCageAnim(Graphics g)
     {
-        Screen screen = m_stateManager.getContext().m_screen;
+        /*Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         
         g.drawImage(m_spritesheetGui2.getSubimage(0, 547, 281, 132), screenWidth/2 - 140, m_eventY, null);
@@ -631,10 +638,10 @@ public class GameState extends BaseState
         {
             g.drawImage(m_spritesheetGui2.getSubimage(282, 548, 37, 36), screenWidth/2 - 140 +((i) * 40 + 39), m_eventY + 78, null);
         }
-        for(int i=0;i<m_level.nbCages;i++)
+        for(int i=0;i<m_level.m_nbCages;i++)
         {
             g.drawImage(m_spritesheetGui2.getSubimage(282, 586, 37, 36), screenWidth/2 - 140 + ((i + m_level.getFreeCages()) * 40 + 39), m_eventY + 78, null);
-        }
+        }*/
     }
     
     /**
@@ -643,7 +650,7 @@ public class GameState extends BaseState
      */
     public void renderGUI(Graphics g)
     {
-        ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
+        /*ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 22.0f);
         Font fontS = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 17.0f);
         
@@ -662,7 +669,7 @@ public class GameState extends BaseState
         int scoreW = m.stringWidth("" + m_player.getScore());
         g.drawString("" + m_player.getScore(), 165 - scoreW, 106);
         g.drawString("" + m_nbLevel, 95, 47);
-        g.drawString("" + m_level.nbCages, 210, 47);
+        g.drawString("" + m_level.m_nbCages, 210, 47);
 
         if(Integer.parseInt(Settings.getInstance().getConfigValue("difficulty")) == 5)
         {
@@ -680,7 +687,7 @@ public class GameState extends BaseState
                 g.setFont(font);
                 g.drawString((String.format("%02d", m_minutes))+":"+(String.format("%02d", m_secondes)), 650, 50);
             }
-        }
+        }*/
     }
     
     /**
@@ -689,13 +696,13 @@ public class GameState extends BaseState
      */
     public void setLevelCagesMap(List<List<CageEntity>> cagesMap)
     {
-        for(int i=0;i<cagesMap.size();i++)
+        /*for(int i=0;i<cagesMap.size();i++)
         {
             if(i + 1 == m_nbLevel)
                 m_level.setCagesInLevel(cagesMap.get(i));
             else
-                m_level.cagesMap.set(i, cagesMap.get(i));
-        }
+                m_level.m_cagesMap.set(i, cagesMap.get(i));
+        }*/
     }
     
     /**
@@ -722,10 +729,10 @@ public class GameState extends BaseState
         return output.toString();
     }
     
-    public boolean save()
+    public boolean save(int slotId)
     {
-        Save s = Save.getInstance();
-        s.saveGame(1, m_level, m_player);
+        /*Save s = Save.getInstance();
+        s.saveGame(1, m_level, m_player);*/
         return true;
     }
 }

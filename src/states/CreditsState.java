@@ -51,11 +51,6 @@ public class CreditsState extends BaseState
     }
 
     @Override
-    public void activate() 
-    {
-    }
-
-    @Override
     public void desactivate()
     {
     }

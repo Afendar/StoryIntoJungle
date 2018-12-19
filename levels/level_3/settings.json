@@ -1,0 +1,10 @@
+{
+    "name":"Mystic Lagoon",
+    "weather":"SUN",
+    "season":"SPRING",
+    "map": {
+        "top": "lvl3-top.png",
+        "layer-1": "lvl3.png"
+    },
+    "background": "background-lagoon"
+}

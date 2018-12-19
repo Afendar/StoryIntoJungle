@@ -46,7 +46,10 @@ public abstract class BaseState
     /**
      * 
      */
-    public abstract void activate();
+    public void activate()
+    {
+        m_stateManager.getContext().m_inputsListener.releaseAll();
+    }
     
     /**
      * 

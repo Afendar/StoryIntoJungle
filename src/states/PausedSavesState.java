@@ -132,12 +132,6 @@ public class PausedSavesState extends BaseState
     }
 
     @Override
-    public void activate()
-    {
-        
-    }
-
-    @Override
     public void desactivate()
     {
         
@@ -152,6 +146,12 @@ public class PausedSavesState extends BaseState
     @Override
     public void update(double dt)
     {
+        if(m_stateManager.getContext().m_inputsListener.pause.typed)
+        {
+            backToMenu();
+            return;
+        }
+        
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         

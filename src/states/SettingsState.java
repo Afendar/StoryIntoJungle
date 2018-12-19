@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import ld34.profile.Settings;
-import level.Level;
+import level.LevelOld;
 
 public class SettingsState extends BaseState
 {
@@ -130,9 +130,10 @@ public class SettingsState extends BaseState
     }
 
     private void createScreenInterface(int screenWidth, int screenHeight)
-    {
+    {   
         CheckBox cb = new CheckBox("Fullscreen", this);
         cb.setPosition(189, 390);
+        cb.setFont(m_fontS);
         cb.addCallback(GuiComponent.Status.CLICKED, "toggleFullscreen", this);
         cb.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
         cb.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(320, 586, 41, 33));
@@ -143,6 +144,7 @@ public class SettingsState extends BaseState
         
         RadioButton rb1 = new RadioButton("800 x 600", this);
         rb1.setPosition(190, 230);
+        rb1.setFont(m_fontS);
         rb1.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 800, 600);
         rb1.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb1.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
@@ -154,6 +156,7 @@ public class SettingsState extends BaseState
         
         RadioButton rb2 = new RadioButton("1024 x 768", this);
         rb2.setPosition(190, 280);
+        rb2.setFont(m_fontS);
         rb2.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 1024, 768);
         rb2.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
@@ -165,6 +168,7 @@ public class SettingsState extends BaseState
         
         RadioButton rb3 = new RadioButton("1280 x 960", this);
         rb3.setPosition(190, 330);
+        rb3.setFont(m_fontS);
         rb3.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 1280, 960);
         rb3.addApearance(GuiComponent.Status.NEUTRAL, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
         rb3.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(365, 589, 29, 29));
@@ -291,7 +295,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_EASY)
+        if(difficulty == LevelOld.DIFFICULTY_EASY)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -302,7 +306,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_MEDIUM)
+        if(difficulty == LevelOld.DIFFICULTY_MEDIUM)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -313,7 +317,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_HARD)
+        if(difficulty == LevelOld.DIFFICULTY_HARD)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -324,7 +328,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_HARDCORE)
+        if(difficulty == LevelOld.DIFFICULTY_HARDCORE)
             rib.setChecked(true);
         bg.add(rib);
         m_gameGuiElements.add(bg);
@@ -394,11 +398,6 @@ public class SettingsState extends BaseState
     
     @Override
     public void onDestroy() 
-    {
-    }
-
-    @Override
-    public void activate() 
     {
     }
 

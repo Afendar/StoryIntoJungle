@@ -3,7 +3,7 @@ package entity;
 import core.Context;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import level.Level;
+import level.LevelOld;
 
 /**
  * SandEntity class
@@ -14,7 +14,7 @@ import level.Level;
 public class SandEntity extends Entity
 {
     public double dt;
-    public Level level;
+    public LevelOld level;
 
     /**
      *
@@ -22,7 +22,7 @@ public class SandEntity extends Entity
      * @param posX
      * @param posY
      */
-    public SandEntity(Level level, int posX, int posY, Context context)
+    public SandEntity(LevelOld level, int posX, int posY, Context context)
     {
         super(posX, posY, context);
         this.level = level;

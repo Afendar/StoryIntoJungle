@@ -125,7 +125,6 @@ public class MainMenuState extends BaseState
         }
         
         Font font = ressourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 24.0f);
-
         for(int i = 0 ; i < coords.length ; i++)
         {
             Button b;
@@ -168,6 +167,8 @@ public class MainMenuState extends BaseState
     @Override
     public void activate()
     {
+        super.activate();
+        
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();

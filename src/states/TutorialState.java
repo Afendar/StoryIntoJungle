@@ -35,6 +35,7 @@ public class TutorialState extends BaseState
         m_timer = 0;
         m_counter = 0;
         m_text = "";
+        m_tmpText = "";
         m_levit  = false;
         m_goingDown = true;
     }
@@ -80,12 +81,6 @@ public class TutorialState extends BaseState
 
     @Override
     public void onDestroy() 
-    {
-        
-    }
-
-    @Override
-    public void activate()
     {
         
     }

@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 public class ResourceManager
 {
     private Map<String, BufferedImage> m_spritesheets = new HashMap<>();
+    private Map<String, BufferedImage> m_backgrounds = new HashMap<>();
     private Map<String, Font> m_fonts = new HashMap<>();
     private Map<String, Sound> m_sounds = new HashMap<>();
     private Map<String, Sound> m_musics = new HashMap<>();
@@ -31,11 +32,19 @@ public class ResourceManager
             m_spritesheets.put("spritesheetGui", ImageIO.read(getClass().getResource("/gui.png")));
             m_spritesheets.put("spritesheetGui2", ImageIO.read(getClass().getResource("/gui2.png")));
             m_spritesheets.put("background", ImageIO.read(getClass().getResource("/background.png")));
+            m_spritesheets.put("backgroundpause", ImageIO.read(getClass().getResource("/backgroundpause.png")));
             m_spritesheets.put("foreground", ImageIO.read(getClass().getResource("/foreground1.png")));
             m_spritesheets.put("foreground2", ImageIO.read(getClass().getResource("/foreground2.png")));
             m_spritesheets.put("foreground3", ImageIO.read(getClass().getResource("/foreground3.png")));
             m_spritesheets.put("littles_pandas", ImageIO.read(getClass().getResource("/littles_pandas.png")));
             m_spritesheets.put("bgPause", ImageIO.read(getClass().getResource("/gui_pausesettings.png")));
+            
+            m_backgrounds.put("background-fall", ImageIO.read(getClass().getResource("/backgrounds/background-fall.png")));
+            m_backgrounds.put("background-lagoon", ImageIO.read(getClass().getResource("/backgrounds/background-lagoon.png")));
+            m_backgrounds.put("background-spring", ImageIO.read(getClass().getResource("/backgrounds/background-spring.png")));
+            m_backgrounds.put("background-summer", ImageIO.read(getClass().getResource("/backgrounds/background-summer.png")));
+            m_backgrounds.put("background-swamp", ImageIO.read(getClass().getResource("/backgrounds/background-swamp.png")));
+            m_backgrounds.put("background-winter", ImageIO.read(getClass().getResource("/backgrounds/background-winter.png")));
             
             m_fonts.put("kaushanscriptregular", Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/fonts/kaushanscriptregular.ttf").openStream()));
             
@@ -81,6 +90,15 @@ public class ResourceManager
     public BufferedImage getSpritesheets(String name)
     {
         return m_spritesheets.get(name);
+    }
+    
+    /**
+     * 
+     * @param name
+     * @return 
+     */
+    public BufferedImage getBackground(String name){
+        return m_backgrounds.get(name);
     }
     
     /**

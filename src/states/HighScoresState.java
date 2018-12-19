@@ -53,12 +53,6 @@ public class HighScoresState extends BaseState
     }
 
     @Override
-    public void activate()
-    {
-        
-    }
-
-    @Override
     public void desactivate()
     {
         

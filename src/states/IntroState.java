@@ -38,11 +38,6 @@ public class IntroState extends BaseState
     }
 
     @Override
-    public void activate()
-    {
-    }
-
-    @Override
     public void desactivate() 
     {
     }

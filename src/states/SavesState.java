@@ -149,6 +149,8 @@ public class SavesState extends BaseState
     @Override
     public void activate()
     {
+        super.activate();
+        
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();

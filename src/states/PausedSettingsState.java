@@ -1,8 +1,6 @@
 package states;
 
-import core.CustomTextField;
 import core.I18nManager;
-import core.OptionButton;
 import core.ResourceManager;
 import core.Screen;
 import core.StateManager;
@@ -21,11 +19,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import ld34.profile.Settings;
-import level.Level;
+import level.LevelOld;
 
 public class PausedSettingsState extends BaseState
 {
@@ -72,8 +69,12 @@ public class PausedSettingsState extends BaseState
 
     private void createScreenSettings(TabsPanelsContainer tabPanelContainer, BufferedImage spritesheet, int panelPosX, int panelPosY, int tabHeight)
     {
+        ResourceManager rm = m_stateManager.getContext().m_resourceManager;
+        Font f = rm.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 16.0f);
+        
         TabContent content = new TabContent(this);
         CheckBox cb = new CheckBox("Fullscreen", this);
+        cb.setFont(f);
         cb.setPosition(10 + panelPosX + 40, panelPosY + 80 + tabHeight);
         cb.addCallback(GuiComponent.Status.CLICKED, "toggleFullscreen", this);
         cb.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(320, 586, 41, 33));
@@ -85,6 +86,7 @@ public class PausedSettingsState extends BaseState
         
         RadioButton rb1 = new RadioButton("800 x 600", this);
         rb1.setPosition(15 + panelPosX + 40, 50 + panelPosY + 80 + tabHeight);
+        rb1.setFont(f);
         rb1.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 800, 600);
         rb1.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(365, 589, 29, 29));
         rb1.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(365, 589, 29, 29));
@@ -96,6 +98,7 @@ public class PausedSettingsState extends BaseState
         
         RadioButton rb2 = new RadioButton("1024 x 768", this);
         rb2.setPosition(15 + panelPosX + 40, 90 + panelPosY + 80 + tabHeight);
+        rb2.setFont(f);
         rb2.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 1024, 768);
         rb2.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(365, 589, 29, 29));
         rb2.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(365, 589, 29, 29));
@@ -107,6 +110,7 @@ public class PausedSettingsState extends BaseState
         
         RadioButton rb3 = new RadioButton("1280 x 960", this);
         rb3.setPosition(15 + panelPosX + 40, 130 + panelPosY + 80 + tabHeight);
+        rb3.setFont(f);
         rb3.addCallback(GuiComponent.Status.CLICKED, "changeResolution", this, 1280, 960);
         rb3.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(365, 589, 29, 29));
         rb3.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(365, 589, 29, 29));
@@ -219,7 +223,7 @@ public class PausedSettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_EASY)
+        if(difficulty == LevelOld.DIFFICULTY_EASY)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -230,7 +234,7 @@ public class PausedSettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_MEDIUM)
+        if(difficulty == LevelOld.DIFFICULTY_MEDIUM)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -241,7 +245,7 @@ public class PausedSettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_HARD)
+        if(difficulty == LevelOld.DIFFICULTY_HARD)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -252,7 +256,7 @@ public class PausedSettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(612, 0, 124, 103));
-        if(difficulty == Level.DIFFICULTY_HARDCORE)
+        if(difficulty == LevelOld.DIFFICULTY_HARDCORE)
             rib.setChecked(true);
         bg.add(rib);
         content.addGuiComponent(bg);
@@ -271,10 +275,10 @@ public class PausedSettingsState extends BaseState
         RadioIconButton rib = new RadioIconButton(spritesheet.getSubimage(238, 344, 42, 28), this);
         rib.setPosition(10 +panelPosX + 40, panelPosY + 80 + tabHeight);
         rib.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 0);
-        rib.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(0, 69, 77, 63));
-        rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(76, 69, 77, 63));
-        rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(0, 69, 77, 63));
-        rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(788, 551, 79, 65));
+        rib.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(612, 0, 124, 103));
         if(lang == 0)
             rib.setChecked(true);
         bg.add(rib);
@@ -282,10 +286,10 @@ public class PausedSettingsState extends BaseState
         rib = new RadioIconButton(spritesheet.getSubimage(238, 372, 42, 28), this);
         rib.setPosition(150 +panelPosX + 40, panelPosY + 80 + tabHeight);
         rib.addCallback(GuiComponent.Status.CLICKED, "selectLanguage", this, 1);
-        rib.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(0, 69, 77, 63));
-        rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(76, 69, 77, 63));
-        rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(0, 69, 77, 63));
-        rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(788, 551, 79, 65));
+        rib.addApearance(GuiComponent.Status.NEUTRAL, spritesheet.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.FOCUSED, spritesheet.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CLICKED, spritesheet.getSubimage(491, 1, 120, 99));
+        rib.addApearance(GuiComponent.Status.CHECKED, spritesheet.getSubimage(612, 0, 124, 103));
         if(lang == 1)
             rib.setChecked(true);
         bg.add(rib);
@@ -297,12 +301,6 @@ public class PausedSettingsState extends BaseState
     
     @Override
     public void onDestroy()
-    {
-        
-    }
-
-    @Override
-    public void activate()
     {
         
     }
@@ -322,6 +320,12 @@ public class PausedSettingsState extends BaseState
     @Override
     public void update(double dt)
     {
+        if(m_stateManager.getContext().m_inputsListener.pause.typed)
+        {
+            backToMenu();
+            return;
+        }
+        
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         

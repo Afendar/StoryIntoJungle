@@ -1,7 +1,7 @@
 package core;
 
 import entity.Player;
-import level.Level;
+import level.LevelOld;
 
 /**
  * Camera class
@@ -13,7 +13,7 @@ public class Camera{
     
     public int x, y;
     public int w, h;
-    public Level level;
+    public LevelOld level;
     
     /**
      * 
@@ -23,7 +23,7 @@ public class Camera{
      * @param h
      * @param level 
      */
-    public Camera(int x, int y, int w, int h, Level level){
+    public Camera(int x, int y, int w, int h, LevelOld level){
         this.x = x;
         this.y =y;
         this.w = w;
@@ -43,9 +43,9 @@ public class Camera{
             this.x = 0;
         if(this.y < 0)
             this.y = 0;
-        if(this.y + this.h - 24 > this.level.h)
-            this.y = this.level.h - this.h + 24;
-        if(this.x + this.w > this.level.w)
-            this.x = this.level.w - this.w;
+        if(this.y + this.h - 24 > this.level.m_h)
+            this.y = this.level.m_h - this.h + 24;
+        if(this.x + this.w > this.level.m_w)
+            this.x = this.level.m_w - this.w;
     }
 }

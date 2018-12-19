@@ -51,12 +51,6 @@ public class EndState extends BaseState
     }
 
     @Override
-    public void activate() 
-    {
-        
-    }
-
-    @Override
     public void desactivate()
     {
         

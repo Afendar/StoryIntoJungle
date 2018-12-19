@@ -2,7 +2,7 @@ package core;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import level.Level;
+import level.LevelOld;
 
 /**
  * Minimap class
@@ -13,7 +13,7 @@ import level.Level;
 public class Minimap {
     
     public int w, h, playerX, playerY;
-    public Level lvl;
+    public LevelOld lvl;
     
     /**
      * 
@@ -23,7 +23,7 @@ public class Minimap {
      * @param playerY
      * @param lvl 
      */
-    public Minimap(int w, int h, int playerX, int playerY, Level lvl){
+    public Minimap(int w, int h, int playerX, int playerY, LevelOld lvl){
         this.w = w;
         this.h = h;
         this.playerX = ((playerX) / 32) + 50;
@@ -49,9 +49,9 @@ public class Minimap {
         g.setColor(new Color(0, 0, 0, 170));
         g.fillRect(0, 0, this.w, this.h);
 
-        for(int i = 0;i<lvl.map.length;i++){
-            for(int j = 0;j<lvl.map[i].length;j++){
-                switch(lvl.map[i][j]){
+        for(int i = 0;i<lvl.m_map.length;i++){
+            for(int j = 0;j<lvl.m_map[i].length;j++){
+                switch(lvl.m_map[i][j]){
                     case 1:
                         g.setColor(Color.WHITE);
                         g.fillRect((i*3) + 50, (j*4) + 282, 3, 3);

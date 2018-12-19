@@ -90,6 +90,8 @@ public class PausedState extends BaseState
     @Override
     public void activate()
     {
+        super.activate();
+        
         Screen screen = m_stateManager.getContext().m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
@@ -100,6 +102,8 @@ public class PausedState extends BaseState
             {screenWidth/2 - 117 - 19 * 30, 3 * (screenHeight / 6) + 40},
             {screenWidth/2 - 117 - 21 * 30, 4 * (screenHeight / 6) + 40}
         };
+        
+        m_stateManager.getContext().m_inputsListener.releaseAll();
     }
 
     @Override
@@ -115,6 +119,12 @@ public class PausedState extends BaseState
     @Override
     public void update(double dt)
     {
+        if(m_stateManager.getContext().m_inputsListener.pause.enabled)
+        {
+            dispose();
+            return;
+        }
+        
         int mouseX = m_stateManager.getContext().m_inputsListener.mouseX;
         int mouseY = m_stateManager.getContext().m_inputsListener.mouseY;
         int index = 0;
@@ -216,10 +226,10 @@ public class PausedState extends BaseState
         int titlewidth = metrics.stringWidth(title);
         g.drawString(title, screenWidth/2 - titlewidth/2, 75);
         
-        for(GuiComponent element : m_guiElements)
+        m_guiElements.forEach((element) ->
         {
             element.render(g);
-        }
+        });
     }
     
     public void dispose()

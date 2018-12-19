@@ -6,15 +6,22 @@ public class Animation
 {
     private BufferedImage[] m_frames;
     private int m_currentFrame;
+    private int m_startFrame;
+    private int m_endFrame;
+    private int m_frameRow;
     
     private long m_startTime;
     private long m_delay;
     
+    private String m_name;
+    
     private boolean m_playedOnce;
+    private boolean m_playing;
     
     public Animation()
     {
         m_playedOnce = false;
+        m_playing = false;
     }
     
     public void setFrames(BufferedImage[] frames)
@@ -25,6 +32,36 @@ public class Animation
         m_playedOnce = false;
     }
     
+    public void setStartFrame(int startFrame)
+    {
+        m_startFrame = startFrame;
+    }
+    
+    public int getStartFrame()
+    {
+        return m_startFrame;
+    }
+    
+    public void setEndFrame(int endFrame)
+    {
+        m_endFrame = endFrame;
+    }
+    
+    public int getEndFrame()
+    {
+        return m_endFrame;
+    }
+    
+    public void setFrameRow(int frameRow)
+    {
+        m_frameRow = frameRow;
+    }
+    
+    public int getFrameRow()
+    {
+        return m_frameRow;
+    }
+    
     public void setDelay(long delay)
     {
         m_delay = delay;
@@ -33,6 +70,16 @@ public class Animation
     public void setFrame(int index)
     {
         m_currentFrame = index;
+    }
+    
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+    
+    public String getName()
+    {
+        return m_name;
     }
     
     public void update()
@@ -68,5 +115,25 @@ public class Animation
     public boolean hasPlayedOnce()
     {
         return m_playedOnce;
+    }
+    
+    public void play()
+    {
+        
+    }
+    
+    public void pause()
+    {
+        
+    }
+    
+    public void stop()
+    {
+        
+    }
+    
+    public void reset()
+    {
+        
     }
 }

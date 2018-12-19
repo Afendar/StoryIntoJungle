@@ -63,16 +63,17 @@ public class I18nManager
     {
         try
         {
-            FileInputStream file = new FileInputStream(new File(getClass().getResource("/lang_" + m_lang + ".properties").getFile()));
+            File f = new File(getClass().getResource("/lang_" + m_lang + ".properties").getFile());
+            FileInputStream file = new FileInputStream(f);  
             m_translations.load(file);
         }
         catch (FileNotFoundException ex)
         {
-            //Logger.getLogger(I18nManager.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
         catch(IOException ex)
         {
-            //Logger.getLogger(I18nManager.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
     }
     

@@ -1,0 +1,10 @@
+{
+    "name":"Frozen Valley",
+    "weather":"SNOW",
+    "season":"WINTER",
+    "map": {
+        "top": "lvl7-top.png",
+        "layer-1": "lvl7.png"
+    },
+    "background": "background-winter"
+}

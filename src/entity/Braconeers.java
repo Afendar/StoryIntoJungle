@@ -14,7 +14,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.util.ArrayList;
 import java.util.List;
-import level.Level;
+import level.LevelOld;
 import level.tiles.TileAtlas;
 import particles.Bullet;
 
@@ -27,7 +27,7 @@ import particles.Bullet;
 public class Braconeers extends Entity
 {
     protected BufferedImage spritesheet, sprite, explosion;
-    protected Level level;
+    protected LevelOld level;
     protected boolean isMoving, isShooting, isStuck, isDeadAnim, isDead;
     protected double timeWalk, elapsedTime, timeAnim, timeAnimStuck, timeAnimDeath, timeAnimShot;
     protected int direction;
@@ -44,7 +44,7 @@ public class Braconeers extends Entity
      * @param posX
      * @param posY
      */
-    public Braconeers(Level level, int posX, int posY, Context context)
+    public Braconeers(LevelOld level, int posX, int posY, Context context)
     {
         super(posX, posY - Defines.TILE_SIZE, context);
         this.level = level;
@@ -73,8 +73,8 @@ public class Braconeers extends Entity
     {
         this.elapsedTime += dt;
 
-        int playerX = (int) this.level.player.getPosX();
-        int playerY = (int) this.level.player.getPosY();
+        int playerX = (int) this.level.m_player.getPosX();
+        int playerY = (int) this.level.m_player.getPosY();
         if(playerX >= m_posX - 200 && playerX <= m_posX + 200 && playerY >= m_posY && playerY <= m_posY + 128)
         {
             this.isShooting = true;
@@ -206,12 +206,12 @@ public class Braconeers extends Entity
         for (int i = 0; i < this.bullets.size(); i++)
         {
             Bullet b = this.bullets.get(i);
-            Rectangle playerDim = this.level.player.getBounds();
+            Rectangle playerDim = this.level.m_player.getBounds();
 
             if (b.x > playerDim.x && b.x < playerDim.x + playerDim.width
                     && b.y > playerDim.y && b.y < playerDim.y + playerDim.height)
             {
-                this.level.player.die(true);
+                this.level.m_player.die(true);
                 this.bullets.remove(i);
             }
             else
@@ -256,9 +256,9 @@ public class Braconeers extends Entity
             m_posX = 0;
             this.direction = RIGHT;
         }
-        else if (m_posX + 84 > this.level.w)
+        else if (m_posX + 84 > this.level.m_w)
         {
-            m_posX = this.level.w - 84;
+            m_posX = this.level.m_w - 84;
             this.direction = LEFT;
         }
     }
@@ -336,11 +336,11 @@ public class Braconeers extends Entity
     {
         int velX = 0;
         int velY = 2;
-        if (m_posX <= this.level.player.getPosX())
+        if (m_posX <= this.level.m_player.getPosX())
         {
             velX = 4;
         }
-        if (m_posX > this.level.player.getPosX())
+        if (m_posX > this.level.m_player.getPosX())
         {
             velX = -4;
         }

@@ -1,7 +1,7 @@
 package ld34.profile;
 
 import entity.Player;
-import level.Level;
+import level.LevelOld;
 import org.json.simple.JSONObject;
 
 /**
@@ -86,7 +86,7 @@ public class Save extends Profile
      * @param level
      * @param player 
      */
-    public void saveGame(int slotId, Level level, Player player)
+    public void saveGame(int slotId, LevelOld level, Player player)
     {
         JSONObject saves = (JSONObject)m_data.get("saves");
         JSONObject slot = (JSONObject)saves.get("slot" + slotId);

@@ -23,6 +23,18 @@ public abstract class Entity
     protected int m_health;
     protected boolean m_alive;
     protected Rectangle m_bounds;
+    protected State m_state;
+    
+    public enum State
+    {
+        IDLE,
+        WALKING,
+        ATTACKING,
+        HURT,
+        DYING,
+        RUNNING,
+        JUMPING;
+    }
     
     /** TODO remove when create EntityManager class */
     protected Context m_context;
@@ -45,6 +57,7 @@ public abstract class Entity
         m_health = 100;
         m_alive = true;
         m_bounds = new Rectangle(0, 0, width, height);
+        m_state = State.IDLE;
     }
     
     /**
@@ -58,6 +71,7 @@ public abstract class Entity
         m_posX = posX;
         m_posY = posY;
         m_context = context;
+        m_state = State.IDLE;
     }
     
     /**
@@ -180,6 +194,11 @@ public abstract class Entity
     public void setAlive(boolean alive)
     {
         m_alive = alive;
+    }
+    
+    public State getState()
+    {
+        return m_state;
     }
     
     /**

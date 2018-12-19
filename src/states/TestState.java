@@ -46,11 +46,6 @@ public class TestState extends BaseState
     }
 
     @Override
-    public void activate()
-    {
-    }
-
-    @Override
     public void desactivate() 
     {
     }

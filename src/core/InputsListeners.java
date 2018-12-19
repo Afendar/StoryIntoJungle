@@ -109,6 +109,14 @@ public class InputsListeners implements KeyListener, MouseMotionListener, MouseL
         }
     }
     
+    public void releaseAll()
+    {
+        for(int i = 0; i < actions.size() ; i++)
+        {
+            actions.get(i).enabled = false;
+        }
+    }
+    
     /**
      * 
      * @param e

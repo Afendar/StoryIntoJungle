@@ -1,0 +1,10 @@
+{
+    "name":"Forgotten Temple",
+    "weather":"SUN",
+    "season":"SPRING",
+    "map": {
+        "top": "lvl2-top.png",
+        "layer-1": "lvl2.png"
+    },
+    "background": "background-temple"
+}

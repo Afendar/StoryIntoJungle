@@ -2,14 +2,11 @@ package core;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
@@ -32,10 +29,9 @@ import profiler.Profiler;
  */
 public class Game extends JPanel implements Runnable
 {
-    private boolean m_running, m_paused;
+    private boolean m_running;
 
     private Thread m_tGame;
-    private Font m_font, m_fontD;
     private int m_nbEntities;
     private int m_elapsedTime, m_lastTime, m_pauseTime;
     private Runtime m_instance;
@@ -52,7 +48,7 @@ public class Game extends JPanel implements Runnable
     public Game(String profileName)
     {
         init(profileName);
-        m_stateManager.switchTo(StateType.GAME);
+        m_stateManager.switchTo(StateType.MAP);
         start();
     }
 
@@ -63,7 +59,6 @@ public class Game extends JPanel implements Runnable
     private void init(String profileName)
     {
         m_running = false;
-        m_paused = false;
         m_instance = Runtime.getRuntime();
         
         Settings.init(profileName);
@@ -93,21 +88,6 @@ public class Game extends JPanel implements Runnable
         setPreferredSize(new Dimension(width, height));
         setSize(new Dimension(width, height));
         m_frame = m_memoryUsed = m_nbEntities = 0;
-
-        try
-        {
-            URL url = getClass().getResource("/fonts/kaushanscriptregular.ttf");
-            m_font = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            m_font = m_font.deriveFont(Font.PLAIN, 36.0f);
-
-            url = getClass().getResource("/fonts/arial.ttf");
-            m_fontD = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
-            m_fontD = m_fontD.deriveFont(Font.PLAIN, 18.0f);
-        }
-        catch(FontFormatException | IOException e)
-        {
-            e.getMessage();
-        }
 
         m_context = new Context();
         m_context.m_inputsListener = new InputsListeners(this);
@@ -156,7 +136,7 @@ public class Game extends JPanel implements Runnable
         m_stateManager = new StateManager(m_context);
         m_context.m_screen = new Screen(this);
         m_context.m_profiler = Profiler.getInstance();
-        m_context.m_profiler.addGame(this);
+        m_context.m_profiler.init(this, m_context.m_logger);
     }
     
     /**
@@ -237,6 +217,7 @@ public class Game extends JPanel implements Runnable
     public void update(double dt)
     {
         m_stateManager.update(dt);
+        
         m_context.m_inputsListener.update();
 
         if(m_context.m_inputsListener.fullscreen.typed)

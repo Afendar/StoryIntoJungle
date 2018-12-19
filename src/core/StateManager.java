@@ -13,6 +13,7 @@ import states.GameState;
 import states.HighScoresState;
 import states.IntroState;
 import states.MainMenuState;
+import states.MapSavesState;
 import states.MapState;
 import states.PausedSavesState;
 import states.PausedSettingsState;
@@ -52,6 +53,7 @@ public class StateManager
         registerState(StateType.SETTINGS);
         registerState(StateType.GAME);
         registerState(StateType.MAP);
+        registerState(StateType.MAP_SAVES);
         registerState(StateType.PAUSED);
         registerState(StateType.PAUSED_SAVES);
         registerState(StateType.PAUSED_SETTINGS);
@@ -234,6 +236,9 @@ public class StateManager
                 break;
             case TEST:
                 m_statesFactory.put(StateType.TEST, new TestState(this));
+                break;
+            case MAP_SAVES:
+                m_statesFactory.put(StateType.MAP_SAVES, new MapSavesState(this));
                 break;
         }
     }

@@ -1,0 +1,10 @@
+{
+    "name":"Flamboyant Uplands",
+    "weather":"SUN",
+    "season":"FALL",
+    "map": {
+        "top": "lvl6-top.png",
+        "layer-1": "lvl6.png"
+    },
+    "background": "background-fall"
+}
