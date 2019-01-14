@@ -1,7 +1,7 @@
 package core;
 
 import entity.Player;
-import level.LevelOld;
+import level.Level;
 
 /**
  * Camera class
@@ -11,9 +11,9 @@ import level.LevelOld;
  */
 public class Camera{
     
-    public int x, y;
-    public int w, h;
-    public LevelOld level;
+    public int m_x, m_y;
+    public int m_width, m_height;
+    public Level m_level;
     
     /**
      * 
@@ -23,12 +23,12 @@ public class Camera{
      * @param h
      * @param level 
      */
-    public Camera(int x, int y, int w, int h, LevelOld level){
-        this.x = x;
-        this.y =y;
-        this.w = w;
-        this.h = h;
-        this.level = level;
+    public Camera(int x, int y, int w, int h, Level level){
+        m_x = x;
+        m_y =y;
+        m_width = w;
+        m_height = h;
+        m_level = level;
     }
     
     /**
@@ -36,16 +36,16 @@ public class Camera{
      * @param p 
      */
     public void update(Player p){
-        this.x = (int)(p.getPosX() + ( Player.PLAYER_SIZE / 2 ) ) - this.w / 2;
-        this.y = (int)(p.getPosY() + ( Player.PLAYER_SIZE / 2) ) - this.h / 2;
+        m_x = (int)(p.getPosX() + ( Player.PLAYER_SIZE / 2 ) ) - m_width / 2;
+        m_y = (int)(p.getPosY() + ( Player.PLAYER_SIZE / 2) ) - m_height / 2;
         
-        if(this.x < 0)
-            this.x = 0;
-        if(this.y < 0)
-            this.y = 0;
-        if(this.y + this.h - 24 > this.level.m_h)
-            this.y = this.level.m_h - this.h + 24;
-        if(this.x + this.w > this.level.m_w)
-            this.x = this.level.m_w - this.w;
+        if(m_x < 0)
+            m_x = 0;
+        if(m_y < 0)
+            m_y = 0;
+        if(m_y + m_height - 24 > m_level.getHeight())
+            m_y = m_level.getHeight() - m_height + 24;
+        if(m_x + m_width > m_level.getWidth())
+            m_x = m_level.getWidth() - m_width;
     }
 }

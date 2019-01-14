@@ -320,7 +320,7 @@ public class Player extends Entity
         }
         else
         {
-            if (m_listener.mouseX + m_cam.x < (int) this.getBounds().x)
+            if (m_listener.mouseX + m_cam.m_x < (int) this.getBounds().x)
             {
                 //Left Pose
                 if (m_direction == 0)
@@ -354,7 +354,7 @@ public class Player extends Entity
                 }
 
             }
-            else if (m_listener.mouseX + m_cam.x > (int) this.getBounds().x + this.getBounds().width)
+            else if (m_listener.mouseX + m_cam.m_x > (int) this.getBounds().x + this.getBounds().width)
             {
                 //Right Pose
                 if (m_direction == 1)
@@ -389,7 +389,7 @@ public class Player extends Entity
                 }
 
             }
-            else if (m_listener.mouseX + m_cam.x < (int) this.getBounds().x + this.getBounds().width / 2 + 5 && m_listener.mouseX + m_cam.x > (int) this.getBounds().x + this.getBounds().width / 2 - 5)
+            else if (m_listener.mouseX + m_cam.m_x < (int) this.getBounds().x + this.getBounds().width / 2 + 5 && m_listener.mouseX + m_cam.m_x > (int) this.getBounds().x + this.getBounds().width / 2 - 5)
             {
                 //Stand Pose
                 m_velX = 0;

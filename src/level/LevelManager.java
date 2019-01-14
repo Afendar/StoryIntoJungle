@@ -1,10 +1,16 @@
 package level;
 
+import core.Context;
+import core.I18nManager;
+import core.InputsListeners;
 import core.ResourceManager;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.logging.Logger;
 import ld34.profile.Settings;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,17 +19,24 @@ import org.json.simple.parser.ParseException;
 import season.Season.SeasonState;
 import weather.Weather.WeatherState;
 
+/**
+ * 
+ */
 public class LevelManager
 {
-    private static String LEVELS_FOLDER = "levels/"; 
-    private static String LEVEL_SETTINGS_FILENAME = "settings.json";
-    private ResourceManager m_resourceManager;
+    private static final String LEVELS_FOLDER = "levels/"; 
+    private static final String LEVEL_SETTINGS_FILENAME = "settings.json";
+    private final Context m_context;
     
     protected JSONParser m_parser;
     
-    public LevelManager(ResourceManager resourceManager){
+    /**
+     * 
+     * @param context 
+     */
+    public LevelManager(Context context){
         m_parser = new JSONParser();
-        m_resourceManager = resourceManager;
+        m_context = context;
     }
     
     /**
@@ -51,6 +64,8 @@ public class LevelManager
         Level lvl = new Level();
         lvl.setNumber(nbLevel);
         lvl.setName((String)o.get("name"));
+        lvl.setNbTilesInScreenX(m_context.m_screen.getWidth());
+        lvl.setNbTilesInScreenY(m_context.m_screen.getHeight());
         JSONArray jsonEvents = (JSONArray)o.get("events");
         if(jsonEvents != null){
             int[][] eventsPos = new int[jsonEvents.size()][2];
@@ -82,30 +97,43 @@ public class LevelManager
             lvl.setWeather(WeatherState.SUN);
         }
         
-        BufferedImage bg = m_resourceManager.getBackground((String)o.get("background"));
+        BufferedImage bg = m_context.m_resourceManager.getBackground((String)o.get("background"));
         lvl.setBackground(bg);
+        
+        JSONObject map = (JSONObject)o.get("map");
+        for(Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
+            String layerName = (String) iterator.next();
+            if(!lvl.loadLayer(layerName, "/level_" + nbLevel + "/" + map.get(layerName))){
+                System.out.println("Error when loading: " + layerName);
+            }
+        }
         
         return lvl;
     }
     
+    /**
+     * 
+     * @param filepath
+     * @return 
+     */
     private JSONObject readSettingFile(String filepath){
-        try
-        {
+        try{
             return (JSONObject) m_parser.parse(new FileReader(filepath));
         }
-        catch (IOException | ParseException e)
-        {
+        catch (IOException | ParseException e){
             e.getMessage();
         }
         return null;
     }
     
-    public static void main(String[] args)
-    {
+    /**
+     * @param args 
+     */
+    public static void main(String[] args){
+        Context c = new Context();
         Settings.init("Afendar");
-        ResourceManager rm = ResourceManager.getInstance();
-        LevelManager lm = new LevelManager(rm);
-        Level l = lm.loadLevel(1);
-        System.out.println("done");
+        c.m_resourceManager = ResourceManager.getInstance();
+        LevelManager lm = new LevelManager(c);
+        lm.loadLevel(2);
     }
 }

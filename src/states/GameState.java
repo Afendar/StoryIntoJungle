@@ -70,14 +70,15 @@ public class GameState extends BaseState
     @Override
     public void onCreate() 
     {
-        /*Screen screen = m_stateManager.getContext().m_screen;
+        Context c = m_stateManager.getContext();
+        Screen screen = c.m_screen;
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
         
-        m_guiConsole = new GuiConsole(0, 400, 350, 200, m_stateManager.getContext().m_inputsListener);
-        m_levelManager = new LevelManager();
+        m_guiConsole = new GuiConsole(0, 400, 350, 200, c.m_inputsListener);
+        m_levelManager = new LevelManager(c);
         
-        m_nbLevel = 1;
+        m_nbLevel = 6;
         m_displayEnd = false;
         m_displayStart = true;
         
@@ -86,24 +87,14 @@ public class GameState extends BaseState
             m_displayStart = false;
         }
         
-        Context c = m_stateManager.getContext();
         m_level = m_levelManager.loadLevel(m_nbLevel);
-        for(int i=1;i<m_nbLevel;i++)
-        {
-            m_level.setUnlocked(i);
-        }
-        m_level.setNbTilesInScreenX(screenWidth);
-        m_level.setNbTilesInScreenY(screenHeight);
-        
-        m_cageToFree = m_level.m_nbCages;
-        
         m_cam = new Camera(0, 0, screenWidth, screenHeight, m_level);
         
-        m_player = new Player(
+        /*m_player = new Player(
             32, 
             445, 
             m_level, 
-            m_stateManager.getContext().m_inputsListener, 
+            c.m_inputsListener, 
             m_cam, 
             Integer.parseInt(
                     Settings.getInstance().getConfigValue("difficulty")
@@ -112,11 +103,9 @@ public class GameState extends BaseState
         );
         m_player.setScore(0);
         
-        m_stateManager.getContext().m_profiler.addObjectToDebug(m_player, new String[]{"getPosX", "getPosY", "getState"});
+        c.m_profiler.addObjectToDebug(m_player, new String[]{"getPosX", "getPosY", "getState"});
         
-        m_level.addPlayer(m_player);
-
-        loadAssets();
+        m_level.addPlayer(m_player);*/
         
         m_alpha = 255;
         m_alphaMax = 128;
@@ -126,13 +115,13 @@ public class GameState extends BaseState
             m_timeF = TimerThread.MILLI;
         }
         
-        m_glueX2 = m_backgroundBottom.getWidth();
-        m_glueTopX2 = m_backgroundTop2.getWidth();
+        m_glueX2 = m_level.getBackground().getWidth();
+        m_glueTopX2 = m_level.getBackground().getWidth();
         
-        m_minimap = new Minimap(screenWidth, screenHeight, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
+        //m_minimap = new Minimap(screenWidth, screenHeight, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
         
         m_timeSound = TimerThread.MILLI;
-        m_soundPlayed = 0;*/
+        m_soundPlayed = 0;
     }
 
     @Override
@@ -179,7 +168,6 @@ public class GameState extends BaseState
     @Override
     public void reloadLocales()
     {
-        System.out.println("Reload locales");
     }
     
     @Override
@@ -322,7 +310,7 @@ public class GameState extends BaseState
     @Override
     public void render(Graphics2D g)
     {
-        /*I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
+        I18nManager i18nManager = m_stateManager.getContext().m_I18nManager;
         ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Screen screen = m_stateManager.getContext().m_screen;
         
@@ -332,7 +320,7 @@ public class GameState extends BaseState
         
         int screenWidth = screen.getContentPane().getWidth();
         int screenHeight = screen.getContentPane().getHeight();
-        
+        /*
         //RENDERING
         ///////////////////////////////////////////
         if(m_displayStart)
@@ -420,26 +408,25 @@ public class GameState extends BaseState
                     m_glueTopX2 -= 2 * m_backgroundTop2.getWidth();
                 }
             }
-            
-            g.translate(-m_cam.x/4, 0);
-            
-            g.drawImage(m_backgroundTop, (int)(m_glueTopX - (m_cam.x)), screenHeight - m_backgroundTop.getHeight(), null);
-            g.drawImage(m_backgroundTop2, (int)(m_glueTopX2 - (m_cam.x)), screenHeight - m_backgroundTop2.getHeight(), null);
-            
-            g.translate(m_cam.x/4, 0);
-            g.translate(-m_cam.x, -m_cam.y);
+            */
+            g.translate(-m_cam.m_x/4, 0);
+            BufferedImage bg = m_level.getBackground();
+            g.drawImage(bg, (int)(m_glueTopX - (m_cam.m_x)), screenHeight - bg.getHeight(), null);
+            g.drawImage(bg, (int)(m_glueTopX2 - (m_cam.m_x)), screenHeight - bg.getHeight(), null);
+            g.translate(m_cam.m_x/4, 0);
+            g.translate(-m_cam.m_x, -m_cam.m_y);
             
             //Map Render
-            int startX = (int)(m_player.getPosX() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenX() / 2);
+            /*int startX = (int)(m_player.getPosX() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenX() / 2);
             int startY = (int)(m_player.getPosY() / Defines.TILE_SIZE) - (m_level.getNbTilesInScreenY() / 2);
-            if(startX > m_level.m_nbTilesW - m_level.getNbTilesInScreenX())startX = m_level.m_nbTilesW - m_level.getNbTilesInScreenX();
-            if(startY > m_level.m_nbTilesH - m_level.getNbTilesInScreenY())startY = m_level.m_nbTilesH - m_level.getNbTilesInScreenY();
+            if(startX > m_level.getNbTilesW() - m_level.getNbTilesInScreenX())startX = m_level.getNbTilesW() - m_level.getNbTilesInScreenX();
+            if(startY > m_level.getNbTilesH() - m_level.getNbTilesInScreenY())startY = m_level.getNbTilesH() - m_level.getNbTilesInScreenY();
             if(startX < 0)startX = 0;
-            if(startY < 0)startY = 0;
+            if(startY < 0)startY = 0;*/
             
-            m_level.renderFirstLayer(g, startX, startY);
+            m_level.render(g, 0, 0);
             
-            m_player.render(g, false);
+            /*m_player.render(g, false);
 
             m_level.renderSecondLayer(g, startX, startY);
 
@@ -447,9 +434,9 @@ public class GameState extends BaseState
             {
                 g.drawImage(m_monkeySpriteSheet.getSubimage(105 * (int)(m_timeMonkey / 4), 0, 105, 107), m_level.getEventsPos()[m_eventNumber][0] + 139, m_level.getEventsPos()[m_eventNumber][1] - 81, null);
             }
-
-            g.translate(m_cam.x, m_cam.y);
-            
+            */
+            g.translate(m_cam.m_x, m_cam.m_y);
+            /*
             g.drawImage(m_foregroundGame, 0, 300, null);
 
             //Render GUI
