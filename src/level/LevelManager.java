@@ -1,16 +1,12 @@
 package level;
 
 import core.Context;
-import core.I18nManager;
-import core.InputsListeners;
 import core.ResourceManager;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.logging.Logger;
 import ld34.profile.Settings;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -64,6 +60,7 @@ public class LevelManager
         Level lvl = new Level();
         lvl.setNumber(nbLevel);
         lvl.setName((String)o.get("name"));
+        lvl.setContext(m_context);
         lvl.setNbTilesInScreenX(m_context.m_screen.getWidth());
         lvl.setNbTilesInScreenY(m_context.m_screen.getHeight());
         JSONArray jsonEvents = (JSONArray)o.get("events");

@@ -1,7 +1,7 @@
 package level.tiles;
 
 import java.awt.Graphics;
-import level.LevelOld;
+import level.Level;
 
 /**
  * Empty class
@@ -21,12 +21,12 @@ public class Empty extends Tile {
     }
 
     @Override
-    public boolean canPass(LevelOld level, int x, int y) {
+    public boolean canPass(Level level, int x, int y) {
         return true;
     }
 
     @Override
-    public void update(LevelOld level, int x, int y, double dt) {
+    public void update(Level level, int x, int y, double dt) {
         
     }
     

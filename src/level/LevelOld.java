@@ -151,7 +151,7 @@ public class LevelOld
         int endX = (startX + m_nbTilesInScreenX + 2 <= m_nbTilesW)? startX + m_nbTilesInScreenX + 2 : m_nbTilesW;
         int endY = (startY + m_nbTilesInScreenY + 2 <= m_nbTilesH)? startY + m_nbTilesInScreenY + 2 : m_nbTilesH;
         
-        for(int i = startX;i<endX;i++){
+        /*for(int i = startX;i<endX;i++){
             for(int j = startY;j<endY;j++){
                 switch(m_map[i][j]){
                     case 1:
@@ -188,7 +188,7 @@ public class LevelOld
                         break;
                 }
             }
-        }
+        }*/
         
         for(int i = startX;i<endX;i++){
             for(int j = startY;j<endY;j++){
@@ -583,7 +583,7 @@ public class LevelOld
                argb += ((int) pixels[pixel + 1] & 0xff); // blue
                argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
                argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-               switch(argb){
+               /*switch(argb){
                     case WHITE:
                         m_map[col][row] = TileAtlas.empty.ID;
                         break;
@@ -626,14 +626,14 @@ public class LevelOld
                         pixel += pixelLength;
                         break;
                     case BRACONEER:
-                        m_braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE, m_context));
+                        //m_braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE, m_context));
                         break;
                     case LIME:
                         m_map[col][row] = TileAtlas.plant.ID;
                         break;
                     default:
                         break;
-               }
+               }*/
 
                col++;
                if (col >= width) {
@@ -707,7 +707,7 @@ public class LevelOld
                    argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
                    argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
                    //System.out.println(argb);
-                   switch(argb){
+                   /*switch(argb){
                         case WHITE:
                             m_map[col][row] = TileAtlas.empty.ID;
                             break;
@@ -753,14 +753,14 @@ public class LevelOld
                             pixel += pixelLength;
                             break;
                         case BRACONEER:
-                            m_braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE, m_context));
+                            //m_braconeers.add(new Braconeers(this, col * Defines.TILE_SIZE, row * Defines.TILE_SIZE, m_context));
                             break;
                         case LIME:
                             m_map[col][row] = TileAtlas.plant.ID;
                             break;
                         default:
                             break;
-                   }
+                   }*/
 
                    col++;
                    if (col >= width) {

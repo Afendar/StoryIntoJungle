@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import core.Defines;
-import level.LevelOld;
+import level.Level;
 
 /**
  * Tile class
@@ -51,7 +51,7 @@ public abstract class Tile {
      * @param y
      * @return 
      */
-    public abstract boolean canPass(LevelOld level, int x, int y);
+    public abstract boolean canPass(Level level, int x, int y);
     
     /**
      * 
@@ -60,7 +60,7 @@ public abstract class Tile {
      * @param y
      * @param dt 
      */
-    public abstract void update(LevelOld level, int x, int y, double dt);
+    public abstract void update(Level level, int x, int y, double dt);
     
     /**
      * 

@@ -42,6 +42,7 @@ public class ResourceManager
             m_backgrounds.put("background-fall", ImageIO.read(getClass().getResource("/backgrounds/background-fall.png")));
             m_backgrounds.put("background-lagoon", ImageIO.read(getClass().getResource("/backgrounds/background-lagoon.png")));
             m_backgrounds.put("background-spring", ImageIO.read(getClass().getResource("/backgrounds/background-spring.png")));
+            m_backgrounds.put("background-temple", ImageIO.read(getClass().getResource("/backgrounds/background-temple.png")));
             m_backgrounds.put("background-summer", ImageIO.read(getClass().getResource("/backgrounds/background-summer.png")));
             m_backgrounds.put("background-swamp", ImageIO.read(getClass().getResource("/backgrounds/background-swamp.png")));
             m_backgrounds.put("background-winter", ImageIO.read(getClass().getResource("/backgrounds/background-winter.png")));

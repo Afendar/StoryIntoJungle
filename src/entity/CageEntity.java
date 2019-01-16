@@ -11,7 +11,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import level.LevelOld;
+import level.Level;
 
 /**
  * CageEntity class
@@ -24,7 +24,7 @@ public class CageEntity extends Entity
     public BufferedImage tileset, topLeftSprite, topRightSprite, bottomLeftSprite, bottomRightSprite, pandas;
 
     protected double dt;
-    protected LevelOld level;
+    protected Level level;
 
     private float alpha;
     private int brokenStep, offset, offsetPandas;
@@ -37,7 +37,7 @@ public class CageEntity extends Entity
      * @param posX
      * @param posY
      */
-    public CageEntity(LevelOld level, int posX, int posY, Context context)
+    public CageEntity(Level level, int posX, int posY, Context context)
     {
         super(posX, posY, context);
 

@@ -2,7 +2,7 @@ package level.tiles;
 
 import core.Defines;
 import java.awt.Graphics;
-import level.LevelOld;
+import level.Level;
 
 /**
  * Plant class
@@ -28,12 +28,12 @@ public class Plant extends Tile {
     }
     
     @Override
-    public boolean canPass(LevelOld level, int x, int y){
+    public boolean canPass(Level level, int x, int y){
         return true;
     }
     
     @Override
-    public void update(LevelOld level, int x, int y, double dt){
+    public void update(Level level, int x, int y, double dt){
         
     }
     

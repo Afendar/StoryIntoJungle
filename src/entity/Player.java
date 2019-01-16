@@ -17,7 +17,7 @@ import core.TimerThread;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import level.LevelOld;
+import level.Level;
 import level.tiles.TileAtlas;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -38,7 +38,7 @@ public class Player extends Entity
     
     public static final int PLAYER_SIZE = 64;
     
-    private LevelOld m_level;
+    private Level m_level;
     private float m_velX, m_velY;
     private InputsListeners m_listener;
     private BufferedImage m_spritesheet, m_sprite, m_spritefx, m_spritesheetfx, m_spritesheetfxend, m_spritefxend;
@@ -69,7 +69,7 @@ public class Player extends Entity
      * @param cam
      * @param difficulty
      */
-    public Player(int posX, int posY, LevelOld level, InputsListeners listener, Camera cam, int difficulty, Context context)
+    public Player(int posX, int posY, Level level, InputsListeners listener, Camera cam, int difficulty, Context context)
     {
         super(posX, posY, context);
 
@@ -108,7 +108,7 @@ public class Player extends Entity
                 break;
         }
 
-        switch (m_level.m_nbLevel)
+        switch (m_level.getNumber())
         {
             case 1:
             case 2:
@@ -221,13 +221,13 @@ public class Player extends Entity
         }
 
         //On the bridge        
-        if (y1 + 1 <= m_level.m_nbTilesH - 1
+        if (y1 + 1 <= m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x1, y1 + 1)).ID == 3
                 && !m_listener.slow.enabled)
         {
             m_level.removeTile(x1, y1 + 1);
         }
-        if (y1 + 1 <= m_level.m_nbTilesH - 1
+        if (y1 + 1 <= m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x0, y1 + 1)).ID == 3
                 && !m_listener.slow.enabled)
         {
@@ -235,7 +235,7 @@ public class Player extends Entity
         }
 
         //cage
-        if (y1 + 1 <= m_level.m_nbTilesH - 1
+        if (y1 + 1 <= m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x1, y1 + 1)).ID == 10
                 && m_isJumping && m_isFalling)
         {
@@ -245,7 +245,7 @@ public class Player extends Entity
                 ce.hurt();
             }
         }
-        else if(y1 + 1 <= m_level.m_nbTilesH - 1
+        else if(y1 + 1 <= m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x0, y1 + 1)).ID == 10
                 && m_isJumping && m_isFalling)
         {
@@ -257,7 +257,7 @@ public class Player extends Entity
         }
 
         //Sand
-        if (y1 + 1 <= m_level.m_nbTilesH - 1
+        if (y1 + 1 <= m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x1, y1 + 1)).ID == 9)
         {
             if (m_level.getData(x1, y1 + 1) < 1)
@@ -265,7 +265,7 @@ public class Player extends Entity
                 m_level.setData(x1, y1 + 1, 1);
             }
         }
-        else if (y1 + 1 <= m_level.m_nbTilesH - 1
+        else if (y1 + 1 <= m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x0, y1 + 1)).ID == 9)
         {
             if (m_level.getData(x0, y1 + 1) < 1)
@@ -306,7 +306,7 @@ public class Player extends Entity
         }
 
         //spikes
-        if (y1 < m_level.m_nbTilesH - 1
+        if (y1 < m_level.getNbTilesH() - 1
                 && TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 6
                 || TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 6)
         {
@@ -420,7 +420,7 @@ public class Player extends Entity
             m_velX = 0;
         }
         //RIGHT
-        else if ((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE < m_level.m_nbTilesW - 1
+        else if ((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE < m_level.getNbTilesW() - 1
                 && (!TileAtlas.atlas.get(m_level.getTile((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + 2) / Defines.TILE_SIZE)).canPass(m_level, (int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + 2) / Defines.TILE_SIZE)
                 || !TileAtlas.atlas.get(m_level.getTile((int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + getBounds().height - 2) / Defines.TILE_SIZE)).canPass(m_level, (int) (getBounds().x + getBounds().width + m_velX) / Defines.TILE_SIZE, (getBounds().y + getBounds().height - 2) / Defines.TILE_SIZE)))
         {
@@ -429,7 +429,7 @@ public class Player extends Entity
 
         //DOWN 
         int y1VelY = (int) ((getBounds().y + getBounds().height + 4) / Defines.TILE_SIZE);
-        if(y1 + 1 < m_level.m_nbTilesH)
+        if(y1 + 1 < m_level.getNbTilesH())
         {
             if ((!TileAtlas.atlas.get(m_level.getTile(x0, y1VelY)).canPass(m_level, x0, y1VelY)
                     || !TileAtlas.atlas.get(m_level.getTile(x1, y1VelY)).canPass(m_level, x1, y1VelY)) && m_velY >= 0)
@@ -460,7 +460,7 @@ public class Player extends Entity
             //m_level.splash(m_posX + 32, 6.3f);
             m_splash = true;
         }
-        else if((m_posY > m_level.m_h - 70 || m_posY < 1050 - 20) && m_splash)
+        else if((m_posY > m_level.getHeight() - 70 || m_posY < 1050 - 20) && m_splash)
         {
             //TODO Check if in water stop velocity and start to floating
             m_velY = 0;
@@ -532,14 +532,14 @@ public class Player extends Entity
             m_posY = 0;
             return false;
         }
-        if(getBounds().x + getBounds().width > m_level.m_w)
+        if(getBounds().x + getBounds().width > m_level.getWidth())
         {
-            m_posX = m_level.m_w - getBounds().width;
+            m_posX = m_level.getWidth() - getBounds().width;
             return false;
         }
-        if(getBounds().y + getBounds().height > m_level.m_h)
+        if(getBounds().y + getBounds().height > m_level.getHeight())
         {
-            m_posY = m_level.m_h - getBounds().height;
+            m_posY = m_level.getHeight() - getBounds().height;
             m_isDead = true;
             m_sprite = m_spritesheet.getSubimage(3 * Player.PLAYER_SIZE, 10, Player.PLAYER_SIZE, Player.PLAYER_SIZE);
             new Thread(m_context.m_resourceManager.getSound("death")::play).start();
@@ -735,7 +735,7 @@ public class Player extends Entity
      * 
      * @param lvl 
      */
-    public void setLevel(LevelOld lvl)
+    public void setLevel(Level lvl)
     {
         m_level = lvl;
     }

@@ -1,6 +1,6 @@
 package level.tiles;
 
-import level.LevelOld;
+import level.Level;
 
 /**
  * Leaves class
@@ -21,12 +21,12 @@ public class Leaves extends Tile {
     }
 
     @Override
-    public boolean canPass(LevelOld level, int x, int y) {
+    public boolean canPass(Level level, int x, int y) {
         return true;
     }
 
     @Override
-    public void update(LevelOld level, int x, int y, double dt) {
+    public void update(Level level, int x, int y, double dt) {
         
     }
 }
