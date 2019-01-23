@@ -12,6 +12,11 @@ public class Settings extends Profile
 {
     protected static Settings INSTANCE;
 
+    public static final int DIFFICULTY_EASY = 0;
+    public static final int DIFFICULTY_MEDIUM = 1;
+    public static final int DIFFICULTY_HARD = 2;
+    public static final int DIFFICULTY_HARDCORE = 3;
+    
     /**
      *
      */

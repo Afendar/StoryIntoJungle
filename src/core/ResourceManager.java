@@ -32,6 +32,7 @@ public class ResourceManager
             m_spritesheets.put("spritesheetGui", ImageIO.read(getClass().getResource("/gui.png")));
             m_spritesheets.put("spritesheetGui2", ImageIO.read(getClass().getResource("/gui2.png")));
             m_spritesheets.put("background", ImageIO.read(getClass().getResource("/background.png")));
+            m_spritesheets.put("background2", ImageIO.read(getClass().getResource("/background2.png")));
             m_spritesheets.put("backgroundpause", ImageIO.read(getClass().getResource("/backgroundpause.png")));
             m_spritesheets.put("foreground", ImageIO.read(getClass().getResource("/foreground1.png")));
             m_spritesheets.put("foreground2", ImageIO.read(getClass().getResource("/foreground2.png")));

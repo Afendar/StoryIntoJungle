@@ -7,6 +7,7 @@ import entity.CageEntity;
 import entity.Player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import static level.LevelOld.SAND;
 import static level.LevelOld.WHITE;
 import level.tiles.TileAtlas;
 import level.tiles.Tree;
-import particles.Particle;
 import season.Season.SeasonState;
 import weather.Weather.WeatherState;
 
@@ -39,7 +39,8 @@ public class Level
 {
     private int m_number, m_width, m_height, m_nbTilesInScreenX, m_nbTilesInScreenY, m_nbTilesW, m_nbTilesH,
             m_freeCages, m_nbCages;
-    private int[][] m_eventsPos;
+    private int[][] m_eventsPos, m_data;
+    private boolean[] m_viewedEvent;
     private String m_name;
     private SeasonState m_season;
     private WeatherState m_weather;
@@ -55,11 +56,13 @@ public class Level
     public Level(){
         m_number = 0;
         m_eventsPos = null;
+        m_viewedEvent = null;
         m_name = "";
         m_season = SeasonState.SPRING;
         m_weather = WeatherState.SUN;
         m_background = null;
         m_nbTilesW = m_nbTilesH = 0;
+        m_data = null;
         m_nbTilesInScreenX = m_nbTilesInScreenY = 0;
         m_layers = new HashMap<>();
         m_freeCages = m_nbCages = 0;
@@ -115,6 +118,11 @@ public class Level
      */
     public void setEventsPos(int[][] eventsPos){
         m_eventsPos = eventsPos;
+        m_viewedEvent = new boolean[eventsPos.length];
+        
+        for(int i=0;i<m_viewedEvent.length;i++){
+            m_viewedEvent[i] = false;
+        }
     }
     
     /**
@@ -217,6 +225,14 @@ public class Level
     
     /**
      * 
+     * @return 
+     */
+    public int getFreeCages(){
+        return m_freeCages;
+    }
+    
+    /**
+     * 
      * @param name
      * @param filename
      * @return 
@@ -240,6 +256,7 @@ public class Level
             m_nbTilesW = width;
             
             int[][] map = new int[width][height];
+            m_data = new int[width][height];
             
             ArrayList cageLevelMapping = new ArrayList<>();    
             int pixelLength = 4;
@@ -351,7 +368,18 @@ public class Level
     }
     
     public void update(double dt, int startX, int startY){
-        //TODO
+        int endX = (startX + m_nbTilesInScreenX + 2 <= m_nbTilesW)? startX + m_nbTilesInScreenX + 2 : m_nbTilesW;
+        int endY = (startY + m_nbTilesInScreenY + 2 <= m_nbTilesH)? startY + m_nbTilesInScreenY + 2 : m_nbTilesH;
+        
+        for(int i=0;i<m_cageEntity.size();i++){
+            CageEntity ce = m_cageEntity.get(i);
+            
+            if(ce.getPosX() < startX && ce.getPosX() > endX && ce.getPosY() < startY && ce.getPosY() > endY){
+                continue;
+            }
+            
+            ce.update(dt);
+        }
     }
     
     public void render(Graphics g, int startX, int startY){
@@ -432,19 +460,28 @@ public class Level
                             case 11:
                                 TileAtlas.bush.render(g, i, j);
                                 break;
-                            case 12:
-                                /*for(int k=0;k<m_particles.size();k++){
-                                    Particle p = m_particles.get(k);
-                                    p.render(g);
-
-                                }*/
-                                TileAtlas.tallTree.render(g, i, j, Tree.TALL);
-                                break;
                             case 13:
                                 TileAtlas.smallTree.render(g, i, j, Tree.SMALL);
                                 break;
                             default:
                                 break;
+                        }
+                        
+                        if(i > 2 && map[i - 3][j] == 12){
+                            /*for(int k=0;k<m_particles.size();k++){
+                                    Particle p = m_particles.get(k);
+                                    p.render(g);
+
+                                }*/
+                            TileAtlas.tallTree.render(g, i - 3, j, Tree.TALL);
+                        }
+                        else if(i < m_nbTilesW && map[i + 1][j] == 12){
+                            /*for(int k=0;k<m_particles.size();k++){
+                                    Particle p = m_particles.get(k);
+                                    p.render(g);
+
+                                }*/
+                            TileAtlas.tallTree.render(g, i + 1, j, Tree.TALL);
                         }
                     }
                 }
@@ -461,12 +498,11 @@ public class Level
     }
     
     public int getData(int x, int y){
-        //TODO
-        return 0;
+        return m_data[x][y];
     }
     
     public void setData(int x, int y, int val){
-        //TODO
+        m_data[x][y] = val;
     }
     
     public void removeTile(int x, int y){
@@ -478,12 +514,26 @@ public class Level
     }
     
     public CageEntity getCageEntity(int x, int y){
-        //TODO
+        for(int i=0;i< m_cageEntity.size();i++){
+            CageEntity ce = m_cageEntity.get(i);
+            Rectangle bounds = ce.getBounds();
+            if(x * Defines.TILE_SIZE >= bounds.x && x * Defines.TILE_SIZE <= bounds.x + bounds.width && 
+                    y * Defines.TILE_SIZE >= bounds.y && y * Defines.TILE_SIZE <= bounds.y + bounds.height){
+                return ce;
+            }
+        }
         return null;
     }
     
     public List<Braconeers> getBraconeersEntities(int x0, int y0, int w, int h, boolean isStuck){
         //TODO
         return new ArrayList<>();
+    }
+    
+    public boolean isViewedEvent(int eventId){
+        if(eventId > m_viewedEvent.length){
+            return true;
+        }
+        return m_viewedEvent[eventId];
     }
 }

@@ -1,9 +1,7 @@
 package states;
 
-import audio.Sound;
 import core.Camera;
 import core.Defines;
-import core.Easing;
 import core.I18nManager;
 import core.Minimap;
 import core.ResourceManager;
@@ -21,13 +19,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.imageio.ImageIO;
 import ld34.profile.BestScores;
-import ld34.profile.Save;
 import ld34.profile.Settings;
 import level.Level;
 import level.LevelManager;
@@ -44,12 +38,10 @@ public class GameState extends BaseState
     public Level m_level;
     public Camera m_cam;
     private LevelManager m_levelManager;
-    
     public GuiConsole m_guiConsole;
-    
     public BufferedImage m_background2, m_bgGui, m_gui, m_bgGui2, m_clockGui, m_backgroundBottom, m_backgroundTop, m_monkeySpriteSheet,
-            m_backgroundBottomAll, m_backgroundBottom2, m_backgroundTop2, m_backgroundTopAll, m_guiAssets, m_scoreIcon, m_timeIcon, m_levelIcon, m_cagesIcon, 
-            m_cageIcon, m_dollardIcon, m_littlesPandas, m_spritesheetGui, m_background, m_foregroundGame, m_spritesheetGui2;
+            m_backgroundBottomAll, m_backgroundBottom2, m_backgroundTop2, m_backgroundTopAll, m_guiAssets, m_scoreIcon, m_timeIcon, m_levelIcon, m_cagesIcon,
+            m_littlesPandas, m_spritesheetGui, m_background, m_foregroundGame;
     public int m_nbLevel, m_selectedItemMenu, m_selectedItemSaves, m_selectedItemSettings;
     public boolean m_displayEnd, m_displayStart, m_renderSaves, m_displayEvent, m_displayDialog = false;
     public int m_alpha, m_alphaMax;
@@ -121,6 +113,16 @@ public class GameState extends BaseState
         m_backgroundBottom2 = m_level.getBackground();
         m_backgroundTop = m_stateManager.getContext().m_resourceManager.getSpritesheets("background");
         m_background2 = m_stateManager.getContext().m_resourceManager.getSpritesheets("background2");
+        
+        m_scoreIcon = m_stateManager.getContext().m_resourceManager.getSpritesheets("spritesheetGui2").getSubimage(82, 8, 61, 59);
+        m_levelIcon = m_stateManager.getContext().m_resourceManager.getSpritesheets("spritesheetGui2").getSubimage(156, 7, 61, 61);
+        
+        if(m_player.getSpecies().equals("panda")){
+            m_cagesIcon = m_stateManager.getContext().m_resourceManager.getSpritesheets("spritesheetGui2").getSubimage(232, 7, 61, 61);
+        }
+        else{
+            m_cagesIcon = m_stateManager.getContext().m_resourceManager.getSpritesheets("spritesheetGui2").getSubimage(307, 7, 61, 61);
+        }
         
         //m_minimap = new Minimap(screenWidth, screenHeight, (int)m_player.getPosX(), (int)m_player.getPosY(), m_level);
         
@@ -220,13 +222,13 @@ public class GameState extends BaseState
             m_timeEventFree = 0;
             m_eventY = 0;
             m_cageToFree = m_level.m_nbCages;
-        }
+        }*/
 
         if(m_level.getNumber() == 1)
         {
             for(int i=0;i< m_level.getEventsPos().length;i++)
             {
-                if(m_player.getPosX() >= m_level.getEventsPos()[i][0] + 64 && m_player.getPosX() <= m_level.getEventsPos()[i][0] + 128 && !m_level.m_viewedEvent[i])
+                if(m_player.getPosX() >= m_level.getEventsPos()[i][0] + 64 && m_player.getPosX() <= m_level.getEventsPos()[i][0] + 128 && !m_level.isViewedEvent(i))
                 {
                     TutorialState ts = (TutorialState)m_stateManager.getState(StateType.TUTORIAL);
                     if(ts == null)
@@ -242,7 +244,7 @@ public class GameState extends BaseState
                     }
                 }
             }
-        }*/
+        }
 
         if(m_player.hasWon())
         {
@@ -330,7 +332,7 @@ public class GameState extends BaseState
         if(m_displayStart)
         {
             if(m_alpha > 0)
-                m_alpha--;
+                m_alpha --;
             
             g.drawImage(m_background2, 0, 0, screenWidth, screenHeight, null);
             g.setColor(Color.BLACK);
@@ -490,68 +492,6 @@ public class GameState extends BaseState
         m_level = level;
     }
     
-    public void loadAssets(){
-        try{
-            URL url = getClass().getResource("/gui.png");
-            m_spritesheetGui = ImageIO.read(url);
-            
-            url = getClass().getResource("/background.png");
-            m_background = ImageIO.read(url);
-            
-            url = getClass().getResource("/background2.png");
-            m_background2 = ImageIO.read(url);
-            
-            url = getClass().getResource("/background_bottom.png");
-            m_backgroundBottomAll = ImageIO.read(url);
-            m_backgroundBottom = m_backgroundBottomAll.getSubimage(0, 0, 800, 600);
-            m_backgroundBottom2 = m_backgroundBottomAll.getSubimage(800, 0, 800, 600);
-            url = getClass().getResource("/background_top.png");
-            m_backgroundTopAll = ImageIO.read(url);
-            m_backgroundTop = m_backgroundTopAll.getSubimage(0, 0, 800, 600);
-            m_backgroundTop2 = m_backgroundTopAll.getSubimage(800, 0, 800, 600);
-            
-            url = getClass().getResource("/foreground2.png");
-            m_foregroundGame = ImageIO.read(url).getSubimage(0, 300, 800, 300);
-            
-            url = getClass().getResource("/gui2.png");
-            m_spritesheetGui2 = ImageIO.read(url);
-            
-            url = getClass().getResource("/gui2.png");
-            m_guiAssets = ImageIO.read(url);
-            m_timeIcon = m_guiAssets.getSubimage(6, 8, 61, 60);
-            m_scoreIcon = m_guiAssets.getSubimage(82, 8, 61, 59);
-            m_levelIcon = m_guiAssets.getSubimage(156, 7, 61, 61);
-            if(m_player.getSpecies().equals("panda"))
-            {
-                m_cagesIcon = m_guiAssets.getSubimage(232, 7, 61, 61);
-            }
-            else
-            {
-                m_cagesIcon = m_guiAssets.getSubimage(307, 7, 61, 61);
-            }
-            
-            url = getClass().getResource("/gui.png");
-            m_gui = ImageIO.read(url);
-            
-            url = getClass().getResource("/littles_pandas.png");
-            m_littlesPandas = ImageIO.read(url);
-            
-            url = getClass().getResource("/monkey.png");
-            m_monkeySpriteSheet = ImageIO.read(url);
-            
-        }
-        catch(IOException e)
-        {
-            e.getMessage();
-        }
-        
-        m_bgGui = m_spritesheetGui.getSubimage(0, 20, 214, 50);
-        m_bgGui2 = m_spritesheetGui.getSubimage(0, 0, 214, 50);
-        m_clockGui = m_spritesheetGui.getSubimage(0, 281, 55, 55);
-        m_cageIcon = m_guiAssets.getSubimage(384, 101, 27, 25); 
-        m_dollardIcon = m_guiAssets.getSubimage(413, 104, 16, 20);
-    }
-    
     /**
      * 
      * @param lvl 
@@ -639,7 +579,7 @@ public class GameState extends BaseState
      */
     public void renderGUI(Graphics g)
     {
-        /*ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
+        ResourceManager resourceManager = m_stateManager.getContext().m_resourceManager;
         Font font = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 22.0f);
         Font fontS = resourceManager.getFont("kaushanscriptregular").deriveFont(Font.PLAIN, 17.0f);
         
@@ -658,9 +598,9 @@ public class GameState extends BaseState
         int scoreW = m.stringWidth("" + m_player.getScore());
         g.drawString("" + m_player.getScore(), 165 - scoreW, 106);
         g.drawString("" + m_nbLevel, 95, 47);
-        g.drawString("" + m_level.m_nbCages, 210, 47);
+        g.drawString("" + m_level.getFreeCages(), 210, 47);
 
-        if(Integer.parseInt(Settings.getInstance().getConfigValue("difficulty")) == 5)
+        if(Integer.parseInt(Settings.getInstance().getConfigValue("difficulty")) == Settings.DIFFICULTY_HARDCORE)
         {
             g.setColor(new Color(0,0,0,160));
             g.fillRoundRect(640, 27, 100, 30, 5, 5);
@@ -676,7 +616,7 @@ public class GameState extends BaseState
                 g.setFont(font);
                 g.drawString((String.format("%02d", m_minutes))+":"+(String.format("%02d", m_secondes)), 650, 50);
             }
-        }*/
+        }
     }
     
     /**

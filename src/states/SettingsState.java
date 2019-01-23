@@ -295,7 +295,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == LevelOld.DIFFICULTY_EASY)
+        if(difficulty == Settings.DIFFICULTY_EASY)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -306,7 +306,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == LevelOld.DIFFICULTY_MEDIUM)
+        if(difficulty == Settings.DIFFICULTY_MEDIUM)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -317,7 +317,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == LevelOld.DIFFICULTY_HARD)
+        if(difficulty == Settings.DIFFICULTY_HARD)
             rib.setChecked(true);
         bg.add(rib);
         
@@ -328,7 +328,7 @@ public class SettingsState extends BaseState
         rib.addApearance(GuiComponent.Status.FOCUSED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CLICKED, m_spritesheetGui2.getSubimage(491, 1, 120, 99));
         rib.addApearance(GuiComponent.Status.CHECKED, m_spritesheetGui2.getSubimage(612, 0, 124, 103));
-        if(difficulty == LevelOld.DIFFICULTY_HARDCORE)
+        if(difficulty == Settings.DIFFICULTY_HARDCORE)
             rib.setChecked(true);
         bg.add(rib);
         m_gameGuiElements.add(bg);

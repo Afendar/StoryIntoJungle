@@ -33,7 +33,7 @@ import weather.Weather.WeatherState;
  * @author Afendar
  */
 public class LevelOld
-{    
+{
     public int m_w, m_h, m_nbTilesW, m_nbTilesH, m_nbLevel, m_nbCages;
     public int[][] m_map, m_topMap, m_data;
     public boolean[] m_viewedEvent, m_unlockedLevels;
