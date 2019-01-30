@@ -63,9 +63,8 @@ public class I18nManager
     {
         try
         {
-            File f = new File(getClass().getResource("/lang_" + m_lang + ".properties").getFile());
-            FileInputStream file = new FileInputStream(f);  
-            m_translations.load(file);
+            m_translations.load(getClass().getResource("/lang_" + m_lang + ".properties").openStream());
+            System.out.println(m_translations.size());
         }
         catch (FileNotFoundException ex)
         {

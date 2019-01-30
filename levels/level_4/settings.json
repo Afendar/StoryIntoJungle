@@ -6,5 +6,8 @@
         "top": "lvl4-top.png",
         "layer-1": "lvl4.png"
     },
-    "background": "background-swamp"
+    "background": [
+        "background-swamp-top",
+        "background-swamp-layer-1"
+    ]
 }

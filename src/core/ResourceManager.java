@@ -40,9 +40,10 @@ public class ResourceManager
             m_spritesheets.put("littles_pandas", ImageIO.read(getClass().getResource("/littles_pandas.png")));
             m_spritesheets.put("bgPause", ImageIO.read(getClass().getResource("/gui_pausesettings.png")));
             
+            m_backgrounds.put("background-spring-top", ImageIO.read(getClass().getResource("/backgrounds/background-spring-top.png")));
+            m_backgrounds.put("background-spring-layer-1", ImageIO.read(getClass().getResource("/backgrounds/background-spring-layer-1.png")));
             m_backgrounds.put("background-fall", ImageIO.read(getClass().getResource("/backgrounds/background-fall.png")));
             m_backgrounds.put("background-lagoon", ImageIO.read(getClass().getResource("/backgrounds/background-lagoon.png")));
-            m_backgrounds.put("background-spring", ImageIO.read(getClass().getResource("/backgrounds/background-spring.png")));
             m_backgrounds.put("background-temple", ImageIO.read(getClass().getResource("/backgrounds/background-temple.png")));
             m_backgrounds.put("background-summer", ImageIO.read(getClass().getResource("/backgrounds/background-summer.png")));
             m_backgrounds.put("background-swamp", ImageIO.read(getClass().getResource("/backgrounds/background-swamp.png")));

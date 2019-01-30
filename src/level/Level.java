@@ -44,11 +44,11 @@ public class Level
     private String m_name;
     private SeasonState m_season;
     private WeatherState m_weather;
-    private BufferedImage m_background;
     private Map<String, int[][]> m_layers;
     private Player m_player;
     private Context m_context;
     private List<CageEntity> m_cageEntity = new ArrayList<>();
+    private List<BufferedImage> m_background = new ArrayList<>();
     
     /**
      * 
@@ -60,7 +60,6 @@ public class Level
         m_name = "";
         m_season = SeasonState.SPRING;
         m_weather = WeatherState.SUN;
-        m_background = null;
         m_nbTilesW = m_nbTilesH = 0;
         m_data = null;
         m_nbTilesInScreenX = m_nbTilesInScreenY = 0;
@@ -154,17 +153,15 @@ public class Level
     }
     
     /**
-     * @return 
+     * 
+     * @param img 
      */
-    public BufferedImage getBackground(){
-        return m_background;
+    public void addBackground(BufferedImage img){
+        m_background.add(img);
     }
     
-    /**
-     * @param background 
-     */
-    public void setBackground(BufferedImage background){
-        m_background = background;
+    public List<BufferedImage> getBackgrounds(){
+        return m_background;
     }
     
     /**

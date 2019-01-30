@@ -2,7 +2,7 @@ package level;
 
 import core.Context;
 import core.ResourceManager;
-import java.awt.image.BufferedImage;
+import core.WeatherManager;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -94,8 +94,13 @@ public class LevelManager
             lvl.setWeather(WeatherState.SUN);
         }
         
-        BufferedImage bg = m_context.m_resourceManager.getBackground((String)o.get("background"));
-        lvl.setBackground(bg);
+        JSONArray backgrounds = (JSONArray)o.get("background");
+        if(backgrounds != null){
+            backgrounds.stream().filter((bg) -> (bg instanceof String)).forEachOrdered((bg) ->
+            {
+                lvl.addBackground(m_context.m_resourceManager.getBackground((String)bg));
+            });
+        }
         
         JSONObject map = (JSONObject)o.get("map");
         for(Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {

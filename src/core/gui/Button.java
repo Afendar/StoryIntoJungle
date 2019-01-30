@@ -7,7 +7,7 @@ import states.BaseState;
 
 public class Button extends GuiComponent
 {
-    private static final String componentID = "Button";
+    private static final String COMPONENT_ID = "Button";
 
     private boolean m_textCenter;
     private int m_paddingTop, m_paddingLeft;
@@ -110,7 +110,7 @@ public class Button extends GuiComponent
         g.setFont(m_font);
         FontMetrics fm = g.getFontMetrics(m_font);
         int labelHeight = fm.getHeight();
-        int labelWidth = 0;
+        int labelWidth;
         if (m_label != null && !m_label.isEmpty())
         {
             labelWidth = fm.stringWidth(m_label);

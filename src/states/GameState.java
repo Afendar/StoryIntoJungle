@@ -10,6 +10,7 @@ import core.StateManager;
 import core.StateType;
 import core.TimerThread;
 import core.Context;
+import core.WeatherManager;
 import core.gui.GuiConsole;
 import entity.CageEntity;
 import entity.Player;
@@ -38,6 +39,7 @@ public class GameState extends BaseState
     public Level m_level;
     public Camera m_cam;
     private LevelManager m_levelManager;
+    private WeatherManager m_weatherManager;
     public GuiConsole m_guiConsole;
     public BufferedImage m_background2, m_bgGui, m_gui, m_bgGui2, m_clockGui, m_backgroundBottom, m_backgroundTop, m_monkeySpriteSheet,
             m_backgroundBottomAll, m_backgroundBottom2, m_backgroundTop2, m_backgroundTopAll, m_guiAssets, m_scoreIcon, m_timeIcon, m_levelIcon, m_cagesIcon,
@@ -69,6 +71,7 @@ public class GameState extends BaseState
         
         m_guiConsole = new GuiConsole(0, 400, 350, 200, c.m_inputsListener);
         m_levelManager = new LevelManager(c);
+        m_weatherManager = new WeatherManager(c);
         
         m_nbLevel = 1;
         m_displayEnd = false;
@@ -80,6 +83,8 @@ public class GameState extends BaseState
         }
         
         m_level = m_levelManager.loadLevel(m_nbLevel);
+        m_weatherManager.setWeather(m_level.getWeather());
+        
         m_cam = new Camera(0, 0, screenWidth, screenHeight, m_level);
         
         m_player = new Player(
@@ -95,7 +100,8 @@ public class GameState extends BaseState
         );
         m_player.setScore(0);
         
-        //c.m_profiler.addObjectToDebug(m_player, new String[]{"getPosX", "getPosY", "getState"});
+        c.m_profiler.addObjectToDebug(m_player, new String[]{"getPosX", "getPosY", "getState"});
+        c.m_profiler.addObjectToDebug(m_level, new String[]{"getWeather"});
         
         m_level.addPlayer(m_player);
         
@@ -107,10 +113,10 @@ public class GameState extends BaseState
             m_timeF = TimerThread.MILLI;
         }
         
-        m_glueX2 = m_level.getBackground().getWidth();
-        m_glueTopX2 = m_level.getBackground().getWidth();
-        m_backgroundBottom = m_level.getBackground();
-        m_backgroundBottom2 = m_level.getBackground();
+        m_glueX2 = m_level.getBackgrounds().get(0).getWidth();
+        m_glueTopX2 = m_level.getBackgrounds().get(0).getWidth();
+        m_backgroundBottom = m_level.getBackgrounds().get(1);
+        m_backgroundBottom2 = m_level.getBackgrounds().get(1);
         m_backgroundTop = m_stateManager.getContext().m_resourceManager.getSpritesheets("background");
         m_background2 = m_stateManager.getContext().m_resourceManager.getSpritesheets("background2");
         
@@ -182,13 +188,13 @@ public class GameState extends BaseState
         /*ResourceManager rm = m_stateManager.getContext().m_resourceManager;
         
         m_guiConsole.update(dt);
-        
+        */
         if(m_stateManager.getContext().m_inputsListener.profiler.typed)
         {
             m_stateManager.getContext().m_profiler.toggleVisible();
-            m_guiConsole.toggleVisible();
+            //m_guiConsole.toggleVisible();
         }
-        
+        /*
         if(m_soundPlayed == 1 && ( TimerThread.MILLI - m_timeSound ) > 36000)
         {
             m_timeSound = TimerThread.MILLI;
@@ -298,6 +304,7 @@ public class GameState extends BaseState
 
                     //m_minimap.update((int)m_player.getPosX(), (int)m_player.getPosY());
                     m_cam.update(m_player);
+                    m_weatherManager.update(dt);
                 }
 
                 if(m_minutes >= m_maxTimeHardcore)
@@ -328,11 +335,10 @@ public class GameState extends BaseState
         int screenHeight = screen.getContentPane().getHeight();
         
         //RENDERING
-        ///////////////////////////////////////////
         if(m_displayStart)
         {
             if(m_alpha > 0)
-                m_alpha --;
+                m_alpha--;
             
             g.drawImage(m_background2, 0, 0, screenWidth, screenHeight, null);
             g.setColor(Color.BLACK);
@@ -416,7 +422,7 @@ public class GameState extends BaseState
             }*/
             
             g.translate(-m_cam.m_x/4, 0);
-            BufferedImage bg = m_level.getBackground();
+            BufferedImage bg = m_level.getBackgrounds().get(0);
             g.drawImage(bg, (int)(m_glueTopX - (m_cam.m_x)), screenHeight - bg.getHeight(), null);
             g.drawImage(bg, (int)(m_glueTopX2 - (m_cam.m_x)), screenHeight - bg.getHeight(), null);
             g.translate(m_cam.m_x/4, 0);
@@ -441,8 +447,10 @@ public class GameState extends BaseState
             
             g.translate(m_cam.m_x, m_cam.m_y);
             
-            g.drawImage(m_foregroundGame, 0, 300, null);
-
+            //g.drawImage(m_foregroundGame, 0, 300, null);
+            
+            m_weatherManager.render(g);
+            
             //Render GUI
             renderGUI(g);
             

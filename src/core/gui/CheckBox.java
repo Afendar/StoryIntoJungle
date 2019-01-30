@@ -11,7 +11,7 @@ import states.BaseState;
  */
 public class CheckBox extends Button
 {
-    private static final String componentID = "CheckBox";
+    private static final String COMPONENT_ID = "CheckBox";
 
     protected boolean m_checked;
 

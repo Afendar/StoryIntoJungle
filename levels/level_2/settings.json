@@ -6,5 +6,8 @@
         "top": "lvl2-top.png",
         "layer-1": "lvl2.png"
     },
-    "background": "background-temple"
+    "background": [
+        "background-temple-top",
+        "background-temple-layer-1"
+    ]
 }

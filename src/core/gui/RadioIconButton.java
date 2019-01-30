@@ -6,7 +6,7 @@ import states.BaseState;
 
 public class RadioIconButton extends RadioButton
 {
-    private static final String componentID = "RadioIconButton";
+    private static final String COMPONENT_ID = "RadioIconButton";
 
     private final BufferedImage m_icon;
 

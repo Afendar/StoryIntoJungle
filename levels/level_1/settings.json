@@ -1,6 +1,6 @@
 {
     "name":"Tutorial",
-    "weather":"SUN",
+    "weather":"SNOW",
     "season":"SPRING",
     "map": {
         "top": "lvl1-top.png",
@@ -17,5 +17,8 @@
         [6976, 768],
         [8064, 640]
     ],
-    "background": "background-spring"
+    "background": [
+        "background-spring-top",
+        "background-spring-layer-1"
+    ]
 }

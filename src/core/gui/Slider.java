@@ -7,7 +7,7 @@ import states.BaseState;
 
 public class Slider extends GuiComponent
 {
-    private static final String componentID = "Slider";
+    private static final String COMPONENT_ID = "Slider";
 
     private int m_value;
     private int[] m_moveMouseLast;

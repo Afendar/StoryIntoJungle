@@ -6,5 +6,8 @@
         "top": "lvl3-top.png",
         "layer-1": "lvl3.png"
     },
-    "background": "background-lagoon"
+    "background": [
+        "background-lagoon-top",
+        "background-lagoon-layer-1"
+    ]
 }

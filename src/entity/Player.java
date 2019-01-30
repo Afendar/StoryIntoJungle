@@ -589,7 +589,6 @@ public class Player extends Entity
      */
     public void reloadSpritesheet(int lvl)
     {
-
         switch (lvl)
         {
             case 1:

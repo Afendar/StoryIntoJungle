@@ -17,7 +17,7 @@ public class TabsPanelsContainer extends GuiComponent
     private static final int BOTTOM = 3;
     private static final int RIGHT = 4;
 
-    private static final String componentID = "Tabs Panels Container";
+    private static final String COMPONENT_ID = "Tabs Panels Container";
 
     private int m_tabPlacement = TOP;
 

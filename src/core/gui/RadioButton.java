@@ -8,7 +8,7 @@ import states.BaseState;
 
 public class RadioButton extends Button
 {
-    private static final String componentID = "RadioButton";
+    private static final String COMPONENT_ID = "RadioButton";
 
     protected boolean m_checked;
 
