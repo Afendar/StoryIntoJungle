@@ -1,5 +1,6 @@
 package level.tiles;
 
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -12,12 +13,13 @@ public class Leaves extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Leaves(int imgX, int imgY){
-        super(imgX, imgY, 5);
-        this.bonus = 100;
+    public Leaves(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 5);
+        m_bonus = 100;
     }
 
     @Override

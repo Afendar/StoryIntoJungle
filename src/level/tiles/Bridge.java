@@ -3,6 +3,7 @@ package level.tiles;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import core.Defines;
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -18,11 +19,12 @@ public class Bridge extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Bridge(int imgX, int imgY){
-        super(imgX, imgY, 3);
+    public Bridge(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 3);
     }
 
     @Override
@@ -59,10 +61,9 @@ public class Bridge extends Tile {
             }
             g2d.rotate(-this.rotation, (x * Defines.TILE_SIZE) + 16, (y * Defines.TILE_SIZE) + 16);
         }
-        g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
+        g.drawImage(m_tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
         if(onBridge){
             g2d.rotate(this.rotation, (x * Defines.TILE_SIZE) + 16, (y * Defines.TILE_SIZE) + 16);
         }
     }
-    
 }

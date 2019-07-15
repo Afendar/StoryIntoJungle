@@ -2,6 +2,7 @@ package level.tiles;
 
 import java.awt.Graphics;
 import core.Defines;
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -14,11 +15,12 @@ public class Floor extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Floor(int imgX, int imgY){
-        super(imgX, imgY, 1);
+    public Floor(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 1);
     }
     
     @Override
@@ -46,18 +48,18 @@ public class Floor extends Tile {
      */
     public void render(Graphics g, int x, int y, boolean left, boolean right){
         if(left && right){
-            this.tile = this.tileset.getSubimage((this.imgX * Defines.TILE_SIZE) + (Defines.TILE_SIZE/2), this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            m_tile = m_tileset.getSubimage((m_imgX * Defines.TILE_SIZE) + (Defines.TILE_SIZE/2), m_imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         else if(left){
-            this.tile = this.tileset.getSubimage((this.imgX + 1) * Defines.TILE_SIZE, this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            m_tile = m_tileset.getSubimage((m_imgX + 1) * Defines.TILE_SIZE, m_imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         else if(right){
-            this.tile = this.tileset.getSubimage((this.imgX * Defines.TILE_SIZE), this.imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            m_tile = m_tileset.getSubimage((m_imgX * Defines.TILE_SIZE), m_imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         else{
-            this.tile = this.tileset.getSubimage(0, 3 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+            m_tile = m_tileset.getSubimage(0, 3 * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         }
         
-        g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
+        g.drawImage(m_tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
     }
 }

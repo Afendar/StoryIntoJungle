@@ -66,7 +66,7 @@ public class MapState extends BaseState
     private CubicCurve2D[] m_curve;
     private boolean m_animated;
     private List<List<CageEntity>> m_cagesMap;
-    private boolean[] m_unlockedLevels;
+    private List<Boolean> m_unlockedLevels;
     private double m_time, m_scale;
     
     public MapState(StateManager stateManager)
@@ -158,7 +158,8 @@ public class MapState extends BaseState
         m_currentLvl = 1;
         m_currentScore = 0;
         
-        m_unlockedLevels = new boolean[]{true, true, true, true, true, true};
+        //m_unlockedLevels = new boolean[]{false, false, false, false, false, false};
+        m_unlockedLevels = new ArrayList<>();
         
         m_index = 0;
         
@@ -336,7 +337,7 @@ public class MapState extends BaseState
         
         for(int i=0 ; i < Defines.LEVEL_MAX - 1;i++)
         {
-            if(m_unlockedLevels[i])
+            if(m_unlockedLevels.get(i))
             {
                 g.drawImage(spritesheetGui2.getSubimage(841, 65, 19, 8), m_coordsPinsIcons[i][0], m_coordsPinsIcons[i][1], null);
             }
@@ -408,7 +409,7 @@ public class MapState extends BaseState
      */
     public void prevLevel()
     {
-        if(m_currentLvl > 1 && m_unlockedLevels[m_currentLvl - 2] && !m_animated)
+        if(m_currentLvl > 1 && m_unlockedLevels.get(m_currentLvl - 2) && !m_animated)
         {
             m_animated = true;
             m_currentLvl--;
@@ -421,7 +422,7 @@ public class MapState extends BaseState
      */
     public void nextLevel()
     {
-        if(m_currentLvl < 6 && m_unlockedLevels[m_currentLvl] && !m_animated)
+        if(m_currentLvl < 6 && m_unlockedLevels.get(m_currentLvl) && !m_animated)
         {
             m_animated = true;
             m_currentLvl++;
@@ -511,5 +512,9 @@ public class MapState extends BaseState
     public void setCagesMap(List<List<CageEntity>> cagesMap)
     {
         m_cagesMap = cagesMap;
+    }
+    
+    public void setUnlockedLevels(List<Boolean> unlockedLevels){
+        m_unlockedLevels = unlockedLevels;
     }
 }

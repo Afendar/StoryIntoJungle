@@ -20,5 +20,6 @@
     "background": [
         "background-spring-top",
         "background-spring-layer-1"
-    ]
+    ],
+    "tileset": "tileset3"
 }

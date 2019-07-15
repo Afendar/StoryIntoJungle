@@ -17,11 +17,12 @@ public class Bush extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Bush(int imgX, int imgY){
-        super(imgX, imgY, 11);
+    public Bush(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 11);
     }
 
     @Override
@@ -36,6 +37,6 @@ public class Bush extends Tile {
     
     @Override
     public void render(Graphics g, int x, int y){
-        g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE + 16, null);
+        g.drawImage(m_tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE + 16, null);
     }
 }

@@ -2,7 +2,6 @@ package level;
 
 import core.Context;
 import core.ResourceManager;
-import core.WeatherManager;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -100,6 +99,14 @@ public class LevelManager
             {
                 lvl.addBackground(m_context.m_resourceManager.getBackground((String)bg));
             });
+        }
+        
+        String tilesetName = (String)o.get("tileset");
+        if(tilesetName.equals("")){
+            lvl.setTileset(m_context.m_resourceManager.getSpritesheets("tileset2"));
+        }
+        else{
+            lvl.setTileset(m_context.m_resourceManager.getSpritesheets(tilesetName));
         }
         
         JSONObject map = (JSONObject)o.get("map");

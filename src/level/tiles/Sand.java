@@ -1,5 +1,6 @@
 package level.tiles;
 
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -17,11 +18,12 @@ public class Sand extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Sand(int imgX, int imgY){
-        super(imgX, imgY, 9);
+    public Sand(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 9);
         this.startBreak = false;
         this.dt = 0;
         this.isBroken = false;

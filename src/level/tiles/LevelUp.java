@@ -17,14 +17,15 @@ public class LevelUp extends Tile{
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public LevelUp(int imgX, int imgY){
-        super(imgX, imgY, 7);
+    public LevelUp(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 7);
         
-        this.topSprite = this.tile;
-        this.bottomSprite = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, (imgY + 1) * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.topSprite = m_tile;
+        this.bottomSprite = m_tileset.getSubimage(imgX * Defines.TILE_SIZE, (imgY + 1) * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
     }
     
     @Override

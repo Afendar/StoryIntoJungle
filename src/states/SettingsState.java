@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import ld34.profile.Settings;
-import level.LevelOld;
 
 public class SettingsState extends BaseState
 {

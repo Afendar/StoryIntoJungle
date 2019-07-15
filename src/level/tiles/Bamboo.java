@@ -17,14 +17,15 @@ public class Bamboo extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Bamboo(int imgX, int imgY){
-        super(imgX, imgY, 2);
+    public Bamboo(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 2);
         
-        this.topSprite = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, (imgY - 1) * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.bottomSprite = this.tile;
+        this.topSprite = m_tileset.getSubimage(imgX * Defines.TILE_SIZE, (imgY - 1) * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.bottomSprite = m_tile;
     }
 
     @Override

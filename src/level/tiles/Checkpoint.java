@@ -20,14 +20,15 @@ public class Checkpoint extends Tile{
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Checkpoint(int imgX, int imgY){
-        super(imgX, imgY, 8);
+    public Checkpoint(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 8);
         this.pos = 0;
-        this.tile2 = this.tileset.getSubimage((imgX + 1) * Defines.TILE_SIZE , imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.tile3 = this.tileset.getSubimage((imgX + 2) * Defines.TILE_SIZE , imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.tile2 = m_tileset.getSubimage((imgX + 1) * Defines.TILE_SIZE , imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.tile3 = m_tileset.getSubimage((imgX + 2) * Defines.TILE_SIZE , imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
         this.animated = false;
         this.timeAnim = TimerThread.MILLI;
         this.counter = 0;
@@ -49,7 +50,7 @@ public class Checkpoint extends Tile{
     public void render(Graphics g, int x, int y){
         switch(this.pos){
             case 0:
-                g.drawImage(this.tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
+                g.drawImage(m_tile, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);
                 break;
             case 1:
                 g.drawImage(this.tile2, x * Defines.TILE_SIZE, y * Defines.TILE_SIZE, null);

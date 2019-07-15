@@ -279,14 +279,14 @@ public class Player extends Entity
         if (TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 4
                 || TileAtlas.atlas.get(m_level.getTile(x1, y1)).ID == 5)
         {
-            m_score += TileAtlas.atlas.get(m_level.getTile(x1, y1)).bonus;
+            m_score += TileAtlas.atlas.get(m_level.getTile(x1, y1)).m_bonus;
             m_level.removeTile(x1, y1);
             new Thread(m_context.m_resourceManager.getSound("bonus")::play).start();
         }
         else if (TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 4
                 || TileAtlas.atlas.get(m_level.getTile(x0, y1)).ID == 5)
         {
-            m_score += TileAtlas.atlas.get(m_level.getTile(x0, y1)).bonus;
+            m_score += TileAtlas.atlas.get(m_level.getTile(x0, y1)).m_bonus;
             m_level.removeTile(x0, y1);
             new Thread(m_context.m_resourceManager.getSound("bonus")::play).start();
         }

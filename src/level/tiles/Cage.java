@@ -19,16 +19,17 @@ public class Cage extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Cage(int imgX, int imgY){
-        super(imgX, imgY, 10);
+    public Cage(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 10);
         
-        this.topLeftSprite = this.tile;
-        this.bottomLeftSprite = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, (int)((imgY + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.topRightSprite = this.tileset.getSubimage((int)((imgX + 1) * Defines.TILE_SIZE), imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
-        this.bottomRightSprite = this.tileset.getSubimage((int)((imgX + 1) * Defines.TILE_SIZE), (int)((imgY + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.topLeftSprite = m_tile;
+        this.bottomLeftSprite = m_tileset.getSubimage(imgX * Defines.TILE_SIZE, (int)((imgY + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.topRightSprite = m_tileset.getSubimage((int)((imgX + 1) * Defines.TILE_SIZE), imgY * Defines.TILE_SIZE, Defines.TILE_SIZE, Defines.TILE_SIZE);
+        this.bottomRightSprite = m_tileset.getSubimage((int)((imgX + 1) * Defines.TILE_SIZE), (int)((imgY + 1) * Defines.TILE_SIZE), Defines.TILE_SIZE, Defines.TILE_SIZE);
     
         this.dt = 0;
     }
@@ -36,10 +37,7 @@ public class Cage extends Tile {
     @Override
     public boolean canPass(Level level, int x, int y){
         CageEntity entity = level.getCageEntity(x, y);
-        if(entity != null && entity.isBreak()){
-            return true;
-        }
-        return false;
+        return entity != null && entity.isBreak();
     }
     
     @Override

@@ -12,6 +12,7 @@ import states.EndState;
 import states.GameState;
 import states.HighScoresState;
 import states.IntroState;
+import states.LoadingState;
 import states.MainMenuState;
 import states.MapSavesState;
 import states.MapState;
@@ -58,6 +59,7 @@ public class StateManager
         registerState(StateType.PAUSED_SAVES);
         registerState(StateType.PAUSED_SETTINGS);
         registerState(StateType.TUTORIAL);
+        registerState(StateType.LOADING);
         registerState(StateType.TEST);
     }
     
@@ -159,8 +161,6 @@ public class StateManager
            return null; 
         }
         
-        BaseState search = m_statesFactory.get(type);
-        
         if(m_states.containsKey(type))
         {
             return m_states.get(type);
@@ -233,6 +233,9 @@ public class StateManager
                 break;
             case TUTORIAL:
                 m_statesFactory.put(StateType.TUTORIAL, new TutorialState(this));
+                break;
+            case LOADING:
+                m_statesFactory.put(StateType.LOADING, new LoadingState(this));
                 break;
             case TEST:
                 m_statesFactory.put(StateType.TEST, new TestState(this));

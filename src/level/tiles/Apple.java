@@ -1,5 +1,6 @@
 package level.tiles;
 
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -12,12 +13,13 @@ public class Apple extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Apple(int imgX, int imgY){
-        super(imgX, imgY, 4);
-        this.bonus = 10;
+    public Apple(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 4);
+        m_bonus = 10;
     }
 
     @Override

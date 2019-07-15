@@ -1,5 +1,6 @@
 package level.tiles;
 
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -12,11 +13,12 @@ public class Pious extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Pious(int imgX, int imgY){
-        super(imgX, imgY, 6);
+    public Pious(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 6);
     }
 
     @Override

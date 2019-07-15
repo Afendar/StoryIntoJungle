@@ -20,6 +20,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import ld34.profile.BestScores;
@@ -258,6 +259,16 @@ public class GameState extends BaseState
             if(m_nbLevel < Defines.LEVEL_MAX)
             {
                 m_stateManager.switchTo(StateType.MAP);
+                MapState ms = (MapState)m_stateManager.getState(StateType.MAP);
+                List<Boolean> unlockedLevels = new ArrayList<>();
+                unlockedLevels.add(true);
+                unlockedLevels.add(true);
+                unlockedLevels.add(true);
+                unlockedLevels.add(false);
+                unlockedLevels.add(false);
+                unlockedLevels.add(false);
+                
+                ms.setUnlockedLevels(unlockedLevels);
                 /*m_level.setUnlocked(m_nbLevel);
                 MapScene ms = new MapScene(Defines.SCREEN_WIDTH, Defines.SCREEN_HEIGHT, m_game, m_nbLevel, m_player.score, m_level.unlockedLevels);
                 ms.setCagesMap(m_level.cagesMap);

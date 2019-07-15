@@ -5,6 +5,7 @@ import core.Defines;
 import entity.Braconeers;
 import entity.CageEntity;
 import entity.Player;
+import entity.SandEntity;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -48,7 +49,9 @@ public class Level
     private Player m_player;
     private Context m_context;
     private List<CageEntity> m_cageEntity = new ArrayList<>();
+    private List<SandEntity> m_sandEntity = new ArrayList<>();
     private List<BufferedImage> m_background = new ArrayList<>();
+    private BufferedImage m_tileset;
     
     /**
      * 
@@ -103,6 +106,23 @@ public class Level
      */
     public void setName(String name){
         m_name = name;
+    }
+    
+    /**
+     * 
+     * @param tileset 
+     */
+    public void setTileset(BufferedImage tileset){
+        m_tileset = tileset;
+        TileAtlas.load(m_tileset);
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public BufferedImage getTileset(){
+        return m_tileset;
     }
     
     /**
@@ -298,7 +318,7 @@ public class Level
                             break;
                         case SAND:
                             map[col][row] = TileAtlas.sand.ID;
-                            //m_sandEntity.add(new SandEntity(this, col, row, m_context));
+                            m_sandEntity.add(new SandEntity(this, col, row, m_context));
                             break;
                         case CAGE:
                             m_nbCages++;
@@ -368,6 +388,16 @@ public class Level
         int endX = (startX + m_nbTilesInScreenX + 2 <= m_nbTilesW)? startX + m_nbTilesInScreenX + 2 : m_nbTilesW;
         int endY = (startY + m_nbTilesInScreenY + 2 <= m_nbTilesH)? startY + m_nbTilesInScreenY + 2 : m_nbTilesH;
         
+        for(int i=0;i<m_sandEntity.size();i++){
+            SandEntity se = m_sandEntity.get(i);
+            
+            if(se.getPosX() < startX && se.getPosX() > endX && se.getPosY() < startY && se.getPosY() > endY){
+                continue;
+            }
+            
+            se.update(dt);
+        }
+        
         for(int i=0;i<m_cageEntity.size();i++){
             CageEntity ce = m_cageEntity.get(i);
             
@@ -430,9 +460,9 @@ public class Level
                                 TileAtlas.checkpoint.render(g, i, j);
                                 break;
                             case 9:
-                                /*if(m_data[i][j] != 2){
+                                if(m_data[i][j] != 2){
                                     TileAtlas.sand.render(g, i, j);
-                                }*/
+                                }
                                 break;
                             case 10:
                                 if(map[i-1][j] != 11){
@@ -472,7 +502,7 @@ public class Level
                                 }*/
                             TileAtlas.tallTree.render(g, i - 3, j, Tree.TALL);
                         }
-                        else if(i < m_nbTilesW && map[i + 1][j] == 12){
+                        else if(i < m_nbTilesW - 1 && map[i + 1][j] == 12){
                             /*for(int k=0;k<m_particles.size();k++){
                                     Particle p = m_particles.get(k);
                                     p.render(g);

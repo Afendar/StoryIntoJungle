@@ -16,5 +16,6 @@ public enum StateType
     PAUSED_SAVES,
     PAUSED_SETTINGS,
     TUTORIAL,
+    LOADING,
     TEST
 }

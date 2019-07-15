@@ -26,8 +26,7 @@ public class ResourceManager
      */
     private ResourceManager()
     {
-        try
-        {
+        try {
             m_spritesheets.put("afendar", ImageIO.read(getClass().getResource("/afendar.png")));
             m_spritesheets.put("spritesheetGui", ImageIO.read(getClass().getResource("/gui.png")));
             m_spritesheets.put("spritesheetGui2", ImageIO.read(getClass().getResource("/gui2.png")));
@@ -39,6 +38,8 @@ public class ResourceManager
             m_spritesheets.put("foreground3", ImageIO.read(getClass().getResource("/foreground3.png")));
             m_spritesheets.put("littles_pandas", ImageIO.read(getClass().getResource("/littles_pandas.png")));
             m_spritesheets.put("bgPause", ImageIO.read(getClass().getResource("/gui_pausesettings.png")));
+            m_spritesheets.put("tileset2", ImageIO.read(getClass().getResource("/tileset2.png")));
+            m_spritesheets.put("tileset3", ImageIO.read(getClass().getResource("/tileset3.png")));
             
             m_backgrounds.put("background-spring-top", ImageIO.read(getClass().getResource("/backgrounds/background-spring-top.png")));
             m_backgrounds.put("background-spring-layer-1", ImageIO.read(getClass().getResource("/backgrounds/background-spring-layer-1.png")));
@@ -62,12 +63,10 @@ public class ResourceManager
             m_musics.put("jungle1", new Sound("/jungle01.wav"));
             m_musics.put("jungle2", new Sound("/jungle02.wav"));
         }
-        catch(IOException e)
-        {
+        catch(IOException e){
             e.getMessage();
         }
-        catch (FontFormatException ex)
-        {
+        catch (FontFormatException ex){
             Logger.getLogger(ResourceManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

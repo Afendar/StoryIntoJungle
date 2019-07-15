@@ -2,6 +2,7 @@ package level.tiles;
 
 import core.Defines;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -18,13 +19,14 @@ public class Plant extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param size
      * @param imgX
      * @param imgY 
      */
-    public Plant(int size, int imgX, int imgY){
-        super(imgX, imgY, 14);
-        this.tile = this.tileset.getSubimage(imgX * Defines.TILE_SIZE, imgY * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+    public Plant(BufferedImage tileset, int size, int imgX, int imgY){
+        super(tileset, imgX, imgY, 14);
+        m_tile = m_tileset.getSubimage(imgX * Defines.TILE_SIZE, imgY * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
     }
     
     @Override
@@ -39,6 +41,6 @@ public class Plant extends Tile {
     
     @Override
     public void render(Graphics g, int x, int y){
-        g.drawImage(this.tile, x * Defines.TILE_SIZE, (y * Defines.TILE_SIZE) - Defines.TILE_SIZE, null);
+        g.drawImage(m_tile, x * Defines.TILE_SIZE, (y * Defines.TILE_SIZE) - Defines.TILE_SIZE, null);
     }
 }

@@ -1,6 +1,7 @@
 package level.tiles;
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import level.Level;
 
 /**
@@ -13,11 +14,12 @@ public class Empty extends Tile {
     
     /**
      * 
+     * @param tileset
      * @param imgX
      * @param imgY 
      */
-    public Empty(int imgX, int imgY){
-        super(imgX, imgY, 0);
+    public Empty(BufferedImage tileset, int imgX, int imgY){
+        super(tileset, imgX, imgY, 0);
     }
 
     @Override

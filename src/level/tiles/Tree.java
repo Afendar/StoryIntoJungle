@@ -3,6 +3,7 @@ package level.tiles;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import core.Defines;
+import java.awt.image.BufferedImage;
 import level.Level;
 import particles.Leaf;
 
@@ -22,17 +23,18 @@ public class Tree extends Tile{
     
     /**
      * 
+     * @param tileset
      * @param size
      * @param imgX
      * @param imgY 
      */
-    public Tree(int size, int imgX, int imgY){
-        super(imgX, imgY, (size == Tree.TALL) ? 12 : 13);
+    public Tree(BufferedImage tileset, int size, int imgX, int imgY){
+        super(tileset, imgX, imgY, (size == Tree.TALL) ? 12 : 13);
         this.size = size;
         if(size == Tree.TALL)
-            this.tile = this.tileset.getSubimage(4 * Defines.TILE_SIZE, 0, 5 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE);
+            m_tile = m_tileset.getSubimage(4 * Defines.TILE_SIZE, 0, 5 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE);
         else
-            this.tile = this.tileset.getSubimage(1 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
+            m_tile = m_tileset.getSubimage(1 * Defines.TILE_SIZE, 4 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE, 2 * Defines.TILE_SIZE);
     
         for(int i=0;i<3;i++){
             this.leaves.add(new Leaf(5, 0, 0, 800, 600));
@@ -71,10 +73,10 @@ public class Tree extends Tile{
     public void render(Graphics g, int x, int y, int size){
         switch(size){
             case Tree.SMALL:
-                g.drawImage(this.tile, x * Defines.TILE_SIZE, (y * Defines.TILE_SIZE) - Defines.TILE_SIZE, null);
+                g.drawImage(m_tile, x * Defines.TILE_SIZE, (y * Defines.TILE_SIZE) - Defines.TILE_SIZE, null);
                 break;
             default:
-                g.drawImage(this.tile, (x * Defines.TILE_SIZE) - Defines.TILE_SIZE - 5, (y * Defines.TILE_SIZE) - (3 * Defines.TILE_SIZE - 1 ), null);
+                g.drawImage(m_tile, (x * Defines.TILE_SIZE) - Defines.TILE_SIZE - 5, (y * Defines.TILE_SIZE) - (3 * Defines.TILE_SIZE - 1 ), null);
                 break;
         }
     }
