@@ -48,7 +48,7 @@ public class Game extends JPanel implements Runnable
     public Game(String profileName)
     {
         init(profileName);
-        m_stateManager.switchTo(StateType.INTRO);
+        m_stateManager.switchTo(StateType.LOADING);
         start();
     }
 

@@ -40,6 +40,8 @@ public class ResourceManager
             m_spritesheets.put("bgPause", ImageIO.read(getClass().getResource("/gui_pausesettings.png")));
             m_spritesheets.put("tileset2", ImageIO.read(getClass().getResource("/tileset2.png")));
             m_spritesheets.put("tileset3", ImageIO.read(getClass().getResource("/tileset3.png")));
+            m_spritesheets.put("loading-border", ImageIO.read(getClass().getResource("/loading_border.png")));
+            m_spritesheets.put("background-fall-loading", ImageIO.read(getClass().getResource("/loading_bg1.png")));
             
             m_backgrounds.put("background-spring-top", ImageIO.read(getClass().getResource("/backgrounds/background-spring-top.png")));
             m_backgrounds.put("background-spring-layer-1", ImageIO.read(getClass().getResource("/backgrounds/background-spring-layer-1.png")));
